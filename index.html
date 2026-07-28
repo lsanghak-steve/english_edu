@@ -44,18 +44,22 @@
                         <!-- 카드 앞면 (영어 & 그림 & 발음) -->
                         <div class="card-face card-front">
                             <span class="category-tag" id="card-category">과일</span>
-                            <div class="card-image-box">
-                                <span class="card-emoji" id="card-emoji">🍎</span>
+                            <div class="card-image-box" style="display: flex; align-items: center; justify-content: center; height: 110px; margin-bottom: 8px;">
+                                <img id="card-img" src="" alt="단어 그림" style="max-width: 140px; max-height: 100px; object-fit: contain; display: none; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1));">
+                                <span class="card-emoji" id="card-emoji" style="font-size: 64px;">🍎</span>
                             </div>
                             <h2 class="card-word" id="card-word">Apple</h2>
                             <p class="card-phonics" id="card-phonics">[애플]</p>
                             <button class="audio-btn" id="btn-listen-speech">🔊 발음 듣기</button>
                         </div>
-                        <!-- 카드 뒷면 (한국어 뜻 & 예문) -->
+                        <!-- 카드 뒷면 (한국어 뜻 & 예문 & 예문 문장 듣기) -->
                         <div class="card-face card-back">
                             <h3 class="card-meaning" id="card-meaning">사과</h3>
-                            <p class="card-example-en" id="card-example-en">I like red apples.</p>
-                            <p class="card-example-ko" id="card-example-ko">나는 빨간 사과를 좋아해요.</p>
+                            <div class="example-box" style="margin-top: 10px; text-align: center;">
+                                <p class="card-example-en" id="card-example-en" style="font-size: 16px; font-weight: bold; color: #2C3E50;">I like red apples.</p>
+                                <p class="card-example-ko" id="card-example-ko" style="font-size: 13px; color: #7F8C8D; margin-top: 4px;">나는 빨간 사과를 좋아해요.</p>
+                            </div>
+                            <button class="audio-btn" id="btn-listen-example" style="margin-top: 14px; background: #FF9F43; color: white;">🔊 예문 문장 듣기</button>
                         </div>
                     </div>
                 </div>

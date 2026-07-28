@@ -2,17 +2,22 @@
    🎈 초등학생 기초 영어 단어장 메인 로직 (app.js)
    =================================================== */
 
-// 1. 단어 데이터 가져오기 (500개 단어 연동)
+// 1. 로그인된 학생의 지정 단어 수에 맞춰 학습 단어 목록 구성
 function getActiveWordList() {
-    if (typeof wordList500 !== 'undefined' && Array.isArray(wordList500) && wordList500.length > 0) {
-        return wordList500;
-    }
-    return (typeof wordList !== 'undefined') ? wordList : [];
+    let fullList = (typeof wordList500 !== 'undefined' && Array.isArray(wordList500) && wordList500.length > 0) 
+        ? wordList500 
+        : ((typeof wordList !== 'undefined') ? wordList : []);
+    
+    // 관리자가 학생별로 설정한 일일 학습 단어 수 가져오기 (기본값: 20개)
+    const targetCount = (typeof getCurrentUserWordCount === 'function') ? getCurrentUserWordCount() : 20;
+
+    // 전체 500개 단어 중 관리자가 세팅한 개수만큼 맞춤 구성
+    return fullList.slice(0, targetCount);
 }
 
 let currentIndex = 0; // 현재 단어 위치 번호
 
-// 2. 화면 카드 내용 갱신 함수
+// 2. 화면 카드 내용 갱신 함수 (그림 이미지 & 이모지 스마트 전환)
 function updateCardContent() {
     const list = getActiveWordList();
     if (!list || list.length === 0) return;
@@ -36,6 +41,7 @@ function updateCardContent() {
     // 카드 텍스트 요소들 갱신
     const cardCategory = document.getElementById('card-category');
     const cardEmoji = document.getElementById('card-emoji');
+    const cardImg = document.getElementById('card-img');
     const cardWord = document.getElementById('card-word');
     const cardPhonics = document.getElementById('card-phonics');
     const cardMeaning = document.getElementById('card-meaning');
@@ -52,6 +58,23 @@ function updateCardContent() {
     if (cardExampleEn) cardExampleEn.textContent = currentData.exampleEn;
     if (cardExampleKo) cardExampleKo.textContent = currentData.exampleKo;
 
+    // 단어 맞춤 그림 이미지 처리 (images/단어명.png)
+    if (cardImg && cardEmoji) {
+        const imageName = currentData.word.toLowerCase().replace(/ /g, '_').replace(/[^a-z0-9_]/g, '');
+        const imagePath = `images/${imageName}.png`;
+
+        cardImg.onload = () => {
+            cardImg.style.display = 'block';
+            cardEmoji.style.display = 'none';
+        };
+        cardImg.onerror = () => {
+            // 이미지가 아직 없는 단어는 귀여운 이모지로 자동 대체
+            cardImg.style.display = 'none';
+            cardEmoji.style.display = 'block';
+        };
+        cardImg.src = imagePath;
+    }
+
     if (currentCardNum) currentCardNum.textContent = currentIndex + 1;
     if (totalCardNum) totalCardNum.textContent = list.length;
 }
@@ -65,7 +88,6 @@ function bindAppEvents() {
     // 플래시 카드 뒤집기 이벤트
     if (flashcard) {
         flashcard.onclick = (e) => {
-            // 발음 버튼 눌렀을 때는 카드 뒤집기 안함
             if (e.target.id === 'btn-listen-speech' || e.target.closest('#btn-listen-speech')) return;
             flashcard.classList.toggle('flipped');
         };
@@ -93,7 +115,7 @@ function bindAppEvents() {
                 currentIndex++;
                 updateCardContent();
             } else {
-                alert('🎉 500개 단어를 모두 다 읽었어요! 참 잘했어요!');
+                alert(`🎉 오늘 목표 ${list.length}개 단어를 모두 다 읽었어요! 참 잘했어요!`);
             }
         };
     }
@@ -125,7 +147,6 @@ function initApp() {
     updateCardContent();
 }
 
-// 화면 로딩 상태에 따라 실행
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', initApp);
 } else {

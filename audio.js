@@ -1,5 +1,5 @@
 /* ===================================================
-   🎈 초등학생 영어 발음 듣기(TTS) & 마이크 녹음 로직 (audio.js)
+   🎈 초등학생 영어 발음 및 예문 문장 듣기(TTS) & 마이크 녹음 로직 (audio.js)
    =================================================== */
 
 // 1. 상태 변수 설정
@@ -10,16 +10,18 @@ let isRecording = false;
 
 // 2. HTML 엘리먼트 가져오기
 const btnListenSpeech = document.getElementById('btn-listen-speech');
+const btnListenExample = document.getElementById('btn-listen-example');
 const btnQuizSpeech = document.getElementById('btn-quiz-speech');
 const btnRecord = document.getElementById('btn-record');
 const btnPlayRecord = document.getElementById('btn-play-record');
 const recordStatus = document.getElementById('record-status');
 const cardWord = document.getElementById('card-word');
+const cardExampleEn = document.getElementById('card-example-en');
 
 /* ---------------------------------------------------
-   [기능 1] 원어민 영어 발음 듣기 (Text-to-Speech)
+   [기능 1] 원어민 영어 발음 & 예문 문장 듣기 (Text-to-Speech)
    --------------------------------------------------- */
-function speakText(text) {
+function speakText(text, isSentence = false) {
     if (!('speechSynthesis' in window)) {
         alert('이 브라우저는 음성 듣기 기능을 지원하지 않습니다.');
         return;
@@ -30,26 +32,36 @@ function speakText(text) {
 
     const utterance = new SpeechSynthesisUtterance(text);
     utterance.lang = 'en-US'; // 미국 영어 발음
-    utterance.rate = 0.85;   // 아이들이 듣기 편하도록 약 15% 천천히 발음
+    utterance.rate = isSentence ? 0.8 : 0.85; // 문장은 더 천천히 억양에 맞춰 발음
     utterance.pitch = 1.0;
 
     window.speechSynthesis.speak(utterance);
 }
 
-// 스피커 버튼 이벤트 연결
+// 1) 단어 발음 듣기 버튼 이벤트
 if (btnListenSpeech) {
     btnListenSpeech.addEventListener('click', (e) => {
         e.stopPropagation(); // 카드 뒤집기 이벤트 방지
         const wordText = cardWord ? cardWord.textContent : 'Apple';
-        speakText(wordText);
+        speakText(wordText, false);
     });
 }
 
+// 2) 예문 문장 전체 듣기 버튼 이벤트
+if (btnListenExample) {
+    btnListenExample.addEventListener('click', (e) => {
+        e.stopPropagation(); // 카드 뒤집기 이벤트 방지
+        const exampleText = cardExampleEn ? cardExampleEn.textContent : 'I eat an apple.';
+        speakText(exampleText, true);
+    });
+}
+
+// 3) 퀴즈 단어 발음 듣기 버튼 이벤트
 if (btnQuizSpeech) {
     btnQuizSpeech.addEventListener('click', () => {
         const quizWord = document.getElementById('quiz-word');
         if (quizWord) {
-            speakText(quizWord.textContent);
+            speakText(quizWord.textContent, false);
         }
     });
 }
@@ -100,7 +112,6 @@ async function toggleRecording() {
         // [녹음 중지]
         if (mediaRecorder && mediaRecorder.state !== 'inactive') {
             mediaRecorder.stop();
-            // 마이크 스트림 트랙 종료 (마이크 아이콘 끄기)
             mediaRecorder.stream.getTracks().forEach(track => track.stop());
         }
         isRecording = false;
