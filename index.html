@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎒 신나는 초등 기초 영어 단어장</title>
+    <!-- 어린이 친화적 Google 폰트 적용 -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Gaegu:wght@400;700&family=Nanum+Gothic:wght@400;700;800&family=Nunito:wght@700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- 0. 사용자 헤더 바 (학생 로그인 상태 & 관리자 버튼) -->
+        <div id="user-header-bar"></div>
+
+        <!-- 1. 앱 헤더 (상단 제목) -->
+        <header class="app-header">
+            <h1 class="logo">🎈 신나는 영어 단어장</h1>
+            <p class="subtitle">매일매일 즐겁게 외우는 초등 기초 영어!</p>
+        </header>
+
+        <!-- 2. 상단 네비게이션 탭 (메뉴 선택) -->
+        <nav class="nav-tabs">
+            <button class="tab-btn active" data-tab="learn-tab">📖 오늘의 단어</button>
+            <button class="tab-btn" data-tab="quiz-tab">✏️ 퀴즈 테스트</button>
+            <button class="tab-btn" data-tab="wrong-tab">❌ 오답 노트 <span id="wrong-count-badge" class="badge">0</span></button>
+            <button class="tab-btn" data-tab="calendar-tab">📅 학습 달력</button>
+        </nav>
+
+        <!-- 3. 메인 콘텐츠 영역 -->
+        <main class="main-content">
+            
+            <!-- 탭 1: 오늘의 단어 (플래시 카드 및 녹음) -->
+            <section id="learn-tab" class="tab-content active">
+                <div class="card-progress">
+                    <span>학습 진행: <strong id="current-card-num">1</strong> / <strong id="total-card-num">10</strong></span>
+                </div>
+
+                <!-- 플래시 카드 메인 -->
+                <div class="flashcard-wrapper">
+                    <div class="flashcard" id="flashcard">
+                        <!-- 카드 앞면 (영어 & 그림 & 발음) -->
+                        <div class="card-face card-front">
+                            <span class="category-tag" id="card-category">과일</span>
+                            <div class="card-image-box">
+                                <span class="card-emoji" id="card-emoji">🍎</span>
+                            </div>
+                            <h2 class="card-word" id="card-word">Apple</h2>
+                            <p class="card-phonics" id="card-phonics">[애플]</p>
+                            <button class="audio-btn" id="btn-listen-speech">🔊 발음 듣기</button>
+                        </div>
+                        <!-- 카드 뒷면 (한국어 뜻 & 예문) -->
+                        <div class="card-face card-back">
+                            <h3 class="card-meaning" id="card-meaning">사과</h3>
+                            <p class="card-example-en" id="card-example-en">I like red apples.</p>
+                            <p class="card-example-ko" id="card-example-ko">나는 빨간 사과를 좋아해요.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <p class="card-hint">💡 카드를 클릭하면 뒤집혀서 뜻을 볼 수 있어요!</p>
+
+                <!-- 따라하기 & 녹음 컨트롤 영역 -->
+                <div class="voice-practice-section">
+                    <h3>🎤 발음 따라하고 녹음하기</h3>
+                    <div class="voice-controls">
+                        <button class="voice-btn record-btn" id="btn-record">🔴 녹음 시작</button>
+                        <button class="voice-btn play-btn" id="btn-play-record" disabled>▶️ 내 발음 듣기</button>
+                    </div>
+                    <p class="record-status" id="record-status">마이크 버튼을 눌러 말을 시작하세요.</p>
+                </div>
+
+                <!-- 카드 이동 버튼 및 학습 완료 도장 찍기 -->
+                <div class="card-nav-buttons">
+                    <button class="nav-btn" id="btn-prev-card">◀ 이전 단어</button>
+                    <button class="nav-btn primary" id="btn-next-card">다음 단어 ▶</button>
+                </div>
+                <button class="stamp-complete-btn" id="btn-complete-stamp" style="
+                    width: 100%;
+                    margin-top: 12px;
+                    padding: 14px;
+                    background: #F1C40F;
+                    color: #2C3E50;
+                    border: none;
+                    border-radius: 16px;
+                    font-size: 16px;
+                    font-weight: bold;
+                    cursor: pointer;
+                    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+                ">💮 오늘 공부 끝! 출석 도장 찍기</button>
+            </section>
+
+            <!-- 탭 2: 퀴즈 테스트 -->
+            <section id="quiz-tab" class="tab-content">
+                <div class="quiz-container">
+                    <div class="quiz-header">
+                        <h2>✏️ 오늘의 단어 퀴즈</h2>
+                        <p>단어를 보고 알맞은 뜻을 골라보세요!</p>
+                    </div>
+                    <div class="quiz-box">
+                        <div class="quiz-question-card">
+                            <span class="quiz-emoji" id="quiz-emoji">🍎</span>
+                            <h3 class="quiz-word" id="quiz-word">Apple</h3>
+                            <button class="quiz-audio-btn" id="btn-quiz-speech">🔊 소리 듣기</button>
+                        </div>
+                        <div class="quiz-options" id="quiz-options">
+                            <button class="option-btn">1. 바나나</button>
+                            <button class="option-btn">2. 사과</button>
+                            <button class="option-btn">3. 포도</button>
+                            <button class="option-btn">4. 오렌지</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 탭 3: 오답 노트 -->
+            <section id="wrong-tab" class="tab-content">
+                <div class="wrong-container">
+                    <h2>❌ 다시 복습할 오답 노트</h2>
+                    <p>퀴즈에서 틀렸던 단어들이 모여 있어요. 완벽히 외워봅시다!</p>
+                    <div class="wrong-word-list" id="wrong-word-list">
+                        <p class="empty-msg">아직 틀린 단어가 없어요! 참 잘했어요! 👍</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 탭 4: 학습 달력 -->
+            <section id="calendar-tab" class="tab-content">
+                <div class="calendar-container">
+                    <h2>📅 나의 일일 학습 달력</h2>
+                    <p>오늘의 학습을 끝마치면 출석 도장이 찍혀요!</p>
+                    <div class="calendar-card">
+                        <div class="calendar-header-bar">
+                            <span id="calendar-month-title">2026년 7월</span>
+                        </div>
+                        <div class="calendar-grid" id="calendar-grid">
+                            <!-- 달력 날짜 칸들이 들어갈 자리 -->
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- 사용자 관리, 데이터, 음성, 퀴즈, 달력, 메인 앱 로직 연동 -->
+    <script src="user_manager.js"></script>
+    <script src="words_data.js"></script>
+    <script src="audio.js"></script>
+    <script src="quiz.js"></script>
+    <script src="calendar.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>

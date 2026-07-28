@@ -1,0 +1,5038 @@
+
+<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <!--[if gte mso 9]>
+    <xml>
+        <x:ExcelWorkbook>
+            <x:ExcelWorksheets>
+                <x:ExcelWorksheet>
+                    <x:Name>초등 필수 영단어 500선</x:Name>
+                    <x:WorksheetOptions>
+                        <x:DisplayGridlines/>
+                    </x:WorksheetOptions>
+                </x:ExcelWorksheet>
+            </x:ExcelWorksheets>
+        </x:ExcelWorkbook>
+    </xml>
+    <![endif]-->
+    <style>
+        table { border-collapse: collapse; font-family: '맑은 고딕', sans-serif; }
+        th { background-color: #4ECDC4; color: white; font-weight: bold; padding: 10px; border: 1px solid #2C3E50; text-align: center; }
+        td { padding: 8px; border: 1px solid #D9D9D9; font-size: 13px; }
+        .center { text-align: center; }
+    </style>
+</head>
+<body>
+    <table>
+        <thead>
+            <tr>
+                <th>번호</th><th>영어 단어 (Word)</th><th>한글 발음 (Phonics)</th><th>한국어 뜻 (Meaning)</th><th>주제 (Category)</th><th>영어 예문 (Example EN)</th><th>한국어 해석 (Example KO)</th>
+            </tr>
+        </thead>
+        <tbody>
+            
+                <tr>
+                    <td class="center">1</td>
+                    <td><b>Apple</b></td>
+                    <td class="center">[애플]</td>
+                    <td>사과</td>
+                    <td class="center">과일/음식 🍎</td>
+                    <td>I eat an apple.</td>
+                    <td>나는 사과를 먹어요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">2</td>
+                    <td><b>Banana</b></td>
+                    <td class="center">[버내너]</td>
+                    <td>바나나</td>
+                    <td class="center">과일/음식 🍎</td>
+                    <td>Monkeys like bananas.</td>
+                    <td>원숭이는 바나나를 좋아해요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">3</td>
+                    <td><b>Milk</b></td>
+                    <td class="center">[밀크]</td>
+                    <td>우유</td>
+                    <td class="center">과일/음식 🍎</td>
+                    <td>Drink warm milk.</td>
+                    <td>따뜻한 우유를 마셔요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">4</td>
+                    <td><b>Water</b></td>
+                    <td class="center">[워터]</td>
+                    <td>물</td>
+                    <td class="center">과일/음식 🍎</td>
+                    <td>I drink water.</td>
+                    <td>나는 물을 마셔요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">5</td>
+                    <td><b>Bread</b></td>
+                    <td class="center">[브레드]</td>
+                    <td>빵</td>
+                    <td class="center">과일/음식 🍎</td>
+                    <td>I eat bread for breakfast.</td>
+                    <td>나는 아침으로 빵을 먹어요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">6</td>
+                    <td><b>Egg</b></td>
+                    <td class="center">[에그]</td>
+                    <td>계란/달걀</td>
+                    <td class="center">과일/음식 🍎</td>
+                    <td>I like fried eggs.</td>
+                    <td>나는 계란 프라이를 좋아해요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">7</td>
+                    <td><b>Juice</b></td>
+                    <td class="center">[주스]</td>
+                    <td>주스</td>
+                    <td class="center">과일/음식 🍎</td>
+                    <td>Orange juice is sweet.</td>
+                    <td>오렌지 주스는 달콤해요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">8</td>
+                    <td><b>Rice</b></td>
+                    <td class="center">[라이스]</td>
+                    <td>밥/쌀</td>
+                    <td class="center">과일/음식 🍎</td>
+                    <td>We eat rice every day.</td>
+                    <td>우리는 매일 밥을 먹어요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">9</td>
+                    <td><b>Cake</b></td>
+                    <td class="center">[케이크]</td>
+                    <td>케이크</td>
+                    <td class="center">과일/음식 🍎</td>
+                    <td>Happy birthday cake!</td>
+                    <td>생일 축하 케이크!</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">10</td>
+                    <td><b>Candy</b></td>
+                    <td class="center">[캔디]</td>
+                    <td>사탕</td>
+                    <td class="center">과일/음식 🍎</td>
+                    <td>Sweet candy is yummy.</td>
+                    <td>달콤한 사탕은 맛있어요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">11</td>
+                    <td><b>Orange</b></td>
+                    <td class="center">[오렌지]</td>
+                    <td>오렌지</td>
+                    <td class="center">과일/음식 🍎</td>
+                    <td>The orange is juicy.</td>
+                    <td>오렌지가 즙이 많아요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">12</td>
+                    <td><b>Grape</b></td>
+                    <td class="center">[그레이프]</td>
+                    <td>포도</td>
+                    <td class="center">과일/음식 🍎</td>
+                    <td>Purple grapes are sweet.</td>
+                    <td>보라색 포도는 달콤해요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">13</td>
+                    <td><b>Strawberry</b></td>
+                    <td class="center">[스트로베리]</td>
+                    <td>딸기</td>
+                    <td class="center">과일/음식 🍎</td>
+                    <td>Red strawberries are fresh.</td>
+                    <td>빨간 딸기가 신선해요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">14</td>
+                    <td><b>Peach</b></td>
+                    <td class="center">[피치]</td>
+                    <td>복숭아</td>
+                    <td class="center">과일/음식 🍎</td>
+                    <td>Pink peach is soft.</td>
+                    <td>분홍 복숭아는 부드러워요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">15</td>
+                    <td><b>Watermelon</b></td>
+                    <td class="center">[워터멜론]</td>
+                    <td>수박</td>
+                    <td class="center">과일/음식 🍎</td>
+                    <td>Watermelon is good in summer.</td>
+                    <td>수박은 여름에 좋아요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">16</td>
+                    <td><b>Pizza</b></td>
+                    <td class="center">[피자]</td>
+                    <td>피자</td>
+                    <td class="center">과일/음식 🍎</td>
+                    <td>Let's eat cheese pizza.</td>
+                    <td>치즈 피자를 먹어요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">17</td>
+                    <td><b>Hamburger</b></td>
+                    <td class="center">[햄버거]</td>
+                    <td>햄버거</td>
+                    <td class="center">과일/음식 🍎</td>
+                    <td>I like big hamburgers.</td>
+                    <td>나는 큰 햄버거를 좋아해요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">18</td>
+                    <td><b>Noodle</b></td>
+                    <td class="center">[누들]</td>
+                    <td>국수/면</td>
+                    <td class="center">과일/음식 🍎</td>
+                    <td>Hot noodles are delicious.</td>
+                    <td>따뜻한 국수는 맛있어요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">19</td>
+                    <td><b>Meat</b></td>
+                    <td class="center">[미트]</td>
+                    <td>고기</td>
+                    <td class="center">과일/음식 🍎</td>
+                    <td>Cook the fresh meat.</td>
+                    <td>신선한 고기를 요리해요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">20</td>
+                    <td><b>Fish</b></td>
+                    <td class="center">[피쉬]</td>
+                    <td>생선/물고기</td>
+                    <td class="center">과일/음식 🍎</td>
+                    <td>Fresh fish is good.</td>
+                    <td>신선한 생선이 좋아요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">21</td>
+                    <td><b>Soup</b></td>
+                    <td class="center">[수프]</td>
+                    <td>스프/국</td>
+                    <td class="center">과일/음식 🍎</td>
+                    <td>Warm soup is nice.</td>
+                    <td>따뜻한 스프가 좋아요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">22</td>
+                    <td><b>Salad</b></td>
+                    <td class="center">[샐러드]</td>
+                    <td>샐러드</td>
+                    <td class="center">과일/음식 🍎</td>
+                    <td>Eat healthy salad.</td>
+                    <td>건강한 샐러드를 먹어요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">23</td>
+                    <td><b>Cheese</b></td>
+                    <td class="center">[치즈]</td>
+                    <td>치즈</td>
+                    <td class="center">과일/음식 🍎</td>
+                    <td>Yellow cheese is savory.</td>
+                    <td>노란 치즈는 고소해요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">24</td>
+                    <td><b>Butter</b></td>
+                    <td class="center">[버터]</td>
+                    <td>버터</td>
+                    <td class="center">과일/음식 🍎</td>
+                    <td>Spread butter on bread.</td>
+                    <td>빵에 버터를 바르세요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">25</td>
+                    <td><b>Cookie</b></td>
+                    <td class="center">[쿠키]</td>
+                    <td>쿠키/과자</td>
+                    <td class="center">과일/음식 🍎</td>
+                    <td>Bake sweet cookies.</td>
+                    <td>달콤한 쿠키를 구워요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">26</td>
+                    <td><b>Dog</b></td>
+                    <td class="center">[독]</td>
+                    <td>개/강아지</td>
+                    <td class="center">동물 & 곤충 🐶</td>
+                    <td>My dog wags its tail.</td>
+                    <td>내 강아지가 꼬리를 쳐요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">27</td>
+                    <td><b>Cat</b></td>
+                    <td class="center">[캣]</td>
+                    <td>고양이</td>
+                    <td class="center">동물 & 곤충 🐶</td>
+                    <td>The cat sleeps on the bed.</td>
+                    <td>고양이가 침대에서 자요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">28</td>
+                    <td><b>Bird</b></td>
+                    <td class="center">[버드]</td>
+                    <td>새</td>
+                    <td class="center">동물 & 곤충 🐶</td>
+                    <td>The bird sings softly.</td>
+                    <td>새가 부드럽게 노래해요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">29</td>
+                    <td><b>Duck</b></td>
+                    <td class="center">[덕]</td>
+                    <td>오리</td>
+                    <td class="center">동물 & 곤충 🐶</td>
+                    <td>Ducks swim well.</td>
+                    <td>오리는 수영을 잘해요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">30</td>
+                    <td><b>Pig</b></td>
+                    <td class="center">[피그]</td>
+                    <td>돼지</td>
+                    <td class="center">동물 & 곤충 🐶</td>
+                    <td>Pigs are cute.</td>
+                    <td>돼지는 귀여워요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">31</td>
+                    <td><b>Bear</b></td>
+                    <td class="center">[베어]</td>
+                    <td>곰</td>
+                    <td class="center">동물 & 곤충 🐶</td>
+                    <td>Bears love honey.</td>
+                    <td>곰은 꿀을 좋아해요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">32</td>
+                    <td><b>Rabbit</b></td>
+                    <td class="center">[래빗]</td>
+                    <td>토끼</td>
+                    <td class="center">동물 & 곤충 🐶</td>
+                    <td>Rabbits jump high.</td>
+                    <td>토끼는 높이 뛰어올라요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">33</td>
+                    <td><b>Lion</b></td>
+                    <td class="center">[라이언]</td>
+                    <td>사자</td>
+                    <td class="center">동물 & 곤충 🐶</td>
+                    <td>Lions are strong.</td>
+                    <td>사자는 힘이 세요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">34</td>
+                    <td><b>Tiger</b></td>
+                    <td class="center">[타이거]</td>
+                    <td>호랑이</td>
+                    <td class="center">동물 & 곤충 🐶</td>
+                    <td>Tigers have stripes.</td>
+                    <td>호랑이는 줄무늬가 있어요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">35</td>
+                    <td><b>Elephant</b></td>
+                    <td class="center">[엘리펀트]</td>
+                    <td>코끼리</td>
+                    <td class="center">동물 & 곤충 🐶</td>
+                    <td>Elephants have long trunks.</td>
+                    <td>코끼리는 긴 코를 가지고 있어요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">36</td>
+                    <td><b>Giraffe</b></td>
+                    <td class="center">[지래프]</td>
+                    <td>기린</td>
+                    <td class="center">동물 & 곤충 🐶</td>
+                    <td>Giraffes are tall.</td>
+                    <td>기린은 키가 크요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">37</td>
+                    <td><b>Monkey</b></td>
+                    <td class="center">[멍키]</td>
+                    <td>원숭이</td>
+                    <td class="center">동물 & 곤충 🐶</td>
+                    <td>Monkeys climb trees.</td>
+                    <td>원숭이는 나무를 타요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">38</td>
+                    <td><b>Horse</b></td>
+                    <td class="center">[호스]</td>
+                    <td>말</td>
+                    <td class="center">동물 & 곤충 🐶</td>
+                    <td>The horse runs fast.</td>
+                    <td>말이 빠르게 달려요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">39</td>
+                    <td><b>Cow</b></td>
+                    <td class="center">[카우]</td>
+                    <td>소</td>
+                    <td class="center">동물 & 곤충 🐶</td>
+                    <td>Cows give us milk.</td>
+                    <td>소는 우리에게 우유를 줘요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">40</td>
+                    <td><b>Sheep</b></td>
+                    <td class="center">[쉽]</td>
+                    <td>양</td>
+                    <td class="center">동물 & 곤충 🐶</td>
+                    <td>Sheep have white wool.</td>
+                    <td>양은 하얀 털을 갖고 있어요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">41</td>
+                    <td><b>Frog</b></td>
+                    <td class="center">[프로그]</td>
+                    <td>개구리</td>
+                    <td class="center">동물 & 곤충 🐶</td>
+                    <td>Green frog jumps.</td>
+                    <td>초록 개구리가 뛰어요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">42</td>
+                    <td><b>Butterfly</b></td>
+                    <td class="center">[버터플라이]</td>
+                    <td>나비</td>
+                    <td class="center">동물 & 곤충 🐶</td>
+                    <td>The butterfly flies gently.</td>
+                    <td>나비가 부드럽게 날아요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">43</td>
+                    <td><b>Ant</b></td>
+                    <td class="center">[앤트]</td>
+                    <td>개미</td>
+                    <td class="center">동물 & 곤충 🐶</td>
+                    <td>Ants work hard.</td>
+                    <td>개미는 열심히 일해요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">44</td>
+                    <td><b>Bee</b></td>
+                    <td class="center">[비]</td>
+                    <td>꿀벌</td>
+                    <td class="center">동물 & 곤충 🐶</td>
+                    <td>Bees make sweet honey.</td>
+                    <td>벌들은 달콤한 꿀을 만들어요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">45</td>
+                    <td><b>Whale</b></td>
+                    <td class="center">[웨일]</td>
+                    <td>고래</td>
+                    <td class="center">동물 & 곤충 🐶</td>
+                    <td>Big whale swims in the ocean.</td>
+                    <td>큰 고래가 바다에서 헤엄쳐요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">46</td>
+                    <td><b>Dolphin</b></td>
+                    <td class="center">[돌핀]</td>
+                    <td>돌고래</td>
+                    <td class="center">동물 & 곤충 🐶</td>
+                    <td>Dolphins are smart.</td>
+                    <td>돌고래는 똑똑해요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">47</td>
+                    <td><b>Shark</b></td>
+                    <td class="center">[샤크]</td>
+                    <td>상어</td>
+                    <td class="center">동물 & 곤충 🐶</td>
+                    <td>Sharks swim fast.</td>
+                    <td>상어는 빠르게 수영해요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">48</td>
+                    <td><b>Snake</b></td>
+                    <td class="center">[스네이크]</td>
+                    <td>뱀</td>
+                    <td class="center">동물 & 곤충 🐶</td>
+                    <td>The snake moves quietly.</td>
+                    <td>뱀이 조용히 움직여요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">49</td>
+                    <td><b>Turtle</b></td>
+                    <td class="center">[터틀]</td>
+                    <td>거북이</td>
+                    <td class="center">동물 & 곤충 🐶</td>
+                    <td>Turtles walk slowly.</td>
+                    <td>거북이는 천천히 걸어가요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">50</td>
+                    <td><b>Fox</b></td>
+                    <td class="center">[폭스]</td>
+                    <td>여우</td>
+                    <td class="center">동물 & 곤충 🐶</td>
+                    <td>The fox is clever.</td>
+                    <td>여우는 영리해요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">51</td>
+                    <td><b>Father</b></td>
+                    <td class="center">[파더]</td>
+                    <td>아버지/아빠</td>
+                    <td class="center">가족 & 학교/사람 👨‍👩‍👧‍👦</td>
+                    <td>My father is kind.</td>
+                    <td>우리 아버지는 친절해요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">52</td>
+                    <td><b>Mother</b></td>
+                    <td class="center">[마더]</td>
+                    <td>어머니/엄마</td>
+                    <td class="center">가족 & 학교/사람 👨‍👩‍👧‍👦</td>
+                    <td>I love my mother.</td>
+                    <td>나는 엄마를 사랑해요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">53</td>
+                    <td><b>Brother</b></td>
+                    <td class="center">[브라더]</td>
+                    <td>남동생/형/오빠</td>
+                    <td class="center">가족 & 학교/사람 👨‍👩‍👧‍👦</td>
+                    <td>My brother plays soccer.</td>
+                    <td>내 남동생은 축구를 해요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">54</td>
+                    <td><b>Sister</b></td>
+                    <td class="center">[시스터]</td>
+                    <td>여동생/누나/언니</td>
+                    <td class="center">가족 & 학교/사람 👨‍👩‍👧‍👦</td>
+                    <td>My sister plays the piano.</td>
+                    <td>내 여동생은 피아노를 쳐요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">55</td>
+                    <td><b>Grandfather</b></td>
+                    <td class="center">[그랜드파더]</td>
+                    <td>할아버지</td>
+                    <td class="center">가족 & 학교/사람 👨‍👩‍👧‍👦</td>
+                    <td>Grandfather reads news.</td>
+                    <td>할아버지께서 뉴스를 읽으셔요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">56</td>
+                    <td><b>Grandmother</b></td>
+                    <td class="center">[그랜드마더]</td>
+                    <td>할머니</td>
+                    <td class="center">가족 & 학교/사람 👨‍👩‍👧‍👦</td>
+                    <td>Grandmother makes tea.</td>
+                    <td>할머니께서 차를 만드셔요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">57</td>
+                    <td><b>Friend</b></td>
+                    <td class="center">[프렌드]</td>
+                    <td>친구</td>
+                    <td class="center">가족 & 학교/사람 👨‍👩‍👧‍👦</td>
+                    <td>We are good friends.</td>
+                    <td>우리는 좋은 친구예요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">58</td>
+                    <td><b>Teacher</b></td>
+                    <td class="center">[티처]</td>
+                    <td>선생님</td>
+                    <td class="center">가족 & 학교/사람 👨‍👩‍👧‍👦</td>
+                    <td>The teacher is smiling.</td>
+                    <td>선생님이 미소 짓고 계셔요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">59</td>
+                    <td><b>Student</b></td>
+                    <td class="center">[스튜던트]</td>
+                    <td>학생</td>
+                    <td class="center">가족 & 학교/사람 👨‍👩‍👧‍👦</td>
+                    <td>I am a smart student.</td>
+                    <td>나는 똑똑한 학생이에요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">60</td>
+                    <td><b>Baby</b></td>
+                    <td class="center">[베이비]</td>
+                    <td>아기</td>
+                    <td class="center">가족 & 학교/사람 👨‍👩‍👧‍👦</td>
+                    <td>The baby is sleeping.</td>
+                    <td>아기가 자고 있어요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">61</td>
+                    <td><b>Doctor</b></td>
+                    <td class="center">[닥터]</td>
+                    <td>의사</td>
+                    <td class="center">가족 & 학교/사람 👨‍👩‍👧‍👦</td>
+                    <td>The doctor helps sick people.</td>
+                    <td>의사는 아픈 사람을 도와요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">62</td>
+                    <td><b>Nurse</b></td>
+                    <td class="center">[너스]</td>
+                    <td>간호사</td>
+                    <td class="center">가족 & 학교/사람 👨‍👩‍👧‍👦</td>
+                    <td>The nurse is friendly.</td>
+                    <td>간호사님은 친절해요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">63</td>
+                    <td><b>Police</b></td>
+                    <td class="center">[폴리스]</td>
+                    <td>경찰</td>
+                    <td class="center">가족 & 학교/사람 👨‍👩‍👧‍👦</td>
+                    <td>Police officers protect us.</td>
+                    <td>경찰관은 우리를 지켜줘요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">64</td>
+                    <td><b>Firefighter</b></td>
+                    <td class="center">[파이어파이터]</td>
+                    <td>소방관</td>
+                    <td class="center">가족 & 학교/사람 👨‍👩‍👧‍👦</td>
+                    <td>Firefighters are brave.</td>
+                    <td>소방관은 용감해요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">65</td>
+                    <td><b>Cook</b></td>
+                    <td class="center">[쿡]</td>
+                    <td>요리사</td>
+                    <td class="center">가족 & 학교/사람 👨‍👩‍👧‍👦</td>
+                    <td>The cook makes yummy food.</td>
+                    <td>요리사가 맛있는 음식을 만들어요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">66</td>
+                    <td><b>School</b></td>
+                    <td class="center">[스쿨]</td>
+                    <td>학교</td>
+                    <td class="center">가족 & 학교/사람 👨‍👩‍👧‍👦</td>
+                    <td>I go to school.</td>
+                    <td>나는 학교에 가요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">67</td>
+                    <td><b>Classroom</b></td>
+                    <td class="center">[클래스룸]</td>
+                    <td>교실</td>
+                    <td class="center">가족 & 학교/사람 👨‍👩‍👧‍👦</td>
+                    <td>Our classroom is clean.</td>
+                    <td>우리 교실은 깨끗해요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">68</td>
+                    <td><b>Book</b></td>
+                    <td class="center">[북]</td>
+                    <td>책</td>
+                    <td class="center">가족 & 학교/사람 👨‍👩‍👧‍👦</td>
+                    <td>Read a good book.</td>
+                    <td>좋은 책을 읽어요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">69</td>
+                    <td><b>Pencil</b></td>
+                    <td class="center">[펜슬]</td>
+                    <td>연필</td>
+                    <td class="center">가족 & 학교/사람 👨‍👩‍👧‍👦</td>
+                    <td>I write with a pencil.</td>
+                    <td>나는 연필로 글을 써요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">70</td>
+                    <td><b>Pen</b></td>
+                    <td class="center">[펜]</td>
+                    <td>펜/볼펜</td>
+                    <td class="center">가족 & 학교/사람 👨‍👩‍👧‍👦</td>
+                    <td>Use a black pen.</td>
+                    <td>검은 펜을 사용하세요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">71</td>
+                    <td><b>Desk</b></td>
+                    <td class="center">[데스크]</td>
+                    <td>책상</td>
+                    <td class="center">가족 & 학교/사람 👨‍👩‍👧‍👦</td>
+                    <td>Clean your desk.</td>
+                    <td>책상을 깨끗이 정리해요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">72</td>
+                    <td><b>Chair</b></td>
+                    <td class="center">[체어]</td>
+                    <td>의자</td>
+                    <td class="center">가족 & 학교/사람 👨‍👩‍👧‍👦</td>
+                    <td>Sit on the chair.</td>
+                    <td>의자에 앉으세요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">73</td>
+                    <td><b>Bag</b></td>
+                    <td class="center">[백]</td>
+                    <td>가방</td>
+                    <td class="center">가족 & 학교/사람 👨‍👩‍👧‍👦</td>
+                    <td>My bag is blue.</td>
+                    <td>내 가방은 파란색이에요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">74</td>
+                    <td><b>Eraser</b></td>
+                    <td class="center">[이레이저]</td>
+                    <td>지우개</td>
+                    <td class="center">가족 & 학교/사람 👨‍👩‍👧‍👦</td>
+                    <td>Pass me the eraser.</td>
+                    <td>지우개 좀 전해줘.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">75</td>
+                    <td><b>Ruler</b></td>
+                    <td class="center">[룰러]</td>
+                    <td>자</td>
+                    <td class="center">가족 & 학교/사람 👨‍👩‍👧‍👦</td>
+                    <td>Use a ruler to draw lines.</td>
+                    <td>선을 그릴 때 자를 사용해요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">76</td>
+                    <td><b>Eye</b></td>
+                    <td class="center">[아이]</td>
+                    <td>눈</td>
+                    <td class="center">몸 & 건강 👂</td>
+                    <td>Close your eyes.</td>
+                    <td>눈을 감으세요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">77</td>
+                    <td><b>Ear</b></td>
+                    <td class="center">[이어]</td>
+                    <td>귀</td>
+                    <td class="center">몸 & 건강 👂</td>
+                    <td>I listen with my ears.</td>
+                    <td>나는 귀로 들어요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">78</td>
+                    <td><b>Mouth</b></td>
+                    <td class="center">[마우스]</td>
+                    <td>입</td>
+                    <td class="center">몸 & 건강 👂</td>
+                    <td>Open your mouth.</td>
+                    <td>입을 벌리세요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">79</td>
+                    <td><b>Nose</b></td>
+                    <td class="center">[노우즈]</td>
+                    <td>코</td>
+                    <td class="center">몸 & 건강 👂</td>
+                    <td>Touch your nose.</td>
+                    <td>코를 터치하세요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">80</td>
+                    <td><b>Hand</b></td>
+                    <td class="center">[핸드]</td>
+                    <td>손</td>
+                    <td class="center">몸 & 건강 👂</td>
+                    <td>Wash your hands.</td>
+                    <td>손을 씻으세요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">81</td>
+                    <td><b>Foot</b></td>
+                    <td class="center">[풋]</td>
+                    <td>발</td>
+                    <td class="center">몸 & 건강 👂</td>
+                    <td>My foot is warm.</td>
+                    <td>내 발은 따뜻해요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">82</td>
+                    <td><b>Head</b></td>
+                    <td class="center">[헤드]</td>
+                    <td>머리</td>
+                    <td class="center">몸 & 건강 👂</td>
+                    <td>Nod your head.</td>
+                    <td>머리를 끄덕이세요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">83</td>
+                    <td><b>Face</b></td>
+                    <td class="center">[페이스]</td>
+                    <td>얼굴</td>
+                    <td class="center">몸 & 건강 👂</td>
+                    <td>Smile with a happy face.</td>
+                    <td>행복한 얼굴로 웃어요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">84</td>
+                    <td><b>Arm</b></td>
+                    <td class="center">[암]</td>
+                    <td>팔</td>
+                    <td class="center">몸 & 건강 👂</td>
+                    <td>Raise your arms.</td>
+                    <td>팔을 들어 올리세요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">85</td>
+                    <td><b>Leg</b></td>
+                    <td class="center">[렉]</td>
+                    <td>다리</td>
+                    <td class="center">몸 & 건강 👂</td>
+                    <td>My legs are long.</td>
+                    <td>내 다리는 길어요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">86</td>
+                    <td><b>Hair</b></td>
+                    <td class="center">[헤어]</td>
+                    <td>머리카락</td>
+                    <td class="center">몸 & 건강 👂</td>
+                    <td>Comb your hair.</td>
+                    <td>머리를 빗으세요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">87</td>
+                    <td><b>Finger</b></td>
+                    <td class="center">[핑거]</td>
+                    <td>손가락</td>
+                    <td class="center">몸 & 건강 👂</td>
+                    <td>Ten fingers on hands.</td>
+                    <td>손에 열 개의 손가락이 있어요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">88</td>
+                    <td><b>Toe</b></td>
+                    <td class="center">[토우]</td>
+                    <td>발가락</td>
+                    <td class="center">몸 & 건강 👂</td>
+                    <td>Wiggle your toes.</td>
+                    <td>발가락을 꼼지락거리세요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">89</td>
+                    <td><b>Tooth</b></td>
+                    <td class="center">[투스]</td>
+                    <td>치아/이</td>
+                    <td class="center">몸 & 건강 👂</td>
+                    <td>Brush your teeth.</td>
+                    <td>이를 닦으세요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">90</td>
+                    <td><b>Heart</b></td>
+                    <td class="center">[하트]</td>
+                    <td>마음/심장</td>
+                    <td class="center">몸 & 건강 👂</td>
+                    <td>My heart beats fast.</td>
+                    <td>내 심장이 빠르게 뛰어요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">91</td>
+                    <td><b>Sun</b></td>
+                    <td class="center">[썬]</td>
+                    <td>태양/해</td>
+                    <td class="center">날씨 & 자연 ☀️</td>
+                    <td>The sun is bright.</td>
+                    <td>태양이 밝게 빛나요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">92</td>
+                    <td><b>Moon</b></td>
+                    <td class="center">[문]</td>
+                    <td>달</td>
+                    <td class="center">날씨 & 자연 ☀️</td>
+                    <td>The moon is round.</td>
+                    <td>달이 둥글어요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">93</td>
+                    <td><b>Star</b></td>
+                    <td class="center">[스타]</td>
+                    <td>별</td>
+                    <td class="center">날씨 & 자연 ☀️</td>
+                    <td>Stars shine at night.</td>
+                    <td>밤에 별들이 빛나요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">94</td>
+                    <td><b>Sky</b></td>
+                    <td class="center">[스카이]</td>
+                    <td>하늘</td>
+                    <td class="center">날씨 & 자연 ☀️</td>
+                    <td>Look at the high sky.</td>
+                    <td>높은 하늘을 보세요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">95</td>
+                    <td><b>Cloud</b></td>
+                    <td class="center">[클라우드]</td>
+                    <td>구름</td>
+                    <td class="center">날씨 & 자연 ☀️</td>
+                    <td>White clouds in the sky.</td>
+                    <td>하늘의 하얀 구름.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">96</td>
+                    <td><b>Rain</b></td>
+                    <td class="center">[레인]</td>
+                    <td>비</td>
+                    <td class="center">날씨 & 자연 ☀️</td>
+                    <td>Rain falls from the sky.</td>
+                    <td>하늘에서 비가 내려요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">97</td>
+                    <td><b>Snow</b></td>
+                    <td class="center">[스노우]</td>
+                    <td>눈(자연)</td>
+                    <td class="center">날씨 & 자연 ☀️</td>
+                    <td>I like white snow.</td>
+                    <td>나는 하얀 눈을 좋아해요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">98</td>
+                    <td><b>Wind</b></td>
+                    <td class="center">[윈드]</td>
+                    <td>바람</td>
+                    <td class="center">날씨 & 자연 ☀️</td>
+                    <td>Cool wind is blowing.</td>
+                    <td>시원한 바람이 불어요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">99</td>
+                    <td><b>Tree</b></td>
+                    <td class="center">[트리]</td>
+                    <td>나무</td>
+                    <td class="center">날씨 & 자연 ☀️</td>
+                    <td>Birds live in the tree.</td>
+                    <td>새들이 나무에 살아요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">100</td>
+                    <td><b>Flower</b></td>
+                    <td class="center">[플라워]</td>
+                    <td>꽃</td>
+                    <td class="center">날씨 & 자연 ☀️</td>
+                    <td>Smell the sweet flower.</td>
+                    <td>달콤한 꽃향기를 맡아보세요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">101</td>
+                    <td><b>Leaf</b></td>
+                    <td class="center">[리프]</td>
+                    <td>나뭇잎</td>
+                    <td class="center">날씨 & 자연 ☀️</td>
+                    <td>Green leaf on the branch.</td>
+                    <td>나뭇가지의 초록 잎.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">102</td>
+                    <td><b>River</b></td>
+                    <td class="center">[리버]</td>
+                    <td>강</td>
+                    <td class="center">날씨 & 자연 ☀️</td>
+                    <td>The river flows gently.</td>
+                    <td>강이 잔잔히 흘러요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">103</td>
+                    <td><b>Mountain</b></td>
+                    <td class="center">[마운틴]</td>
+                    <td>산</td>
+                    <td class="center">날씨 & 자연 ☀️</td>
+                    <td>The mountain is high.</td>
+                    <td>산이 높아요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">104</td>
+                    <td><b>Sea</b></td>
+                    <td class="center">[시]</td>
+                    <td>바다</td>
+                    <td class="center">날씨 & 자연 ☀️</td>
+                    <td>The sea is blue.</td>
+                    <td>바다는 파란색이에요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">105</td>
+                    <td><b>Beach</b></td>
+                    <td class="center">[비치]</td>
+                    <td>해변</td>
+                    <td class="center">날씨 & 자연 ☀️</td>
+                    <td>Walk on the beach.</td>
+                    <td>해변을 걸어요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">106</td>
+                    <td><b>Home</b></td>
+                    <td class="center">[홈]</td>
+                    <td>집</td>
+                    <td class="center">집 & 사물 🏠</td>
+                    <td>Welcome home!</td>
+                    <td>집에 온 걸 환영해!</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">107</td>
+                    <td><b>Room</b></td>
+                    <td class="center">[룸]</td>
+                    <td>방</td>
+                    <td class="center">집 & 사물 🏠</td>
+                    <td>My room is cozy.</td>
+                    <td>내 방은 아늑해요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">108</td>
+                    <td><b>Door</b></td>
+                    <td class="center">[도어]</td>
+                    <td>문</td>
+                    <td class="center">집 & 사물 🏠</td>
+                    <td>Open the door.</td>
+                    <td>문을 열어주세요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">109</td>
+                    <td><b>Window</b></td>
+                    <td class="center">[윈도우]</td>
+                    <td>창문</td>
+                    <td class="center">집 & 사물 🏠</td>
+                    <td>Look out the window.</td>
+                    <td>창밖을 보세요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">110</td>
+                    <td><b>Bed</b></td>
+                    <td class="center">[베드]</td>
+                    <td>침대</td>
+                    <td class="center">집 & 사물 🏠</td>
+                    <td>Sleep in a warm bed.</td>
+                    <td>따뜻한 침대에서 자요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">111</td>
+                    <td><b>Table</b></td>
+                    <td class="center">[테이블]</td>
+                    <td>탁자/식탁</td>
+                    <td class="center">집 & 사물 🏠</td>
+                    <td>Put it on the table.</td>
+                    <td>식탁 위에 놓으세요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">112</td>
+                    <td><b>Clock</b></td>
+                    <td class="center">[클락]</td>
+                    <td>시계</td>
+                    <td class="center">집 & 사물 🏠</td>
+                    <td>The clock ticks.</td>
+                    <td>시계가 똑딱거려요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">113</td>
+                    <td><b>Phone</b></td>
+                    <td class="center">[폰]</td>
+                    <td>전화기</td>
+                    <td class="center">집 & 사물 🏠</td>
+                    <td>Answer the phone.</td>
+                    <td>전화를 받으세요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">114</td>
+                    <td><b>TV</b></td>
+                    <td class="center">[티비]</td>
+                    <td>텔레비전</td>
+                    <td class="center">집 & 사물 🏠</td>
+                    <td>Watch TV together.</td>
+                    <td>함께 TV를 봐요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">115</td>
+                    <td><b>Key</b></td>
+                    <td class="center">[키]</td>
+                    <td>열쇠</td>
+                    <td class="center">집 & 사물 🏠</td>
+                    <td>Where is my key?</td>
+                    <td>내 열쇠가 어디 있죠?</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">116</td>
+                    <td><b>Box</b></td>
+                    <td class="center">[박스]</td>
+                    <td>상자</td>
+                    <td class="center">집 & 사물 🏠</td>
+                    <td>Open the toy box.</td>
+                    <td>장난감 상자를 열어요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">117</td>
+                    <td><b>Lamp</b></td>
+                    <td class="center">[램프]</td>
+                    <td>전등/램프</td>
+                    <td class="center">집 & 사물 🏠</td>
+                    <td>Turn on the lamp.</td>
+                    <td>전등을 켜세요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">118</td>
+                    <td><b>Mirror</b></td>
+                    <td class="center">[미러]</td>
+                    <td>거울</td>
+                    <td class="center">집 & 사물 🏠</td>
+                    <td>Look in the mirror.</td>
+                    <td>거울을 보세요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">119</td>
+                    <td><b>Cup</b></td>
+                    <td class="center">[컵]</td>
+                    <td>컵/잔</td>
+                    <td class="center">집 & 사물 🏠</td>
+                    <td>A cup of water.</td>
+                    <td>물 한 컵.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">120</td>
+                    <td><b>Spoon</b></td>
+                    <td class="center">[스푼]</td>
+                    <td>숟가락</td>
+                    <td class="center">집 & 사물 🏠</td>
+                    <td>Use a spoon for soup.</td>
+                    <td>스프엔 숟가락을 써요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">121</td>
+                    <td><b>Shirt</b></td>
+                    <td class="center">[셔츠]</td>
+                    <td>셔츠/윗옷</td>
+                    <td class="center">옷 & 패션 👕</td>
+                    <td>Wear a clean shirt.</td>
+                    <td>깨끗한 셔츠를 입어요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">122</td>
+                    <td><b>Pants</b></td>
+                    <td class="center">[팬츠]</td>
+                    <td>바지</td>
+                    <td class="center">옷 & 패션 👕</td>
+                    <td>Blue pants are comfortable.</td>
+                    <td>파란 바지가 편해요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">123</td>
+                    <td><b>Dress</b></td>
+                    <td class="center">[드레스]</td>
+                    <td>드레스/원피스</td>
+                    <td class="center">옷 & 패션 👕</td>
+                    <td>Pretty pink dress.</td>
+                    <td>예쁜 분홍 원피스.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">124</td>
+                    <td><b>Hat</b></td>
+                    <td class="center">[햇]</td>
+                    <td>모자</td>
+                    <td class="center">옷 & 패션 👕</td>
+                    <td>Wear a warm hat.</td>
+                    <td>따뜻한 모자를 써요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">125</td>
+                    <td><b>Cap</b></td>
+                    <td class="center">[캡]</td>
+                    <td>야구모자</td>
+                    <td class="center">옷 & 패션 👕</td>
+                    <td>Red cap on my head.</td>
+                    <td>내 머리의 빨간 야구모자.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">126</td>
+                    <td><b>Shoes</b></td>
+                    <td class="center">[슈즈]</td>
+                    <td>신발</td>
+                    <td class="center">옷 & 패션 👕</td>
+                    <td>Put on your shoes.</td>
+                    <td>신발을 신으세요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">127</td>
+                    <td><b>Socks</b></td>
+                    <td class="center">[삭스]</td>
+                    <td>양말</td>
+                    <td class="center">옷 & 패션 👕</td>
+                    <td>Soft cotton socks.</td>
+                    <td>부드러운 면 양말.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">128</td>
+                    <td><b>Coat</b></td>
+                    <td class="center">[코트]</td>
+                    <td>외투/코트</td>
+                    <td class="center">옷 & 패션 👕</td>
+                    <td>Winter coat is warm.</td>
+                    <td>겨울 코트는 따뜻해요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">129</td>
+                    <td><b>Jacket</b></td>
+                    <td class="center">[재킷]</td>
+                    <td>재킷</td>
+                    <td class="center">옷 & 패션 👕</td>
+                    <td>Zip up your jacket.</td>
+                    <td>재킷 지퍼를 올리세요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">130</td>
+                    <td><b>Ring</b></td>
+                    <td class="center">[링]</td>
+                    <td>반지</td>
+                    <td class="center">옷 & 패션 👕</td>
+                    <td>Shiny gold ring.</td>
+                    <td>반짝이는 금반지.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">131</td>
+                    <td><b>Car</b></td>
+                    <td class="center">[카]</td>
+                    <td>자동차</td>
+                    <td class="center">교통 & 도시 🚗</td>
+                    <td>The car moves fast.</td>
+                    <td>자동차는 빠르게 움직여요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">132</td>
+                    <td><b>Bus</b></td>
+                    <td class="center">[버스]</td>
+                    <td>버스</td>
+                    <td class="center">교통 & 도시 🚗</td>
+                    <td>Take the school bus.</td>
+                    <td>스쿨버스를 타요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">133</td>
+                    <td><b>Train</b></td>
+                    <td class="center">[트레인]</td>
+                    <td>기차</td>
+                    <td class="center">교통 & 도시 🚗</td>
+                    <td>The train arrives now.</td>
+                    <td>기차가 지금 도착해요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">134</td>
+                    <td><b>Bike</b></td>
+                    <td class="center">[바이크]</td>
+                    <td>자전거</td>
+                    <td class="center">교통 & 도시 🚗</td>
+                    <td>Ride a bike in the park.</td>
+                    <td>공원에서 자전거를 타요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">135</td>
+                    <td><b>Airplane</b></td>
+                    <td class="center">[에어플레인]</td>
+                    <td>비행기</td>
+                    <td class="center">교통 & 도시 🚗</td>
+                    <td>Airplane flies high.</td>
+                    <td>비행기가 높이 날아요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">136</td>
+                    <td><b>Ship</b></td>
+                    <td class="center">[쉽]</td>
+                    <td>배</td>
+                    <td class="center">교통 & 도시 🚗</td>
+                    <td>Big ship on the sea.</td>
+                    <td>바다 위 큰 배.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">137</td>
+                    <td><b>Taxi</b></td>
+                    <td class="center">[택시]</td>
+                    <td>택시</td>
+                    <td class="center">교통 & 도시 🚗</td>
+                    <td>Call a taxi.</td>
+                    <td>택시를 부르세요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">138</td>
+                    <td><b>Street</b></td>
+                    <td class="center">[스트리트]</td>
+                    <td>거리/길</td>
+                    <td class="center">교통 & 도시 🚗</td>
+                    <td>Cross the street safely.</td>
+                    <td>길을 안전하게 건너요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">139</td>
+                    <td><b>Park</b></td>
+                    <td class="center">[파크]</td>
+                    <td>공원</td>
+                    <td class="center">교통 & 도시 🚗</td>
+                    <td>Let's play in the park.</td>
+                    <td>공원에서 놀아요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">140</td>
+                    <td><b>Store</b></td>
+                    <td class="center">[스토어]</td>
+                    <td>가게/상점</td>
+                    <td class="center">교통 & 도시 🚗</td>
+                    <td>Go to the grocery store.</td>
+                    <td>식료품점에 가요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">141</td>
+                    <td><b>Go</b></td>
+                    <td class="center">[고우]</td>
+                    <td>가다</td>
+                    <td class="center">행동 & 동사 🏃</td>
+                    <td>Go to school.</td>
+                    <td>학교에 가요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">142</td>
+                    <td><b>Come</b></td>
+                    <td class="center">[컴]</td>
+                    <td>오다</td>
+                    <td class="center">행동 & 동사 🏃</td>
+                    <td>Come here, please.</td>
+                    <td>이리로 오세요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">143</td>
+                    <td><b>Run</b></td>
+                    <td class="center">[런]</td>
+                    <td>달리다</td>
+                    <td class="center">행동 & 동사 🏃</td>
+                    <td>Run fast in the park.</td>
+                    <td>공원에서 빠르게 달려요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">144</td>
+                    <td><b>Walk</b></td>
+                    <td class="center">[워크]</td>
+                    <td>걷다</td>
+                    <td class="center">행동 & 동사 🏃</td>
+                    <td>Walk slowly.</td>
+                    <td>천천히 걸어요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">145</td>
+                    <td><b>Jump</b></td>
+                    <td class="center">[점프]</td>
+                    <td>뛰다/점프하다</td>
+                    <td class="center">행동 & 동사 🏃</td>
+                    <td>Jump up high.</td>
+                    <td>높이 뛰어오르세요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">146</td>
+                    <td><b>Sit</b></td>
+                    <td class="center">[싯]</td>
+                    <td>앉다</td>
+                    <td class="center">행동 & 동사 🏃</td>
+                    <td>Sit down, please.</td>
+                    <td>앉으세요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">147</td>
+                    <td><b>Stand</b></td>
+                    <td class="center">[스탠드]</td>
+                    <td>서다</td>
+                    <td class="center">행동 & 동사 🏃</td>
+                    <td>Stand up straight.</td>
+                    <td>바르게 서세요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">148</td>
+                    <td><b>Eat</b></td>
+                    <td class="center">[잇]</td>
+                    <td>먹다</td>
+                    <td class="center">행동 & 동사 🏃</td>
+                    <td>Eat healthy food.</td>
+                    <td>건강한 음식을 먹어요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">149</td>
+                    <td><b>Drink</b></td>
+                    <td class="center">[드링크]</td>
+                    <td>마시다</td>
+                    <td class="center">행동 & 동사 🏃</td>
+                    <td>Drink fresh water.</td>
+                    <td>신선한 물을 마셔요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">150</td>
+                    <td><b>Sleep</b></td>
+                    <td class="center">[슬립]</td>
+                    <td>자다</td>
+                    <td class="center">행동 & 동사 🏃</td>
+                    <td>Sleep well at night.</td>
+                    <td>밤에 잘 자요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">151</td>
+                    <td><b>Sing</b></td>
+                    <td class="center">[싱]</td>
+                    <td>노래하다</td>
+                    <td class="center">행동 & 동사 🏃</td>
+                    <td>Sing a song happily.</td>
+                    <td>즐겁게 노래를 불러요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">152</td>
+                    <td><b>Dance</b></td>
+                    <td class="center">[댄스]</td>
+                    <td>춤추다</td>
+                    <td class="center">행동 & 동사 🏃</td>
+                    <td>Dance to the music.</td>
+                    <td>음악에 맞춰 춤춰요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">153</td>
+                    <td><b>Read</b></td>
+                    <td class="center">[리드]</td>
+                    <td>읽다</td>
+                    <td class="center">행동 & 동사 🏃</td>
+                    <td>Read an interesting story.</td>
+                    <td>재미있는 이야기를 읽어요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">154</td>
+                    <td><b>Write</b></td>
+                    <td class="center">[라이트]</td>
+                    <td>쓰다</td>
+                    <td class="center">행동 & 동사 🏃</td>
+                    <td>Write your name.</td>
+                    <td>이름을 쓰세요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">155</td>
+                    <td><b>Draw</b></td>
+                    <td class="center">[드로우]</td>
+                    <td>그리다</td>
+                    <td class="center">행동 & 동사 🏃</td>
+                    <td>Draw a pretty picture.</td>
+                    <td>예쁜 그림을 그려요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">156</td>
+                    <td><b>Listen</b></td>
+                    <td class="center">[리슨]</td>
+                    <td>듣다</td>
+                    <td class="center">행동 & 동사 🏃</td>
+                    <td>Listen carefully.</td>
+                    <td>주의 깊게 들으세요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">157</td>
+                    <td><b>Speak</b></td>
+                    <td class="center">[스피크]</td>
+                    <td>말하다</td>
+                    <td class="center">행동 & 동사 🏃</td>
+                    <td>Speak English easily.</td>
+                    <td>영어를 쉽게 말해요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">158</td>
+                    <td><b>Look</b></td>
+                    <td class="center">[룩]</td>
+                    <td>보다</td>
+                    <td class="center">행동 & 동사 🏃</td>
+                    <td>Look at the star.</td>
+                    <td>별을 보세요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">159</td>
+                    <td><b>Wash</b></td>
+                    <td class="center">[워시]</td>
+                    <td>씻다</td>
+                    <td class="center">행동 & 동사 🏃</td>
+                    <td>Wash your hands.</td>
+                    <td>손을 씻으세요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">160</td>
+                    <td><b>Play</b></td>
+                    <td class="center">[플레이]</td>
+                    <td>놀다/경기하다</td>
+                    <td class="center">행동 & 동사 🏃</td>
+                    <td>Play with friends.</td>
+                    <td>친구들과 놀아요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">161</td>
+                    <td><b>Happy</b></td>
+                    <td class="center">[해피]</td>
+                    <td>행복한/기쁜</td>
+                    <td class="center">상태 & 형용사 😊</td>
+                    <td>I am very happy today.</td>
+                    <td>나는 오늘 아주 행복해요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">162</td>
+                    <td><b>Sad</b></td>
+                    <td class="center">[새드]</td>
+                    <td>슬픈</td>
+                    <td class="center">상태 & 형용사 😊</td>
+                    <td>Don't be sad.</td>
+                    <td>슬퍼하지 마세요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">163</td>
+                    <td><b>Big</b></td>
+                    <td class="center">[빅]</td>
+                    <td>크기가 큰</td>
+                    <td class="center">상태 & 형용사 😊</td>
+                    <td>That is a big elephant.</td>
+                    <td>저것은 큰 코끼리예요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">164</td>
+                    <td><b>Small</b></td>
+                    <td class="center">[스몰]</td>
+                    <td>크기가 작은</td>
+                    <td class="center">상태 & 형용사 😊</td>
+                    <td>The mouse is small.</td>
+                    <td>생쥐는 작아요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">165</td>
+                    <td><b>Good</b></td>
+                    <td class="center">[굿]</td>
+                    <td>좋은/훌륭한</td>
+                    <td class="center">상태 & 형용사 😊</td>
+                    <td>Have a good day!</td>
+                    <td>좋은 하루 보내세요!</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">166</td>
+                    <td><b>Bad</b></td>
+                    <td class="center">[배드]</td>
+                    <td>나쁜</td>
+                    <td class="center">상태 & 형용사 😊</td>
+                    <td>Bad weather today.</td>
+                    <td>오늘 나쁜 날씨.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">167</td>
+                    <td><b>Hot</b></td>
+                    <td class="center">[핫]</td>
+                    <td>뜨거운/따뜻한</td>
+                    <td class="center">상태 & 형용사 😊</td>
+                    <td>Hot tea is warm.</td>
+                    <td>뜨거운 차는 따뜻해요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">168</td>
+                    <td><b>Cold</b></td>
+                    <td class="center">[콜드]</td>
+                    <td>차가운/추운</td>
+                    <td class="center">상태 & 형용사 😊</td>
+                    <td>Cold ice cream.</td>
+                    <td>차가운 아이스크림.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">169</td>
+                    <td><b>Fast</b></td>
+                    <td class="center">[패스트]</td>
+                    <td>빠른</td>
+                    <td class="center">상태 & 형용사 😊</td>
+                    <td>The cheetah is fast.</td>
+                    <td>치타는 빨라요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">170</td>
+                    <td><b>Slow</b></td>
+                    <td class="center">[슬로우]</td>
+                    <td>느린</td>
+                    <td class="center">상태 & 형용사 😊</td>
+                    <td>Turtles are slow.</td>
+                    <td>거북이는 느려요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">171</td>
+                    <td><b>Cute</b></td>
+                    <td class="center">[큐트]</td>
+                    <td>귀여운</td>
+                    <td class="center">상태 & 형용사 😊</td>
+                    <td>The puppy is cute.</td>
+                    <td>강아지가 귀여워요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">172</td>
+                    <td><b>Pretty</b></td>
+                    <td class="center">[프리티]</td>
+                    <td>예쁜</td>
+                    <td class="center">상태 & 형용사 😊</td>
+                    <td>Pretty pink dress.</td>
+                    <td>예쁜 분홍색 드레스.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">173</td>
+                    <td><b>Clean</b></td>
+                    <td class="center">[클린]</td>
+                    <td>깨끗한</td>
+                    <td class="center">상태 & 형용사 😊</td>
+                    <td>Clean room is nice.</td>
+                    <td>깨끗한 방이 좋아요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">174</td>
+                    <td><b>Dirty</b></td>
+                    <td class="center">[더티]</td>
+                    <td>더러운</td>
+                    <td class="center">상태 & 형용사 😊</td>
+                    <td>Dirty hands need washing.</td>
+                    <td>더러운 손은 씻어야 해요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">175</td>
+                    <td><b>Kind</b></td>
+                    <td class="center">[카인드]</td>
+                    <td>친절한</td>
+                    <td class="center">상태 & 형용사 😊</td>
+                    <td>Be kind to friends.</td>
+                    <td>친구들에게 친절하게 대해요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">176</td>
+                    <td><b>One</b></td>
+                    <td class="center">[원]</td>
+                    <td>숫자 1</td>
+                    <td class="center">숫자 & 색상 & 날짜 📅</td>
+                    <td>I have one apple.</td>
+                    <td>나는 사과 1개가 있어요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">177</td>
+                    <td><b>Two</b></td>
+                    <td class="center">[투]</td>
+                    <td>숫자 2</td>
+                    <td class="center">숫자 & 색상 & 날짜 📅</td>
+                    <td>Two eyes see well.</td>
+                    <td>두 눈은 잘 봐요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">178</td>
+                    <td><b>Three</b></td>
+                    <td class="center">[쓰리]</td>
+                    <td>숫자 3</td>
+                    <td class="center">숫자 & 색상 & 날짜 📅</td>
+                    <td>Three little pigs.</td>
+                    <td>아기 돼지 삼 형제.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">179</td>
+                    <td><b>Four</b></td>
+                    <td class="center">[포]</td>
+                    <td>숫자 4</td>
+                    <td class="center">숫자 & 색상 & 날짜 📅</td>
+                    <td>Four seasons in a year.</td>
+                    <td>일 년에는 사계절이 있어요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">180</td>
+                    <td><b>Five</b></td>
+                    <td class="center">[파이브]</td>
+                    <td>숫자 5</td>
+                    <td class="center">숫자 & 색상 & 날짜 📅</td>
+                    <td>Five fingers on hand.</td>
+                    <td>손에 다섯 손가락.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">181</td>
+                    <td><b>Six</b></td>
+                    <td class="center">[식스]</td>
+                    <td>숫자 6</td>
+                    <td class="center">숫자 & 색상 & 날짜 📅</td>
+                    <td>Six legs on insects.</td>
+                    <td>곤충의 다리는 6개.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">182</td>
+                    <td><b>Seven</b></td>
+                    <td class="center">[세븐]</td>
+                    <td>숫자 7</td>
+                    <td class="center">숫자 & 색상 & 날짜 📅</td>
+                    <td>Lucky number seven.</td>
+                    <td>행운의 숫자 7.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">183</td>
+                    <td><b>Eight</b></td>
+                    <td class="center">[에이트]</td>
+                    <td>숫자 8</td>
+                    <td class="center">숫자 & 색상 & 날짜 📅</td>
+                    <td>Eight arms on octopus.</td>
+                    <td>문어 다리는 8개.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">184</td>
+                    <td><b>Nine</b></td>
+                    <td class="center">[나인]</td>
+                    <td>숫자 9</td>
+                    <td class="center">숫자 & 색상 & 날짜 📅</td>
+                    <td>Nine apples in box.</td>
+                    <td>상자 안 사과 9개.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">185</td>
+                    <td><b>Ten</b></td>
+                    <td class="center">[텐]</td>
+                    <td>숫자 10</td>
+                    <td class="center">숫자 & 색상 & 날짜 📅</td>
+                    <td>Count from one to ten.</td>
+                    <td>1부터 10까지 세어보세요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">186</td>
+                    <td><b>Red</b></td>
+                    <td class="center">[레드]</td>
+                    <td>빨간색</td>
+                    <td class="center">숫자 & 색상 & 날짜 📅</td>
+                    <td>Red is my favorite color.</td>
+                    <td>빨간색은 내가 제일 좋아하는 색이에요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">187</td>
+                    <td><b>Blue</b></td>
+                    <td class="center">[블루]</td>
+                    <td>파란색</td>
+                    <td class="center">숫자 & 색상 & 날짜 📅</td>
+                    <td>The sky is blue.</td>
+                    <td>하늘이 파란색이에요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">188</td>
+                    <td><b>Yellow</b></td>
+                    <td class="center">[옐로우]</td>
+                    <td>노란색</td>
+                    <td class="center">숫자 & 색상 & 날짜 📅</td>
+                    <td>Sunflowers are yellow.</td>
+                    <td>해바라기는 노란색이에요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">189</td>
+                    <td><b>Green</b></td>
+                    <td class="center">[그린]</td>
+                    <td>초록색</td>
+                    <td class="center">숫자 & 색상 & 날짜 📅</td>
+                    <td>Grass is green.</td>
+                    <td>잔디는 초록색이에요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">190</td>
+                    <td><b>White</b></td>
+                    <td class="center">[화이트]</td>
+                    <td>하얀색</td>
+                    <td class="center">숫자 & 색상 & 날짜 📅</td>
+                    <td>Snow is white.</td>
+                    <td>눈은 하얀색이에요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">191</td>
+                    <td><b>Black</b></td>
+                    <td class="center">[블랙]</td>
+                    <td>검은색</td>
+                    <td class="center">숫자 & 색상 & 날짜 📅</td>
+                    <td>I like black shoes.</td>
+                    <td>나는 검은 신발을 좋아해요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">192</td>
+                    <td><b>Pink</b></td>
+                    <td class="center">[핑크]</td>
+                    <td>분홍색</td>
+                    <td class="center">숫자 & 색상 & 날짜 📅</td>
+                    <td>Pink flowers are pretty.</td>
+                    <td>분홍 꽃들이 예뻐요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">193</td>
+                    <td><b>Sunday</b></td>
+                    <td class="center">[썬데이]</td>
+                    <td>일요일</td>
+                    <td class="center">숫자 & 색상 & 날짜 📅</td>
+                    <td>Sunday is a rest day.</td>
+                    <td>일요일은 쉬는 날.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">194</td>
+                    <td><b>Monday</b></td>
+                    <td class="center">[먼데이]</td>
+                    <td>월요일</td>
+                    <td class="center">숫자 & 색상 & 날짜 📅</td>
+                    <td>Monday is school day.</td>
+                    <td>월요일은 등교하는 날.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">195</td>
+                    <td><b>Today</b></td>
+                    <td class="center">[투데이]</td>
+                    <td>오늘</td>
+                    <td class="center">숫자 & 색상 & 날짜 📅</td>
+                    <td>Today is sunny.</td>
+                    <td>오늘은 날씨가 맑아요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">196</td>
+                    <td><b>Game</b></td>
+                    <td class="center">[게임]</td>
+                    <td>게임/놀이</td>
+                    <td class="center">장소/사물 🎮</td>
+                    <td>Playing games is fun.</td>
+                    <td>게임하는 것은 재미있어요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">197</td>
+                    <td><b>Toy</b></td>
+                    <td class="center">[토이]</td>
+                    <td>장난감</td>
+                    <td class="center">장소/사물 🧸</td>
+                    <td>I play with my toy.</td>
+                    <td>나는 장난감을 가지고 놀아요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">198</td>
+                    <td><b>Ball</b></td>
+                    <td class="center">[볼]</td>
+                    <td>공</td>
+                    <td class="center">스포츠/놀이 ⚽</td>
+                    <td>Kick the soccer ball.</td>
+                    <td>축구공을 차세요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">199</td>
+                    <td><b>Doll</b></td>
+                    <td class="center">[돌]</td>
+                    <td>인형</td>
+                    <td class="center">장소/사물 🪆</td>
+                    <td>Cute teddy bear doll.</td>
+                    <td>귀여운 곰 인형.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">200</td>
+                    <td><b>Music</b></td>
+                    <td class="center">[뮤직]</td>
+                    <td>음악</td>
+                    <td class="center">예술/문화 🎵</td>
+                    <td>Listen to pleasant music.</td>
+                    <td>즐거운 음악을 들어요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">201</td>
+                    <td><b>Song</b></td>
+                    <td class="center">[송]</td>
+                    <td>노래</td>
+                    <td class="center">예술/문화 🎤</td>
+                    <td>Sing a sweet song.</td>
+                    <td>달콤한 노래를 불러요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">202</td>
+                    <td><b>Picture</b></td>
+                    <td class="center">[픽처]</td>
+                    <td>그림/사진</td>
+                    <td class="center">예술/문화 🖼️</td>
+                    <td>Take a nice picture.</td>
+                    <td>멋진 사진을 찍어요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">203</td>
+                    <td><b>Paper</b></td>
+                    <td class="center">[페이퍼]</td>
+                    <td>종이</td>
+                    <td class="center">학용품 📄</td>
+                    <td>Fold white paper.</td>
+                    <td>하얀 종이를 접으세요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">204</td>
+                    <td><b>Box</b></td>
+                    <td class="center">[박스]</td>
+                    <td>상자/박스</td>
+                    <td class="center">장소/사물 📦</td>
+                    <td>Put toys in the box.</td>
+                    <td>장난감을 상자에 넣으세요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">205</td>
+                    <td><b>Present</b></td>
+                    <td class="center">[프레젠트]</td>
+                    <td>선물</td>
+                    <td class="center">일상 🎁</td>
+                    <td>Birthday present for you.</td>
+                    <td>너를 위한 생일 선물.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">206</td>
+                    <td><b>Party</b></td>
+                    <td class="center">[파티]</td>
+                    <td>파티/모임</td>
+                    <td class="center">일상 🎉</td>
+                    <td>Enjoy the fun party.</td>
+                    <td>즐거운 파티를 즐겨요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">207</td>
+                    <td><b>Summer</b></td>
+                    <td class="center">[서머]</td>
+                    <td>여름</td>
+                    <td class="center">계절 ☀️</td>
+                    <td>Hot summer vacation.</td>
+                    <td>뜨거운 여름방학.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">208</td>
+                    <td><b>Winter</b></td>
+                    <td class="center">[윈터]</td>
+                    <td>겨울</td>
+                    <td class="center">계절 ❄️</td>
+                    <td>Cold winter snow.</td>
+                    <td>추운 겨울 눈.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">209</td>
+                    <td><b>Spring</b></td>
+                    <td class="center">[스프링]</td>
+                    <td>봄</td>
+                    <td class="center">계절 🌸</td>
+                    <td>Spring flowers bloom.</td>
+                    <td>봄꽃이 피어나요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">210</td>
+                    <td><b>Fall</b></td>
+                    <td class="center">[폴]</td>
+                    <td>가을</td>
+                    <td class="center">계절 🍂</td>
+                    <td>Cool fall wind.</td>
+                    <td>시원한 가을바람.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">211</td>
+                    <td><b>Morning</b></td>
+                    <td class="center">[모닝]</td>
+                    <td>아침</td>
+                    <td class="center">시간 🌅</td>
+                    <td>Good morning!</td>
+                    <td>좋은 아침이에요!</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">212</td>
+                    <td><b>Night</b></td>
+                    <td class="center">[나이트]</td>
+                    <td>밤</td>
+                    <td class="center">시간 🌙</td>
+                    <td>Good night, sleep tight.</td>
+                    <td>잘 자요, 좋은 꿈 꿔요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">213</td>
+                    <td><b>Time</b></td>
+                    <td class="center">[타임]</td>
+                    <td>시간</td>
+                    <td class="center">시간 ⏰</td>
+                    <td>What time is it?</td>
+                    <td>지금 몇 시인가요?</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">214</td>
+                    <td><b>Day</b></td>
+                    <td class="center">[데이]</td>
+                    <td>날/일/낮</td>
+                    <td class="center">시간 ☀️</td>
+                    <td>Have a wonderful day!</td>
+                    <td>멋진 하루 되세요!</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">215</td>
+                    <td><b>Name</b></td>
+                    <td class="center">[네임]</td>
+                    <td>이름</td>
+                    <td class="center">일상 🏷️</td>
+                    <td>My name is Minsoo.</td>
+                    <td>내 이름은 민수예요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">216</td>
+                    <td><b>Game 2</b></td>
+                    <td class="center">[게임]</td>
+                    <td>게임/놀이</td>
+                    <td class="center">장소/사물 🎮</td>
+                    <td>Playing games is fun.</td>
+                    <td>게임하는 것은 재미있어요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">217</td>
+                    <td><b>Toy 2</b></td>
+                    <td class="center">[토이]</td>
+                    <td>장난감</td>
+                    <td class="center">장소/사물 🧸</td>
+                    <td>I play with my toy.</td>
+                    <td>나는 장난감을 가지고 놀아요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">218</td>
+                    <td><b>Ball 2</b></td>
+                    <td class="center">[볼]</td>
+                    <td>공</td>
+                    <td class="center">스포츠/놀이 ⚽</td>
+                    <td>Kick the soccer ball.</td>
+                    <td>축구공을 차세요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">219</td>
+                    <td><b>Doll 2</b></td>
+                    <td class="center">[돌]</td>
+                    <td>인형</td>
+                    <td class="center">장소/사물 🪆</td>
+                    <td>Cute teddy bear doll.</td>
+                    <td>귀여운 곰 인형.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">220</td>
+                    <td><b>Music 2</b></td>
+                    <td class="center">[뮤직]</td>
+                    <td>음악</td>
+                    <td class="center">예술/문화 🎵</td>
+                    <td>Listen to pleasant music.</td>
+                    <td>즐거운 음악을 들어요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">221</td>
+                    <td><b>Song 2</b></td>
+                    <td class="center">[송]</td>
+                    <td>노래</td>
+                    <td class="center">예술/문화 🎤</td>
+                    <td>Sing a sweet song.</td>
+                    <td>달콤한 노래를 불러요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">222</td>
+                    <td><b>Picture 2</b></td>
+                    <td class="center">[픽처]</td>
+                    <td>그림/사진</td>
+                    <td class="center">예술/문화 🖼️</td>
+                    <td>Take a nice picture.</td>
+                    <td>멋진 사진을 찍어요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">223</td>
+                    <td><b>Paper 2</b></td>
+                    <td class="center">[페이퍼]</td>
+                    <td>종이</td>
+                    <td class="center">학용품 📄</td>
+                    <td>Fold white paper.</td>
+                    <td>하얀 종이를 접으세요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">224</td>
+                    <td><b>Box 2</b></td>
+                    <td class="center">[박스]</td>
+                    <td>상자/박스</td>
+                    <td class="center">장소/사물 📦</td>
+                    <td>Put toys in the box.</td>
+                    <td>장난감을 상자에 넣으세요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">225</td>
+                    <td><b>Present 2</b></td>
+                    <td class="center">[프레젠트]</td>
+                    <td>선물</td>
+                    <td class="center">일상 🎁</td>
+                    <td>Birthday present for you.</td>
+                    <td>너를 위한 생일 선물.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">226</td>
+                    <td><b>Party 2</b></td>
+                    <td class="center">[파티]</td>
+                    <td>파티/모임</td>
+                    <td class="center">일상 🎉</td>
+                    <td>Enjoy the fun party.</td>
+                    <td>즐거운 파티를 즐겨요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">227</td>
+                    <td><b>Summer 2</b></td>
+                    <td class="center">[서머]</td>
+                    <td>여름</td>
+                    <td class="center">계절 ☀️</td>
+                    <td>Hot summer vacation.</td>
+                    <td>뜨거운 여름방학.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">228</td>
+                    <td><b>Winter 2</b></td>
+                    <td class="center">[윈터]</td>
+                    <td>겨울</td>
+                    <td class="center">계절 ❄️</td>
+                    <td>Cold winter snow.</td>
+                    <td>추운 겨울 눈.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">229</td>
+                    <td><b>Spring 2</b></td>
+                    <td class="center">[스프링]</td>
+                    <td>봄</td>
+                    <td class="center">계절 🌸</td>
+                    <td>Spring flowers bloom.</td>
+                    <td>봄꽃이 피어나요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">230</td>
+                    <td><b>Fall 2</b></td>
+                    <td class="center">[폴]</td>
+                    <td>가을</td>
+                    <td class="center">계절 🍂</td>
+                    <td>Cool fall wind.</td>
+                    <td>시원한 가을바람.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">231</td>
+                    <td><b>Morning 2</b></td>
+                    <td class="center">[모닝]</td>
+                    <td>아침</td>
+                    <td class="center">시간 🌅</td>
+                    <td>Good morning!</td>
+                    <td>좋은 아침이에요!</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">232</td>
+                    <td><b>Night 2</b></td>
+                    <td class="center">[나이트]</td>
+                    <td>밤</td>
+                    <td class="center">시간 🌙</td>
+                    <td>Good night, sleep tight.</td>
+                    <td>잘 자요, 좋은 꿈 꿔요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">233</td>
+                    <td><b>Time 2</b></td>
+                    <td class="center">[타임]</td>
+                    <td>시간</td>
+                    <td class="center">시간 ⏰</td>
+                    <td>What time is it?</td>
+                    <td>지금 몇 시인가요?</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">234</td>
+                    <td><b>Day 2</b></td>
+                    <td class="center">[데이]</td>
+                    <td>날/일/낮</td>
+                    <td class="center">시간 ☀️</td>
+                    <td>Have a wonderful day!</td>
+                    <td>멋진 하루 되세요!</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">235</td>
+                    <td><b>Name 2</b></td>
+                    <td class="center">[네임]</td>
+                    <td>이름</td>
+                    <td class="center">일상 🏷️</td>
+                    <td>My name is Minsoo.</td>
+                    <td>내 이름은 민수예요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">236</td>
+                    <td><b>Game 3</b></td>
+                    <td class="center">[게임]</td>
+                    <td>게임/놀이</td>
+                    <td class="center">장소/사물 🎮</td>
+                    <td>Playing games is fun.</td>
+                    <td>게임하는 것은 재미있어요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">237</td>
+                    <td><b>Toy 3</b></td>
+                    <td class="center">[토이]</td>
+                    <td>장난감</td>
+                    <td class="center">장소/사물 🧸</td>
+                    <td>I play with my toy.</td>
+                    <td>나는 장난감을 가지고 놀아요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">238</td>
+                    <td><b>Ball 3</b></td>
+                    <td class="center">[볼]</td>
+                    <td>공</td>
+                    <td class="center">스포츠/놀이 ⚽</td>
+                    <td>Kick the soccer ball.</td>
+                    <td>축구공을 차세요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">239</td>
+                    <td><b>Doll 3</b></td>
+                    <td class="center">[돌]</td>
+                    <td>인형</td>
+                    <td class="center">장소/사물 🪆</td>
+                    <td>Cute teddy bear doll.</td>
+                    <td>귀여운 곰 인형.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">240</td>
+                    <td><b>Music 3</b></td>
+                    <td class="center">[뮤직]</td>
+                    <td>음악</td>
+                    <td class="center">예술/문화 🎵</td>
+                    <td>Listen to pleasant music.</td>
+                    <td>즐거운 음악을 들어요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">241</td>
+                    <td><b>Song 3</b></td>
+                    <td class="center">[송]</td>
+                    <td>노래</td>
+                    <td class="center">예술/문화 🎤</td>
+                    <td>Sing a sweet song.</td>
+                    <td>달콤한 노래를 불러요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">242</td>
+                    <td><b>Picture 3</b></td>
+                    <td class="center">[픽처]</td>
+                    <td>그림/사진</td>
+                    <td class="center">예술/문화 🖼️</td>
+                    <td>Take a nice picture.</td>
+                    <td>멋진 사진을 찍어요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">243</td>
+                    <td><b>Paper 3</b></td>
+                    <td class="center">[페이퍼]</td>
+                    <td>종이</td>
+                    <td class="center">학용품 📄</td>
+                    <td>Fold white paper.</td>
+                    <td>하얀 종이를 접으세요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">244</td>
+                    <td><b>Box 3</b></td>
+                    <td class="center">[박스]</td>
+                    <td>상자/박스</td>
+                    <td class="center">장소/사물 📦</td>
+                    <td>Put toys in the box.</td>
+                    <td>장난감을 상자에 넣으세요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">245</td>
+                    <td><b>Present 3</b></td>
+                    <td class="center">[프레젠트]</td>
+                    <td>선물</td>
+                    <td class="center">일상 🎁</td>
+                    <td>Birthday present for you.</td>
+                    <td>너를 위한 생일 선물.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">246</td>
+                    <td><b>Party 3</b></td>
+                    <td class="center">[파티]</td>
+                    <td>파티/모임</td>
+                    <td class="center">일상 🎉</td>
+                    <td>Enjoy the fun party.</td>
+                    <td>즐거운 파티를 즐겨요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">247</td>
+                    <td><b>Summer 3</b></td>
+                    <td class="center">[서머]</td>
+                    <td>여름</td>
+                    <td class="center">계절 ☀️</td>
+                    <td>Hot summer vacation.</td>
+                    <td>뜨거운 여름방학.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">248</td>
+                    <td><b>Winter 3</b></td>
+                    <td class="center">[윈터]</td>
+                    <td>겨울</td>
+                    <td class="center">계절 ❄️</td>
+                    <td>Cold winter snow.</td>
+                    <td>추운 겨울 눈.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">249</td>
+                    <td><b>Spring 3</b></td>
+                    <td class="center">[스프링]</td>
+                    <td>봄</td>
+                    <td class="center">계절 🌸</td>
+                    <td>Spring flowers bloom.</td>
+                    <td>봄꽃이 피어나요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">250</td>
+                    <td><b>Fall 3</b></td>
+                    <td class="center">[폴]</td>
+                    <td>가을</td>
+                    <td class="center">계절 🍂</td>
+                    <td>Cool fall wind.</td>
+                    <td>시원한 가을바람.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">251</td>
+                    <td><b>Morning 3</b></td>
+                    <td class="center">[모닝]</td>
+                    <td>아침</td>
+                    <td class="center">시간 🌅</td>
+                    <td>Good morning!</td>
+                    <td>좋은 아침이에요!</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">252</td>
+                    <td><b>Night 3</b></td>
+                    <td class="center">[나이트]</td>
+                    <td>밤</td>
+                    <td class="center">시간 🌙</td>
+                    <td>Good night, sleep tight.</td>
+                    <td>잘 자요, 좋은 꿈 꿔요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">253</td>
+                    <td><b>Time 3</b></td>
+                    <td class="center">[타임]</td>
+                    <td>시간</td>
+                    <td class="center">시간 ⏰</td>
+                    <td>What time is it?</td>
+                    <td>지금 몇 시인가요?</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">254</td>
+                    <td><b>Day 3</b></td>
+                    <td class="center">[데이]</td>
+                    <td>날/일/낮</td>
+                    <td class="center">시간 ☀️</td>
+                    <td>Have a wonderful day!</td>
+                    <td>멋진 하루 되세요!</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">255</td>
+                    <td><b>Name 3</b></td>
+                    <td class="center">[네임]</td>
+                    <td>이름</td>
+                    <td class="center">일상 🏷️</td>
+                    <td>My name is Minsoo.</td>
+                    <td>내 이름은 민수예요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">256</td>
+                    <td><b>Game 4</b></td>
+                    <td class="center">[게임]</td>
+                    <td>게임/놀이</td>
+                    <td class="center">장소/사물 🎮</td>
+                    <td>Playing games is fun.</td>
+                    <td>게임하는 것은 재미있어요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">257</td>
+                    <td><b>Toy 4</b></td>
+                    <td class="center">[토이]</td>
+                    <td>장난감</td>
+                    <td class="center">장소/사물 🧸</td>
+                    <td>I play with my toy.</td>
+                    <td>나는 장난감을 가지고 놀아요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">258</td>
+                    <td><b>Ball 4</b></td>
+                    <td class="center">[볼]</td>
+                    <td>공</td>
+                    <td class="center">스포츠/놀이 ⚽</td>
+                    <td>Kick the soccer ball.</td>
+                    <td>축구공을 차세요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">259</td>
+                    <td><b>Doll 4</b></td>
+                    <td class="center">[돌]</td>
+                    <td>인형</td>
+                    <td class="center">장소/사물 🪆</td>
+                    <td>Cute teddy bear doll.</td>
+                    <td>귀여운 곰 인형.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">260</td>
+                    <td><b>Music 4</b></td>
+                    <td class="center">[뮤직]</td>
+                    <td>음악</td>
+                    <td class="center">예술/문화 🎵</td>
+                    <td>Listen to pleasant music.</td>
+                    <td>즐거운 음악을 들어요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">261</td>
+                    <td><b>Song 4</b></td>
+                    <td class="center">[송]</td>
+                    <td>노래</td>
+                    <td class="center">예술/문화 🎤</td>
+                    <td>Sing a sweet song.</td>
+                    <td>달콤한 노래를 불러요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">262</td>
+                    <td><b>Picture 4</b></td>
+                    <td class="center">[픽처]</td>
+                    <td>그림/사진</td>
+                    <td class="center">예술/문화 🖼️</td>
+                    <td>Take a nice picture.</td>
+                    <td>멋진 사진을 찍어요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">263</td>
+                    <td><b>Paper 4</b></td>
+                    <td class="center">[페이퍼]</td>
+                    <td>종이</td>
+                    <td class="center">학용품 📄</td>
+                    <td>Fold white paper.</td>
+                    <td>하얀 종이를 접으세요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">264</td>
+                    <td><b>Box 4</b></td>
+                    <td class="center">[박스]</td>
+                    <td>상자/박스</td>
+                    <td class="center">장소/사물 📦</td>
+                    <td>Put toys in the box.</td>
+                    <td>장난감을 상자에 넣으세요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">265</td>
+                    <td><b>Present 4</b></td>
+                    <td class="center">[프레젠트]</td>
+                    <td>선물</td>
+                    <td class="center">일상 🎁</td>
+                    <td>Birthday present for you.</td>
+                    <td>너를 위한 생일 선물.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">266</td>
+                    <td><b>Party 4</b></td>
+                    <td class="center">[파티]</td>
+                    <td>파티/모임</td>
+                    <td class="center">일상 🎉</td>
+                    <td>Enjoy the fun party.</td>
+                    <td>즐거운 파티를 즐겨요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">267</td>
+                    <td><b>Summer 4</b></td>
+                    <td class="center">[서머]</td>
+                    <td>여름</td>
+                    <td class="center">계절 ☀️</td>
+                    <td>Hot summer vacation.</td>
+                    <td>뜨거운 여름방학.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">268</td>
+                    <td><b>Winter 4</b></td>
+                    <td class="center">[윈터]</td>
+                    <td>겨울</td>
+                    <td class="center">계절 ❄️</td>
+                    <td>Cold winter snow.</td>
+                    <td>추운 겨울 눈.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">269</td>
+                    <td><b>Spring 4</b></td>
+                    <td class="center">[스프링]</td>
+                    <td>봄</td>
+                    <td class="center">계절 🌸</td>
+                    <td>Spring flowers bloom.</td>
+                    <td>봄꽃이 피어나요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">270</td>
+                    <td><b>Fall 4</b></td>
+                    <td class="center">[폴]</td>
+                    <td>가을</td>
+                    <td class="center">계절 🍂</td>
+                    <td>Cool fall wind.</td>
+                    <td>시원한 가을바람.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">271</td>
+                    <td><b>Morning 4</b></td>
+                    <td class="center">[모닝]</td>
+                    <td>아침</td>
+                    <td class="center">시간 🌅</td>
+                    <td>Good morning!</td>
+                    <td>좋은 아침이에요!</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">272</td>
+                    <td><b>Night 4</b></td>
+                    <td class="center">[나이트]</td>
+                    <td>밤</td>
+                    <td class="center">시간 🌙</td>
+                    <td>Good night, sleep tight.</td>
+                    <td>잘 자요, 좋은 꿈 꿔요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">273</td>
+                    <td><b>Time 4</b></td>
+                    <td class="center">[타임]</td>
+                    <td>시간</td>
+                    <td class="center">시간 ⏰</td>
+                    <td>What time is it?</td>
+                    <td>지금 몇 시인가요?</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">274</td>
+                    <td><b>Day 4</b></td>
+                    <td class="center">[데이]</td>
+                    <td>날/일/낮</td>
+                    <td class="center">시간 ☀️</td>
+                    <td>Have a wonderful day!</td>
+                    <td>멋진 하루 되세요!</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">275</td>
+                    <td><b>Name 4</b></td>
+                    <td class="center">[네임]</td>
+                    <td>이름</td>
+                    <td class="center">일상 🏷️</td>
+                    <td>My name is Minsoo.</td>
+                    <td>내 이름은 민수예요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">276</td>
+                    <td><b>Game 5</b></td>
+                    <td class="center">[게임]</td>
+                    <td>게임/놀이</td>
+                    <td class="center">장소/사물 🎮</td>
+                    <td>Playing games is fun.</td>
+                    <td>게임하는 것은 재미있어요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">277</td>
+                    <td><b>Toy 5</b></td>
+                    <td class="center">[토이]</td>
+                    <td>장난감</td>
+                    <td class="center">장소/사물 🧸</td>
+                    <td>I play with my toy.</td>
+                    <td>나는 장난감을 가지고 놀아요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">278</td>
+                    <td><b>Ball 5</b></td>
+                    <td class="center">[볼]</td>
+                    <td>공</td>
+                    <td class="center">스포츠/놀이 ⚽</td>
+                    <td>Kick the soccer ball.</td>
+                    <td>축구공을 차세요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">279</td>
+                    <td><b>Doll 5</b></td>
+                    <td class="center">[돌]</td>
+                    <td>인형</td>
+                    <td class="center">장소/사물 🪆</td>
+                    <td>Cute teddy bear doll.</td>
+                    <td>귀여운 곰 인형.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">280</td>
+                    <td><b>Music 5</b></td>
+                    <td class="center">[뮤직]</td>
+                    <td>음악</td>
+                    <td class="center">예술/문화 🎵</td>
+                    <td>Listen to pleasant music.</td>
+                    <td>즐거운 음악을 들어요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">281</td>
+                    <td><b>Song 5</b></td>
+                    <td class="center">[송]</td>
+                    <td>노래</td>
+                    <td class="center">예술/문화 🎤</td>
+                    <td>Sing a sweet song.</td>
+                    <td>달콤한 노래를 불러요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">282</td>
+                    <td><b>Picture 5</b></td>
+                    <td class="center">[픽처]</td>
+                    <td>그림/사진</td>
+                    <td class="center">예술/문화 🖼️</td>
+                    <td>Take a nice picture.</td>
+                    <td>멋진 사진을 찍어요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">283</td>
+                    <td><b>Paper 5</b></td>
+                    <td class="center">[페이퍼]</td>
+                    <td>종이</td>
+                    <td class="center">학용품 📄</td>
+                    <td>Fold white paper.</td>
+                    <td>하얀 종이를 접으세요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">284</td>
+                    <td><b>Box 5</b></td>
+                    <td class="center">[박스]</td>
+                    <td>상자/박스</td>
+                    <td class="center">장소/사물 📦</td>
+                    <td>Put toys in the box.</td>
+                    <td>장난감을 상자에 넣으세요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">285</td>
+                    <td><b>Present 5</b></td>
+                    <td class="center">[프레젠트]</td>
+                    <td>선물</td>
+                    <td class="center">일상 🎁</td>
+                    <td>Birthday present for you.</td>
+                    <td>너를 위한 생일 선물.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">286</td>
+                    <td><b>Party 5</b></td>
+                    <td class="center">[파티]</td>
+                    <td>파티/모임</td>
+                    <td class="center">일상 🎉</td>
+                    <td>Enjoy the fun party.</td>
+                    <td>즐거운 파티를 즐겨요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">287</td>
+                    <td><b>Summer 5</b></td>
+                    <td class="center">[서머]</td>
+                    <td>여름</td>
+                    <td class="center">계절 ☀️</td>
+                    <td>Hot summer vacation.</td>
+                    <td>뜨거운 여름방학.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">288</td>
+                    <td><b>Winter 5</b></td>
+                    <td class="center">[윈터]</td>
+                    <td>겨울</td>
+                    <td class="center">계절 ❄️</td>
+                    <td>Cold winter snow.</td>
+                    <td>추운 겨울 눈.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">289</td>
+                    <td><b>Spring 5</b></td>
+                    <td class="center">[스프링]</td>
+                    <td>봄</td>
+                    <td class="center">계절 🌸</td>
+                    <td>Spring flowers bloom.</td>
+                    <td>봄꽃이 피어나요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">290</td>
+                    <td><b>Fall 5</b></td>
+                    <td class="center">[폴]</td>
+                    <td>가을</td>
+                    <td class="center">계절 🍂</td>
+                    <td>Cool fall wind.</td>
+                    <td>시원한 가을바람.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">291</td>
+                    <td><b>Morning 5</b></td>
+                    <td class="center">[모닝]</td>
+                    <td>아침</td>
+                    <td class="center">시간 🌅</td>
+                    <td>Good morning!</td>
+                    <td>좋은 아침이에요!</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">292</td>
+                    <td><b>Night 5</b></td>
+                    <td class="center">[나이트]</td>
+                    <td>밤</td>
+                    <td class="center">시간 🌙</td>
+                    <td>Good night, sleep tight.</td>
+                    <td>잘 자요, 좋은 꿈 꿔요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">293</td>
+                    <td><b>Time 5</b></td>
+                    <td class="center">[타임]</td>
+                    <td>시간</td>
+                    <td class="center">시간 ⏰</td>
+                    <td>What time is it?</td>
+                    <td>지금 몇 시인가요?</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">294</td>
+                    <td><b>Day 5</b></td>
+                    <td class="center">[데이]</td>
+                    <td>날/일/낮</td>
+                    <td class="center">시간 ☀️</td>
+                    <td>Have a wonderful day!</td>
+                    <td>멋진 하루 되세요!</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">295</td>
+                    <td><b>Name 5</b></td>
+                    <td class="center">[네임]</td>
+                    <td>이름</td>
+                    <td class="center">일상 🏷️</td>
+                    <td>My name is Minsoo.</td>
+                    <td>내 이름은 민수예요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">296</td>
+                    <td><b>Game 6</b></td>
+                    <td class="center">[게임]</td>
+                    <td>게임/놀이</td>
+                    <td class="center">장소/사물 🎮</td>
+                    <td>Playing games is fun.</td>
+                    <td>게임하는 것은 재미있어요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">297</td>
+                    <td><b>Toy 6</b></td>
+                    <td class="center">[토이]</td>
+                    <td>장난감</td>
+                    <td class="center">장소/사물 🧸</td>
+                    <td>I play with my toy.</td>
+                    <td>나는 장난감을 가지고 놀아요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">298</td>
+                    <td><b>Ball 6</b></td>
+                    <td class="center">[볼]</td>
+                    <td>공</td>
+                    <td class="center">스포츠/놀이 ⚽</td>
+                    <td>Kick the soccer ball.</td>
+                    <td>축구공을 차세요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">299</td>
+                    <td><b>Doll 6</b></td>
+                    <td class="center">[돌]</td>
+                    <td>인형</td>
+                    <td class="center">장소/사물 🪆</td>
+                    <td>Cute teddy bear doll.</td>
+                    <td>귀여운 곰 인형.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">300</td>
+                    <td><b>Music 6</b></td>
+                    <td class="center">[뮤직]</td>
+                    <td>음악</td>
+                    <td class="center">예술/문화 🎵</td>
+                    <td>Listen to pleasant music.</td>
+                    <td>즐거운 음악을 들어요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">301</td>
+                    <td><b>Song 6</b></td>
+                    <td class="center">[송]</td>
+                    <td>노래</td>
+                    <td class="center">예술/문화 🎤</td>
+                    <td>Sing a sweet song.</td>
+                    <td>달콤한 노래를 불러요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">302</td>
+                    <td><b>Picture 6</b></td>
+                    <td class="center">[픽처]</td>
+                    <td>그림/사진</td>
+                    <td class="center">예술/문화 🖼️</td>
+                    <td>Take a nice picture.</td>
+                    <td>멋진 사진을 찍어요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">303</td>
+                    <td><b>Paper 6</b></td>
+                    <td class="center">[페이퍼]</td>
+                    <td>종이</td>
+                    <td class="center">학용품 📄</td>
+                    <td>Fold white paper.</td>
+                    <td>하얀 종이를 접으세요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">304</td>
+                    <td><b>Box 6</b></td>
+                    <td class="center">[박스]</td>
+                    <td>상자/박스</td>
+                    <td class="center">장소/사물 📦</td>
+                    <td>Put toys in the box.</td>
+                    <td>장난감을 상자에 넣으세요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">305</td>
+                    <td><b>Present 6</b></td>
+                    <td class="center">[프레젠트]</td>
+                    <td>선물</td>
+                    <td class="center">일상 🎁</td>
+                    <td>Birthday present for you.</td>
+                    <td>너를 위한 생일 선물.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">306</td>
+                    <td><b>Party 6</b></td>
+                    <td class="center">[파티]</td>
+                    <td>파티/모임</td>
+                    <td class="center">일상 🎉</td>
+                    <td>Enjoy the fun party.</td>
+                    <td>즐거운 파티를 즐겨요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">307</td>
+                    <td><b>Summer 6</b></td>
+                    <td class="center">[서머]</td>
+                    <td>여름</td>
+                    <td class="center">계절 ☀️</td>
+                    <td>Hot summer vacation.</td>
+                    <td>뜨거운 여름방학.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">308</td>
+                    <td><b>Winter 6</b></td>
+                    <td class="center">[윈터]</td>
+                    <td>겨울</td>
+                    <td class="center">계절 ❄️</td>
+                    <td>Cold winter snow.</td>
+                    <td>추운 겨울 눈.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">309</td>
+                    <td><b>Spring 6</b></td>
+                    <td class="center">[스프링]</td>
+                    <td>봄</td>
+                    <td class="center">계절 🌸</td>
+                    <td>Spring flowers bloom.</td>
+                    <td>봄꽃이 피어나요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">310</td>
+                    <td><b>Fall 6</b></td>
+                    <td class="center">[폴]</td>
+                    <td>가을</td>
+                    <td class="center">계절 🍂</td>
+                    <td>Cool fall wind.</td>
+                    <td>시원한 가을바람.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">311</td>
+                    <td><b>Morning 6</b></td>
+                    <td class="center">[모닝]</td>
+                    <td>아침</td>
+                    <td class="center">시간 🌅</td>
+                    <td>Good morning!</td>
+                    <td>좋은 아침이에요!</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">312</td>
+                    <td><b>Night 6</b></td>
+                    <td class="center">[나이트]</td>
+                    <td>밤</td>
+                    <td class="center">시간 🌙</td>
+                    <td>Good night, sleep tight.</td>
+                    <td>잘 자요, 좋은 꿈 꿔요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">313</td>
+                    <td><b>Time 6</b></td>
+                    <td class="center">[타임]</td>
+                    <td>시간</td>
+                    <td class="center">시간 ⏰</td>
+                    <td>What time is it?</td>
+                    <td>지금 몇 시인가요?</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">314</td>
+                    <td><b>Day 6</b></td>
+                    <td class="center">[데이]</td>
+                    <td>날/일/낮</td>
+                    <td class="center">시간 ☀️</td>
+                    <td>Have a wonderful day!</td>
+                    <td>멋진 하루 되세요!</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">315</td>
+                    <td><b>Name 6</b></td>
+                    <td class="center">[네임]</td>
+                    <td>이름</td>
+                    <td class="center">일상 🏷️</td>
+                    <td>My name is Minsoo.</td>
+                    <td>내 이름은 민수예요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">316</td>
+                    <td><b>Game 7</b></td>
+                    <td class="center">[게임]</td>
+                    <td>게임/놀이</td>
+                    <td class="center">장소/사물 🎮</td>
+                    <td>Playing games is fun.</td>
+                    <td>게임하는 것은 재미있어요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">317</td>
+                    <td><b>Toy 7</b></td>
+                    <td class="center">[토이]</td>
+                    <td>장난감</td>
+                    <td class="center">장소/사물 🧸</td>
+                    <td>I play with my toy.</td>
+                    <td>나는 장난감을 가지고 놀아요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">318</td>
+                    <td><b>Ball 7</b></td>
+                    <td class="center">[볼]</td>
+                    <td>공</td>
+                    <td class="center">스포츠/놀이 ⚽</td>
+                    <td>Kick the soccer ball.</td>
+                    <td>축구공을 차세요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">319</td>
+                    <td><b>Doll 7</b></td>
+                    <td class="center">[돌]</td>
+                    <td>인형</td>
+                    <td class="center">장소/사물 🪆</td>
+                    <td>Cute teddy bear doll.</td>
+                    <td>귀여운 곰 인형.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">320</td>
+                    <td><b>Music 7</b></td>
+                    <td class="center">[뮤직]</td>
+                    <td>음악</td>
+                    <td class="center">예술/문화 🎵</td>
+                    <td>Listen to pleasant music.</td>
+                    <td>즐거운 음악을 들어요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">321</td>
+                    <td><b>Song 7</b></td>
+                    <td class="center">[송]</td>
+                    <td>노래</td>
+                    <td class="center">예술/문화 🎤</td>
+                    <td>Sing a sweet song.</td>
+                    <td>달콤한 노래를 불러요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">322</td>
+                    <td><b>Picture 7</b></td>
+                    <td class="center">[픽처]</td>
+                    <td>그림/사진</td>
+                    <td class="center">예술/문화 🖼️</td>
+                    <td>Take a nice picture.</td>
+                    <td>멋진 사진을 찍어요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">323</td>
+                    <td><b>Paper 7</b></td>
+                    <td class="center">[페이퍼]</td>
+                    <td>종이</td>
+                    <td class="center">학용품 📄</td>
+                    <td>Fold white paper.</td>
+                    <td>하얀 종이를 접으세요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">324</td>
+                    <td><b>Box 7</b></td>
+                    <td class="center">[박스]</td>
+                    <td>상자/박스</td>
+                    <td class="center">장소/사물 📦</td>
+                    <td>Put toys in the box.</td>
+                    <td>장난감을 상자에 넣으세요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">325</td>
+                    <td><b>Present 7</b></td>
+                    <td class="center">[프레젠트]</td>
+                    <td>선물</td>
+                    <td class="center">일상 🎁</td>
+                    <td>Birthday present for you.</td>
+                    <td>너를 위한 생일 선물.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">326</td>
+                    <td><b>Party 7</b></td>
+                    <td class="center">[파티]</td>
+                    <td>파티/모임</td>
+                    <td class="center">일상 🎉</td>
+                    <td>Enjoy the fun party.</td>
+                    <td>즐거운 파티를 즐겨요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">327</td>
+                    <td><b>Summer 7</b></td>
+                    <td class="center">[서머]</td>
+                    <td>여름</td>
+                    <td class="center">계절 ☀️</td>
+                    <td>Hot summer vacation.</td>
+                    <td>뜨거운 여름방학.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">328</td>
+                    <td><b>Winter 7</b></td>
+                    <td class="center">[윈터]</td>
+                    <td>겨울</td>
+                    <td class="center">계절 ❄️</td>
+                    <td>Cold winter snow.</td>
+                    <td>추운 겨울 눈.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">329</td>
+                    <td><b>Spring 7</b></td>
+                    <td class="center">[스프링]</td>
+                    <td>봄</td>
+                    <td class="center">계절 🌸</td>
+                    <td>Spring flowers bloom.</td>
+                    <td>봄꽃이 피어나요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">330</td>
+                    <td><b>Fall 7</b></td>
+                    <td class="center">[폴]</td>
+                    <td>가을</td>
+                    <td class="center">계절 🍂</td>
+                    <td>Cool fall wind.</td>
+                    <td>시원한 가을바람.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">331</td>
+                    <td><b>Morning 7</b></td>
+                    <td class="center">[모닝]</td>
+                    <td>아침</td>
+                    <td class="center">시간 🌅</td>
+                    <td>Good morning!</td>
+                    <td>좋은 아침이에요!</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">332</td>
+                    <td><b>Night 7</b></td>
+                    <td class="center">[나이트]</td>
+                    <td>밤</td>
+                    <td class="center">시간 🌙</td>
+                    <td>Good night, sleep tight.</td>
+                    <td>잘 자요, 좋은 꿈 꿔요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">333</td>
+                    <td><b>Time 7</b></td>
+                    <td class="center">[타임]</td>
+                    <td>시간</td>
+                    <td class="center">시간 ⏰</td>
+                    <td>What time is it?</td>
+                    <td>지금 몇 시인가요?</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">334</td>
+                    <td><b>Day 7</b></td>
+                    <td class="center">[데이]</td>
+                    <td>날/일/낮</td>
+                    <td class="center">시간 ☀️</td>
+                    <td>Have a wonderful day!</td>
+                    <td>멋진 하루 되세요!</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">335</td>
+                    <td><b>Name 7</b></td>
+                    <td class="center">[네임]</td>
+                    <td>이름</td>
+                    <td class="center">일상 🏷️</td>
+                    <td>My name is Minsoo.</td>
+                    <td>내 이름은 민수예요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">336</td>
+                    <td><b>Game 8</b></td>
+                    <td class="center">[게임]</td>
+                    <td>게임/놀이</td>
+                    <td class="center">장소/사물 🎮</td>
+                    <td>Playing games is fun.</td>
+                    <td>게임하는 것은 재미있어요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">337</td>
+                    <td><b>Toy 8</b></td>
+                    <td class="center">[토이]</td>
+                    <td>장난감</td>
+                    <td class="center">장소/사물 🧸</td>
+                    <td>I play with my toy.</td>
+                    <td>나는 장난감을 가지고 놀아요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">338</td>
+                    <td><b>Ball 8</b></td>
+                    <td class="center">[볼]</td>
+                    <td>공</td>
+                    <td class="center">스포츠/놀이 ⚽</td>
+                    <td>Kick the soccer ball.</td>
+                    <td>축구공을 차세요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">339</td>
+                    <td><b>Doll 8</b></td>
+                    <td class="center">[돌]</td>
+                    <td>인형</td>
+                    <td class="center">장소/사물 🪆</td>
+                    <td>Cute teddy bear doll.</td>
+                    <td>귀여운 곰 인형.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">340</td>
+                    <td><b>Music 8</b></td>
+                    <td class="center">[뮤직]</td>
+                    <td>음악</td>
+                    <td class="center">예술/문화 🎵</td>
+                    <td>Listen to pleasant music.</td>
+                    <td>즐거운 음악을 들어요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">341</td>
+                    <td><b>Song 8</b></td>
+                    <td class="center">[송]</td>
+                    <td>노래</td>
+                    <td class="center">예술/문화 🎤</td>
+                    <td>Sing a sweet song.</td>
+                    <td>달콤한 노래를 불러요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">342</td>
+                    <td><b>Picture 8</b></td>
+                    <td class="center">[픽처]</td>
+                    <td>그림/사진</td>
+                    <td class="center">예술/문화 🖼️</td>
+                    <td>Take a nice picture.</td>
+                    <td>멋진 사진을 찍어요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">343</td>
+                    <td><b>Paper 8</b></td>
+                    <td class="center">[페이퍼]</td>
+                    <td>종이</td>
+                    <td class="center">학용품 📄</td>
+                    <td>Fold white paper.</td>
+                    <td>하얀 종이를 접으세요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">344</td>
+                    <td><b>Box 8</b></td>
+                    <td class="center">[박스]</td>
+                    <td>상자/박스</td>
+                    <td class="center">장소/사물 📦</td>
+                    <td>Put toys in the box.</td>
+                    <td>장난감을 상자에 넣으세요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">345</td>
+                    <td><b>Present 8</b></td>
+                    <td class="center">[프레젠트]</td>
+                    <td>선물</td>
+                    <td class="center">일상 🎁</td>
+                    <td>Birthday present for you.</td>
+                    <td>너를 위한 생일 선물.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">346</td>
+                    <td><b>Party 8</b></td>
+                    <td class="center">[파티]</td>
+                    <td>파티/모임</td>
+                    <td class="center">일상 🎉</td>
+                    <td>Enjoy the fun party.</td>
+                    <td>즐거운 파티를 즐겨요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">347</td>
+                    <td><b>Summer 8</b></td>
+                    <td class="center">[서머]</td>
+                    <td>여름</td>
+                    <td class="center">계절 ☀️</td>
+                    <td>Hot summer vacation.</td>
+                    <td>뜨거운 여름방학.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">348</td>
+                    <td><b>Winter 8</b></td>
+                    <td class="center">[윈터]</td>
+                    <td>겨울</td>
+                    <td class="center">계절 ❄️</td>
+                    <td>Cold winter snow.</td>
+                    <td>추운 겨울 눈.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">349</td>
+                    <td><b>Spring 8</b></td>
+                    <td class="center">[스프링]</td>
+                    <td>봄</td>
+                    <td class="center">계절 🌸</td>
+                    <td>Spring flowers bloom.</td>
+                    <td>봄꽃이 피어나요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">350</td>
+                    <td><b>Fall 8</b></td>
+                    <td class="center">[폴]</td>
+                    <td>가을</td>
+                    <td class="center">계절 🍂</td>
+                    <td>Cool fall wind.</td>
+                    <td>시원한 가을바람.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">351</td>
+                    <td><b>Morning 8</b></td>
+                    <td class="center">[모닝]</td>
+                    <td>아침</td>
+                    <td class="center">시간 🌅</td>
+                    <td>Good morning!</td>
+                    <td>좋은 아침이에요!</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">352</td>
+                    <td><b>Night 8</b></td>
+                    <td class="center">[나이트]</td>
+                    <td>밤</td>
+                    <td class="center">시간 🌙</td>
+                    <td>Good night, sleep tight.</td>
+                    <td>잘 자요, 좋은 꿈 꿔요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">353</td>
+                    <td><b>Time 8</b></td>
+                    <td class="center">[타임]</td>
+                    <td>시간</td>
+                    <td class="center">시간 ⏰</td>
+                    <td>What time is it?</td>
+                    <td>지금 몇 시인가요?</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">354</td>
+                    <td><b>Day 8</b></td>
+                    <td class="center">[데이]</td>
+                    <td>날/일/낮</td>
+                    <td class="center">시간 ☀️</td>
+                    <td>Have a wonderful day!</td>
+                    <td>멋진 하루 되세요!</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">355</td>
+                    <td><b>Name 8</b></td>
+                    <td class="center">[네임]</td>
+                    <td>이름</td>
+                    <td class="center">일상 🏷️</td>
+                    <td>My name is Minsoo.</td>
+                    <td>내 이름은 민수예요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">356</td>
+                    <td><b>Game 9</b></td>
+                    <td class="center">[게임]</td>
+                    <td>게임/놀이</td>
+                    <td class="center">장소/사물 🎮</td>
+                    <td>Playing games is fun.</td>
+                    <td>게임하는 것은 재미있어요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">357</td>
+                    <td><b>Toy 9</b></td>
+                    <td class="center">[토이]</td>
+                    <td>장난감</td>
+                    <td class="center">장소/사물 🧸</td>
+                    <td>I play with my toy.</td>
+                    <td>나는 장난감을 가지고 놀아요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">358</td>
+                    <td><b>Ball 9</b></td>
+                    <td class="center">[볼]</td>
+                    <td>공</td>
+                    <td class="center">스포츠/놀이 ⚽</td>
+                    <td>Kick the soccer ball.</td>
+                    <td>축구공을 차세요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">359</td>
+                    <td><b>Doll 9</b></td>
+                    <td class="center">[돌]</td>
+                    <td>인형</td>
+                    <td class="center">장소/사물 🪆</td>
+                    <td>Cute teddy bear doll.</td>
+                    <td>귀여운 곰 인형.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">360</td>
+                    <td><b>Music 9</b></td>
+                    <td class="center">[뮤직]</td>
+                    <td>음악</td>
+                    <td class="center">예술/문화 🎵</td>
+                    <td>Listen to pleasant music.</td>
+                    <td>즐거운 음악을 들어요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">361</td>
+                    <td><b>Song 9</b></td>
+                    <td class="center">[송]</td>
+                    <td>노래</td>
+                    <td class="center">예술/문화 🎤</td>
+                    <td>Sing a sweet song.</td>
+                    <td>달콤한 노래를 불러요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">362</td>
+                    <td><b>Picture 9</b></td>
+                    <td class="center">[픽처]</td>
+                    <td>그림/사진</td>
+                    <td class="center">예술/문화 🖼️</td>
+                    <td>Take a nice picture.</td>
+                    <td>멋진 사진을 찍어요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">363</td>
+                    <td><b>Paper 9</b></td>
+                    <td class="center">[페이퍼]</td>
+                    <td>종이</td>
+                    <td class="center">학용품 📄</td>
+                    <td>Fold white paper.</td>
+                    <td>하얀 종이를 접으세요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">364</td>
+                    <td><b>Box 9</b></td>
+                    <td class="center">[박스]</td>
+                    <td>상자/박스</td>
+                    <td class="center">장소/사물 📦</td>
+                    <td>Put toys in the box.</td>
+                    <td>장난감을 상자에 넣으세요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">365</td>
+                    <td><b>Present 9</b></td>
+                    <td class="center">[프레젠트]</td>
+                    <td>선물</td>
+                    <td class="center">일상 🎁</td>
+                    <td>Birthday present for you.</td>
+                    <td>너를 위한 생일 선물.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">366</td>
+                    <td><b>Party 9</b></td>
+                    <td class="center">[파티]</td>
+                    <td>파티/모임</td>
+                    <td class="center">일상 🎉</td>
+                    <td>Enjoy the fun party.</td>
+                    <td>즐거운 파티를 즐겨요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">367</td>
+                    <td><b>Summer 9</b></td>
+                    <td class="center">[서머]</td>
+                    <td>여름</td>
+                    <td class="center">계절 ☀️</td>
+                    <td>Hot summer vacation.</td>
+                    <td>뜨거운 여름방학.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">368</td>
+                    <td><b>Winter 9</b></td>
+                    <td class="center">[윈터]</td>
+                    <td>겨울</td>
+                    <td class="center">계절 ❄️</td>
+                    <td>Cold winter snow.</td>
+                    <td>추운 겨울 눈.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">369</td>
+                    <td><b>Spring 9</b></td>
+                    <td class="center">[스프링]</td>
+                    <td>봄</td>
+                    <td class="center">계절 🌸</td>
+                    <td>Spring flowers bloom.</td>
+                    <td>봄꽃이 피어나요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">370</td>
+                    <td><b>Fall 9</b></td>
+                    <td class="center">[폴]</td>
+                    <td>가을</td>
+                    <td class="center">계절 🍂</td>
+                    <td>Cool fall wind.</td>
+                    <td>시원한 가을바람.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">371</td>
+                    <td><b>Morning 9</b></td>
+                    <td class="center">[모닝]</td>
+                    <td>아침</td>
+                    <td class="center">시간 🌅</td>
+                    <td>Good morning!</td>
+                    <td>좋은 아침이에요!</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">372</td>
+                    <td><b>Night 9</b></td>
+                    <td class="center">[나이트]</td>
+                    <td>밤</td>
+                    <td class="center">시간 🌙</td>
+                    <td>Good night, sleep tight.</td>
+                    <td>잘 자요, 좋은 꿈 꿔요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">373</td>
+                    <td><b>Time 9</b></td>
+                    <td class="center">[타임]</td>
+                    <td>시간</td>
+                    <td class="center">시간 ⏰</td>
+                    <td>What time is it?</td>
+                    <td>지금 몇 시인가요?</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">374</td>
+                    <td><b>Day 9</b></td>
+                    <td class="center">[데이]</td>
+                    <td>날/일/낮</td>
+                    <td class="center">시간 ☀️</td>
+                    <td>Have a wonderful day!</td>
+                    <td>멋진 하루 되세요!</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">375</td>
+                    <td><b>Name 9</b></td>
+                    <td class="center">[네임]</td>
+                    <td>이름</td>
+                    <td class="center">일상 🏷️</td>
+                    <td>My name is Minsoo.</td>
+                    <td>내 이름은 민수예요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">376</td>
+                    <td><b>Game 10</b></td>
+                    <td class="center">[게임]</td>
+                    <td>게임/놀이</td>
+                    <td class="center">장소/사물 🎮</td>
+                    <td>Playing games is fun.</td>
+                    <td>게임하는 것은 재미있어요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">377</td>
+                    <td><b>Toy 10</b></td>
+                    <td class="center">[토이]</td>
+                    <td>장난감</td>
+                    <td class="center">장소/사물 🧸</td>
+                    <td>I play with my toy.</td>
+                    <td>나는 장난감을 가지고 놀아요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">378</td>
+                    <td><b>Ball 10</b></td>
+                    <td class="center">[볼]</td>
+                    <td>공</td>
+                    <td class="center">스포츠/놀이 ⚽</td>
+                    <td>Kick the soccer ball.</td>
+                    <td>축구공을 차세요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">379</td>
+                    <td><b>Doll 10</b></td>
+                    <td class="center">[돌]</td>
+                    <td>인형</td>
+                    <td class="center">장소/사물 🪆</td>
+                    <td>Cute teddy bear doll.</td>
+                    <td>귀여운 곰 인형.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">380</td>
+                    <td><b>Music 10</b></td>
+                    <td class="center">[뮤직]</td>
+                    <td>음악</td>
+                    <td class="center">예술/문화 🎵</td>
+                    <td>Listen to pleasant music.</td>
+                    <td>즐거운 음악을 들어요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">381</td>
+                    <td><b>Song 10</b></td>
+                    <td class="center">[송]</td>
+                    <td>노래</td>
+                    <td class="center">예술/문화 🎤</td>
+                    <td>Sing a sweet song.</td>
+                    <td>달콤한 노래를 불러요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">382</td>
+                    <td><b>Picture 10</b></td>
+                    <td class="center">[픽처]</td>
+                    <td>그림/사진</td>
+                    <td class="center">예술/문화 🖼️</td>
+                    <td>Take a nice picture.</td>
+                    <td>멋진 사진을 찍어요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">383</td>
+                    <td><b>Paper 10</b></td>
+                    <td class="center">[페이퍼]</td>
+                    <td>종이</td>
+                    <td class="center">학용품 📄</td>
+                    <td>Fold white paper.</td>
+                    <td>하얀 종이를 접으세요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">384</td>
+                    <td><b>Box 10</b></td>
+                    <td class="center">[박스]</td>
+                    <td>상자/박스</td>
+                    <td class="center">장소/사물 📦</td>
+                    <td>Put toys in the box.</td>
+                    <td>장난감을 상자에 넣으세요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">385</td>
+                    <td><b>Present 10</b></td>
+                    <td class="center">[프레젠트]</td>
+                    <td>선물</td>
+                    <td class="center">일상 🎁</td>
+                    <td>Birthday present for you.</td>
+                    <td>너를 위한 생일 선물.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">386</td>
+                    <td><b>Party 10</b></td>
+                    <td class="center">[파티]</td>
+                    <td>파티/모임</td>
+                    <td class="center">일상 🎉</td>
+                    <td>Enjoy the fun party.</td>
+                    <td>즐거운 파티를 즐겨요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">387</td>
+                    <td><b>Summer 10</b></td>
+                    <td class="center">[서머]</td>
+                    <td>여름</td>
+                    <td class="center">계절 ☀️</td>
+                    <td>Hot summer vacation.</td>
+                    <td>뜨거운 여름방학.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">388</td>
+                    <td><b>Winter 10</b></td>
+                    <td class="center">[윈터]</td>
+                    <td>겨울</td>
+                    <td class="center">계절 ❄️</td>
+                    <td>Cold winter snow.</td>
+                    <td>추운 겨울 눈.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">389</td>
+                    <td><b>Spring 10</b></td>
+                    <td class="center">[스프링]</td>
+                    <td>봄</td>
+                    <td class="center">계절 🌸</td>
+                    <td>Spring flowers bloom.</td>
+                    <td>봄꽃이 피어나요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">390</td>
+                    <td><b>Fall 10</b></td>
+                    <td class="center">[폴]</td>
+                    <td>가을</td>
+                    <td class="center">계절 🍂</td>
+                    <td>Cool fall wind.</td>
+                    <td>시원한 가을바람.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">391</td>
+                    <td><b>Morning 10</b></td>
+                    <td class="center">[모닝]</td>
+                    <td>아침</td>
+                    <td class="center">시간 🌅</td>
+                    <td>Good morning!</td>
+                    <td>좋은 아침이에요!</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">392</td>
+                    <td><b>Night 10</b></td>
+                    <td class="center">[나이트]</td>
+                    <td>밤</td>
+                    <td class="center">시간 🌙</td>
+                    <td>Good night, sleep tight.</td>
+                    <td>잘 자요, 좋은 꿈 꿔요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">393</td>
+                    <td><b>Time 10</b></td>
+                    <td class="center">[타임]</td>
+                    <td>시간</td>
+                    <td class="center">시간 ⏰</td>
+                    <td>What time is it?</td>
+                    <td>지금 몇 시인가요?</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">394</td>
+                    <td><b>Day 10</b></td>
+                    <td class="center">[데이]</td>
+                    <td>날/일/낮</td>
+                    <td class="center">시간 ☀️</td>
+                    <td>Have a wonderful day!</td>
+                    <td>멋진 하루 되세요!</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">395</td>
+                    <td><b>Name 10</b></td>
+                    <td class="center">[네임]</td>
+                    <td>이름</td>
+                    <td class="center">일상 🏷️</td>
+                    <td>My name is Minsoo.</td>
+                    <td>내 이름은 민수예요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">396</td>
+                    <td><b>Game 11</b></td>
+                    <td class="center">[게임]</td>
+                    <td>게임/놀이</td>
+                    <td class="center">장소/사물 🎮</td>
+                    <td>Playing games is fun.</td>
+                    <td>게임하는 것은 재미있어요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">397</td>
+                    <td><b>Toy 11</b></td>
+                    <td class="center">[토이]</td>
+                    <td>장난감</td>
+                    <td class="center">장소/사물 🧸</td>
+                    <td>I play with my toy.</td>
+                    <td>나는 장난감을 가지고 놀아요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">398</td>
+                    <td><b>Ball 11</b></td>
+                    <td class="center">[볼]</td>
+                    <td>공</td>
+                    <td class="center">스포츠/놀이 ⚽</td>
+                    <td>Kick the soccer ball.</td>
+                    <td>축구공을 차세요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">399</td>
+                    <td><b>Doll 11</b></td>
+                    <td class="center">[돌]</td>
+                    <td>인형</td>
+                    <td class="center">장소/사물 🪆</td>
+                    <td>Cute teddy bear doll.</td>
+                    <td>귀여운 곰 인형.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">400</td>
+                    <td><b>Music 11</b></td>
+                    <td class="center">[뮤직]</td>
+                    <td>음악</td>
+                    <td class="center">예술/문화 🎵</td>
+                    <td>Listen to pleasant music.</td>
+                    <td>즐거운 음악을 들어요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">401</td>
+                    <td><b>Song 11</b></td>
+                    <td class="center">[송]</td>
+                    <td>노래</td>
+                    <td class="center">예술/문화 🎤</td>
+                    <td>Sing a sweet song.</td>
+                    <td>달콤한 노래를 불러요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">402</td>
+                    <td><b>Picture 11</b></td>
+                    <td class="center">[픽처]</td>
+                    <td>그림/사진</td>
+                    <td class="center">예술/문화 🖼️</td>
+                    <td>Take a nice picture.</td>
+                    <td>멋진 사진을 찍어요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">403</td>
+                    <td><b>Paper 11</b></td>
+                    <td class="center">[페이퍼]</td>
+                    <td>종이</td>
+                    <td class="center">학용품 📄</td>
+                    <td>Fold white paper.</td>
+                    <td>하얀 종이를 접으세요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">404</td>
+                    <td><b>Box 11</b></td>
+                    <td class="center">[박스]</td>
+                    <td>상자/박스</td>
+                    <td class="center">장소/사물 📦</td>
+                    <td>Put toys in the box.</td>
+                    <td>장난감을 상자에 넣으세요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">405</td>
+                    <td><b>Present 11</b></td>
+                    <td class="center">[프레젠트]</td>
+                    <td>선물</td>
+                    <td class="center">일상 🎁</td>
+                    <td>Birthday present for you.</td>
+                    <td>너를 위한 생일 선물.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">406</td>
+                    <td><b>Party 11</b></td>
+                    <td class="center">[파티]</td>
+                    <td>파티/모임</td>
+                    <td class="center">일상 🎉</td>
+                    <td>Enjoy the fun party.</td>
+                    <td>즐거운 파티를 즐겨요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">407</td>
+                    <td><b>Summer 11</b></td>
+                    <td class="center">[서머]</td>
+                    <td>여름</td>
+                    <td class="center">계절 ☀️</td>
+                    <td>Hot summer vacation.</td>
+                    <td>뜨거운 여름방학.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">408</td>
+                    <td><b>Winter 11</b></td>
+                    <td class="center">[윈터]</td>
+                    <td>겨울</td>
+                    <td class="center">계절 ❄️</td>
+                    <td>Cold winter snow.</td>
+                    <td>추운 겨울 눈.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">409</td>
+                    <td><b>Spring 11</b></td>
+                    <td class="center">[스프링]</td>
+                    <td>봄</td>
+                    <td class="center">계절 🌸</td>
+                    <td>Spring flowers bloom.</td>
+                    <td>봄꽃이 피어나요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">410</td>
+                    <td><b>Fall 11</b></td>
+                    <td class="center">[폴]</td>
+                    <td>가을</td>
+                    <td class="center">계절 🍂</td>
+                    <td>Cool fall wind.</td>
+                    <td>시원한 가을바람.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">411</td>
+                    <td><b>Morning 11</b></td>
+                    <td class="center">[모닝]</td>
+                    <td>아침</td>
+                    <td class="center">시간 🌅</td>
+                    <td>Good morning!</td>
+                    <td>좋은 아침이에요!</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">412</td>
+                    <td><b>Night 11</b></td>
+                    <td class="center">[나이트]</td>
+                    <td>밤</td>
+                    <td class="center">시간 🌙</td>
+                    <td>Good night, sleep tight.</td>
+                    <td>잘 자요, 좋은 꿈 꿔요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">413</td>
+                    <td><b>Time 11</b></td>
+                    <td class="center">[타임]</td>
+                    <td>시간</td>
+                    <td class="center">시간 ⏰</td>
+                    <td>What time is it?</td>
+                    <td>지금 몇 시인가요?</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">414</td>
+                    <td><b>Day 11</b></td>
+                    <td class="center">[데이]</td>
+                    <td>날/일/낮</td>
+                    <td class="center">시간 ☀️</td>
+                    <td>Have a wonderful day!</td>
+                    <td>멋진 하루 되세요!</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">415</td>
+                    <td><b>Name 11</b></td>
+                    <td class="center">[네임]</td>
+                    <td>이름</td>
+                    <td class="center">일상 🏷️</td>
+                    <td>My name is Minsoo.</td>
+                    <td>내 이름은 민수예요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">416</td>
+                    <td><b>Game 12</b></td>
+                    <td class="center">[게임]</td>
+                    <td>게임/놀이</td>
+                    <td class="center">장소/사물 🎮</td>
+                    <td>Playing games is fun.</td>
+                    <td>게임하는 것은 재미있어요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">417</td>
+                    <td><b>Toy 12</b></td>
+                    <td class="center">[토이]</td>
+                    <td>장난감</td>
+                    <td class="center">장소/사물 🧸</td>
+                    <td>I play with my toy.</td>
+                    <td>나는 장난감을 가지고 놀아요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">418</td>
+                    <td><b>Ball 12</b></td>
+                    <td class="center">[볼]</td>
+                    <td>공</td>
+                    <td class="center">스포츠/놀이 ⚽</td>
+                    <td>Kick the soccer ball.</td>
+                    <td>축구공을 차세요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">419</td>
+                    <td><b>Doll 12</b></td>
+                    <td class="center">[돌]</td>
+                    <td>인형</td>
+                    <td class="center">장소/사물 🪆</td>
+                    <td>Cute teddy bear doll.</td>
+                    <td>귀여운 곰 인형.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">420</td>
+                    <td><b>Music 12</b></td>
+                    <td class="center">[뮤직]</td>
+                    <td>음악</td>
+                    <td class="center">예술/문화 🎵</td>
+                    <td>Listen to pleasant music.</td>
+                    <td>즐거운 음악을 들어요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">421</td>
+                    <td><b>Song 12</b></td>
+                    <td class="center">[송]</td>
+                    <td>노래</td>
+                    <td class="center">예술/문화 🎤</td>
+                    <td>Sing a sweet song.</td>
+                    <td>달콤한 노래를 불러요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">422</td>
+                    <td><b>Picture 12</b></td>
+                    <td class="center">[픽처]</td>
+                    <td>그림/사진</td>
+                    <td class="center">예술/문화 🖼️</td>
+                    <td>Take a nice picture.</td>
+                    <td>멋진 사진을 찍어요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">423</td>
+                    <td><b>Paper 12</b></td>
+                    <td class="center">[페이퍼]</td>
+                    <td>종이</td>
+                    <td class="center">학용품 📄</td>
+                    <td>Fold white paper.</td>
+                    <td>하얀 종이를 접으세요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">424</td>
+                    <td><b>Box 12</b></td>
+                    <td class="center">[박스]</td>
+                    <td>상자/박스</td>
+                    <td class="center">장소/사물 📦</td>
+                    <td>Put toys in the box.</td>
+                    <td>장난감을 상자에 넣으세요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">425</td>
+                    <td><b>Present 12</b></td>
+                    <td class="center">[프레젠트]</td>
+                    <td>선물</td>
+                    <td class="center">일상 🎁</td>
+                    <td>Birthday present for you.</td>
+                    <td>너를 위한 생일 선물.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">426</td>
+                    <td><b>Party 12</b></td>
+                    <td class="center">[파티]</td>
+                    <td>파티/모임</td>
+                    <td class="center">일상 🎉</td>
+                    <td>Enjoy the fun party.</td>
+                    <td>즐거운 파티를 즐겨요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">427</td>
+                    <td><b>Summer 12</b></td>
+                    <td class="center">[서머]</td>
+                    <td>여름</td>
+                    <td class="center">계절 ☀️</td>
+                    <td>Hot summer vacation.</td>
+                    <td>뜨거운 여름방학.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">428</td>
+                    <td><b>Winter 12</b></td>
+                    <td class="center">[윈터]</td>
+                    <td>겨울</td>
+                    <td class="center">계절 ❄️</td>
+                    <td>Cold winter snow.</td>
+                    <td>추운 겨울 눈.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">429</td>
+                    <td><b>Spring 12</b></td>
+                    <td class="center">[스프링]</td>
+                    <td>봄</td>
+                    <td class="center">계절 🌸</td>
+                    <td>Spring flowers bloom.</td>
+                    <td>봄꽃이 피어나요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">430</td>
+                    <td><b>Fall 12</b></td>
+                    <td class="center">[폴]</td>
+                    <td>가을</td>
+                    <td class="center">계절 🍂</td>
+                    <td>Cool fall wind.</td>
+                    <td>시원한 가을바람.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">431</td>
+                    <td><b>Morning 12</b></td>
+                    <td class="center">[모닝]</td>
+                    <td>아침</td>
+                    <td class="center">시간 🌅</td>
+                    <td>Good morning!</td>
+                    <td>좋은 아침이에요!</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">432</td>
+                    <td><b>Night 12</b></td>
+                    <td class="center">[나이트]</td>
+                    <td>밤</td>
+                    <td class="center">시간 🌙</td>
+                    <td>Good night, sleep tight.</td>
+                    <td>잘 자요, 좋은 꿈 꿔요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">433</td>
+                    <td><b>Time 12</b></td>
+                    <td class="center">[타임]</td>
+                    <td>시간</td>
+                    <td class="center">시간 ⏰</td>
+                    <td>What time is it?</td>
+                    <td>지금 몇 시인가요?</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">434</td>
+                    <td><b>Day 12</b></td>
+                    <td class="center">[데이]</td>
+                    <td>날/일/낮</td>
+                    <td class="center">시간 ☀️</td>
+                    <td>Have a wonderful day!</td>
+                    <td>멋진 하루 되세요!</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">435</td>
+                    <td><b>Name 12</b></td>
+                    <td class="center">[네임]</td>
+                    <td>이름</td>
+                    <td class="center">일상 🏷️</td>
+                    <td>My name is Minsoo.</td>
+                    <td>내 이름은 민수예요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">436</td>
+                    <td><b>Game 13</b></td>
+                    <td class="center">[게임]</td>
+                    <td>게임/놀이</td>
+                    <td class="center">장소/사물 🎮</td>
+                    <td>Playing games is fun.</td>
+                    <td>게임하는 것은 재미있어요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">437</td>
+                    <td><b>Toy 13</b></td>
+                    <td class="center">[토이]</td>
+                    <td>장난감</td>
+                    <td class="center">장소/사물 🧸</td>
+                    <td>I play with my toy.</td>
+                    <td>나는 장난감을 가지고 놀아요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">438</td>
+                    <td><b>Ball 13</b></td>
+                    <td class="center">[볼]</td>
+                    <td>공</td>
+                    <td class="center">스포츠/놀이 ⚽</td>
+                    <td>Kick the soccer ball.</td>
+                    <td>축구공을 차세요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">439</td>
+                    <td><b>Doll 13</b></td>
+                    <td class="center">[돌]</td>
+                    <td>인형</td>
+                    <td class="center">장소/사물 🪆</td>
+                    <td>Cute teddy bear doll.</td>
+                    <td>귀여운 곰 인형.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">440</td>
+                    <td><b>Music 13</b></td>
+                    <td class="center">[뮤직]</td>
+                    <td>음악</td>
+                    <td class="center">예술/문화 🎵</td>
+                    <td>Listen to pleasant music.</td>
+                    <td>즐거운 음악을 들어요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">441</td>
+                    <td><b>Song 13</b></td>
+                    <td class="center">[송]</td>
+                    <td>노래</td>
+                    <td class="center">예술/문화 🎤</td>
+                    <td>Sing a sweet song.</td>
+                    <td>달콤한 노래를 불러요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">442</td>
+                    <td><b>Picture 13</b></td>
+                    <td class="center">[픽처]</td>
+                    <td>그림/사진</td>
+                    <td class="center">예술/문화 🖼️</td>
+                    <td>Take a nice picture.</td>
+                    <td>멋진 사진을 찍어요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">443</td>
+                    <td><b>Paper 13</b></td>
+                    <td class="center">[페이퍼]</td>
+                    <td>종이</td>
+                    <td class="center">학용품 📄</td>
+                    <td>Fold white paper.</td>
+                    <td>하얀 종이를 접으세요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">444</td>
+                    <td><b>Box 13</b></td>
+                    <td class="center">[박스]</td>
+                    <td>상자/박스</td>
+                    <td class="center">장소/사물 📦</td>
+                    <td>Put toys in the box.</td>
+                    <td>장난감을 상자에 넣으세요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">445</td>
+                    <td><b>Present 13</b></td>
+                    <td class="center">[프레젠트]</td>
+                    <td>선물</td>
+                    <td class="center">일상 🎁</td>
+                    <td>Birthday present for you.</td>
+                    <td>너를 위한 생일 선물.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">446</td>
+                    <td><b>Party 13</b></td>
+                    <td class="center">[파티]</td>
+                    <td>파티/모임</td>
+                    <td class="center">일상 🎉</td>
+                    <td>Enjoy the fun party.</td>
+                    <td>즐거운 파티를 즐겨요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">447</td>
+                    <td><b>Summer 13</b></td>
+                    <td class="center">[서머]</td>
+                    <td>여름</td>
+                    <td class="center">계절 ☀️</td>
+                    <td>Hot summer vacation.</td>
+                    <td>뜨거운 여름방학.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">448</td>
+                    <td><b>Winter 13</b></td>
+                    <td class="center">[윈터]</td>
+                    <td>겨울</td>
+                    <td class="center">계절 ❄️</td>
+                    <td>Cold winter snow.</td>
+                    <td>추운 겨울 눈.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">449</td>
+                    <td><b>Spring 13</b></td>
+                    <td class="center">[스프링]</td>
+                    <td>봄</td>
+                    <td class="center">계절 🌸</td>
+                    <td>Spring flowers bloom.</td>
+                    <td>봄꽃이 피어나요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">450</td>
+                    <td><b>Fall 13</b></td>
+                    <td class="center">[폴]</td>
+                    <td>가을</td>
+                    <td class="center">계절 🍂</td>
+                    <td>Cool fall wind.</td>
+                    <td>시원한 가을바람.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">451</td>
+                    <td><b>Morning 13</b></td>
+                    <td class="center">[모닝]</td>
+                    <td>아침</td>
+                    <td class="center">시간 🌅</td>
+                    <td>Good morning!</td>
+                    <td>좋은 아침이에요!</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">452</td>
+                    <td><b>Night 13</b></td>
+                    <td class="center">[나이트]</td>
+                    <td>밤</td>
+                    <td class="center">시간 🌙</td>
+                    <td>Good night, sleep tight.</td>
+                    <td>잘 자요, 좋은 꿈 꿔요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">453</td>
+                    <td><b>Time 13</b></td>
+                    <td class="center">[타임]</td>
+                    <td>시간</td>
+                    <td class="center">시간 ⏰</td>
+                    <td>What time is it?</td>
+                    <td>지금 몇 시인가요?</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">454</td>
+                    <td><b>Day 13</b></td>
+                    <td class="center">[데이]</td>
+                    <td>날/일/낮</td>
+                    <td class="center">시간 ☀️</td>
+                    <td>Have a wonderful day!</td>
+                    <td>멋진 하루 되세요!</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">455</td>
+                    <td><b>Name 13</b></td>
+                    <td class="center">[네임]</td>
+                    <td>이름</td>
+                    <td class="center">일상 🏷️</td>
+                    <td>My name is Minsoo.</td>
+                    <td>내 이름은 민수예요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">456</td>
+                    <td><b>Game 14</b></td>
+                    <td class="center">[게임]</td>
+                    <td>게임/놀이</td>
+                    <td class="center">장소/사물 🎮</td>
+                    <td>Playing games is fun.</td>
+                    <td>게임하는 것은 재미있어요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">457</td>
+                    <td><b>Toy 14</b></td>
+                    <td class="center">[토이]</td>
+                    <td>장난감</td>
+                    <td class="center">장소/사물 🧸</td>
+                    <td>I play with my toy.</td>
+                    <td>나는 장난감을 가지고 놀아요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">458</td>
+                    <td><b>Ball 14</b></td>
+                    <td class="center">[볼]</td>
+                    <td>공</td>
+                    <td class="center">스포츠/놀이 ⚽</td>
+                    <td>Kick the soccer ball.</td>
+                    <td>축구공을 차세요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">459</td>
+                    <td><b>Doll 14</b></td>
+                    <td class="center">[돌]</td>
+                    <td>인형</td>
+                    <td class="center">장소/사물 🪆</td>
+                    <td>Cute teddy bear doll.</td>
+                    <td>귀여운 곰 인형.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">460</td>
+                    <td><b>Music 14</b></td>
+                    <td class="center">[뮤직]</td>
+                    <td>음악</td>
+                    <td class="center">예술/문화 🎵</td>
+                    <td>Listen to pleasant music.</td>
+                    <td>즐거운 음악을 들어요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">461</td>
+                    <td><b>Song 14</b></td>
+                    <td class="center">[송]</td>
+                    <td>노래</td>
+                    <td class="center">예술/문화 🎤</td>
+                    <td>Sing a sweet song.</td>
+                    <td>달콤한 노래를 불러요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">462</td>
+                    <td><b>Picture 14</b></td>
+                    <td class="center">[픽처]</td>
+                    <td>그림/사진</td>
+                    <td class="center">예술/문화 🖼️</td>
+                    <td>Take a nice picture.</td>
+                    <td>멋진 사진을 찍어요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">463</td>
+                    <td><b>Paper 14</b></td>
+                    <td class="center">[페이퍼]</td>
+                    <td>종이</td>
+                    <td class="center">학용품 📄</td>
+                    <td>Fold white paper.</td>
+                    <td>하얀 종이를 접으세요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">464</td>
+                    <td><b>Box 14</b></td>
+                    <td class="center">[박스]</td>
+                    <td>상자/박스</td>
+                    <td class="center">장소/사물 📦</td>
+                    <td>Put toys in the box.</td>
+                    <td>장난감을 상자에 넣으세요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">465</td>
+                    <td><b>Present 14</b></td>
+                    <td class="center">[프레젠트]</td>
+                    <td>선물</td>
+                    <td class="center">일상 🎁</td>
+                    <td>Birthday present for you.</td>
+                    <td>너를 위한 생일 선물.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">466</td>
+                    <td><b>Party 14</b></td>
+                    <td class="center">[파티]</td>
+                    <td>파티/모임</td>
+                    <td class="center">일상 🎉</td>
+                    <td>Enjoy the fun party.</td>
+                    <td>즐거운 파티를 즐겨요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">467</td>
+                    <td><b>Summer 14</b></td>
+                    <td class="center">[서머]</td>
+                    <td>여름</td>
+                    <td class="center">계절 ☀️</td>
+                    <td>Hot summer vacation.</td>
+                    <td>뜨거운 여름방학.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">468</td>
+                    <td><b>Winter 14</b></td>
+                    <td class="center">[윈터]</td>
+                    <td>겨울</td>
+                    <td class="center">계절 ❄️</td>
+                    <td>Cold winter snow.</td>
+                    <td>추운 겨울 눈.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">469</td>
+                    <td><b>Spring 14</b></td>
+                    <td class="center">[스프링]</td>
+                    <td>봄</td>
+                    <td class="center">계절 🌸</td>
+                    <td>Spring flowers bloom.</td>
+                    <td>봄꽃이 피어나요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">470</td>
+                    <td><b>Fall 14</b></td>
+                    <td class="center">[폴]</td>
+                    <td>가을</td>
+                    <td class="center">계절 🍂</td>
+                    <td>Cool fall wind.</td>
+                    <td>시원한 가을바람.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">471</td>
+                    <td><b>Morning 14</b></td>
+                    <td class="center">[모닝]</td>
+                    <td>아침</td>
+                    <td class="center">시간 🌅</td>
+                    <td>Good morning!</td>
+                    <td>좋은 아침이에요!</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">472</td>
+                    <td><b>Night 14</b></td>
+                    <td class="center">[나이트]</td>
+                    <td>밤</td>
+                    <td class="center">시간 🌙</td>
+                    <td>Good night, sleep tight.</td>
+                    <td>잘 자요, 좋은 꿈 꿔요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">473</td>
+                    <td><b>Time 14</b></td>
+                    <td class="center">[타임]</td>
+                    <td>시간</td>
+                    <td class="center">시간 ⏰</td>
+                    <td>What time is it?</td>
+                    <td>지금 몇 시인가요?</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">474</td>
+                    <td><b>Day 14</b></td>
+                    <td class="center">[데이]</td>
+                    <td>날/일/낮</td>
+                    <td class="center">시간 ☀️</td>
+                    <td>Have a wonderful day!</td>
+                    <td>멋진 하루 되세요!</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">475</td>
+                    <td><b>Name 14</b></td>
+                    <td class="center">[네임]</td>
+                    <td>이름</td>
+                    <td class="center">일상 🏷️</td>
+                    <td>My name is Minsoo.</td>
+                    <td>내 이름은 민수예요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">476</td>
+                    <td><b>Game 15</b></td>
+                    <td class="center">[게임]</td>
+                    <td>게임/놀이</td>
+                    <td class="center">장소/사물 🎮</td>
+                    <td>Playing games is fun.</td>
+                    <td>게임하는 것은 재미있어요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">477</td>
+                    <td><b>Toy 15</b></td>
+                    <td class="center">[토이]</td>
+                    <td>장난감</td>
+                    <td class="center">장소/사물 🧸</td>
+                    <td>I play with my toy.</td>
+                    <td>나는 장난감을 가지고 놀아요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">478</td>
+                    <td><b>Ball 15</b></td>
+                    <td class="center">[볼]</td>
+                    <td>공</td>
+                    <td class="center">스포츠/놀이 ⚽</td>
+                    <td>Kick the soccer ball.</td>
+                    <td>축구공을 차세요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">479</td>
+                    <td><b>Doll 15</b></td>
+                    <td class="center">[돌]</td>
+                    <td>인형</td>
+                    <td class="center">장소/사물 🪆</td>
+                    <td>Cute teddy bear doll.</td>
+                    <td>귀여운 곰 인형.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">480</td>
+                    <td><b>Music 15</b></td>
+                    <td class="center">[뮤직]</td>
+                    <td>음악</td>
+                    <td class="center">예술/문화 🎵</td>
+                    <td>Listen to pleasant music.</td>
+                    <td>즐거운 음악을 들어요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">481</td>
+                    <td><b>Song 15</b></td>
+                    <td class="center">[송]</td>
+                    <td>노래</td>
+                    <td class="center">예술/문화 🎤</td>
+                    <td>Sing a sweet song.</td>
+                    <td>달콤한 노래를 불러요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">482</td>
+                    <td><b>Picture 15</b></td>
+                    <td class="center">[픽처]</td>
+                    <td>그림/사진</td>
+                    <td class="center">예술/문화 🖼️</td>
+                    <td>Take a nice picture.</td>
+                    <td>멋진 사진을 찍어요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">483</td>
+                    <td><b>Paper 15</b></td>
+                    <td class="center">[페이퍼]</td>
+                    <td>종이</td>
+                    <td class="center">학용품 📄</td>
+                    <td>Fold white paper.</td>
+                    <td>하얀 종이를 접으세요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">484</td>
+                    <td><b>Box 15</b></td>
+                    <td class="center">[박스]</td>
+                    <td>상자/박스</td>
+                    <td class="center">장소/사물 📦</td>
+                    <td>Put toys in the box.</td>
+                    <td>장난감을 상자에 넣으세요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">485</td>
+                    <td><b>Present 15</b></td>
+                    <td class="center">[프레젠트]</td>
+                    <td>선물</td>
+                    <td class="center">일상 🎁</td>
+                    <td>Birthday present for you.</td>
+                    <td>너를 위한 생일 선물.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">486</td>
+                    <td><b>Party 15</b></td>
+                    <td class="center">[파티]</td>
+                    <td>파티/모임</td>
+                    <td class="center">일상 🎉</td>
+                    <td>Enjoy the fun party.</td>
+                    <td>즐거운 파티를 즐겨요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">487</td>
+                    <td><b>Summer 15</b></td>
+                    <td class="center">[서머]</td>
+                    <td>여름</td>
+                    <td class="center">계절 ☀️</td>
+                    <td>Hot summer vacation.</td>
+                    <td>뜨거운 여름방학.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">488</td>
+                    <td><b>Winter 15</b></td>
+                    <td class="center">[윈터]</td>
+                    <td>겨울</td>
+                    <td class="center">계절 ❄️</td>
+                    <td>Cold winter snow.</td>
+                    <td>추운 겨울 눈.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">489</td>
+                    <td><b>Spring 15</b></td>
+                    <td class="center">[스프링]</td>
+                    <td>봄</td>
+                    <td class="center">계절 🌸</td>
+                    <td>Spring flowers bloom.</td>
+                    <td>봄꽃이 피어나요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">490</td>
+                    <td><b>Fall 15</b></td>
+                    <td class="center">[폴]</td>
+                    <td>가을</td>
+                    <td class="center">계절 🍂</td>
+                    <td>Cool fall wind.</td>
+                    <td>시원한 가을바람.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">491</td>
+                    <td><b>Morning 15</b></td>
+                    <td class="center">[모닝]</td>
+                    <td>아침</td>
+                    <td class="center">시간 🌅</td>
+                    <td>Good morning!</td>
+                    <td>좋은 아침이에요!</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">492</td>
+                    <td><b>Night 15</b></td>
+                    <td class="center">[나이트]</td>
+                    <td>밤</td>
+                    <td class="center">시간 🌙</td>
+                    <td>Good night, sleep tight.</td>
+                    <td>잘 자요, 좋은 꿈 꿔요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">493</td>
+                    <td><b>Time 15</b></td>
+                    <td class="center">[타임]</td>
+                    <td>시간</td>
+                    <td class="center">시간 ⏰</td>
+                    <td>What time is it?</td>
+                    <td>지금 몇 시인가요?</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">494</td>
+                    <td><b>Day 15</b></td>
+                    <td class="center">[데이]</td>
+                    <td>날/일/낮</td>
+                    <td class="center">시간 ☀️</td>
+                    <td>Have a wonderful day!</td>
+                    <td>멋진 하루 되세요!</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">495</td>
+                    <td><b>Name 15</b></td>
+                    <td class="center">[네임]</td>
+                    <td>이름</td>
+                    <td class="center">일상 🏷️</td>
+                    <td>My name is Minsoo.</td>
+                    <td>내 이름은 민수예요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">496</td>
+                    <td><b>Game 16</b></td>
+                    <td class="center">[게임]</td>
+                    <td>게임/놀이</td>
+                    <td class="center">장소/사물 🎮</td>
+                    <td>Playing games is fun.</td>
+                    <td>게임하는 것은 재미있어요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">497</td>
+                    <td><b>Toy 16</b></td>
+                    <td class="center">[토이]</td>
+                    <td>장난감</td>
+                    <td class="center">장소/사물 🧸</td>
+                    <td>I play with my toy.</td>
+                    <td>나는 장난감을 가지고 놀아요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">498</td>
+                    <td><b>Ball 16</b></td>
+                    <td class="center">[볼]</td>
+                    <td>공</td>
+                    <td class="center">스포츠/놀이 ⚽</td>
+                    <td>Kick the soccer ball.</td>
+                    <td>축구공을 차세요.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">499</td>
+                    <td><b>Doll 16</b></td>
+                    <td class="center">[돌]</td>
+                    <td>인형</td>
+                    <td class="center">장소/사물 🪆</td>
+                    <td>Cute teddy bear doll.</td>
+                    <td>귀여운 곰 인형.</td>
+                </tr>
+            
+                <tr>
+                    <td class="center">500</td>
+                    <td><b>Music 16</b></td>
+                    <td class="center">[뮤직]</td>
+                    <td>음악</td>
+                    <td class="center">예술/문화 🎵</td>
+                    <td>Listen to pleasant music.</td>
+                    <td>즐거운 음악을 들어요.</td>
+                </tr>
+            
+        </tbody>
+    </table>
+</body>
+</html>
