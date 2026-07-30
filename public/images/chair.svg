@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="300" height="300" viewBox="0 0 300 300">
+    <rect width="100%" height="100%" rx="36" fill="#FFF9E6"/>
+    <circle cx="150" cy="135" r="90" fill="#FFFFFF" opacity="0.95"/>
+    <text x="150" y="165" font-family="'Segoe UI Emoji', 'Apple Color Emoji', 'Segoe UI', sans-serif" font-size="100" text-anchor="middle">🏫</text>
+    <text x="150" y="255" font-family="'Nunito', 'Arial', sans-serif" font-size="28" font-weight="900" fill="#D35400" text-anchor="middle">Chair</text>
+</svg>
