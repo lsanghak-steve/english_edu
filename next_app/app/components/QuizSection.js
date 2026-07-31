@@ -3,9 +3,14 @@
 import { useState, useEffect, useCallback } from 'react';
 import wordList500 from '../../data/wordsData.js';
 
-export default function QuizSection({ currentUser }) {
+export default function QuizSection({ currentUser, activeWords }) {
     const [quizLevel, setQuizLevel] = useState(1); // 1: 소리 퀴즈, 2: 스펠링 퀴즈
-    const [quizData, setQuizData] = useState(null);
+    const [quizPool, setQuizPool] = useState([]); // 오늘 공부하는 전체 단어 리스트
+    const [shuffledQuestions, setShuffledQuestions] = useState([]); // 중복 없는 퀴즈 문제 순서 배열
+    const [currentIndex, setCurrentIndex] = useState(0); // 현재 문제 번호 (0 ~ total - 1)
+    const [score, setScore] = useState(0); // 맞힌 개수
+    const [isFinished, setIsFinished] = useState(false); // 퀴즈 완료 여부
+
     const [options, setOptions] = useState([]);
     const [selectedAnswer, setSelectedAnswer] = useState(null);
     const [isCorrect, setIsCorrect] = useState(null);
@@ -16,6 +21,18 @@ export default function QuizSection({ currentUser }) {
     const getWrongWordsKey = useCallback(() => {
         return currentUser ? `english_wrong_words_${currentUser.id}` : 'english_wrong_words';
     }, [currentUser]);
+
+    // 플래시카드 단어 리스트(activeWords) 수신 및 퀴즈 풀(pool) 확보
+    useEffect(() => {
+        let pool = [];
+        if (Array.isArray(activeWords) && activeWords.length > 0) {
+            pool = activeWords;
+        } else {
+            const count = currentUser ? parseInt(currentUser.dailyWordCount || 10) : 10;
+            pool = wordList500.slice(0, count);
+        }
+        setQuizPool(pool);
+    }, [activeWords, currentUser]);
 
     // 오답 목록 로드
     useEffect(() => {
@@ -44,81 +61,93 @@ export default function QuizSection({ currentUser }) {
         }
     }, []);
 
-    // 퀴즈 문제 생성
-    const generateQuiz = useCallback(() => {
-        if (!wordList500 || wordList500.length === 0) return;
+    // 퀴즈 초기화 및 셔플 (중복 문제 방지)
+    const initQuizSet = useCallback(() => {
+        if (!quizPool || quizPool.length === 0) return;
+        const shuffled = [...quizPool].sort(() => Math.random() - 0.5);
+        setShuffledQuestions(shuffled);
+        setCurrentIndex(0);
+        setScore(0);
+        setIsFinished(false);
         setSelectedAnswer(null);
         setIsCorrect(null);
         setSpellingInput('');
+    }, [quizPool]);
 
-        const randomIndex = Math.floor(Math.random() * wordList500.length);
-        const correctWord = wordList500[randomIndex];
-        setQuizData(correctWord);
+    useEffect(() => {
+        initQuizSet();
+    }, [quizLevel, quizPool, initQuizSet]);
 
-        // 1단계 (소리 퀴즈) 일 경우 문제 생성 시 바로 소리 자동 재생
-        if (quizLevel === 1) {
+    // 현재 문제 데이터
+    const currentQuestion = shuffledQuestions[currentIndex] || null;
+
+    // 1단계 소리 퀴즈용 보기 4개 구성
+    useEffect(() => {
+        if (quizLevel === 1 && currentQuestion && !isFinished) {
             setTimeout(() => {
-                playWordAudio(correctWord.word);
+                playWordAudio(currentQuestion.word);
             }, 300);
 
             const wrongOpts = [];
+            const backupPool = quizPool.length >= 4 ? quizPool : wordList500;
             while (wrongOpts.length < 3) {
-                const rand = Math.floor(Math.random() * wordList500.length);
-                if (rand !== randomIndex && !wrongOpts.includes(wordList500[rand])) {
-                    wrongOpts.push(wordList500[rand]);
+                const rand = Math.floor(Math.random() * backupPool.length);
+                if (backupPool[rand].word !== currentQuestion.word && !wrongOpts.some(w => w.word === backupPool[rand].word)) {
+                    wrongOpts.push(backupPool[rand]);
                 }
             }
-            const allOpts = [correctWord, ...wrongOpts].sort(() => Math.random() - 0.5);
+            const allOpts = [currentQuestion, ...wrongOpts].sort(() => Math.random() - 0.5);
             setOptions(allOpts);
         }
-    }, [quizLevel, playWordAudio]);
+    }, [quizLevel, currentIndex, currentQuestion, quizPool, isFinished, playWordAudio]);
 
-    useEffect(() => {
-        generateQuiz();
-    }, [quizLevel, generateQuiz]);
-
-    // 1단계 (소리 퀴즈) 답안 제출
-    const handleLevel1AnswerSelect = (opt) => {
-        if (selectedAnswer !== null) return;
-        setSelectedAnswer(opt);
-
-        const correct = opt.word === quizData.word;
-        setIsCorrect(correct);
-
-        if (!correct) {
-            if (!wrongWords.some(w => w.word === quizData.word)) {
-                const updated = [...wrongWords, quizData];
+    // 다음 문제로 이동 처리
+    const moveToNextQuestion = (correct, questionWordObj) => {
+        if (correct) {
+            setScore(prev => prev + 1);
+        } else {
+            if (!wrongWords.some(w => w.word === questionWordObj.word)) {
+                const updated = [...wrongWords, questionWordObj];
                 saveWrongWords(updated);
             }
         }
 
         setTimeout(() => {
-            generateQuiz();
+            if (currentIndex + 1 < shuffledQuestions.length) {
+                setCurrentIndex(prev => prev + 1);
+                setSelectedAnswer(null);
+                setIsCorrect(null);
+                setSpellingInput('');
+            } else {
+                setIsFinished(true);
+            }
         }, 1500);
+    };
+
+    // 1단계 (소리 퀴즈) 답안 제출
+    const handleLevel1AnswerSelect = (opt) => {
+        if (selectedAnswer !== null || !currentQuestion) return;
+        setSelectedAnswer(opt);
+
+        const correct = opt.word === currentQuestion.word;
+        setIsCorrect(correct);
+
+        moveToNextQuestion(correct, currentQuestion);
     };
 
     // 2단계 (스펠링 퀴즈) 답안 제출
     const handleLevel2Submit = (e) => {
         e.preventDefault();
-        if (!spellingInput.trim() || selectedAnswer !== null) return;
+        if (!spellingInput.trim() || selectedAnswer !== null || !currentQuestion) return;
 
         const userInputStr = spellingInput.trim().toLowerCase();
-        const correctStr = quizData.word.trim().toLowerCase();
+        const correctStr = currentQuestion.word.trim().toLowerCase();
         const correct = userInputStr === correctStr;
 
         setSelectedAnswer(spellingInput);
         setIsCorrect(correct);
 
-        if (!correct) {
-            if (!wrongWords.some(w => w.word === quizData.word)) {
-                const updated = [...wrongWords, quizData];
-                saveWrongWords(updated);
-            }
-        }
-
-        setTimeout(() => {
-            generateQuiz();
-        }, 1800);
+        moveToNextQuestion(correct, currentQuestion);
     };
 
     const handleRemoveWrongWord = (wordStr) => {
@@ -145,8 +174,39 @@ export default function QuizSection({ currentUser }) {
 
             {activeTab === 'quiz' ? (
                 <div className="quiz-card">
+                    {/* 퀴즈 상단 단어 리스트 히든 분리 노출 박스 */}
+                    <div style={{ background: '#FFF9E6', border: '2px solid #FFE66D', borderRadius: '16px', padding: '12px 14px', marginBottom: '16px', textAlign: 'left' }}>
+                        <div style={{ fontSize: '13px', fontWeight: 'bold', color: '#D35400', marginBottom: '8px' }}>
+                            📋 오늘 공부하는 단어 리스트 ({quizPool.length}개)
+                            <span style={{ fontSize: '11px', color: '#7F8C8D', marginLeft: '6px', fontWeight: 'normal' }}>
+                                {quizLevel === 1 ? '(뜻 히든 처리 - 영단어만 노출)' : '(영단어 히든 처리 - 뜻만 노출)'}
+                            </span>
+                        </div>
+                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
+                            {quizPool.map((item, idx) => (
+                                <span
+                                    key={idx}
+                                    style={{
+                                        background: '#FFFFFF',
+                                        border: '1px solid #FFE066',
+                                        padding: '4px 10px',
+                                        borderRadius: '12px',
+                                        fontSize: '12px',
+                                        fontWeight: 'bold',
+                                        color: '#2C3E50',
+                                        cursor: 'pointer'
+                                    }}
+                                    onClick={() => playWordAudio(item.word)}
+                                    title="클릭 시 발음 듣기"
+                                >
+                                    {quizLevel === 1 ? `${idx + 1}. ${item.word} 🔊` : `${idx + 1}. ${item.meaning} 🔊`}
+                                </span>
+                            ))}
+                        </div>
+                    </div>
+
                     {/* 1단계 / 2단계 레벨 선택기 */}
-                    <div className="quiz-level-selector">
+                    <div className="quiz-level-selector" style={{ marginBottom: '14px' }}>
                         <button
                             className={`quiz-level-btn ${quizLevel === 1 ? 'active' : ''}`}
                             onClick={() => setQuizLevel(1)}
@@ -161,20 +221,25 @@ export default function QuizSection({ currentUser }) {
                         </button>
                     </div>
 
-                    {quizData ? (
+                    {!isFinished && currentQuestion ? (
                         <>
+                            {/* 문제 진행도 표시 바 */}
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#F8F9FA', padding: '8px 14px', borderRadius: '12px', marginBottom: '16px', fontSize: '13px', fontWeight: 'bold' }}>
+                                <span>📝 퀴즈 진행률</span>
+                                <span style={{ color: '#27AE60' }}>{currentIndex + 1} / {shuffledQuestions.length} 문제</span>
+                            </div>
+
                             {/* 1단계 소리 퀴즈 */}
                             {quizLevel === 1 && (
                                 <>
-                                    <div className="quiz-question-box">
-                                        <span className="quiz-emoji" style={{ fontSize: '40px' }}>🎧</span>
-                                        <h2 className="quiz-word-en" style={{ fontSize: '24px', color: '#7F8C8D' }}>
+                                    <div className="quiz-question-container">
+                                        <span className="quiz-emoji" style={{ fontSize: '42px' }}>🎧</span>
+                                        <h2 className="quiz-word-en" style={{ fontSize: '22px', color: '#7F8C8D', margin: '4px 0' }}>
                                             [ 🔒 소리를 듣고 뜻을 맞추세요 ]
                                         </h2>
                                         <button
-                                            className="audio-btn"
-                                            style={{ margin: '10px auto' }}
-                                            onClick={() => playWordAudio(quizData.word)}
+                                            className="quiz-btn-audio-pill"
+                                            onClick={() => playWordAudio(currentQuestion.word)}
                                         >
                                             🔊 다시 듣기
                                         </button>
@@ -183,7 +248,7 @@ export default function QuizSection({ currentUser }) {
                                         {options.map((opt, idx) => {
                                             let btnStyle = {};
                                             if (selectedAnswer) {
-                                                if (opt.word === quizData.word) {
+                                                if (opt.word === currentQuestion.word) {
                                                     btnStyle = { backgroundColor: '#2ECC71', color: 'white', borderColor: '#27AE60' };
                                                 } else if (opt === selectedAnswer && !isCorrect) {
                                                     btnStyle = { backgroundColor: '#E74C3C', color: 'white', borderColor: '#C0392B' };
@@ -205,21 +270,25 @@ export default function QuizSection({ currentUser }) {
                                 </>
                             )}
 
-                            {/* 2단계 스펠링 퀴즈 */}
+                            {/* 2단계 스펠링 퀴즈 (겹침 문제 100% 해제 정돈) */}
                             {quizLevel === 2 && (
-                                <div className="quiz-question-box">
-                                    <span className="quiz-emoji" style={{ fontSize: '40px' }}>✍️</span>
-                                    <h2 className="meaning-kr" style={{ margin: '10px 0' }}>{quizData.meaning}</h2>
-                                    <p className="quiz-phonics" style={{ fontSize: '15px', color: '#3498DB' }}>{quizData.phonics}</p>
+                                <div className="quiz-question-container">
+                                    <span className="quiz-emoji" style={{ fontSize: '42px' }}>✍️</span>
+                                    <h2 className="meaning-kr" style={{ fontSize: '38px', margin: '4px 0', color: '#FF6B6B' }}>
+                                        {currentQuestion.meaning}
+                                    </h2>
+                                    <p className="word-phonics" style={{ fontSize: '18px', color: '#3498DB', marginBottom: '8px' }}>
+                                        {currentQuestion.phonics}
+                                    </p>
                                     <button
-                                        className="audio-btn"
-                                        style={{ margin: '6px auto 14px' }}
-                                        onClick={() => playWordAudio(quizData.word)}
+                                        className="quiz-btn-audio-pill"
+                                        type="button"
+                                        onClick={() => playWordAudio(currentQuestion.word)}
                                     >
                                         🔊 발음 듣기
                                     </button>
 
-                                    <form onSubmit={handleLevel2Submit}>
+                                    <form onSubmit={handleLevel2Submit} style={{ width: '100%', marginTop: '14px' }}>
                                         <input
                                             type="text"
                                             className="spelling-input"
@@ -232,7 +301,7 @@ export default function QuizSection({ currentUser }) {
                                         <button
                                             type="submit"
                                             className="btn-primary"
-                                            style={{ width: '100%', marginTop: '12px', padding: '12px' }}
+                                            style={{ width: '100%', marginTop: '12px', padding: '14px', fontSize: '16px', borderRadius: '16px' }}
                                             disabled={selectedAnswer !== null}
                                         >
                                             정답 확인
@@ -243,17 +312,36 @@ export default function QuizSection({ currentUser }) {
 
                             {/* 피드백 메시지 */}
                             {selectedAnswer && (
-                                <div className="quiz-feedback">
+                                <div className="quiz-feedback" style={{ marginTop: '16px', fontSize: '16px' }}>
                                     {isCorrect ? (
-                                        <span style={{ color: '#2ECC71', fontWeight: 'bold' }}>⭕ 정답입니다! 정답: {quizData.word}</span>
+                                        <span style={{ color: '#2ECC71', fontWeight: 'bold' }}>⭕ 정답입니다! 정답: {currentQuestion.word}</span>
                                     ) : (
-                                        <span style={{ color: '#E74C3C', fontWeight: 'bold' }}>❌ 오답입니다! (정답: {quizData.word}) - 오답노트 저장</span>
+                                        <span style={{ color: '#E74C3C', fontWeight: 'bold' }}>❌ 오답입니다! (정답: {currentQuestion.word}) - 오답노트 저장</span>
                                     )}
                                 </div>
                             )}
                         </>
+                    ) : isFinished ? (
+                        /* 퀴즈 최종 완료 결과 화면 */
+                        <div className="quiz-result-box" style={{ padding: '20px 0', textAlign: 'center' }}>
+                            <div style={{ fontSize: '50px', marginBottom: '10px' }}>🎉</div>
+                            <h2 style={{ fontSize: '24px', fontWeight: 'bold', color: '#2C3E50' }}>퀴즈를 모두 마쳤습니다!</h2>
+                            <p style={{ fontSize: '18px', margin: '12px 0', color: '#D35400', fontWeight: 'bold' }}>
+                                최종 점수: {score} / {shuffledQuestions.length}점
+                            </p>
+                            <p style={{ fontSize: '14px', color: '#7F8C8D', marginBottom: '20px' }}>
+                                {score === shuffledQuestions.length ? '완벽해요! 오늘 공부한 단어를 모두 마스터했습니다! 💯' : '틀린 단어는 오답노트에서 다시 공부해보세요! 💪'}
+                            </p>
+                            <button
+                                className="btn-primary"
+                                style={{ padding: '12px 28px', fontSize: '16px', borderRadius: '16px' }}
+                                onClick={initQuizSet}
+                            >
+                                🔄 퀴즈 다시 풀기
+                            </button>
+                        </div>
                     ) : (
-                        <p>퀴즈를 불러오는 중입니다...</p>
+                        <p>퀴즈를 준비 중입니다...</p>
                     )}
                 </div>
             ) : (
