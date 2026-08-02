@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback, useRef } from 'react';
+import { useState, useCallback, useRef, useEffect } from 'react';
 import wordList500 from '../data/wordsData.js';
 import UserManager from './components/UserManager.js';
 import QuizSection from './components/QuizSection.js';
@@ -18,6 +18,27 @@ export default function Home() {
   const [recordedAudioUrl, setRecordedAudioUrl] = useState(null);
   const mediaRecorderRef = useRef(null);
   const audioChunksRef = useRef([]);
+
+  // 미션 상태: 1차 녹음 수행 및 퀴즈 2단계 완수 추적
+  const [hasRecorded, setHasRecorded] = useState(false);
+  const [completedQuizLevels, setCompletedQuizLevels] = useState([]);
+  const [isTodayComplete, setIsTodayComplete] = useState(false);
+
+  const todayStr = new Date().toISOString().split('T')[0];
+
+  useEffect(() => {
+    if (!currentUser) return;
+    const recKey = `record_mission_${currentUser.id}_${todayStr}`;
+    const quizKey = `quiz_mission_${currentUser.id}_${todayStr}`;
+
+    setHasRecorded(localStorage.getItem(recKey) === 'true');
+    try {
+      const storedQuiz = JSON.parse(localStorage.getItem(quizKey) || '[]');
+      setCompletedQuizLevels(storedQuiz);
+    } catch (e) {
+      setCompletedQuizLevels([]);
+    }
+  }, [currentUser, todayStr]);
 
   const categories = ['전체', ...new Set(wordList500.map(w => w.category))];
 
@@ -39,6 +60,16 @@ export default function Home() {
       window.speechSynthesis.speak(utterance);
     }
   }, [currentWord]);
+
+  // 플래시카드가 보일 때(카드 전환, 탭 이동 등) 자동으로 발음 소리 재생!
+  useEffect(() => {
+    if (mainTab === 'flashcard' && currentWord) {
+      const timer = setTimeout(() => {
+        playAudio(currentWord.word);
+      }, 200);
+      return () => clearTimeout(timer);
+    }
+  }, [mainTab, currentIndex, category, currentWord, playAudio]);
 
   const handleCardClick = (e) => {
     if (e.target.closest('button') || e.target.closest('.audio-btn') || e.target.closest('.record-btn')) {
@@ -80,6 +111,12 @@ export default function Home() {
         const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/webm' });
         const url = URL.createObjectURL(audioBlob);
         setRecordedAudioUrl(url);
+
+        // 1차 발음 녹음 미션 성공 기록!
+        if (currentUser) {
+          setHasRecorded(true);
+          localStorage.setItem(`record_mission_${currentUser.id}_${todayStr}`, 'true');
+        }
       };
 
       mediaRecorderRef.current.start();
@@ -103,10 +140,78 @@ export default function Home() {
     }
   };
 
+  // 퀴즈 레벨 완수 처리
+  const handleQuizLevelComplete = (level) => {
+    if (!currentUser) return;
+    const updated = [...new Set([...completedQuizLevels, level])];
+    setCompletedQuizLevels(updated);
+    localStorage.setItem(`quiz_mission_${currentUser.id}_${todayStr}`, JSON.stringify(updated));
+  };
+
+  // 학습 완료 조건 달성 여부 (녹음 1회 이상 + 퀴즈 1단계/2단계 완수)
+  const isQuizL2Done = completedQuizLevels.includes(1) && completedQuizLevels.includes(2);
+  const canShowCompleteBtn = hasRecorded && isQuizL2Done;
+
+  // 출석 도장 쾅 찍기
+  const handleStampAttendance = () => {
+    if (!currentUser) return;
+    const stampKey = `english_stamps_${currentUser.id}`;
+    let stamps = [];
+    try {
+      stamps = JSON.parse(localStorage.getItem(stampKey) || '[]');
+    } catch (e) {
+      stamps = [];
+    }
+    if (!stamps.includes(todayStr)) {
+      stamps.push(todayStr);
+      localStorage.setItem(stampKey, JSON.stringify(stamps));
+    }
+    setIsTodayComplete(true);
+    alert('🎉 참잘했어요 도장이 출석 달력에 등록되었습니다! 💮');
+    setMainTab('calendar');
+  };
+
   return (
     <main className="app-container">
       {/* 상단 학생 헤더 바 및 모달 제어 */}
       <UserManager currentUser={currentUser} setCurrentUser={setCurrentUser} />
+
+      {/* 학습 완료 조건 만족 시 자동으로 등장하는 축하 버튼 */}
+      {canShowCompleteBtn && (
+        <div style={{ width: '100%', animation: 'pulse 1.5s infinite' }}>
+          <button
+            onClick={handleStampAttendance}
+            style={{
+              width: '100%',
+              padding: '14px 20px',
+              borderRadius: '20px',
+              border: 'none',
+              background: 'linear-gradient(135deg, #2ECC71 0%, #27AE60 100%)',
+              color: 'white',
+              fontSize: '16px',
+              fontWeight: '900',
+              cursor: 'pointer',
+              boxShadow: '0 8px 20px rgba(46, 204, 113, 0.4)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '8px'
+            }}
+          >
+            🎉 오늘 미션 완료! 💮 참잘했어요 도장 찍기
+          </button>
+        </div>
+      )}
+
+      {/* 실시간 미션 가이드 바 */}
+      <div style={{ width: '100%', background: '#F8F9FA', border: '1px solid #E9ECEF', borderRadius: '16px', padding: '10px 14px', fontSize: '12px', display: 'flex', justifyContent: 'space-around' }}>
+        <span style={{ color: hasRecorded ? '#27AE60' : '#7F8C8D', fontWeight: 'bold' }}>
+          {hasRecorded ? '✅ 발음 녹음 완료' : '🎙️ 1차 녹음 미션'}
+        </span>
+        <span style={{ color: isQuizL2Done ? '#27AE60' : '#7F8C8D', fontWeight: 'bold' }}>
+          {isQuizL2Done ? '✅ 퀴즈 2단계 완수' : '🧩 퀴즈 2단계 미션'}
+        </span>
+      </div>
 
       {/* 메인 4대 탭 메뉴 */}
       <nav className="main-tab-nav">
@@ -208,7 +313,7 @@ export default function Home() {
                 <div className="flip-hint-bottom">👆 터치하여 뜻 보기</div>
               </div>
 
-              {/* 뒷면 카드 (예문 🔊 소리 듣기 버튼 장착) */}
+              {/* 뒷면 카드 */}
               <div className="card-face card-back">
                 <h2 className="meaning-kr">{currentWord.meaning}</h2>
                 <div className="example-box">
@@ -254,7 +359,11 @@ export default function Home() {
 
       {/* 탭 3: 퀴즈 & 오답노트 */}
       {mainTab === 'quiz' && (
-        <QuizSection currentUser={currentUser} activeWords={activeWords} />
+        <QuizSection
+          currentUser={currentUser}
+          activeWords={activeWords}
+          onQuizLevelComplete={handleQuizLevelComplete}
+        />
       )}
 
       {/* 탭 4: 출석 달력 */}
