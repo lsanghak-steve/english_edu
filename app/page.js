@@ -23,6 +23,10 @@ export default function Home() {
   const [dailyRandomWords, setDailyRandomWords] = useState([]);
   const [studyRound, setStudyRound] = useState(1);
 
+  // 오늘 누적 학습 단어 전체 목록 상태 & 팝업 모달 상태
+  const [todayAllLearnedWords, setTodayAllLearnedWords] = useState([]);
+  const [showTodayAllModal, setShowTodayAllModal] = useState(false);
+
   const [isRecording, setIsRecording] = useState(false);
   const [recordedAudioUrl, setRecordedAudioUrl] = useState(null);
   const mediaRecorderRef = useRef(null);
@@ -98,6 +102,7 @@ export default function Home() {
     const recKey = `record_mission_${currentUser.id}_${todayStr}`;
     const quizKey = `quiz_mission_${currentUser.id}_${todayStr}`;
     const dailySetKey = `daily_random_set_${currentUser.id}_${todayStr}`;
+    const todayAllKey = `today_all_learned_${currentUser.id}_${todayStr}`;
 
     setHasRecorded(localStorage.getItem(recKey) === 'true');
     try {
@@ -105,6 +110,14 @@ export default function Home() {
       setCompletedQuizLevels(storedQuiz);
     } catch (e) {
       setCompletedQuizLevels([]);
+    }
+
+    // 오늘 누적 학습 단어 객체 리스트 로드
+    try {
+      const savedTodayAll = JSON.parse(localStorage.getItem(todayAllKey) || '[]');
+      setTodayAllLearnedWords(savedTodayAll);
+    } catch (e) {
+      setTodayAllLearnedWords([]);
     }
 
     let savedDailySet = [];
@@ -120,15 +133,19 @@ export default function Home() {
       const newRandomSet = generateDailyRandomWords(currentUser, wordList);
       setDailyRandomWords(newRandomSet);
       localStorage.setItem(dailySetKey, JSON.stringify(newRandomSet));
+      // 1회차 세트를 오늘 누적 학습 단어에 기본 등록
+      setTodayAllLearnedWords(newRandomSet);
+      localStorage.setItem(todayAllKey, JSON.stringify(newRandomSet));
     }
   }, [currentUser, todayStr, wordList, generateDailyRandomWords]);
 
-  // 🚀 [다음 단어 학습] 추가 세트 로드 함수
+  // 🚀 [다음 단어 학습] 추가 세트 로드 함수 (오늘 누적 학습 단어 목록 확장)
   const handleLoadNextWordSet = () => {
     if (!currentUser) return;
     const userId = currentUser.id;
     const dailyCount = parseInt(currentUser.dailyWordCount || 10, 10);
     const learnedKey = `learned_words_${userId}`;
+    const todayAllKey = `today_all_learned_${currentUser.id}_${todayStr}`;
 
     let learnedList = [];
     try {
@@ -152,13 +169,18 @@ export default function Home() {
     setDailyRandomWords(nextRandomSet);
     localStorage.setItem(`daily_random_set_${userId}_${todayStr}`, JSON.stringify(nextRandomSet));
 
+    // 오늘 누적 학습 단어 전체 객체 배열 업데이트
+    const updatedTodayAll = [...todayAllLearnedWords, ...nextRandomSet];
+    setTodayAllLearnedWords(updatedTodayAll);
+    localStorage.setItem(todayAllKey, JSON.stringify(updatedTodayAll));
+
     setStudyRound(prev => prev + 1);
     setCurrentIndex(0);
     setIsFlipped(false);
     setCompletedQuizLevels([]);
     setMainTab('flashcard');
 
-    alert(`🎉 🚀 다음 단어 학습 세트(제 ${studyRound + 1}회차)를 불러왔습니다!\n플래시카드 1번부터 즐겁게 공부하세요!`);
+    alert(`🎉 🚀 다음 단어 학습 세트(제 ${studyRound + 1}회차)를 불러왔습니다!\n오늘 학습한 총 ${updatedTodayAll.length}개 단어는 상단 [📖 오늘 누적 학습 단어] 버튼으로 언제든 다시 복습할 수 있습니다!`);
   };
 
   const safeActiveWords = dailyRandomWords.length > 0
@@ -330,18 +352,19 @@ export default function Home() {
     }
   };
 
-  // 💮 클라우드 DB & localStorage 출석 도장 찍기 및 단어 세트 저장 함수
+  // 💮 클라우드 DB & localStorage 출석 도장 찍기 및 오늘 공부한 전체 단어 세트 저장 함수
   const handleStampAttendance = useCallback(async () => {
     if (!currentUser) return;
     const stampKey = `english_stamps_${currentUser.id}`;
     const stampedWordsKey = `stamped_words_${currentUser.id}_${todayStr}`;
+    const wordsToSave = todayAllLearnedWords.length > 0 ? todayAllLearnedWords : safeActiveWords;
 
-    // 1. Supabase 클라우드 DB에 출석도장 및 단어세트 저장
+    // 1. Supabase 클라우드 DB에 출석도장 및 오늘 학습한 전체 단어 세트 저장
     try {
       await supabase.from('student_attendance').insert([{
         user_id: currentUser.id,
         stamped_date: todayStr,
-        stamped_words: safeActiveWords
+        stamped_words: wordsToSave
       }]);
     } catch (e) {
       console.log('Cloud attendance save fallback');
@@ -359,8 +382,8 @@ export default function Home() {
       localStorage.setItem(stampKey, JSON.stringify(stamps));
     }
 
-    localStorage.setItem(stampedWordsKey, JSON.stringify(safeActiveWords));
-  }, [currentUser, todayStr, safeActiveWords]);
+    localStorage.setItem(stampedWordsKey, JSON.stringify(wordsToSave));
+  }, [currentUser, todayStr, todayAllLearnedWords, safeActiveWords]);
 
   // 💡 2단계 퀴즈 완수 시 출석 도장 찍기 수행!
   const handleQuizLevelComplete = (level) => {
@@ -372,7 +395,7 @@ export default function Home() {
     if (level === 2) {
       handleStampAttendance();
       setTimeout(() => {
-        alert('🎉 축하합니다! 2단계 퀴즈까지 완수하여 오늘 필수 학습 출석 도장이 찍혔습니다! 💮\n\n더 공부하고 싶다면 [🚀 다음 단어 학습] 버튼을 누르세요!');
+        alert(`🎉 축하합니다! 2단계 퀴즈까지 완수하여 오늘 필수 학습 출석 도장이 찍혔습니다! 💮\n(오늘 총 ${todayAllLearnedWords.length || safeActiveWords.length}개 단어 학습 완료!)\n\n더 공부하고 싶다면 [🚀 다음 단어 학습] 버튼을 누르세요!`);
         setMainTab('calendar');
       }, 300);
     }
@@ -405,7 +428,7 @@ export default function Home() {
       {/* 상단 학생 헤더 바 및 모달 제어 */}
       <UserManager currentUser={currentUser} setCurrentUser={setCurrentUser} />
 
-      {/* 실시간 미션 스마트 버튼 바 및 🚀 [다음 단어 학습] 버튼 */}
+      {/* 실시간 미션 스마트 버튼 바, 🔥 회차 뱃지, 📖 오늘 누적 단어 버튼 및 🚀 [다음 단어 학습] 버튼 */}
       <div style={{
         width: '100%',
         background: '#FFFFFF',
@@ -419,11 +442,20 @@ export default function Home() {
         gap: '8px',
         flexWrap: 'wrap'
       }}>
-        {studyRound > 1 && (
+        {/* 오늘 N회차 진행 상태 및 오늘 공부한 전체 단어 팝업 버튼 */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
           <span style={{ fontSize: '12px', fontWeight: 'bold', color: '#E67E22', background: '#FEF5E7', padding: '4px 10px', borderRadius: '10px', border: '1px solid #FADBD8' }}>
             🔥 오늘 {studyRound}회차 학습 중!
           </span>
-        )}
+
+          <button
+            onClick={() => setShowTodayAllModal(true)}
+            style={{ background: '#27AE60', color: 'white', border: 'none', padding: '4px 10px', borderRadius: '10px', fontWeight: 'bold', fontSize: '12px', cursor: 'pointer', boxShadow: '0 2px 4px rgba(39,174,96,0.2)' }}
+            title="오늘 1회차+2회차 등 지금까지 공부한 모든 단어 리스트 한눈에 보기"
+          >
+            📖 오늘 총 {todayAllLearnedWords.length || safeActiveWords.length}개 단어 전체 보기
+          </button>
+        </div>
 
         <button
           onClick={() => {
@@ -435,7 +467,7 @@ export default function Home() {
           }}
           style={{
             flex: 1,
-            minWidth: '130px',
+            minWidth: '120px',
             padding: '8px 12px',
             borderRadius: '12px',
             border: hasRecorded ? '2px solid #2ECC71' : '1px solid #3498DB',
@@ -457,7 +489,7 @@ export default function Home() {
           onClick={() => setMainTab('quiz')}
           style={{
             flex: 1,
-            minWidth: '130px',
+            minWidth: '120px',
             padding: '8px 12px',
             borderRadius: '12px',
             border: isQuizL2Done ? '2px solid #2ECC71' : '1px solid #9B59B6',
@@ -480,7 +512,7 @@ export default function Home() {
           onClick={handleLoadNextWordSet}
           style={{
             flex: 1,
-            minWidth: '150px',
+            minWidth: '140px',
             padding: '8px 14px',
             borderRadius: '12px',
             border: '2px solid #E67E22',
@@ -499,6 +531,55 @@ export default function Home() {
           🚀 다음 단어 학습 ➔
         </button>
       </div>
+
+      {/* 📖 오늘 공부한 전체 단어 팝업 모달 */}
+      {showTodayAllModal && (
+        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 2200 }}>
+          <div style={{ background: 'white', borderRadius: '24px', padding: '24px', width: '90%', maxWidth: '460px', boxShadow: '0 10px 30px rgba(0,0,0,0.2)', maxHeight: '85vh', overflowY: 'auto' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', paddingBottom: '10px', borderBottom: '2px dashed #E9ECEF' }}>
+              <div>
+                <h3 style={{ margin: 0, color: '#2C3E50', fontSize: '18px' }}>
+                  📖 오늘 학습한 단어 전체 리스트
+                </h3>
+                <span style={{ fontSize: '12px', color: '#27AE60', fontWeight: 'bold' }}>
+                  🔥 오늘 제 {studyRound}회차 학습까지 총 {todayAllLearnedWords.length || safeActiveWords.length}개 단어 완수!
+                </span>
+              </div>
+              <button onClick={() => setShowTodayAllModal(false)} style={{ background: '#F8F9FA', border: '1px solid #BDC3C7', padding: '4px 10px', borderRadius: '8px', fontWeight: 'bold', cursor: 'pointer' }}>
+                ✖
+              </button>
+            </div>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginBottom: '20px' }}>
+              {(todayAllLearnedWords.length > 0 ? todayAllLearnedWords : safeActiveWords).map((item, i) => {
+                const wordStr = (item.word || item).replace(/\.png/gi, '').trim();
+                return (
+                  <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 14px', background: '#F8F9FA', borderRadius: '12px', border: '1px solid #E9ECEF' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <span style={{ fontWeight: 'bold', color: '#2980B9', fontSize: '13px' }}>#{i + 1}</span>
+                      <div>
+                        <span style={{ fontWeight: 'bold', color: '#2C3E50', fontSize: '16px' }}>{wordStr}</span>
+                        {item.phonics && <span style={{ fontSize: '12px', color: '#7F8C8D', marginLeft: '6px' }}>{item.phonics}</span>}
+                        {item.meaning && <div style={{ color: '#E74C3C', fontSize: '14px', fontWeight: 'bold', marginTop: '2px' }}>{item.meaning}</div>}
+                      </div>
+                    </div>
+                    <button onClick={() => playWordAudio(wordStr)} style={{ background: '#3498DB', color: 'white', border: 'none', borderRadius: '50%', width: '32px', height: '32px', cursor: 'pointer', fontSize: '14px' }}>
+                      🔊
+                    </button>
+                  </div>
+                );
+              })}
+            </div>
+
+            <button
+              onClick={() => setShowTodayAllModal(false)}
+              style={{ width: '100%', background: '#2C3E50', color: 'white', border: 'none', padding: '12px', borderRadius: '12px', fontWeight: 'bold', fontSize: '14px', cursor: 'pointer' }}
+            >
+              닫기
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* 메인 6대 탭 메뉴 */}
       <nav className="main-tab-nav" style={{ gap: '2px' }}>
