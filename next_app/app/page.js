@@ -12,7 +12,7 @@ import ParentDashboard from './components/ParentDashboard.js';
 
 export default function Home() {
   const [currentUser, setCurrentUser] = useState(null);
-  const [mainTab, setMainTab] = useState('flashcard'); // 'flashcard', 'wordlist', 'quiz', 'myvocab', 'calendar', 'parent'
+  const [mainTab, setMainTab] = useState('flashcard'); // 'flashcard', 'wordlist', 'quiz', 'myvocab', 'wrongvocab', 'calendar', 'parent'
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isFlipped, setIsFlipped] = useState(false);
 
@@ -581,7 +581,7 @@ export default function Home() {
         </div>
       )}
 
-      {/* 메인 6대 탭 메뉴 */}
+      {/* 메인 7대 탭 메뉴 (❌ 오답노트 전용 독립 탭 추가) */}
       <nav className="main-tab-nav" style={{ gap: '2px' }}>
         <button
           className={`main-tab-btn ${mainTab === 'flashcard' ? 'active' : ''}`}
@@ -605,7 +605,14 @@ export default function Home() {
           className={`main-tab-btn ${mainTab === 'myvocab' ? 'active' : ''}`}
           onClick={() => setMainTab('myvocab')}
         >
-          ⭐ 단어장
+          ⭐ 나만의 단어장
+        </button>
+        <button
+          className={`main-tab-btn ${mainTab === 'wrongvocab' ? 'active' : ''}`}
+          onClick={() => setMainTab('wrongvocab')}
+          style={{ background: mainTab === 'wrongvocab' ? '#E74C3C' : 'transparent', color: mainTab === 'wrongvocab' ? 'white' : '#C0392B', fontWeight: 'bold' }}
+        >
+          ❌ 퀴즈 오답노트 ☁️
         </button>
         <button
           className={`main-tab-btn ${mainTab === 'calendar' ? 'active' : ''}`}
@@ -763,15 +770,20 @@ export default function Home() {
 
       {/* 탭 4: 나만의 개인 단어장 */}
       {mainTab === 'myvocab' && (
-        <PersonalVocabSection currentUser={currentUser} onPlayAudio={playWordAudio} />
+        <PersonalVocabSection currentUser={currentUser} onPlayAudio={playWordAudio} initialTab="custom" />
       )}
 
-      {/* 탭 5: 출석 달력 */}
+      {/* 탭 5: ❌ 퀴즈 오답노트 전용 독립 메인 탭 */}
+      {mainTab === 'wrongvocab' && (
+        <PersonalVocabSection currentUser={currentUser} onPlayAudio={playWordAudio} initialTab="wrong" />
+      )}
+
+      {/* 탭 6: 출석 달력 */}
       {mainTab === 'calendar' && (
         <CalendarSection currentUser={currentUser} onLoadNextWordSet={handleLoadNextWordSet} />
       )}
 
-      {/* 탭 6: 학부모 리포트 */}
+      {/* 탭 7: 학부모 리포트 */}
       {mainTab === 'parent' && (
         <ParentDashboard currentUser={currentUser} />
       )}

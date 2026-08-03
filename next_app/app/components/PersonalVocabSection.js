@@ -3,8 +3,8 @@
 import { useState, useEffect, useCallback } from 'react';
 import supabase from '../../lib/supabaseClient.js';
 
-export default function PersonalVocabSection({ currentUser, onPlayAudio }) {
-  const [activeTab, setActiveTab] = useState('custom'); // 'custom', 'wrong'
+export default function PersonalVocabSection({ currentUser, onPlayAudio, initialTab = 'custom' }) {
+  const [activeTab, setActiveTab] = useState(initialTab); // 'custom', 'wrong'
   const [myVocabList, setMyVocabList] = useState([]);
   const [wrongAnswersList, setWrongAnswersList] = useState([]);
 
@@ -14,6 +14,12 @@ export default function PersonalVocabSection({ currentUser, onPlayAudio }) {
   const [phonicsInput, setPhonicsInput] = useState('');
 
   const userId = currentUser ? currentUser.id : 'guest';
+
+  useEffect(() => {
+    if (initialTab) {
+      setActiveTab(initialTab);
+    }
+  }, [initialTab]);
 
   // 클라우드 DB에서 퀴즈 오답노트 로드
   const loadWrongAnswersFromCloud = useCallback(async () => {
