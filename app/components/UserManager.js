@@ -5,11 +5,12 @@ import supabase from '../../lib/supabaseClient.js';
 
 export default function UserManager({ currentUser, setCurrentUser }) {
   const [users, setUsers] = useState([]);
-  const [showModal, setShowModal] = useState(false);
+  const [showAddEditModal, setShowAddEditModal] = useState(false);
+  const [showLoginModal, setShowLoginModal] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
   const [editingUserId, setEditingUserId] = useState(null);
 
-  // 폼 입력 상태
+  // 등록/수정 폼 입력 상태
   const [nameInput, setNameInput] = useState('');
   const [gradeInput, setGradeInput] = useState('초등 3학년');
   const [dailyCountInput, setDailyCountInput] = useState('10');
@@ -17,6 +18,10 @@ export default function UserManager({ currentUser, setCurrentUser }) {
   const [parentNameInput, setParentNameInput] = useState('');
   const [parentPhoneInput, setParentPhoneInput] = useState('');
   const [parentPinInput, setParentPinInput] = useState('5678');
+
+  // 로그인 폼 입력 상태
+  const [loginSelectedUserId, setLoginSelectedUserId] = useState('');
+  const [loginPinInput, setLoginPinInput] = useState('');
 
   // Supabase 클라우드 DB에서 학생 목록 로드 (실패 시 localStorage 백업)
   const loadUsersFromCloud = async () => {
@@ -45,7 +50,7 @@ export default function UserManager({ currentUser, setCurrentUser }) {
         return;
       }
     } catch (e) {
-      console.log('Supabase cloud profiles table not ready yet, using localStorage');
+      console.log('Supabase cloud profiles table fallback');
     }
 
     // localStorage 백업 로드
@@ -74,6 +79,31 @@ export default function UserManager({ currentUser, setCurrentUser }) {
     loadUsersFromCloud();
   }, []);
 
+  // 🔑 학생 비밀번호(PIN) 로그인 시도
+  const handleStudentLoginSubmit = (e) => {
+    e.preventDefault();
+    if (!loginSelectedUserId) {
+      alert('로그인할 학생을 선택해 주세요.');
+      return;
+    }
+
+    const targetStudent = users.find(u => u.id === loginSelectedUserId);
+    if (!targetStudent) {
+      alert('학생 정보를 찾을 수 없습니다.');
+      return;
+    }
+
+    const correctPin = targetStudent.studentPin || '1234';
+    if (loginPinInput.trim() === correctPin) {
+      setCurrentUser(targetStudent);
+      setShowLoginModal(false);
+      setLoginPinInput('');
+      alert(`🎉 ${targetStudent.name} 학생으로 성공적으로 로그인되었습니다!\n클라우드 학습 데이터가 연결되었습니다. ☁️`);
+    } else {
+      alert('🔒 비밀번호(PIN)가 올바르지 않습니다. 다시 확인해 주세요. (기본 PIN: 1234)');
+    }
+  };
+
   // 등록 모달 열기
   const handleOpenAddModal = () => {
     setIsEditMode(false);
@@ -85,7 +115,7 @@ export default function UserManager({ currentUser, setCurrentUser }) {
     setParentNameInput('');
     setParentPhoneInput('');
     setParentPinInput('5678');
-    setShowModal(true);
+    setShowAddEditModal(true);
   };
 
   // 수정 모달 열기
@@ -100,7 +130,7 @@ export default function UserManager({ currentUser, setCurrentUser }) {
     setParentNameInput(currentUser.parentName || '');
     setParentPhoneInput(currentUser.parentPhone || '');
     setParentPinInput(currentUser.parentPin || '5678');
-    setShowModal(true);
+    setShowAddEditModal(true);
   };
 
   // 폼 제출 (등록 및 수정)
@@ -192,7 +222,7 @@ export default function UserManager({ currentUser, setCurrentUser }) {
       alert(`${newUserLocal.name} 학생이 클라우드 DB에 성공적으로 신규 등록되었습니다!`);
     }
 
-    setShowModal(false);
+    setShowAddEditModal(false);
   };
 
   // 학생 선택 변경
@@ -204,10 +234,10 @@ export default function UserManager({ currentUser, setCurrentUser }) {
   };
 
   return (
-    <div style={{ width: '100%', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#FFFFFF', padding: '12px 18px', borderRadius: '20px', border: '1px solid #E9ECEF', boxShadow: '0 4px 12px rgba(0,0,0,0.03)', marginBottom: '14px' }}>
-      {/* 학생 드롭다운 선택 및 정보 표시 */}
+    <div style={{ width: '100%', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#FFFFFF', padding: '12px 18px', borderRadius: '20px', border: '1px solid #E9ECEF', boxShadow: '0 4px 12px rgba(0,0,0,0.03)', marginBottom: '14px', flexWrap: 'wrap', gap: '10px' }}>
+      {/* 현재 접속한 학생 정보 및 선택 드롭다운 */}
       <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
-        <span style={{ fontSize: '13px', fontWeight: 'bold', color: '#7F8C8D' }}>👤 학생:</span>
+        <span style={{ fontSize: '13px', fontWeight: 'bold', color: '#7F8C8D' }}>👤 학습자:</span>
         <select
           value={currentUser ? currentUser.id : ''}
           onChange={(e) => handleSelectUser(e.target.value)}
@@ -239,23 +269,94 @@ export default function UserManager({ currentUser, setCurrentUser }) {
         </button>
       </div>
 
-      {/* ➕ 신규 학생 등록 버튼 */}
-      <button
-        onClick={handleOpenAddModal}
-        style={{ background: '#3498DB', color: 'white', border: 'none', padding: '8px 14px', borderRadius: '12px', fontWeight: 'bold', fontSize: '13px', cursor: 'pointer' }}
-      >
-        ➕ 학생 등록
-      </button>
+      {/* 우측 버튼 세트 (🔑 로그인 & ➕ 신규 등록) */}
+      <div style={{ display: 'flex', gap: '8px' }}>
+        <button
+          onClick={() => {
+            if (currentUser) setLoginSelectedUserId(currentUser.id);
+            else if (users.length > 0) setLoginSelectedUserId(users[0].id);
+            setLoginPinInput('');
+            setShowLoginModal(true);
+          }}
+          style={{ background: '#9B59B6', color: 'white', border: 'none', padding: '8px 14px', borderRadius: '12px', fontWeight: 'bold', fontSize: '13px', cursor: 'pointer' }}
+        >
+          🔑 학생 비밀번호 로그인
+        </button>
 
-      {/* 팝업 모달 (등록 & 수정 공용) */}
-      {showModal && (
+        <button
+          onClick={handleOpenAddModal}
+          style={{ background: '#3498DB', color: 'white', border: 'none', padding: '8px 14px', borderRadius: '12px', fontWeight: 'bold', fontSize: '13px', cursor: 'pointer' }}
+        >
+          ➕ 학생 등록
+        </button>
+      </div>
+
+      {/* 🔑 학생 전용 비밀번호 로그인 모달 팝업 */}
+      {showLoginModal && (
+        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 2100 }}>
+          <div style={{ background: 'white', borderRadius: '24px', padding: '24px', width: '90%', maxWidth: '380px', boxShadow: '0 10px 30px rgba(0,0,0,0.2)', textAlign: 'center' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', paddingBottom: '10px', borderBottom: '2px dashed #E9ECEF' }}>
+              <h3 style={{ margin: 0, color: '#2C3E50', fontSize: '18px' }}>
+                🔑 내 학습자 계정 비밀번호 로그인
+              </h3>
+              <button onClick={() => setShowLoginModal(false)} style={{ background: '#F8F9FA', border: '1px solid #BDC3C7', padding: '4px 10px', borderRadius: '8px', fontWeight: 'bold', cursor: 'pointer' }}>
+                ✖
+              </button>
+            </div>
+
+            <p style={{ fontSize: '13px', color: '#7F8C8D', marginBottom: '16px' }}>
+              어느 기기에서 접속하든 이름과 4자리 비밀번호를 입력하면 내 학습 기록(출석도장, 오답노트)이 연결됩니다! ☁️
+            </p>
+
+            <form onSubmit={handleStudentLoginSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+              <div style={{ textAlign: 'left' }}>
+                <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', color: '#34495E', marginBottom: '4px' }}>👤 로그인할 학생 선택</label>
+                <select
+                  value={loginSelectedUserId}
+                  onChange={(e) => setLoginSelectedUserId(e.target.value)}
+                  style={{ width: '100%', padding: '10px 12px', borderRadius: '10px', border: '1px solid #BDC3C7', fontSize: '15px', fontWeight: 'bold' }}
+                >
+                  {users.map(u => (
+                    <option key={u.id} value={u.id}>
+                      {u.name} ({u.grade || '초등 3학년'})
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div style={{ textAlign: 'left' }}>
+                <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', color: '#34495E', marginBottom: '4px' }}>🔒 학생 비밀번호 (4자리 PIN)</label>
+                <input
+                  type="password"
+                  maxLength={4}
+                  placeholder="비밀번호 4자리 (기본: 1234)"
+                  value={loginPinInput}
+                  onChange={(e) => setLoginPinInput(e.target.value)}
+                  style={{ width: '100%', padding: '12px', borderRadius: '10px', border: '2px solid #9B59B6', fontSize: '18px', textAlign: 'center', fontWeight: 'bold' }}
+                  autoFocus
+                />
+              </div>
+
+              <button
+                type="submit"
+                style={{ width: '100%', background: '#9B59B6', color: 'white', border: 'none', padding: '12px', borderRadius: '12px', fontWeight: 'bold', fontSize: '16px', cursor: 'pointer', marginTop: '6px' }}
+              >
+                🔓 내 계정으로 로그인하기 ➔
+              </button>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* 등록 및 수정 팝업 모달 */}
+      {showAddEditModal && (
         <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 2000 }}>
           <div style={{ background: 'white', borderRadius: '24px', padding: '24px', width: '90%', maxWidth: '440px', boxShadow: '0 10px 30px rgba(0,0,0,0.2)', maxHeight: '90vh', overflowY: 'auto' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', paddingBottom: '10px', borderBottom: '2px dashed #E9ECEF' }}>
               <h3 style={{ margin: 0, color: '#2C3E50', fontSize: '18px' }}>
                 {isEditMode ? '✏️ 학생 정보 수정 (클라우드 DB 동기화)' : '➕ 신규 학생 등록 (클라우드 DB 동기화)'}
               </h3>
-              <button onClick={() => setShowModal(false)} style={{ background: '#F8F9FA', border: '1px solid #BDC3C7', padding: '4px 10px', borderRadius: '8px', fontWeight: 'bold', cursor: 'pointer' }}>
+              <button onClick={() => setShowAddEditModal(false)} style={{ background: '#F8F9FA', border: '1px solid #BDC3C7', padding: '4px 10px', borderRadius: '8px', fontWeight: 'bold', cursor: 'pointer' }}>
                 ✖
               </button>
             </div>
