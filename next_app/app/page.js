@@ -1,23 +1,37 @@
 'use client';
 
 import { useState, useCallback, useRef, useEffect } from 'react';
-import wordList500 from '../data/wordsData.js';
+import wordList500Fallback from '../data/wordsData.js';
+import supabase from '../lib/supabaseClient.js';
 import UserManager from './components/UserManager.js';
 import QuizSection from './components/QuizSection.js';
 import WordListSection from './components/WordListSection.js';
 import CalendarSection from './components/CalendarSection.js';
+import PersonalVocabSection from './components/PersonalVocabSection.js';
+import ParentDashboard from './components/ParentDashboard.js';
 
 export default function Home() {
   const [currentUser, setCurrentUser] = useState(null);
-  const [mainTab, setMainTab] = useState('flashcard'); // 'flashcard', 'wordlist', 'quiz', 'calendar'
-  const [category, setCategory] = useState('전체');
+  const [mainTab, setMainTab] = useState('flashcard'); // 'flashcard', 'wordlist', 'quiz', 'myvocab', 'calendar', 'parent'
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isFlipped, setIsFlipped] = useState(false);
+
+  // Supabase 클라우드 DB 연동 단어 데이터 상태 ('초등단어' 등 난이도 태깅 포함)
+  const [wordList, setWordList] = useState(() =>
+    wordList500Fallback.map(w => ({ ...w, gradeLevel: w.gradeLevel || '초등단어' }))
+  );
+  const [dailyRandomWords, setDailyRandomWords] = useState([]);
 
   const [isRecording, setIsRecording] = useState(false);
   const [recordedAudioUrl, setRecordedAudioUrl] = useState(null);
   const mediaRecorderRef = useRef(null);
   const audioChunksRef = useRef([]);
+
+  // 음성 파동/높낮이 실시간 Visualizer 레퍼런스
+  const audioContextRef = useRef(null);
+  const analyserRef = useRef(null);
+  const animFrameRef = useRef(null);
+  const canvasRef = useRef(null);
 
   // 미션 상태: 1차 녹음 수행 및 퀴즈 2단계 완수 추적
   const [hasRecorded, setHasRecorded] = useState(false);
@@ -26,10 +40,64 @@ export default function Home() {
 
   const todayStr = new Date().toISOString().split('T')[0];
 
+  // Supabase 클라우드 DB에서 534개 전체 단어 실시간 로드 (grade_level = '초등단어' 매핑)
+  useEffect(() => {
+    async function loadWordsFromSupabase() {
+      try {
+        const { data, error } = await supabase.from('words').select('*').order('id', { ascending: true });
+        if (!error && data && data.length > 0) {
+          const formatted = data.map(item => ({
+            id: item.id,
+            word: (item.word || '').replace(/\.png/gi, '').trim(),
+            phonics: item.phonics || '',
+            meaning: item.meaning,
+            category: item.category || '기타',
+            gradeLevel: item.grade_level || '초등단어',
+            exampleEn: (item.example_en || '').replace(/\.png/gi, '').trim(),
+            exampleKo: (item.example_ko || '').replace(/\.png/gi, '').trim(),
+            imageUrl: item.image_url || ''
+          }));
+          setWordList(formatted);
+        }
+      } catch (e) {
+        console.log('Using local fallback word list with 초등단어 tag');
+      }
+    }
+    loadWordsFromSupabase();
+  }, []);
+
+  // 미학습 단어 중 무작위(랜덤)로 섞어 하루 목표량 세트 준비하기
+  const generateDailyRandomWords = useCallback((userObj, fullList) => {
+    if (!fullList || fullList.length === 0) return [];
+    const userId = userObj ? userObj.id : 'guest';
+    const dailyCount = userObj ? parseInt(userObj.dailyWordCount || 10, 10) : 10;
+    const learnedKey = `learned_words_${userId}`;
+
+    let learnedList = [];
+    try {
+      learnedList = JSON.parse(localStorage.getItem(learnedKey) || '[]');
+    } catch (e) {
+      learnedList = [];
+    }
+
+    let unlearned = fullList.filter(w => !learnedList.includes(w.word));
+
+    if (unlearned.length < dailyCount) {
+      learnedList = [];
+      localStorage.setItem(learnedKey, JSON.stringify([]));
+      unlearned = [...fullList];
+    }
+
+    const shuffled = [...unlearned].sort(() => Math.random() - 0.5);
+    return shuffled.slice(0, dailyCount);
+  }, []);
+
+  // 학생 선택 시 미학습 무작위 단어 세트 로드 & 미션 상태 로드
   useEffect(() => {
     if (!currentUser) return;
     const recKey = `record_mission_${currentUser.id}_${todayStr}`;
     const quizKey = `quiz_mission_${currentUser.id}_${todayStr}`;
+    const dailySetKey = `daily_random_set_${currentUser.id}_${todayStr}`;
 
     setHasRecorded(localStorage.getItem(recKey) === 'true');
     try {
@@ -38,38 +106,78 @@ export default function Home() {
     } catch (e) {
       setCompletedQuizLevels([]);
     }
-  }, [currentUser, todayStr]);
 
-  const categories = ['전체', ...new Set(wordList500.map(w => w.category))];
+    let savedDailySet = [];
+    try {
+      savedDailySet = JSON.parse(localStorage.getItem(dailySetKey) || '[]');
+    } catch (e) {
+      savedDailySet = [];
+    }
 
-  const filteredWords = wordList500.filter(w => {
-    if (category === '전체') return true;
-    return w.category === category;
-  });
+    if (savedDailySet && savedDailySet.length > 0) {
+      setDailyRandomWords(savedDailySet);
+    } else {
+      const newRandomSet = generateDailyRandomWords(currentUser, wordList);
+      setDailyRandomWords(newRandomSet);
+      localStorage.setItem(dailySetKey, JSON.stringify(newRandomSet));
+    }
+  }, [currentUser, todayStr, wordList, generateDailyRandomWords]);
 
-  const activeWords = filteredWords.slice(0, currentUser ? parseInt(currentUser.dailyWordCount || 10) : 10);
-  const currentWord = activeWords[currentIndex] || activeWords[0] || wordList500[0];
+  const safeActiveWords = dailyRandomWords.length > 0
+    ? dailyRandomWords
+    : wordList.slice(0, currentUser ? parseInt(currentUser.dailyWordCount || 10, 10) : 10);
 
-  const playAudio = useCallback((textToPlay) => {
-    const text = textToPlay || currentWord?.word;
-    if ('speechSynthesis' in window && text) {
+  const currentWord = safeActiveWords[currentIndex] || safeActiveWords[0] || wordList[0];
+
+  // 단어명 및 예문 텍스트 완벽 검증 및 문장 자동 구조화
+  const cleanWordStr = (currentWord?.word || '').replace(/\.png/gi, '').trim();
+  const rawExampleEn = (currentWord?.exampleEn || '').replace(/\.png/gi, '').trim();
+  const rawExampleKo = (currentWord?.exampleKo || '').replace(/\.png/gi, '').trim();
+
+  // 💡 단어가 2개 이상 포함된 실제 제대로 된 영어/한글 문장인지 엄격 검사!
+  const isRealSentenceEn = rawExampleEn && rawExampleEn.split(/\s+/).length >= 2 && !rawExampleEn.toLowerCase().endsWith('.png');
+  const isRealSentenceKo = rawExampleKo && rawExampleKo.split(/\s+/).length >= 2 && !rawExampleKo.toLowerCase().endsWith('.png');
+
+  const displayExampleEn = isRealSentenceEn
+    ? rawExampleEn
+    : `I see a nice ${cleanWordStr.toLowerCase()}.`;
+
+  const displayExampleKo = isRealSentenceKo
+    ? rawExampleKo
+    : `나는 멋진 ${currentWord?.meaning || cleanWordStr}을(를) 본다.`;
+
+  // 1. 단어 전용 🔊 TTS 음성 재생 함수
+  const playWordAudio = useCallback((wordText) => {
+    if ('speechSynthesis' in window) {
+      const text = wordText || cleanWordStr;
       window.speechSynthesis.cancel();
       const utterance = new SpeechSynthesisUtterance(text);
       utterance.lang = 'en-US';
       utterance.rate = 0.85;
       window.speechSynthesis.speak(utterance);
     }
-  }, [currentWord]);
+  }, [cleanWordStr]);
 
-  // 플래시카드가 보일 때(카드 전환, 탭 이동 등) 자동으로 발음 소리 재생!
+  // 2. 🔊 예문 문장 전용 원어민 TTS 음성 재생 함수
+  const playSentenceAudio = useCallback((sentenceText) => {
+    if ('speechSynthesis' in window) {
+      const textToSpeak = sentenceText || displayExampleEn;
+      window.speechSynthesis.cancel();
+      const utterance = new SpeechSynthesisUtterance(textToSpeak);
+      utterance.lang = 'en-US';
+      utterance.rate = 0.85;
+      window.speechSynthesis.speak(utterance);
+    }
+  }, [displayExampleEn]);
+
   useEffect(() => {
     if (mainTab === 'flashcard' && currentWord) {
       const timer = setTimeout(() => {
-        playAudio(currentWord.word);
+        playWordAudio(cleanWordStr);
       }, 200);
       return () => clearTimeout(timer);
     }
-  }, [mainTab, currentIndex, category, currentWord, playAudio]);
+  }, [mainTab, currentIndex, currentWord, playWordAudio, cleanWordStr]);
 
   const handleCardClick = (e) => {
     if (e.target.closest('button') || e.target.closest('.audio-btn') || e.target.closest('.record-btn')) {
@@ -81,27 +189,65 @@ export default function Home() {
   const handlePrev = () => {
     setIsFlipped(false);
     setRecordedAudioUrl(null);
-    setCurrentIndex(prev => (prev > 0 ? prev - 1 : activeWords.length - 1));
+    setCurrentIndex(prev => (prev > 0 ? prev - 1 : safeActiveWords.length - 1));
   };
 
   const handleNext = () => {
     setIsFlipped(false);
     setRecordedAudioUrl(null);
-    setCurrentIndex(prev => (prev < activeWords.length - 1 ? prev + 1 : 0));
+
+    if (currentIndex + 1 >= safeActiveWords.length) {
+      alert('🎉 오늘 무작위 공부 단어를 모두 보았습니다! 1단계 소리 퀴즈로 자동 이동합니다!');
+      setMainTab('quiz');
+      setCurrentIndex(0);
+    } else {
+      setCurrentIndex(prev => prev + 1);
+    }
   };
 
-  const handleShuffle = () => {
-    setIsFlipped(false);
-    setRecordedAudioUrl(null);
-    const rand = Math.floor(Math.random() * activeWords.length);
-    setCurrentIndex(rand);
-  };
+  // 실시간 음성 높낮이 파동 Canvas 그리기 함수
+  const drawAudioVisualizer = useCallback(() => {
+    if (!analyserRef.current || !canvasRef.current) return;
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext('2d');
+    const bufferLength = analyserRef.current.frequencyBinCount;
+    const dataArray = new Uint8Array(bufferLength);
+
+    const draw = () => {
+      if (!analyserRef.current) return;
+      analyserRef.current.getByteFrequencyData(dataArray);
+
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      const barWidth = (canvas.width / bufferLength) * 2.2;
+      let x = 0;
+
+      for (let i = 0; i < bufferLength; i++) {
+        const barHeight = (dataArray[i] / 255) * canvas.height;
+        ctx.fillStyle = `hsl(${i * 12 + 160}, 85%, 55%)`;
+        ctx.fillRect(x, canvas.height - barHeight, barWidth - 2, barHeight);
+        x += barWidth;
+      }
+
+      animFrameRef.current = requestAnimationFrame(draw);
+    };
+
+    draw();
+  }, []);
 
   const startRecording = async () => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       mediaRecorderRef.current = new MediaRecorder(stream);
       audioChunksRef.current = [];
+
+      const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      const analyser = audioCtx.createAnalyser();
+      analyser.fftSize = 64;
+      const source = audioCtx.createMediaStreamSource(stream);
+      source.connect(analyser);
+
+      audioContextRef.current = audioCtx;
+      analyserRef.current = analyser;
 
       mediaRecorderRef.current.ondataavailable = (e) => {
         if (e.data.size > 0) audioChunksRef.current.push(e.data);
@@ -112,7 +258,6 @@ export default function Home() {
         const url = URL.createObjectURL(audioBlob);
         setRecordedAudioUrl(url);
 
-        // 1차 발음 녹음 미션 성공 기록!
         if (currentUser) {
           setHasRecorded(true);
           localStorage.setItem(`record_mission_${currentUser.id}_${todayStr}`, 'true');
@@ -121,6 +266,8 @@ export default function Home() {
 
       mediaRecorderRef.current.start();
       setIsRecording(true);
+
+      drawAudioVisualizer();
     } catch (err) {
       alert('마이크 접근 권한이 필요합니다.');
     }
@@ -130,6 +277,13 @@ export default function Home() {
     if (mediaRecorderRef.current && isRecording) {
       mediaRecorderRef.current.stop();
       setIsRecording(false);
+
+      if (animFrameRef.current) {
+        cancelAnimationFrame(animFrameRef.current);
+      }
+      if (audioContextRef.current) {
+        audioContextRef.current.close();
+      }
     }
   };
 
@@ -140,22 +294,13 @@ export default function Home() {
     }
   };
 
-  // 퀴즈 레벨 완수 처리
-  const handleQuizLevelComplete = (level) => {
-    if (!currentUser) return;
-    const updated = [...new Set([...completedQuizLevels, level])];
-    setCompletedQuizLevels(updated);
-    localStorage.setItem(`quiz_mission_${currentUser.id}_${todayStr}`, JSON.stringify(updated));
-  };
-
-  // 학습 완료 조건 달성 여부 (녹음 1회 이상 + 퀴즈 1단계/2단계 완수)
-  const isQuizL2Done = completedQuizLevels.includes(1) && completedQuizLevels.includes(2);
-  const canShowCompleteBtn = hasRecorded && isQuizL2Done;
-
-  // 출석 도장 쾅 찍기
-  const handleStampAttendance = () => {
+  // 💮 자동 출석 도장 찍기 및 배운 단어 + 날짜별 개별 단어 리스트 저장 함수
+  const handleStampAttendance = useCallback(() => {
     if (!currentUser) return;
     const stampKey = `english_stamps_${currentUser.id}`;
+    const learnedKey = `learned_words_${currentUser.id}`;
+    const stampedWordsKey = `stamped_words_${currentUser.id}_${todayStr}`;
+
     let stamps = [];
     try {
       stamps = JSON.parse(localStorage.getItem(stampKey) || '[]');
@@ -166,9 +311,60 @@ export default function Home() {
       stamps.push(todayStr);
       localStorage.setItem(stampKey, JSON.stringify(stamps));
     }
+
+    // 해당 날짜에 공부한 단어 세트 날짜별 바인딩 저장!
+    localStorage.setItem(stampedWordsKey, JSON.stringify(safeActiveWords));
+
+    let learnedList = [];
+    try {
+      learnedList = JSON.parse(localStorage.getItem(learnedKey) || '[]');
+    } catch (e) {
+      learnedList = [];
+    }
+
+    const todayWordsStr = safeActiveWords.map(w => w.word);
+    const updatedLearned = [...new Set([...learnedList, ...todayWordsStr])];
+    localStorage.setItem(learnedKey, JSON.stringify(updatedLearned));
+
     setIsTodayComplete(true);
-    alert('🎉 참잘했어요 도장이 출석 달력에 등록되었습니다! 💮');
-    setMainTab('calendar');
+  }, [currentUser, todayStr, safeActiveWords]);
+
+  // 💡 오직 2단계 퀴즈 완수 시에만 출석 도장 찍기 수행!
+  const handleQuizLevelComplete = (level) => {
+    if (!currentUser) return;
+    const updated = [...new Set([...completedQuizLevels, level])];
+    setCompletedQuizLevels(updated);
+    localStorage.setItem(`quiz_mission_${currentUser.id}_${todayStr}`, JSON.stringify(updated));
+
+    if (level === 2) {
+      handleStampAttendance();
+      setTimeout(() => {
+        alert('🎉 축하합니다! 2단계 퀴즈까지 완수하여 오늘 필수 학습 출석 도장이 찍혔습니다! 💮\n내일 다시 접속하면 새로운 무작위 단어가 시작됩니다!');
+        setMainTab('calendar');
+      }, 300);
+    }
+  };
+
+  const isQuizL2Done = completedQuizLevels.includes(2);
+
+  // 🖼️ 534개 word_img 전용 이미지 주소 생성 로직 (첫글자 대문자)
+  const getWordImgSrc = (wordObj) => {
+    if (!wordObj || !wordObj.word) return '/word_img/Apple.png';
+    const wordClean = wordObj.word.replace(/\.png/gi, '').trim();
+    const wordCap = wordClean.charAt(0).toUpperCase() + wordClean.slice(1);
+    return `/word_img/${wordCap}.png`;
+  };
+
+  const handleImageError = (e, wordStr) => {
+    const target = e.target;
+    const currentSrc = target.src;
+    const wordLower = wordStr.replace(/\.png/gi, '').toLowerCase().trim();
+
+    if (!currentSrc.includes(`/${wordLower}.png`)) {
+      target.src = `/word_img/${wordLower}.png`;
+    } else {
+      target.style.display = 'none';
+    }
   };
 
   return (
@@ -176,45 +372,72 @@ export default function Home() {
       {/* 상단 학생 헤더 바 및 모달 제어 */}
       <UserManager currentUser={currentUser} setCurrentUser={setCurrentUser} />
 
-      {/* 학습 완료 조건 만족 시 자동으로 등장하는 축하 버튼 */}
-      {canShowCompleteBtn && (
-        <div style={{ width: '100%', animation: 'pulse 1.5s infinite' }}>
-          <button
-            onClick={handleStampAttendance}
-            style={{
-              width: '100%',
-              padding: '14px 20px',
-              borderRadius: '20px',
-              border: 'none',
-              background: 'linear-gradient(135deg, #2ECC71 0%, #27AE60 100%)',
-              color: 'white',
-              fontSize: '16px',
-              fontWeight: '900',
-              cursor: 'pointer',
-              boxShadow: '0 8px 20px rgba(46, 204, 113, 0.4)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: '8px'
-            }}
-          >
-            🎉 오늘 미션 완료! 💮 참잘했어요 도장 찍기
-          </button>
-        </div>
-      )}
+      {/* 실시간 미션 스마트 버튼 바 */}
+      <div style={{
+        width: '100%',
+        background: '#FFFFFF',
+        border: '2px solid #EBF5FB',
+        borderRadius: '16px',
+        padding: '10px 14px',
+        display: 'flex',
+        justify: 'space-around',
+        alignItems: 'center',
+        boxShadow: '0 4px 10px rgba(0,0,0,0.03)',
+        gap: '8px'
+      }}>
+        <button
+          onClick={() => {
+            setMainTab('flashcard');
+            setTimeout(() => {
+              const recElement = document.getElementById('record-mission-section');
+              if (recElement) recElement.scrollIntoView({ behavior: 'smooth' });
+            }, 100);
+          }}
+          style={{
+            flex: 1,
+            padding: '8px 12px',
+            borderRadius: '12px',
+            border: hasRecorded ? '2px solid #2ECC71' : '1px solid #3498DB',
+            background: hasRecorded ? '#E8F8F5' : '#EBF5FB',
+            color: hasRecorded ? '#27AE60' : '#2980B9',
+            fontWeight: 'bold',
+            fontSize: '13px',
+            cursor: 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            justify: 'center',
+            gap: '6px',
+            transition: 'all 0.2s ease'
+          }}
+        >
+          {hasRecorded ? '✅ 1차 녹음 완료 🎙️' : '🎙️ 1차 녹음 미션 수행하기 ➔'}
+        </button>
 
-      {/* 실시간 미션 가이드 바 */}
-      <div style={{ width: '100%', background: '#F8F9FA', border: '1px solid #E9ECEF', borderRadius: '16px', padding: '10px 14px', fontSize: '12px', display: 'flex', justifyContent: 'space-around' }}>
-        <span style={{ color: hasRecorded ? '#27AE60' : '#7F8C8D', fontWeight: 'bold' }}>
-          {hasRecorded ? '✅ 발음 녹음 완료' : '🎙️ 1차 녹음 미션'}
-        </span>
-        <span style={{ color: isQuizL2Done ? '#27AE60' : '#7F8C8D', fontWeight: 'bold' }}>
-          {isQuizL2Done ? '✅ 퀴즈 2단계 완수' : '🧩 퀴즈 2단계 미션'}
-        </span>
+        <button
+          onClick={() => setMainTab('quiz')}
+          style={{
+            flex: 1,
+            padding: '8px 12px',
+            borderRadius: '12px',
+            border: isQuizL2Done ? '2px solid #2ECC71' : '1px solid #9B59B6',
+            background: isQuizL2Done ? '#E8F8F5' : '#F5EEF8',
+            color: isQuizL2Done ? '#27AE60' : '#8E44AD',
+            fontWeight: 'bold',
+            fontSize: '13px',
+            cursor: 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            justify: 'center',
+            gap: '6px',
+            transition: 'all 0.2s ease'
+          }}
+        >
+          {isQuizL2Done ? '✅ 오늘 학습완료 💮' : '🧩 2단계 스펠링 선택 풀기 ➔'}
+        </button>
       </div>
 
-      {/* 메인 4대 탭 메뉴 */}
-      <nav className="main-tab-nav">
+      {/* 메인 6대 탭 메뉴 */}
+      <nav className="main-tab-nav" style={{ gap: '2px' }}>
         <button
           className={`main-tab-btn ${mainTab === 'flashcard' ? 'active' : ''}`}
           onClick={() => setMainTab('flashcard')}
@@ -231,144 +454,176 @@ export default function Home() {
           className={`main-tab-btn ${mainTab === 'quiz' ? 'active' : ''}`}
           onClick={() => setMainTab('quiz')}
         >
-          ❓ 퀴즈 & 오답
+          ❓ 퀴즈
+        </button>
+        <button
+          className={`main-tab-btn ${mainTab === 'myvocab' ? 'active' : ''}`}
+          onClick={() => setMainTab('myvocab')}
+        >
+          ⭐ 단어장
         </button>
         <button
           className={`main-tab-btn ${mainTab === 'calendar' ? 'active' : ''}`}
           onClick={() => setMainTab('calendar')}
         >
-          📅 출석 달력
+          📅 출석
+        </button>
+        <button
+          className={`main-tab-btn ${mainTab === 'parent' ? 'active' : ''}`}
+          onClick={() => setMainTab('parent')}
+          style={{ background: mainTab === 'parent' ? '#9B59B6' : 'transparent', color: mainTab === 'parent' ? 'white' : '#8E44AD' }}
+        >
+          👨‍👩‍👧‍👦 학부모
         </button>
       </nav>
 
-      {/* 탭 1: 플래시카드 학습 */}
+      {/* 탭 1: 플래시카드 무작위 학습 코스 */}
       {mainTab === 'flashcard' && (
         <>
           <header className="app-header">
-            <h1 className="app-title">초등 필수 영단어 500</h1>
-            <div className="controls-row">
-              <select
-                className="select-category"
-                value={category}
-                onChange={(e) => {
-                  setCategory(e.target.value);
-                  setCurrentIndex(0);
-                  setIsFlipped(false);
-                }}
-              >
-                {categories.map((cat, idx) => (
-                  <option key={idx} value={cat}>{cat}</option>
-                ))}
-              </select>
-              <button className="btn-action" onClick={handleShuffle}>🎲 섞기</button>
-            </div>
+            <h1 className="app-title" style={{ margin: 0 }}>초등 필수 영단어 500</h1>
           </header>
 
-          <div className="card-scene" onClick={handleCardClick}>
-            <div className={`flashcard ${isFlipped ? 'flipped' : ''}`}>
-              {/* 앞면 카드 */}
+          <div className="flashcard-wrapper">
+            <div className={`flashcard ${isFlipped ? 'flipped' : ''}`} onClick={handleCardClick}>
+              {/* 앞면: 그림 + 영단어 + 발음기호 + 한글 뜻 함께 표시 */}
               <div className="card-face card-front">
-                <div className="card-img-wrapper">
+                <span className="card-category-badge">
+                  {currentWord?.gradeLevel || '초등단어'} • {currentWord?.category}
+                </span>
+
+                <div style={{ width: '130px', height: '130px', margin: '6px 0', borderRadius: '18px', overflow: 'hidden', boxShadow: '0 6px 16px rgba(0,0,0,0.1)', background: '#FAFAFA', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                   <img
-                    src={`/word_img/${currentWord.word}.png`}
-                    alt={currentWord.word}
-                    className="card-img"
-                    onError={(e) => {
-                      e.target.onerror = null;
-                      e.target.src = '/word_img/Apple.png';
-                    }}
+                    src={getWordImgSrc(currentWord)}
+                    alt={cleanWordStr}
+                    style={{ width: '100%', height: '100%', objectFit: 'contain', padding: '6px' }}
+                    onError={(e) => handleImageError(e, cleanWordStr)}
                   />
                 </div>
-                <div className="word-info-right">
-                  <h2 className="word-en">{currentWord.word}</h2>
-                  <p className="word-phonics">{currentWord.phonics}</p>
-                  <div style={{ display: 'flex', gap: '10px', marginTop: '14px' }}>
-                    <button
-                      className="audio-btn"
-                      onClick={(e) => { e.stopPropagation(); playAudio(currentWord.word); }}
-                      title="원어민 발음 듣기"
-                    >
-                      🔊
-                    </button>
-                    <button
-                      className={`record-btn ${isRecording ? 'recording' : ''}`}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        isRecording ? stopRecording() : startRecording();
-                      }}
-                      title="내 발음 녹음하기"
-                    >
-                      🎙️
-                    </button>
-                  </div>
-                  {recordedAudioUrl && (
-                    <button
-                      className="btn-play-my-audio"
-                      onClick={(e) => { e.stopPropagation(); playRecordedAudio(); }}
-                    >
-                      ▶️ 내 녹음 듣기
-                    </button>
-                  )}
+
+                <h2 className="word-en" style={{ margin: '4px 0 0 0' }}>{cleanWordStr}</h2>
+                <p className="word-phonics" style={{ margin: '2px 0 0 0' }}>{currentWord?.phonics}</p>
+                <h3 className="word-ko" style={{ margin: '4px 0 0 0', fontSize: '24px', color: '#FF6B6B' }}>{currentWord?.meaning}</h3>
+
+                <div style={{ marginTop: '8px' }}>
+                  <button className="audio-btn" onClick={(e) => { e.stopPropagation(); playWordAudio(cleanWordStr); }}>
+                    🔊 단어 발음 듣기
+                  </button>
                 </div>
-                <div className="flip-hint-bottom">👆 터치하여 뜻 보기</div>
+
+                <div className="flip-hint">👆 터치하여 예문 및 예문 발음 보기</div>
               </div>
 
-              {/* 뒷면 카드 */}
+              {/* 뒷면: 완벽한 예문 문장 & 예문 음성 전용 재생기 */}
               <div className="card-face card-back">
-                <h2 className="meaning-kr">{currentWord.meaning}</h2>
-                <div className="example-box">
-                  <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
-                    <p className="example-en" style={{ margin: 0 }}>{currentWord.exampleEn}</p>
-                    <button
-                      type="button"
-                      onClick={(e) => { e.stopPropagation(); playAudio(currentWord.exampleEn); }}
-                      style={{
-                        background: '#E8F8F5',
-                        border: '1px solid #2ECC71',
-                        color: '#27AE60',
-                        borderRadius: '12px',
-                        padding: '3px 8px',
-                        fontSize: '12px',
-                        fontWeight: 'bold',
-                        cursor: 'pointer'
-                      }}
-                      title="예문 원어민 소리 듣기"
-                    >
-                      🔊 예문 듣기
-                    </button>
-                  </div>
-                  <p className="example-ko">{currentWord.exampleKo}</p>
+                <span className="card-category-badge">
+                  {currentWord?.gradeLevel || '초등단어'} • {currentWord?.category}
+                </span>
+
+                <div style={{ width: '110px', height: '110px', margin: '4px 0', borderRadius: '18px', overflow: 'hidden', boxShadow: '0 6px 16px rgba(0,0,0,0.1)', background: '#FAFAFA', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <img
+                    src={getWordImgSrc(currentWord)}
+                    alt={cleanWordStr}
+                    style={{ width: '100%', height: '100%', objectFit: 'contain', padding: '6px' }}
+                    onError={(e) => handleImageError(e, cleanWordStr)}
+                  />
                 </div>
-                <div className="flip-hint-bottom">👆 터치하면 앞면으로 돌아갑니다</div>
+
+                <span style={{ fontSize: '12px', color: '#7F8C8D', marginTop: '6px', fontWeight: 'bold' }}>📖 추천 학습 예문</span>
+                <h3 style={{ fontSize: '18px', fontWeight: '900', color: '#2C3E50', margin: '4px 0 0 0', padding: '0 10px', textAlign: 'center' }}>
+                  {displayExampleEn}
+                </h3>
+                <p style={{ fontSize: '15px', fontWeight: 'bold', color: '#27AE60', margin: '4px 0 0 0' }}>
+                  {displayExampleKo}
+                </p>
+
+                <div style={{ marginTop: '10px' }}>
+                  <button
+                    className="audio-btn"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      playSentenceAudio(displayExampleEn);
+                    }}
+                    style={{ background: '#E8F8F5', border: '1px solid #2ECC71', color: '#27AE60' }}
+                  >
+                    🔊 예문 문장 발음 듣기
+                  </button>
+                </div>
+
+                <div className="flip-hint">👆 터치하여 영단어 보기</div>
               </div>
             </div>
-          </div>
 
-          <div className="nav-controls">
-            <button className="btn-nav" onClick={handlePrev}>◀</button>
-            <span className="progress-text">{currentIndex + 1} / {activeWords.length}</span>
-            <button className="btn-nav" onClick={handleNext}>▶</button>
+            <div className="card-nav-buttons">
+              <button className="btn-nav" onClick={handlePrev}>◀ 이전</button>
+              <span className="card-counter">
+                {currentIndex + 1} / {safeActiveWords.length}
+              </span>
+              <button className="btn-nav" onClick={handleNext}>
+                {currentIndex + 1 === safeActiveWords.length ? '1단계 퀴즈로 ➔' : '다음 ▶'}
+              </button>
+            </div>
+
+            {/* 마이크 녹음 및 실시간 음성 파동/높낮이 Visualizer 그래프 */}
+            <div id="record-mission-section" className="voice-recorder-card" style={{ marginTop: '16px', background: '#FFFFFF', borderRadius: '20px', padding: '16px', border: '1px solid #E9ECEF', textAlign: 'center' }}>
+              <h4 style={{ margin: '0 0 8px 0', fontSize: '14px', color: '#2C3E50' }}>
+                🎙️ 내 발음 녹음 & 음성 높낮이 그래프 ({cleanWordStr})
+              </h4>
+
+              <div style={{ margin: '8px 0', background: '#2C3E50', borderRadius: '14px', padding: '6px', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                <canvas
+                  ref={canvasRef}
+                  width={280}
+                  height={50}
+                  style={{ borderRadius: '8px', background: '#1A252F', width: '100%', maxHeight: '50px' }}
+                />
+              </div>
+
+              <div style={{ display: 'flex', justifyContent: 'center', gap: '10px', marginTop: '10px' }}>
+                {!isRecording ? (
+                  <button className="record-btn" onClick={startRecording} style={{ background: '#E74C3C', color: 'white', border: 'none', padding: '10px 18px', borderRadius: '14px', fontWeight: 'bold', cursor: 'pointer' }}>
+                    🎙️ 녹음 시작 (음성 높낮이 보기)
+                  </button>
+                ) : (
+                  <button className="record-btn recording" onClick={stopRecording} style={{ background: '#27AE60', color: 'white', border: 'none', padding: '10px 18px', borderRadius: '14px', fontWeight: 'bold', cursor: 'pointer', animation: 'pulse 1s infinite' }}>
+                    ⏹️ 녹음 완료
+                  </button>
+                )}
+
+                {recordedAudioUrl && (
+                  <button onClick={playRecordedAudio} style={{ background: '#3498DB', color: 'white', border: 'none', padding: '10px 18px', borderRadius: '14px', fontWeight: 'bold', cursor: 'pointer' }}>
+                    ▶️ 내 발음 듣기
+                  </button>
+                )}
+              </div>
+            </div>
           </div>
         </>
       )}
 
-      {/* 탭 2: 단어 리스트 보기 */}
+      {/* 탭 2: 전체 단어 리스트 */}
       {mainTab === 'wordlist' && (
-        <WordListSection activeWords={activeWords} playAudio={playAudio} />
+        <WordListSection words={safeActiveWords} onPlayAudio={playWordAudio} />
       )}
 
-      {/* 탭 3: 퀴즈 & 오답노트 */}
+      {/* 탭 3: 영단어 퀴즈 */}
       {mainTab === 'quiz' && (
-        <QuizSection
-          currentUser={currentUser}
-          activeWords={activeWords}
-          onQuizLevelComplete={handleQuizLevelComplete}
-        />
+        <QuizSection currentUser={currentUser} activeWords={safeActiveWords} onQuizLevelComplete={handleQuizLevelComplete} />
       )}
 
-      {/* 탭 4: 출석 달력 */}
+      {/* 탭 4: ⭐ 나만의 개인 단어장 모듈 */}
+      {mainTab === 'myvocab' && (
+        <PersonalVocabSection currentUser={currentUser} onPlayAudio={playWordAudio} />
+      )}
+
+      {/* 탭 5: 📅 출석 달력 모듈 */}
       {mainTab === 'calendar' && (
         <CalendarSection currentUser={currentUser} />
+      )}
+
+      {/* 탭 6: 👨‍👩‍👧‍👦 학부모 전용 자녀 학습 리포트 대시보드 */}
+      {mainTab === 'parent' && (
+        <ParentDashboard currentUser={currentUser} />
       )}
     </main>
   );

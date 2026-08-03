@@ -39,6 +39,7 @@ body {
     flex-direction: column;
     align-items: center;
     gap: 16px;
+    margin: 0 auto;
 }
 
 /* 메인 탭 메뉴 */
@@ -71,66 +72,178 @@ body {
     box-shadow: 0 4px 12px rgba(78, 205, 196, 0.3);
 }
 
-/* 상단 학생 헤더 바 */
-.user-header-bar {
+/* 헤더 */
+.app-header {
     width: 100%;
-    background: #FFF9E6;
-    border: 2px solid #FFE66D;
-    border-radius: 16px;
-    padding: 10px 16px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+    text-align: center;
+    background: var(--card-bg);
+    padding: 16px 20px;
+    border-radius: 20px;
+    box-shadow: var(--shadow-soft);
 }
 
-.user-info-row {
+.app-title {
+    font-size: 20px;
+    font-weight: 800;
+    color: var(--text-dark);
+}
+
+/* 플래시카드 제자리 3D 회전 레이아웃 */
+.flashcard-wrapper {
+    width: 100%;
+    margin-top: 6px;
+    perspective: 1000px;
+}
+
+.flashcard {
+    width: 100%;
+    min-height: 320px;
+    position: relative;
+    transform-style: preserve-3d;
+    transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1);
+    border-radius: 24px;
+    cursor: pointer;
+}
+
+.flashcard.flipped {
+    transform: rotateY(180deg);
+}
+
+.card-face {
+    width: 100%;
+    min-height: 320px;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    border-radius: 24px;
+    background: #FFFFFF;
+    padding: 28px 20px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+    border: 2px solid #E9ECEF;
     display: flex;
-    justify-content: space-between;
+    flex-direction: column;
     align-items: center;
+    justify-content: center;
+    text-align: center;
+    box-sizing: border-box;
 }
 
-.user-label {
-    font-size: 13px;
+.card-front {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.card-back {
+    position: absolute;
+    top: 0;
+    left: 0;
+    transform: rotateY(180deg);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.card-category-badge {
+    position: absolute;
+    top: 14px;
+    left: 16px;
+    background: #EBF5FB;
+    color: #2980B9;
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.word-en {
+    font-size: 38px;
+    font-weight: 900;
+    color: var(--text-dark);
+    margin-top: 12px;
+}
+
+.word-phonics {
+    font-size: 18px;
+    font-weight: 700;
+    color: #3498DB;
+    margin-top: 4px;
+}
+
+.word-ko {
+    font-size: 38px;
+    font-weight: 900;
+    color: var(--accent-color);
+    margin-top: 12px;
+}
+
+.word-meaning-title {
+    font-size: 14px;
     color: var(--text-muted);
 }
 
-.user-name {
-    font-size: 15px;
-    color: #D35400;
-    margin-left: 6px;
-}
-
-.user-target-badge {
+.flip-hint {
+    position: absolute;
+    bottom: 12px;
     font-size: 11px;
-    background: #FFD166;
-    padding: 2px 8px;
-    border-radius: 10px;
-    margin-left: 6px;
-    font-weight: bold;
-    color: #2C3E50;
+    color: #95A5A6;
 }
 
-.btn-user-switch {
+.audio-btn {
+    background: #EBF5FB;
+    border: 1px solid #3498DB;
+    color: #2980B9;
+    padding: 8px 16px;
+    border-radius: 14px;
+    font-weight: bold;
+    font-size: 13px;
+    cursor: pointer;
+}
+
+/* 카드 이동 내비게이션 바 (넓고 예쁜 정중앙 정렬) */
+.card-nav-buttons {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    margin-top: 14px;
+    background: #FFFFFF;
+    padding: 12px 18px;
+    border-radius: 18px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    border: 1px solid #E9ECEF;
+    box-sizing: border-box;
+}
+
+.btn-nav {
+    background: #F8F9FA;
+    border: 1px solid #BDC3C7;
+    padding: 8px 16px;
+    border-radius: 14px;
+    font-weight: bold;
+    font-size: 13px;
+    color: var(--text-dark);
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.2s ease;
+}
+
+.btn-nav:hover {
     background: var(--primary-color);
     color: white;
-    border: none;
-    padding: 6px 12px;
-    border-radius: 12px;
-    font-weight: bold;
-    cursor: pointer;
-    font-size: 12px;
+    border-color: var(--primary-color);
 }
 
-.btn-admin {
-    background: #2C3E50;
-    color: white;
-    border: none;
-    padding: 6px 12px;
-    border-radius: 12px;
-    font-weight: bold;
-    cursor: pointer;
-    font-size: 12px;
+.card-counter {
+    font-size: 16px;
+    font-weight: 900;
+    color: #2C3E50;
+    margin: 0 12px;
+    white-space: nowrap;
 }
 
-/* 단어 리스트 섹션 스타일 */
+/* 단어 리스트 섹션 */
 .word-list-section {
     width: 100%;
     background: var(--card-bg);
@@ -164,12 +277,6 @@ body {
     border-radius: 16px;
     padding: 14px 16px;
     gap: 14px;
-    transition: all 0.2s ease;
-}
-
-.word-list-item-card:hover {
-    border-color: var(--primary-color);
-    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
 }
 
 .word-item-index {
@@ -182,7 +289,7 @@ body {
     font-size: 13px;
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify: center;
     flex-shrink: 0;
 }
 
@@ -197,19 +304,19 @@ body {
 }
 
 .word-item-en {
-    font-size: 20px;
+    font-size: 18px;
     font-weight: 900;
     color: var(--text-dark);
 }
 
 .word-item-phonics {
-    font-size: 14px;
+    font-size: 13px;
     font-weight: 700;
     color: #3498DB;
 }
 
 .word-item-meaning {
-    font-size: 16px;
+    font-size: 15px;
     font-weight: 800;
     color: var(--accent-color);
     margin-top: 2px;
@@ -222,486 +329,32 @@ body {
 }
 
 .example-en-sm {
-    font-size: 13px;
+    font-size: 12px;
     font-weight: 700;
     color: var(--text-dark);
 }
 
 .example-ko-sm {
-    font-size: 12px;
+    font-size: 11px;
     color: var(--text-muted);
 }
 
 .audio-btn-sm {
-    width: 38px;
-    height: 38px;
+    width: 36px;
+    height: 36px;
     border-radius: 50%;
     border: none;
     background: #E8F8F5;
     color: var(--primary-dark);
-    font-size: 16px;
-    cursor: pointer;
-    flex-shrink: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-/* 컨트롤 및 플래시카드 스타일 (제자리 3D 회전 완전 고정) */
-.app-header {
-    width: 100%;
-    text-align: center;
-    background: var(--card-bg);
-    padding: 16px 20px;
-    border-radius: 20px;
-    box-shadow: var(--shadow-soft);
-}
-
-.app-title {
-    font-size: 20px;
-    font-weight: 800;
-    color: var(--text-dark);
-    margin-bottom: 10px;
-}
-
-.controls-row {
-    display: flex;
-    gap: 10px;
-    justify-content: center;
-}
-
-.select-category, .btn-action {
-    padding: 10px 14px;
-    border-radius: 12px;
-    border: none;
-    font-size: 13px;
-    font-weight: 700;
-    cursor: pointer;
-}
-
-.select-category {
-    background: #F8F9FA;
-    border: 1px solid #E9ECEF;
-    flex: 1;
-}
-
-.btn-action {
-    background: var(--primary-color);
-    color: white;
-}
-
-.card-scene {
-    width: 100%;
-    height: 340px;
-    perspective: 1200px;
-    cursor: pointer;
-    position: relative;
-}
-
-.flashcard {
-    width: 100%;
-    height: 100%;
-    position: relative;
-    transform-style: preserve-3d;
-    transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1);
-    border-radius: var(--radius-large);
-    box-shadow: var(--shadow-soft);
-}
-
-.flashcard.flipped {
-    transform: rotateY(180deg);
-}
-
-.card-face {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    backface-visibility: hidden;
-    -webkit-backface-visibility: hidden;
-    border-radius: var(--radius-large);
-    background: var(--card-bg);
-    padding: 24px;
-    border: 2px solid rgba(255, 255, 255, 0.8);
-    box-sizing: border-box;
-}
-
-.card-front {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-}
-
-.card-img-wrapper {
-    width: 200px;
-    height: 200px;
-    border-radius: 24px;
-    overflow: hidden;
-    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.1);
-    background: #F8F9FA;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-}
-
-.card-img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
-
-.word-info-right {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    justify-content: center;
-    padding-left: 20px;
-}
-
-.word-en {
-    font-size: 34px;
-    font-weight: 900;
-    color: var(--text-dark);
-    line-height: 1.2;
-}
-
-.word-phonics {
-    font-size: 18px;
-    font-weight: 700;
-    color: #3498DB;
-    margin-top: 8px;
-    font-family: 'Segoe UI', Arial, sans-serif;
-}
-
-.audio-btn, .record-btn {
-    width: 46px;
-    height: 46px;
-    border-radius: 50%;
-    border: none;
-    font-size: 20px;
-    cursor: pointer;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.audio-btn {
-    background: #E8F8F5;
-    color: var(--primary-dark);
-}
-
-.record-btn {
-    background: #FFEAA7;
-    color: #D35400;
-}
-
-.record-btn.recording {
-    background: #FF7675;
-    color: white;
-    animation: pulse 1s infinite;
-}
-
-@keyframes pulse {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.1); }
-    100% { transform: scale(1); }
-}
-
-.btn-play-my-audio {
-    margin-top: 14px;
-    background: #E8F8F5;
-    color: #27AE60;
-    border: 1px solid #2ECC71;
-    padding: 8px 14px;
-    border-radius: 12px;
-    font-size: 13px;
-    font-weight: bold;
-    cursor: pointer;
-}
-
-.flip-hint-bottom {
-    position: absolute;
-    bottom: 16px;
-    right: 24px;
-    font-size: 12px;
-    color: var(--text-muted);
-}
-
-/* 카드 뒷면 - 완전 고정 수평/수직 중앙 정렬 */
-.card-back {
-    transform: rotateY(180deg);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 16px;
-    padding: 30px;
-}
-
-.meaning-kr {
-    font-size: 42px;
-    font-weight: 900;
-    color: var(--accent-color);
-}
-
-.example-box {
-    background: #F8F9FA;
-    padding: 16px 20px;
-    border-radius: 20px;
-    width: 100%;
-    text-align: center;
-    border: 1px dashed #DEE2E6;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.03);
-}
-
-.example-en {
-    font-size: 18px;
-    font-weight: 800;
-    color: var(--text-dark);
-    margin-bottom: 6px;
-}
-
-.example-ko {
     font-size: 15px;
-    color: var(--text-muted);
-    font-weight: 600;
-}
-
-.nav-controls {
-    width: 100%;
+    cursor: pointer;
+    flex-shrink: 0;
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    background: var(--card-bg);
-    padding: 10px 20px;
-    border-radius: 20px;
-    box-shadow: var(--shadow-soft);
+    justify: center;
 }
 
-.btn-nav {
-    width: 46px;
-    height: 46px;
-    border-radius: 14px;
-    border: none;
-    background: var(--primary-color);
-    color: white;
-    font-size: 18px;
-    cursor: pointer;
-}
-
-.progress-text {
-    font-size: 16px;
-    font-weight: 800;
-}
-
-/* 퀴즈 문제 박스 및 버튼 겹침 해결 스타일 */
-.quiz-question-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 12px;
-    margin: 16px 0 24px;
-    padding: 16px;
-    background: #F8F9FA;
-    border-radius: 20px;
-}
-
-.quiz-btn-audio-pill {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
-    background: #E8F8F5;
-    border: 1.5px solid #2ECC71;
-    color: #27AE60;
-    padding: 8px 18px;
-    border-radius: 20px;
-    font-size: 14px;
-    font-weight: bold;
-    cursor: pointer;
-    box-shadow: 0 4px 10px rgba(46, 204, 113, 0.15);
-    transition: all 0.2s ease;
-}
-
-.quiz-btn-audio-pill:hover {
-    background: #2ECC71;
-    color: white;
-}
-
-.spelling-input {
-    width: 100%;
-    padding: 14px;
-    border-radius: 16px;
-    border: 2px solid #DEE2E6;
-    font-size: 18px;
-    text-align: center;
-    font-weight: bold;
-    margin-top: 8px;
-}
-
-.spelling-input:focus {
-    border-color: var(--primary-color);
-    outline: none;
-    box-shadow: 0 0 0 3px rgba(78, 205, 196, 0.2);
-}
-
-/* 모달 및 기타 탭 스타일 유지 */
-.modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background: rgba(0, 0, 0, 0.5);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
-    padding: 20px;
-}
-
-.modal-content {
-    background: white;
-    width: 100%;
-    max-width: 420px;
-    border-radius: 24px;
-    padding: 20px;
-    box-shadow: var(--shadow-soft);
-    max-height: 90vh;
-    overflow-y: auto;
-}
-
-.modal-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 16px;
-}
-
-.modal-header h2 {
-    font-size: 18px;
-    font-weight: 800;
-}
-
-.btn-close {
-    border: none;
-    background: transparent;
-    font-size: 20px;
-    cursor: pointer;
-}
-
-.student-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 12px;
-}
-
-.student-card {
-    background: #F8F9FA;
-    border: 2px solid #E9ECEF;
-    border-radius: 16px;
-    padding: 16px;
-    text-align: center;
-    cursor: pointer;
-    transition: all 0.2s ease;
-}
-
-.student-card:hover {
-    border-color: var(--primary-color);
-    transform: translateY(-2px);
-}
-
-.student-avatar {
-    font-size: 32px;
-    margin-bottom: 6px;
-}
-
-.pin-form {
-    text-align: center;
-    padding: 10px 0;
-}
-
-.pin-input {
-    font-size: 24px;
-    letter-spacing: 8px;
-    text-align: center;
-    padding: 10px;
-    width: 160px;
-    border-radius: 12px;
-    border: 2px solid #DEE2E6;
-    margin-top: 10px;
-}
-
-.error-text {
-    color: #E74C3C;
-    font-size: 13px;
-    margin-top: 8px;
-}
-
-.btn-primary {
-    background: var(--primary-color);
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 12px;
-    font-weight: bold;
-    cursor: pointer;
-}
-
-.btn-secondary {
-    background: #95A5A6;
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 12px;
-    font-weight: bold;
-    cursor: pointer;
-}
-
-.admin-form {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-}
-
-.admin-form input, .admin-form select {
-    padding: 10px;
-    border-radius: 10px;
-    border: 1px solid #DEE2E6;
-}
-
-.student-manage-list {
-    list-style: none;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-}
-
-.student-manage-list li {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background: #F8F9FA;
-    padding: 10px 14px;
-    border-radius: 12px;
-    font-size: 13px;
-}
-
-.btn-delete {
-    background: #E74C3C;
-    color: white;
-    border: none;
-    padding: 4px 8px;
-    border-radius: 8px;
-    cursor: pointer;
-    font-size: 12px;
-}
-
+/* 퀴즈 섹션 */
 .quiz-container {
     width: 100%;
 }
@@ -716,170 +369,97 @@ body {
     flex: 1;
     padding: 10px;
     border: none;
+    background: white;
     border-radius: 14px;
-    background: rgba(255,255,255,0.7);
-    font-weight: 700;
+    font-size: 13px;
+    font-weight: bold;
+    color: var(--text-muted);
     cursor: pointer;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
 }
 
 .tab-btn.active {
-    background: white;
-    color: var(--primary-dark);
-    box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+    background: #34495E;
+    color: white;
 }
 
 .quiz-card {
-    background: var(--card-bg);
+    background: white;
     border-radius: var(--radius-large);
-    padding: 24px;
+    padding: 20px;
     box-shadow: var(--shadow-soft);
-    text-align: center;
 }
 
-.quiz-word-en {
-    font-size: 32px;
-    font-weight: 900;
-    color: var(--text-dark);
-    margin: 8px 0;
+.quiz-level-btn {
+    border: 1px solid #E9ECEF;
+    background: #F8F9FA;
+    border-radius: 12px;
+    padding: 8px;
+    font-weight: bold;
+    color: var(--text-muted);
+    cursor: pointer;
+}
+
+.quiz-level-btn.active {
+    background: var(--primary-color);
+    color: white;
+    border-color: var(--primary-color);
+}
+
+.quiz-question-container {
+    text-align: center;
+    margin-bottom: 16px;
+}
+
+.quiz-btn-audio-pill {
+    background: #EBF5FB;
+    border: 1px solid #3498DB;
+    color: #2980B9;
+    padding: 6px 14px;
+    border-radius: 14px;
+    font-size: 12px;
+    font-weight: bold;
+    cursor: pointer;
 }
 
 .options-grid {
     display: grid;
-    grid-template-columns: repeat(1, 1fr);
+    grid-template-columns: 1fr 1fr;
     gap: 10px;
-    margin-top: 16px;
 }
 
 .option-btn {
     padding: 14px;
-    border-radius: 14px;
     border: 2px solid #E9ECEF;
-    background: #F8F9FA;
-    font-size: 16px;
-    font-weight: 700;
-    cursor: pointer;
-    transition: all 0.2s ease;
-}
-
-.quiz-feedback {
-    margin-top: 14px;
-    font-size: 15px;
-}
-
-.wrong-words-card {
-    background: var(--card-bg);
-    border-radius: var(--radius-large);
-    padding: 20px;
-    box-shadow: var(--shadow-soft);
-}
-
-.wrong-list {
-    list-style: none;
-    margin-top: 12px;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-}
-
-.wrong-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background: #F8F9FA;
-    padding: 12px 16px;
     border-radius: 14px;
-    font-size: 14px;
+    background: #F8F9FA;
+    font-weight: bold;
+    color: var(--text-dark);
+    cursor: pointer;
 }
 
-.btn-remove-wrong {
+.spelling-input {
+    width: 100%;
+    padding: 14px;
+    border: 2px solid #BDC3C7;
+    border-radius: 14px;
+    font-size: 18px;
+    text-align: center;
+    font-weight: bold;
+}
+
+.btn-primary {
     background: var(--primary-color);
     color: white;
     border: none;
-    padding: 6px 12px;
-    border-radius: 10px;
-    cursor: pointer;
-    font-size: 12px;
-    font-weight: bold;
-}
-
-.calendar-card {
-    background: var(--card-bg);
-    border-radius: var(--radius-large);
-    padding: 20px;
-    box-shadow: var(--shadow-soft);
-    width: 100%;
-}
-
-.calendar-header {
-    text-align: center;
-    margin-bottom: 14px;
-}
-
-.calendar-subtitle {
-    font-size: 13px;
-    color: var(--text-muted);
-    margin-top: 4px;
-}
-
-.stamp-action-box {
-    margin-bottom: 16px;
-}
-
-.btn-stamp {
-    width: 100%;
-    padding: 14px;
-    border-radius: 16px;
-    border: none;
-    background: #FF6B6B;
-    color: white;
-    font-size: 15px;
-    font-weight: 800;
-    cursor: pointer;
-    box-shadow: 0 4px 12px rgba(255, 107, 107, 0.3);
-}
-
-.btn-stamp.stamped {
-    background: #2ECC71;
-    box-shadow: 0 4px 12px rgba(46, 204, 113, 0.3);
-}
-
-.calendar-grid {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    gap: 6px;
-    text-align: center;
-}
-
-.calendar-week-header {
-    font-weight: bold;
-    font-size: 13px;
-    padding: 6px 0;
-}
-
-.calendar-day-cell {
-    background: #FFFFFF;
-    border: 1px solid #E9ECEF;
+    padding: 12px;
     border-radius: 12px;
-    padding: 6px 2px;
-    min-height: 48px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: space-between;
-}
-
-.calendar-day-cell.today {
-    background: #FFF9E6;
-    border: 2px solid #F1C40F;
-}
-
-.day-number {
-    font-size: 11px;
     font-weight: bold;
-    color: #7F8C8D;
+    cursor: pointer;
 }
 
-.stamp-mark {
-    font-size: 20px;
-    line-height: 1;
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.02); }
+    100% { transform: scale(1); }
 }
