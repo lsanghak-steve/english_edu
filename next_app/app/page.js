@@ -16,12 +16,12 @@ export default function Home() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isFlipped, setIsFlipped] = useState(false);
 
-  // Supabase 클라우드 DB 연동 단어 데이터 상태 ('초등단어' 등 난이도 태깅 포함)
+  // Supabase 클라우드 DB 연동 단어 데이터 상태
   const [wordList, setWordList] = useState(() =>
     wordList500Fallback.map(w => ({ ...w, gradeLevel: w.gradeLevel || '초등단어' }))
   );
   const [dailyRandomWords, setDailyRandomWords] = useState([]);
-  const [studyRound, setStudyRound] = useState(1); // 학습 세트 회차 (1회차, 2회차...)
+  const [studyRound, setStudyRound] = useState(1);
 
   const [isRecording, setIsRecording] = useState(false);
   const [recordedAudioUrl, setRecordedAudioUrl] = useState(null);
@@ -66,7 +66,7 @@ export default function Home() {
     loadWordsFromSupabase();
   }, []);
 
-  // 미학습 단어 중 무작위(랜덤)로 섞어 하루 목표량 세트 준비하기
+  // 미학습 단어 중 무작위(랜덤) 세트 로드
   const generateDailyRandomWords = useCallback((userObj, fullList) => {
     if (!fullList || fullList.length === 0) return [];
     const userId = userObj ? userObj.id : 'guest';
@@ -130,7 +130,6 @@ export default function Home() {
     const dailyCount = parseInt(currentUser.dailyWordCount || 10, 10);
     const learnedKey = `learned_words_${userId}`;
 
-    // 현재 공부한 단어를 배운 단어 목록에 누적 저장
     let learnedList = [];
     try {
       learnedList = JSON.parse(localStorage.getItem(learnedKey) || '[]');
@@ -142,7 +141,6 @@ export default function Home() {
     const updatedLearned = [...new Set([...learnedList, ...currentWordsStr])];
     localStorage.setItem(learnedKey, JSON.stringify(updatedLearned));
 
-    // 배운 단어를 제외한 새로운 미학습 무작위 단어 10개 추출
     let unlearned = wordList.filter(w => !updatedLearned.includes(w.word));
     if (unlearned.length < dailyCount) {
       localStorage.setItem(learnedKey, JSON.stringify([]));
@@ -169,7 +167,6 @@ export default function Home() {
 
   const currentWord = safeActiveWords[currentIndex] || safeActiveWords[0] || wordList[0];
 
-  // 단어명 및 예문 텍스트 완벽 검증 및 문장 자동 구조화
   const cleanWordStr = (currentWord?.word || '').replace(/\.png/gi, '').trim();
   const rawExampleEn = (currentWord?.exampleEn || '').replace(/\.png/gi, '').trim();
   const rawExampleKo = (currentWord?.exampleKo || '').replace(/\.png/gi, '').trim();
@@ -244,7 +241,7 @@ export default function Home() {
     }
   };
 
-  // 실시간 음성 높낮이 파동 Canvas 그리기 함수
+  // 실시간 음성 높낮이 파동 Visualizer
   const drawAudioVisualizer = useCallback(() => {
     if (!analyserRef.current || !canvasRef.current) return;
     const canvas = canvasRef.current;
@@ -333,13 +330,24 @@ export default function Home() {
     }
   };
 
-  // 💮 자동 출석 도장 찍기 및 배운 단어 + 날짜별 개별 단어 리스트 저장 함수
-  const handleStampAttendance = useCallback(() => {
+  // 💮 클라우드 DB & localStorage 출석 도장 찍기 및 단어 세트 저장 함수
+  const handleStampAttendance = useCallback(async () => {
     if (!currentUser) return;
     const stampKey = `english_stamps_${currentUser.id}`;
-    const learnedKey = `learned_words_${currentUser.id}`;
     const stampedWordsKey = `stamped_words_${currentUser.id}_${todayStr}`;
 
+    // 1. Supabase 클라우드 DB에 출석도장 및 단어세트 저장
+    try {
+      await supabase.from('student_attendance').insert([{
+        user_id: currentUser.id,
+        stamped_date: todayStr,
+        stamped_words: safeActiveWords
+      }]);
+    } catch (e) {
+      console.log('Cloud attendance save fallback');
+    }
+
+    // 2. localStorage 백업 저장
     let stamps = [];
     try {
       stamps = JSON.parse(localStorage.getItem(stampKey) || '[]');
@@ -352,17 +360,6 @@ export default function Home() {
     }
 
     localStorage.setItem(stampedWordsKey, JSON.stringify(safeActiveWords));
-
-    let learnedList = [];
-    try {
-      learnedList = JSON.parse(localStorage.getItem(learnedKey) || '[]');
-    } catch (e) {
-      learnedList = [];
-    }
-
-    const todayWordsStr = safeActiveWords.map(w => w.word);
-    const updatedLearned = [...new Set([...learnedList, ...todayWordsStr])];
-    localStorage.setItem(learnedKey, JSON.stringify(updatedLearned));
   }, [currentUser, todayStr, safeActiveWords]);
 
   // 💡 2단계 퀴즈 완수 시 출석 도장 찍기 수행!

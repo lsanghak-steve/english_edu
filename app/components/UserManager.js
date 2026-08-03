@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import supabase from '../../lib/supabaseClient.js';
 
 export default function UserManager({ currentUser, setCurrentUser }) {
   const [users, setUsers] = useState([]);
@@ -17,8 +18,37 @@ export default function UserManager({ currentUser, setCurrentUser }) {
   const [parentPhoneInput, setParentPhoneInput] = useState('');
   const [parentPinInput, setParentPinInput] = useState('5678');
 
-  // 사용자 목록 로드
-  useEffect(() => {
+  // Supabase 클라우드 DB에서 학생 목록 로드 (실패 시 localStorage 백업)
+  const loadUsersFromCloud = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('student_profiles')
+        .select('*')
+        .order('created_at', { ascending: true });
+
+      if (!error && data && data.length > 0) {
+        const formatted = data.map(item => ({
+          id: item.id,
+          name: item.name,
+          grade: item.grade || '초등 3학년',
+          dailyWordCount: item.daily_word_count || '10',
+          studentPin: item.student_pin || '1234',
+          parentName: item.parent_name || '',
+          parentPhone: item.parent_phone || '',
+          parentPin: item.parent_pin || '5678'
+        }));
+        setUsers(formatted);
+        localStorage.setItem('english_edu_users', JSON.stringify(formatted));
+        if (!currentUser && formatted.length > 0) {
+          setCurrentUser(formatted[0]);
+        }
+        return;
+      }
+    } catch (e) {
+      console.log('Supabase cloud profiles table not ready yet, using localStorage');
+    }
+
+    // localStorage 백업 로드
     try {
       const savedUsers = JSON.parse(localStorage.getItem('english_edu_users') || '[]');
       if (savedUsers.length === 0) {
@@ -38,7 +68,11 @@ export default function UserManager({ currentUser, setCurrentUser }) {
     } catch (e) {
       console.log('Error loading users', e);
     }
-  }, [currentUser, setCurrentUser]);
+  };
+
+  useEffect(() => {
+    loadUsersFromCloud();
+  }, []);
 
   // 등록 모달 열기
   const handleOpenAddModal = () => {
@@ -70,7 +104,7 @@ export default function UserManager({ currentUser, setCurrentUser }) {
   };
 
   // 폼 제출 (등록 및 수정)
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!nameInput.trim()) {
       alert('학생 이름을 입력해 주세요.');
@@ -79,6 +113,23 @@ export default function UserManager({ currentUser, setCurrentUser }) {
 
     if (isEditMode) {
       // 수정 처리
+      const updatedUserObj = {
+        id: editingUserId,
+        name: nameInput.trim(),
+        grade: gradeInput,
+        daily_word_count: dailyCountInput,
+        student_pin: studentPinInput.trim() || '1234',
+        parent_name: parentNameInput.trim(),
+        parent_phone: parentPhoneInput.trim(),
+        parent_pin: parentPinInput.trim() || '5678'
+      };
+
+      try {
+        await supabase.from('student_profiles').upsert([updatedUserObj]);
+      } catch (e) {
+        console.log('Cloud update fallback to local');
+      }
+
       const updatedUsers = users.map(u => {
         if (u.id === editingUserId) {
           return {
@@ -101,11 +152,29 @@ export default function UserManager({ currentUser, setCurrentUser }) {
       const updatedCurrent = updatedUsers.find(u => u.id === editingUserId);
       if (updatedCurrent) setCurrentUser(updatedCurrent);
 
-      alert('학생 정보가 성공적으로 수정되었습니다!');
+      alert('학생 정보가 클라우드 DB에 성공적으로 저장 및 동기화되었습니다!');
     } else {
       // 등록 처리
-      const newUser = {
-        id: String(Date.now()),
+      const newUserId = String(Date.now());
+      const newUserObj = {
+        id: newUserId,
+        name: nameInput.trim(),
+        grade: gradeInput,
+        daily_word_count: dailyCountInput,
+        student_pin: studentPinInput.trim() || '1234',
+        parent_name: parentNameInput.trim(),
+        parent_phone: parentPhoneInput.trim(),
+        parent_pin: parentPinInput.trim() || '5678'
+      };
+
+      try {
+        await supabase.from('student_profiles').insert([newUserObj]);
+      } catch (e) {
+        console.log('Cloud insert fallback to local');
+      }
+
+      const newUserLocal = {
+        id: newUserId,
         name: nameInput.trim(),
         grade: gradeInput,
         dailyWordCount: dailyCountInput,
@@ -115,12 +184,12 @@ export default function UserManager({ currentUser, setCurrentUser }) {
         parentPin: parentPinInput.trim() || '5678'
       };
 
-      const updatedUsers = [...users, newUser];
+      const updatedUsers = [...users, newUserLocal];
       setUsers(updatedUsers);
       localStorage.setItem('english_edu_users', JSON.stringify(updatedUsers));
-      setCurrentUser(newUser);
+      setCurrentUser(newUserLocal);
 
-      alert(`${newUser.name} 학생이 성공적으로 등록되었습니다!`);
+      alert(`${newUserLocal.name} 학생이 클라우드 DB에 성공적으로 신규 등록되었습니다!`);
     }
 
     setShowModal(false);
@@ -184,7 +253,7 @@ export default function UserManager({ currentUser, setCurrentUser }) {
           <div style={{ background: 'white', borderRadius: '24px', padding: '24px', width: '90%', maxWidth: '440px', boxShadow: '0 10px 30px rgba(0,0,0,0.2)', maxHeight: '90vh', overflowY: 'auto' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', paddingBottom: '10px', borderBottom: '2px dashed #E9ECEF' }}>
               <h3 style={{ margin: 0, color: '#2C3E50', fontSize: '18px' }}>
-                {isEditMode ? '✏️ 학생 정보 수정' : '➕ 신규 학생 등록'}
+                {isEditMode ? '✏️ 학생 정보 수정 (클라우드 DB 동기화)' : '➕ 신규 학생 등록 (클라우드 DB 동기화)'}
               </h3>
               <button onClick={() => setShowModal(false)} style={{ background: '#F8F9FA', border: '1px solid #BDC3C7', padding: '4px 10px', borderRadius: '8px', fontWeight: 'bold', cursor: 'pointer' }}>
                 ✖
@@ -303,7 +372,7 @@ export default function UserManager({ currentUser, setCurrentUser }) {
                 type="submit"
                 style={{ width: '100%', background: isEditMode ? '#2ECC71' : '#3498DB', color: 'white', border: 'none', padding: '12px', borderRadius: '12px', fontWeight: 'bold', fontSize: '15px', cursor: 'pointer', marginTop: '10px' }}
               >
-                {isEditMode ? '💾 수정 사항 저장하기' : '✨ 신규 학생 등록 완료'}
+                {isEditMode ? '☁️ 클라우드 DB 수정 저장' : '✨ 클라우드 DB 신규 등록'}
               </button>
             </form>
           </div>

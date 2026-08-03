@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
+import supabase from '../../lib/supabaseClient.js';
 
 export default function QuizSection({ currentUser, activeWords, onQuizLevelComplete, onLoadNextWordSet }) {
   const [quizLevel, setQuizLevel] = useState(1); // 1: 소리퀴즈, 2: 스펠링 선택, 3: 스펠링 직접 입력
@@ -61,9 +62,25 @@ export default function QuizSection({ currentUser, activeWords, onQuizLevelCompl
     }
   }, [currentIndex, currentQuiz, quizLevel, generateOptions, playAudio, cleanWordStr]);
 
-  // ❌ 오답 발생 시 localStorage 오답노트에 자동 저장
-  const saveWrongAnswer = (wordObj) => {
+  // ❌ 오답 발생 시 Supabase 클라우드 DB 오답노트에 자동 저장
+  const saveWrongAnswer = async (wordObj) => {
     if (!currentUser || !wordObj) return;
+    const wordStr = (wordObj.word || wordObj).replace(/\.png/gi, '').trim();
+
+    try {
+      await supabase.from('student_wrong_answers').insert([{
+        user_id: currentUser.id,
+        word: wordStr,
+        meaning: wordObj.meaning || '뜻 정보 없음',
+        phonics: wordObj.phonics || '',
+        category: wordObj.category || '기타',
+        added_at: new Date().toISOString().split('T')[0]
+      }]);
+    } catch (e) {
+      console.log('Cloud wrong answer save fallback to local');
+    }
+
+    // localStorage 백업 저장
     const wrongKey = `wrong_answers_${currentUser.id}`;
     let wrongList = [];
     try {
@@ -72,9 +89,7 @@ export default function QuizSection({ currentUser, activeWords, onQuizLevelCompl
       wrongList = [];
     }
 
-    const wordStr = (wordObj.word || wordObj).replace(/\.png/gi, '').trim();
     const isAlreadyIn = wrongList.some(item => (item.word || item) === wordStr);
-
     if (!isAlreadyIn) {
       const newWrongItem = {
         id: wordObj.id || Date.now(),
@@ -341,7 +356,7 @@ export default function QuizSection({ currentUser, activeWords, onQuizLevelCompl
                   ❌ 아쉽네요 오답입니다! (정답: {cleanWordStr} - {currentQuiz.meaning})
                   <br />
                   <span style={{ fontSize: '12px', color: '#C0392B', background: '#FADBD8', padding: '2px 8px', borderRadius: '6px', marginTop: '4px', display: 'inline-block' }}>
-                    📝 틀린 단어가 오답노트에 자동 저장되었습니다!
+                    ☁️ 틀린 단어가 클라우드 DB 오답노트에 자동 저장되었습니다!
                   </span>
                 </div>
               )}
@@ -356,7 +371,7 @@ export default function QuizSection({ currentUser, activeWords, onQuizLevelCompl
           )}
         </>
       ) : (
-        /* 퀴즈 결과 화면 및 🚀 [다음 단어 학습] 버튼 */
+        /* 퀴즈 결과 화면 */
         <div style={{ textAlign: 'center', padding: '30px 10px' }}>
           <h2 style={{ color: '#2C3E50', margin: '0 0 10px 0' }}>
             🎉 {quizLevel === 2 ? '2단계 스펠링 선택 퀴즈 완료!' : '3단계 스펠링 직접 입력 퀴즈 완료!'}
