@@ -21,6 +21,7 @@ export default function Home() {
     wordList500Fallback.map(w => ({ ...w, gradeLevel: w.gradeLevel || '초등단어' }))
   );
   const [dailyRandomWords, setDailyRandomWords] = useState([]);
+  const [studyRound, setStudyRound] = useState(1); // 학습 세트 회차 (1회차, 2회차...)
 
   const [isRecording, setIsRecording] = useState(false);
   const [recordedAudioUrl, setRecordedAudioUrl] = useState(null);
@@ -36,11 +37,10 @@ export default function Home() {
   // 미션 상태: 1차 녹음 수행 및 퀴즈 2단계 완수 추적
   const [hasRecorded, setHasRecorded] = useState(false);
   const [completedQuizLevels, setCompletedQuizLevels] = useState([]);
-  const [isTodayComplete, setIsTodayComplete] = useState(false);
 
   const todayStr = new Date().toISOString().split('T')[0];
 
-  // Supabase 클라우드 DB에서 534개 전체 단어 실시간 로드 (grade_level = '초등단어' 매핑)
+  // Supabase 클라우드 DB에서 534개 전체 단어 실시간 로드
   useEffect(() => {
     async function loadWordsFromSupabase() {
       try {
@@ -123,6 +123,46 @@ export default function Home() {
     }
   }, [currentUser, todayStr, wordList, generateDailyRandomWords]);
 
+  // 🚀 [다음 단어 학습] 추가 세트 로드 함수
+  const handleLoadNextWordSet = () => {
+    if (!currentUser) return;
+    const userId = currentUser.id;
+    const dailyCount = parseInt(currentUser.dailyWordCount || 10, 10);
+    const learnedKey = `learned_words_${userId}`;
+
+    // 현재 공부한 단어를 배운 단어 목록에 누적 저장
+    let learnedList = [];
+    try {
+      learnedList = JSON.parse(localStorage.getItem(learnedKey) || '[]');
+    } catch (e) {
+      learnedList = [];
+    }
+
+    const currentWordsStr = dailyRandomWords.map(w => w.word);
+    const updatedLearned = [...new Set([...learnedList, ...currentWordsStr])];
+    localStorage.setItem(learnedKey, JSON.stringify(updatedLearned));
+
+    // 배운 단어를 제외한 새로운 미학습 무작위 단어 10개 추출
+    let unlearned = wordList.filter(w => !updatedLearned.includes(w.word));
+    if (unlearned.length < dailyCount) {
+      localStorage.setItem(learnedKey, JSON.stringify([]));
+      unlearned = [...wordList];
+    }
+
+    const nextRandomSet = [...unlearned].sort(() => Math.random() - 0.5).slice(0, dailyCount);
+
+    setDailyRandomWords(nextRandomSet);
+    localStorage.setItem(`daily_random_set_${userId}_${todayStr}`, JSON.stringify(nextRandomSet));
+
+    setStudyRound(prev => prev + 1);
+    setCurrentIndex(0);
+    setIsFlipped(false);
+    setCompletedQuizLevels([]);
+    setMainTab('flashcard');
+
+    alert(`🎉 🚀 다음 단어 학습 세트(제 ${studyRound + 1}회차)를 불러왔습니다!\n플래시카드 1번부터 즐겁게 공부하세요!`);
+  };
+
   const safeActiveWords = dailyRandomWords.length > 0
     ? dailyRandomWords
     : wordList.slice(0, currentUser ? parseInt(currentUser.dailyWordCount || 10, 10) : 10);
@@ -134,7 +174,6 @@ export default function Home() {
   const rawExampleEn = (currentWord?.exampleEn || '').replace(/\.png/gi, '').trim();
   const rawExampleKo = (currentWord?.exampleKo || '').replace(/\.png/gi, '').trim();
 
-  // 💡 단어가 2개 이상 포함된 실제 제대로 된 영어/한글 문장인지 엄격 검사!
   const isRealSentenceEn = rawExampleEn && rawExampleEn.split(/\s+/).length >= 2 && !rawExampleEn.toLowerCase().endsWith('.png');
   const isRealSentenceKo = rawExampleKo && rawExampleKo.split(/\s+/).length >= 2 && !rawExampleKo.toLowerCase().endsWith('.png');
 
@@ -197,7 +236,7 @@ export default function Home() {
     setRecordedAudioUrl(null);
 
     if (currentIndex + 1 >= safeActiveWords.length) {
-      alert('🎉 오늘 무작위 공부 단어를 모두 보았습니다! 1단계 소리 퀴즈로 자동 이동합니다!');
+      alert('🎉 선택한 세트 단어를 모두 보았습니다! 1단계 소리 퀴즈로 자동 이동합니다!');
       setMainTab('quiz');
       setCurrentIndex(0);
     } else {
@@ -312,7 +351,6 @@ export default function Home() {
       localStorage.setItem(stampKey, JSON.stringify(stamps));
     }
 
-    // 해당 날짜에 공부한 단어 세트 날짜별 바인딩 저장!
     localStorage.setItem(stampedWordsKey, JSON.stringify(safeActiveWords));
 
     let learnedList = [];
@@ -325,11 +363,9 @@ export default function Home() {
     const todayWordsStr = safeActiveWords.map(w => w.word);
     const updatedLearned = [...new Set([...learnedList, ...todayWordsStr])];
     localStorage.setItem(learnedKey, JSON.stringify(updatedLearned));
-
-    setIsTodayComplete(true);
   }, [currentUser, todayStr, safeActiveWords]);
 
-  // 💡 오직 2단계 퀴즈 완수 시에만 출석 도장 찍기 수행!
+  // 💡 2단계 퀴즈 완수 시 출석 도장 찍기 수행!
   const handleQuizLevelComplete = (level) => {
     if (!currentUser) return;
     const updated = [...new Set([...completedQuizLevels, level])];
@@ -339,7 +375,7 @@ export default function Home() {
     if (level === 2) {
       handleStampAttendance();
       setTimeout(() => {
-        alert('🎉 축하합니다! 2단계 퀴즈까지 완수하여 오늘 필수 학습 출석 도장이 찍혔습니다! 💮\n내일 다시 접속하면 새로운 무작위 단어가 시작됩니다!');
+        alert('🎉 축하합니다! 2단계 퀴즈까지 완수하여 오늘 필수 학습 출석 도장이 찍혔습니다! 💮\n\n더 공부하고 싶다면 [🚀 다음 단어 학습] 버튼을 누르세요!');
         setMainTab('calendar');
       }, 300);
     }
@@ -347,7 +383,7 @@ export default function Home() {
 
   const isQuizL2Done = completedQuizLevels.includes(2);
 
-  // 🖼️ 534개 word_img 전용 이미지 주소 생성 로직 (첫글자 대문자)
+  // 🖼️ 534개 word_img 전용 이미지 주소 생성 로직
   const getWordImgSrc = (wordObj) => {
     if (!wordObj || !wordObj.word) return '/word_img/Apple.png';
     const wordClean = wordObj.word.replace(/\.png/gi, '').trim();
@@ -372,7 +408,7 @@ export default function Home() {
       {/* 상단 학생 헤더 바 및 모달 제어 */}
       <UserManager currentUser={currentUser} setCurrentUser={setCurrentUser} />
 
-      {/* 실시간 미션 스마트 버튼 바 */}
+      {/* 실시간 미션 스마트 버튼 바 및 🚀 [다음 단어 학습] 버튼 */}
       <div style={{
         width: '100%',
         background: '#FFFFFF',
@@ -383,8 +419,15 @@ export default function Home() {
         justify: 'space-around',
         alignItems: 'center',
         boxShadow: '0 4px 10px rgba(0,0,0,0.03)',
-        gap: '8px'
+        gap: '8px',
+        flexWrap: 'wrap'
       }}>
+        {studyRound > 1 && (
+          <span style={{ fontSize: '12px', fontWeight: 'bold', color: '#E67E22', background: '#FEF5E7', padding: '4px 10px', borderRadius: '10px', border: '1px solid #FADBD8' }}>
+            🔥 오늘 {studyRound}회차 학습 중!
+          </span>
+        )}
+
         <button
           onClick={() => {
             setMainTab('flashcard');
@@ -395,6 +438,7 @@ export default function Home() {
           }}
           style={{
             flex: 1,
+            minWidth: '130px',
             padding: '8px 12px',
             borderRadius: '12px',
             border: hasRecorded ? '2px solid #2ECC71' : '1px solid #3498DB',
@@ -406,17 +450,17 @@ export default function Home() {
             display: 'flex',
             alignItems: 'center',
             justify: 'center',
-            gap: '6px',
-            transition: 'all 0.2s ease'
+            gap: '6px'
           }}
         >
-          {hasRecorded ? '✅ 1차 녹음 완료 🎙️' : '🎙️ 1차 녹음 미션 수행하기 ➔'}
+          {hasRecorded ? '✅ 1차 녹음 완료 🎙️' : '🎙️ 1차 녹음 미션 ➔'}
         </button>
 
         <button
           onClick={() => setMainTab('quiz')}
           style={{
             flex: 1,
+            minWidth: '130px',
             padding: '8px 12px',
             borderRadius: '12px',
             border: isQuizL2Done ? '2px solid #2ECC71' : '1px solid #9B59B6',
@@ -428,11 +472,34 @@ export default function Home() {
             display: 'flex',
             alignItems: 'center',
             justify: 'center',
-            gap: '6px',
-            transition: 'all 0.2s ease'
+            gap: '6px'
           }}
         >
-          {isQuizL2Done ? '✅ 오늘 학습완료 💮' : '🧩 2단계 스펠링 선택 풀기 ➔'}
+          {isQuizL2Done ? '✅ 퀴즈 완수 (출석도장💮)' : '🧩 2단계 스펠링 퀴즈 ➔'}
+        </button>
+
+        {/* 🚀 [다음 단어 학습] 스마트 버튼 */}
+        <button
+          onClick={handleLoadNextWordSet}
+          style={{
+            flex: 1,
+            minWidth: '150px',
+            padding: '8px 14px',
+            borderRadius: '12px',
+            border: '2px solid #E67E22',
+            background: '#FEF5E7',
+            color: '#D35400',
+            fontWeight: 'bold',
+            fontSize: '13px',
+            cursor: 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            justify: 'center',
+            gap: '6px',
+            boxShadow: '0 2px 6px rgba(230,126,34,0.2)'
+          }}
+        >
+          🚀 다음 단어 학습 ➔
         </button>
       </div>
 
@@ -477,7 +544,7 @@ export default function Home() {
         </button>
       </nav>
 
-      {/* 탭 1: 플래시카드 무작위 학습 코스 */}
+      {/* 탭 1: 플래시카드 학습 코스 */}
       {mainTab === 'flashcard' && (
         <>
           <header className="app-header">
@@ -486,7 +553,7 @@ export default function Home() {
 
           <div className="flashcard-wrapper">
             <div className={`flashcard ${isFlipped ? 'flipped' : ''}`} onClick={handleCardClick}>
-              {/* 앞면: 그림 + 영단어 + 발음기호 + 한글 뜻 함께 표시 */}
+              {/* 앞면: 그림 + 영단어 + 발음기호 + 한글 뜻 */}
               <div className="card-face card-front">
                 <span className="card-category-badge">
                   {currentWord?.gradeLevel || '초등단어'} • {currentWord?.category}
@@ -514,7 +581,7 @@ export default function Home() {
                 <div className="flip-hint">👆 터치하여 예문 및 예문 발음 보기</div>
               </div>
 
-              {/* 뒷면: 완벽한 예문 문장 & 예문 음성 전용 재생기 */}
+              {/* 뒷면: 예문 문장 & 예문 음성 전용 재생기 */}
               <div className="card-face card-back">
                 <span className="card-category-badge">
                   {currentWord?.gradeLevel || '초등단어'} • {currentWord?.category}
@@ -608,20 +675,25 @@ export default function Home() {
 
       {/* 탭 3: 영단어 퀴즈 */}
       {mainTab === 'quiz' && (
-        <QuizSection currentUser={currentUser} activeWords={safeActiveWords} onQuizLevelComplete={handleQuizLevelComplete} />
+        <QuizSection
+          currentUser={currentUser}
+          activeWords={safeActiveWords}
+          onQuizLevelComplete={handleQuizLevelComplete}
+          onLoadNextWordSet={handleLoadNextWordSet}
+        />
       )}
 
-      {/* 탭 4: ⭐ 나만의 개인 단어장 모듈 */}
+      {/* 탭 4: 나만의 개인 단어장 */}
       {mainTab === 'myvocab' && (
         <PersonalVocabSection currentUser={currentUser} onPlayAudio={playWordAudio} />
       )}
 
-      {/* 탭 5: 📅 출석 달력 모듈 */}
+      {/* 탭 5: 출석 달력 */}
       {mainTab === 'calendar' && (
-        <CalendarSection currentUser={currentUser} />
+        <CalendarSection currentUser={currentUser} onLoadNextWordSet={handleLoadNextWordSet} />
       )}
 
-      {/* 탭 6: 👨‍👩‍👧‍👦 학부모 전용 자녀 학습 리포트 대시보드 */}
+      {/* 탭 6: 학부모 리포트 */}
       {mainTab === 'parent' && (
         <ParentDashboard currentUser={currentUser} />
       )}

@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 
-export default function QuizSection({ currentUser, activeWords, onQuizLevelComplete }) {
+export default function QuizSection({ currentUser, activeWords, onQuizLevelComplete, onLoadNextWordSet }) {
   const [quizLevel, setQuizLevel] = useState(1); // 1: 소리퀴즈, 2: 스펠링 선택, 3: 스펠링 직접 입력
   const [currentIndex, setCurrentIndex] = useState(0);
   const [options, setOptions] = useState([]);
@@ -131,7 +131,7 @@ export default function QuizSection({ currentUser, activeWords, onQuizLevelCompl
       } else if (quizLevel === 2) {
         setIsQuizEnded(true);
         if (onQuizLevelComplete) {
-          onQuizLevelComplete(2); // 💡 오직 2단계 퀴즈 완수 시에만 출석 도장 실행!
+          onQuizLevelComplete(2);
         }
       } else {
         setIsQuizEnded(true);
@@ -333,7 +333,7 @@ export default function QuizSection({ currentUser, activeWords, onQuizLevelCompl
           {selectedAnswer !== null && (
             <div style={{ textAlign: 'center', marginBottom: '16px' }}>
               {isCorrect ? (
-                <div style={{ color: '#27AE60', fontWeight: 'bold', fontSize: '16px', animation: 'bounce 0.5s' }}>
+                <div style={{ color: '#27AE60', fontWeight: 'bold', fontSize: '16px' }}>
                   🎉 정답입니다! 아주 잘했어요!
                 </div>
               ) : (
@@ -356,7 +356,7 @@ export default function QuizSection({ currentUser, activeWords, onQuizLevelCompl
           )}
         </>
       ) : (
-        /* 퀴즈 결과 화면 */
+        /* 퀴즈 결과 화면 및 🚀 [다음 단어 학습] 버튼 */
         <div style={{ textAlign: 'center', padding: '30px 10px' }}>
           <h2 style={{ color: '#2C3E50', margin: '0 0 10px 0' }}>
             🎉 {quizLevel === 2 ? '2단계 스펠링 선택 퀴즈 완료!' : '3단계 스펠링 직접 입력 퀴즈 완료!'}
@@ -365,21 +365,32 @@ export default function QuizSection({ currentUser, activeWords, onQuizLevelCompl
             최종 점수: {score} / {safeWords.length}점
           </p>
 
-          {quizLevel === 2 && (
-            <button
-              onClick={() => handleRestart(3)}
-              style={{ background: '#E67E22', color: 'white', border: 'none', padding: '12px 24px', borderRadius: '14px', fontWeight: 'bold', fontSize: '15px', cursor: 'pointer', margin: '6px' }}
-            >
-              ✍️ 3단계 스펠링 직접 쓰기 퀴즈 도전 ➔
-            </button>
-          )}
+          <div style={{ display: 'flex', justifyContent: 'center', gap: '10px', flexWrap: 'wrap' }}>
+            {onLoadNextWordSet && (
+              <button
+                onClick={onLoadNextWordSet}
+                style={{ background: '#E67E22', color: 'white', border: 'none', padding: '12px 24px', borderRadius: '14px', fontWeight: 'bold', fontSize: '15px', cursor: 'pointer' }}
+              >
+                🚀 다음 단어 학습 ➔
+              </button>
+            )}
 
-          <button
-            onClick={() => handleRestart(quizLevel)}
-            style={{ background: '#3498DB', color: 'white', border: 'none', padding: '12px 24px', borderRadius: '14px', fontWeight: 'bold', fontSize: '15px', cursor: 'pointer', margin: '6px' }}
-          >
-            🔄 다시 풀기
-          </button>
+            {quizLevel === 2 && (
+              <button
+                onClick={() => handleRestart(3)}
+                style={{ background: '#9B59B6', color: 'white', border: 'none', padding: '12px 24px', borderRadius: '14px', fontWeight: 'bold', fontSize: '15px', cursor: 'pointer' }}
+              >
+                ✍️ 3단계 스펠링 직접 쓰기 도전 ➔
+              </button>
+            )}
+
+            <button
+              onClick={() => handleRestart(quizLevel)}
+              style={{ background: '#3498DB', color: 'white', border: 'none', padding: '12px 24px', borderRadius: '14px', fontWeight: 'bold', fontSize: '15px', cursor: 'pointer' }}
+            >
+              🔄 다시 풀기
+            </button>
+          </div>
         </div>
       )}
     </div>
