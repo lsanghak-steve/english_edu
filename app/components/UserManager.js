@@ -10,7 +10,7 @@ export default function UserManager({ currentUser, setCurrentUser }) {
 
   // 폼 입력 상태
   const [nameInput, setNameInput] = useState('');
-  const [gradeInput, setGradeInput] = useState('3학년');
+  const [gradeInput, setGradeInput] = useState('초등 3학년');
   const [dailyCountInput, setDailyCountInput] = useState('10');
   const [studentPinInput, setStudentPinInput] = useState('1234');
   const [parentNameInput, setParentNameInput] = useState('');
@@ -23,8 +23,8 @@ export default function UserManager({ currentUser, setCurrentUser }) {
       const savedUsers = JSON.parse(localStorage.getItem('english_edu_users') || '[]');
       if (savedUsers.length === 0) {
         const defaultUsers = [
-          { id: '1', name: '김민수', grade: '3학년', dailyWordCount: '10', studentPin: '1234', parentName: '김철수', parentPhone: '010-1234-5678', parentPin: '5678' },
-          { id: '2', name: '이영희', grade: '4학년', dailyWordCount: '15', studentPin: '1234', parentName: '이영수', parentPhone: '010-9876-5432', parentPin: '5678' }
+          { id: '1', name: '김민수', grade: '초등 3학년', dailyWordCount: '10', studentPin: '1234', parentName: '김철수', parentPhone: '010-1234-5678', parentPin: '5678' },
+          { id: '2', name: '이영희', grade: '초등 4학년', dailyWordCount: '15', studentPin: '1234', parentName: '이영수', parentPhone: '010-9876-5432', parentPin: '5678' }
         ];
         localStorage.setItem('english_edu_users', JSON.stringify(defaultUsers));
         setUsers(defaultUsers);
@@ -45,7 +45,7 @@ export default function UserManager({ currentUser, setCurrentUser }) {
     setIsEditMode(false);
     setEditingUserId(null);
     setNameInput('');
-    setGradeInput('3학년');
+    setGradeInput('초등 3학년');
     setDailyCountInput('10');
     setStudentPinInput('1234');
     setParentNameInput('');
@@ -60,7 +60,7 @@ export default function UserManager({ currentUser, setCurrentUser }) {
     setIsEditMode(true);
     setEditingUserId(currentUser.id);
     setNameInput(currentUser.name || '');
-    setGradeInput(currentUser.grade || '3학년');
+    setGradeInput(currentUser.grade || '초등 3학년');
     setDailyCountInput(currentUser.dailyWordCount || '10');
     setStudentPinInput(currentUser.studentPin || '1234');
     setParentNameInput(currentUser.parentName || '');
@@ -156,7 +156,7 @@ export default function UserManager({ currentUser, setCurrentUser }) {
         >
           {users.map(u => (
             <option key={u.id} value={u.id}>
-              {u.name} ({u.grade || '3학년'}) • 목표 {u.dailyWordCount || 10}단어
+              {u.name} ({u.grade || '초등 3학년'}) • 목표 {u.dailyWordCount || 10}단어
             </option>
           ))}
         </select>
@@ -213,12 +213,19 @@ export default function UserManager({ currentUser, setCurrentUser }) {
                     onChange={(e) => setGradeInput(e.target.value)}
                     style={{ width: '100%', padding: '10px 12px', borderRadius: '10px', border: '1px solid #BDC3C7', fontSize: '14px' }}
                   >
-                    <option value="1학년">1학년</option>
-                    <option value="2학년">2학년</option>
-                    <option value="3학년">3학년</option>
-                    <option value="4학년">4학년</option>
-                    <option value="5학년">5학년</option>
-                    <option value="6학년">6학년</option>
+                    <option value="초등 1학년">초등 1학년</option>
+                    <option value="초등 2학년">초등 2학년</option>
+                    <option value="초등 3학년">초등 3학년</option>
+                    <option value="초등 4학년">초등 4학년</option>
+                    <option value="초등 5학년">초등 5학년</option>
+                    <option value="초등 6학년">초등 6학년</option>
+                    <option value="중학생 1학년">중학생 1학년</option>
+                    <option value="중학생 2학년">중학생 2학년</option>
+                    <option value="중학생 3학년">중학생 3학년</option>
+                    <option value="고등학생 1학년">고등학생 1학년</option>
+                    <option value="고등학생 2학년">고등학생 2학년</option>
+                    <option value="고등학생 3학년">고등학생 3학년</option>
+                    <option value="대학생 및 성인">대학생 및 성인</option>
                   </select>
                 </div>
 
@@ -240,7 +247,7 @@ export default function UserManager({ currentUser, setCurrentUser }) {
 
               {/* 3. 학생 비밀번호 */}
               <div>
-                <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', color: '#34495E', marginBottom: '4px' }}>🔒 학생 비밀번호 (4자리)</label>
+                <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', color: '#34495E', marginBottom: '4px' }}>🔒 학생 비밀번호 (4자리 PIN)</label>
                 <input
                   type="password"
                   maxLength={4}

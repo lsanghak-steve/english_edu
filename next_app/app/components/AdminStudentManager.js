@@ -10,7 +10,7 @@ export default function AdminStudentManager() {
 
   // 폼 입력 상태
   const [nameInput, setNameInput] = useState('');
-  const [gradeInput, setGradeInput] = useState('3학년');
+  const [gradeInput, setGradeInput] = useState('초등 3학년');
   const [dailyCountInput, setDailyCountInput] = useState('10');
   const [studentPinInput, setStudentPinInput] = useState('1234');
   const [parentNameInput, setParentNameInput] = useState('');
@@ -36,7 +36,7 @@ export default function AdminStudentManager() {
     setIsEditMode(false);
     setEditingUserId(null);
     setNameInput('');
-    setGradeInput('3학년');
+    setGradeInput('초등 3학년');
     setDailyCountInput('10');
     setStudentPinInput('1234');
     setParentNameInput('');
@@ -50,7 +50,7 @@ export default function AdminStudentManager() {
     setIsEditMode(true);
     setEditingUserId(user.id);
     setNameInput(user.name || '');
-    setGradeInput(user.grade || '3학년');
+    setGradeInput(user.grade || '초등 3학년');
     setDailyCountInput(user.dailyWordCount || '10');
     setStudentPinInput(user.studentPin || '1234');
     setParentNameInput(user.parentName || '');
@@ -155,7 +155,7 @@ export default function AdminStudentManager() {
               users.map((u) => (
                 <tr key={u.id} style={{ borderBottom: '1px solid #F1F1F1' }}>
                   <td style={{ padding: '12px 10px', fontWeight: 'bold', color: '#2C3E50' }}>{u.name}</td>
-                  <td style={{ padding: '12px 10px', color: '#7F8C8D' }}>{u.grade || '3학년'}</td>
+                  <td style={{ padding: '12px 10px', color: '#7F8C8D' }}>{u.grade || '초등 3학년'}</td>
                   <td style={{ padding: '12px 10px', color: '#2980B9', fontWeight: 'bold' }}>하루 {u.dailyWordCount || 10}단어</td>
                   <td style={{ padding: '12px 10px', fontFamily: 'monospace' }}>{u.studentPin || '1234'}</td>
                   <td style={{ padding: '12px 10px', color: '#8E44AD', fontWeight: 'bold' }}>{u.parentName || '-'}</td>
@@ -221,12 +221,19 @@ export default function AdminStudentManager() {
                     onChange={(e) => setGradeInput(e.target.value)}
                     style={{ width: '100%', padding: '10px 12px', borderRadius: '10px', border: '1px solid #BDC3C7', fontSize: '14px' }}
                   >
-                    <option value="1학년">1학년</option>
-                    <option value="2학년">2학년</option>
-                    <option value="3학년">3학년</option>
-                    <option value="4학년">4학년</option>
-                    <option value="5학년">5학년</option>
-                    <option value="6학년">6학년</option>
+                    <option value="초등 1학년">초등 1학년</option>
+                    <option value="초등 2학년">초등 2학년</option>
+                    <option value="초등 3학년">초등 3학년</option>
+                    <option value="초등 4학년">초등 4학년</option>
+                    <option value="초등 5학년">초등 5학년</option>
+                    <option value="초등 6학년">초등 6학년</option>
+                    <option value="중학생 1학년">중학생 1학년</option>
+                    <option value="중학생 2학년">중학생 2학년</option>
+                    <option value="중학생 3학년">중학생 3학년</option>
+                    <option value="고등학생 1학년">고등학생 1학년</option>
+                    <option value="고등학생 2학년">고등학생 2학년</option>
+                    <option value="고등학생 3학년">고등학생 3학년</option>
+                    <option value="대학생 및 성인">대학생 및 성인</option>
                   </select>
                 </div>
 
