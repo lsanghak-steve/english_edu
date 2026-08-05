@@ -3,19 +3,24 @@
 import { useState, useEffect } from 'react';
 import supabase from '../../lib/supabaseClient.js';
 
-// 학생 이름 이모지 자동 제거 헬퍼 함수
+// 학생/학부모 이름 이모지 자동 제거 헬퍼 함수
 const removeEmoji = (str) => {
   if (!str) return '';
   return str
-    .replace(/[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{1F1E0}-\u{1F1FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{1F900}-\u{1F9FF}\u{1F300}-\u{1F5FF}]/gu, '')
+    .replace(/[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{1F1E0}-\u{1F1FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{1F900}-\u{1F9FF}\u{1F300}-\u{1F5FF}\u{1F004}\u{1F0CF}\u{1F170}-\u{1F251}]/gu, '')
     .trim();
 };
 
-export default function StudentLoginPage({ onLoginSuccess }) {
+export default function StudentLoginPage({ onLoginSuccess, onParentLoginSuccess }) {
   const [users, setUsers] = useState([]);
   const [studentNameInput, setStudentNameInput] = useState('');
   const [pinInput, setPinInput] = useState('');
   const [isLoading, setIsLoading] = useState(true);
+
+  // 학부모 로그인 모달 상태
+  const [showParentModal, setShowParentModal] = useState(false);
+  const [parentChildNameInput, setParentChildNameInput] = useState('');
+  const [parentPinInput, setParentPinInput] = useState('');
 
   // 수파베이스 클라우드 DB에서 학생 전체 목록 로드
   useEffect(() => {
@@ -51,12 +56,12 @@ export default function StudentLoginPage({ onLoginSuccess }) {
       try {
         const savedUsers = JSON.parse(localStorage.getItem('english_edu_users') || '[]');
         if (savedUsers.length > 0) {
-          const formatted = savedUsers.map(u => ({ ...u, name: removeEmoji(u.name) }));
+          const formatted = savedUsers.map(u => ({ ...u, name: removeEmoji(u.name), parentName: removeEmoji(u.parentName) }));
           setUsers(formatted);
         } else {
           const defaultUsers = [
-            { id: '1', name: '김민수', grade: '초등 3학년', dailyWordCount: '10', studentPin: '1234' },
-            { id: '2', name: '이영희', grade: '초등 4학년', dailyWordCount: '15', studentPin: '1234' }
+            { id: '1', name: '김민수', grade: '초등 3학년', dailyWordCount: '10', studentPin: '1234', parentPin: '5678' },
+            { id: '2', name: '이영희', grade: '초등 4학년', dailyWordCount: '15', studentPin: '1234', parentPin: '5678' }
           ];
           setUsers(defaultUsers);
         }
@@ -69,7 +74,8 @@ export default function StudentLoginPage({ onLoginSuccess }) {
     loadCloudUsers();
   }, []);
 
-  const handleLoginSubmit = (e) => {
+  // 학생 로그인 제출
+  const handleStudentLoginSubmit = (e) => {
     e.preventDefault();
     const trimmedName = removeEmoji(studentNameInput);
     if (!trimmedName) {
@@ -77,7 +83,6 @@ export default function StudentLoginPage({ onLoginSuccess }) {
       return;
     }
 
-    // 이름으로 학생 검색 (이모지 제외 순수 텍스트 비교)
     const student = users.find(u => removeEmoji(u.name) === trimmedName);
     if (!student) {
       alert(`'${trimmedName}' 이름으로 등록된 학생을 찾을 수 없습니다.\n이름을 다시 확인하거나 센터 관리자에게 등록을 요청해 주세요.`);
@@ -89,7 +94,34 @@ export default function StudentLoginPage({ onLoginSuccess }) {
       alert(`🎉 환영합니다! ${student.name} 학생으로 성공적으로 로그인되었습니다. ☁️`);
       onLoginSuccess(student);
     } else {
-      alert('🔒 비밀번호(PIN)가 올바르지 않습니다. 다시 확인해 주세요. (기본 PIN: 1234)');
+      alert('🔒 학생 비밀번호(PIN)가 올바르지 않습니다. 다시 확인해 주세요. (기본 PIN: 1234)');
+    }
+  };
+
+  // 학부모 로그인 제출
+  const handleParentLoginSubmit = (e) => {
+    e.preventDefault();
+    const trimmedChildName = removeEmoji(parentChildNameInput);
+    if (!trimmedChildName) {
+      alert('자녀(학생) 이름을 입력해 주세요.');
+      return;
+    }
+
+    const student = users.find(u => removeEmoji(u.name) === trimmedChildName);
+    if (!student) {
+      alert(`'${trimmedChildName}' 자녀 정보를 찾을 수 없습니다.\n이름을 다시 확인해 주세요.`);
+      return;
+    }
+
+    const correctParentPin = student.parentPin || '5678';
+    if (parentPinInput.trim() === correctParentPin) {
+      alert(`👨‍👩‍👧‍👦 ${student.name} 학생의 학부모님, 환영합니다!\n자녀의 주간 학습 성취도 리포트로 이동합니다. 📊`);
+      setShowParentModal(false);
+      if (onParentLoginSuccess) {
+        onParentLoginSuccess(student);
+      }
+    } else {
+      alert('🔑 학부모 비밀번호(PIN)가 올바르지 않습니다. 다시 확인해 주세요. (기본 PIN: 5678)');
     }
   };
 
@@ -136,7 +168,7 @@ export default function StudentLoginPage({ onLoginSuccess }) {
             ☁️ 클라우드 DB 연동 중...
           </div>
         ) : (
-          <form onSubmit={handleLoginSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '18px' }}>
+          <form onSubmit={handleStudentLoginSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '18px' }}>
             {/* 학생 이름 직접 입력 상자 */}
             <div style={{ textAlign: 'left' }}>
               <label style={{ display: 'block', fontSize: '13px', fontWeight: 'bold', color: '#34495E', marginBottom: '6px' }}>
@@ -209,16 +241,69 @@ export default function StudentLoginPage({ onLoginSuccess }) {
           </form>
         )}
 
-        {/* 하단 서브 메뉴 링크 (관리자 로그인 이동) */}
-        <div style={{ marginTop: '28px', paddingTop: '18px', borderTop: '1px dashed #BDC3C7', display: 'flex', justifyContent: 'center', gap: '16px' }}>
-          <a
-            href="/admin"
-            style={{ fontSize: '13px', color: '#8E44AD', fontWeight: 'bold', textDecoration: 'none' }}
+        {/* 하단 학부모 전용 로그인 버튼 */}
+        <div style={{ marginTop: '28px', paddingTop: '18px', borderTop: '1px dashed #BDC3C7', display: 'flex', justifyContent: 'center' }}>
+          <button
+            onClick={() => setShowParentModal(true)}
+            style={{ background: '#F5EEF8', border: '1px solid #9B59B6', color: '#8E44AD', padding: '10px 18px', borderRadius: '12px', fontWeight: 'bold', fontSize: '14px', cursor: 'pointer' }}
           >
-            🏫 Center Admin 관리자 페이지 ➔
-          </a>
+            👨‍👩‍👧‍👦 학부모 전용 로그인 ➔
+          </button>
         </div>
       </div>
+
+      {/* 👨‍👩‍👧‍👦 학부모 전용 로그인 팝업 모달 */}
+      {showParentModal && (
+        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 10000 }}>
+          <div style={{ background: 'white', borderRadius: '24px', padding: '28px', width: '90%', maxWidth: '380px', boxShadow: '0 10px 30px rgba(0,0,0,0.2)', textAlign: 'center' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', paddingBottom: '10px', borderBottom: '2px dashed #E9ECEF' }}>
+              <h3 style={{ margin: 0, color: '#8E44AD', fontSize: '18px' }}>
+                👨‍👩‍👧‍👦 학부모 전용 안심 로그인
+              </h3>
+              <button onClick={() => setShowParentModal(false)} style={{ background: '#F8F9FA', border: '1px solid #BDC3C7', padding: '4px 10px', borderRadius: '8px', fontWeight: 'bold', cursor: 'pointer' }}>
+                ✖
+              </button>
+            </div>
+
+            <p style={{ fontSize: '13px', color: '#7F8C8D', marginBottom: '16px' }}>
+              자녀의 이름을 입력하고 학부모 비밀번호(PIN)를 입력하면 학습 상태 리포트로 바로 이동합니다! 📊
+            </p>
+
+            <form onSubmit={handleParentLoginSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+              <div style={{ textAlign: 'left' }}>
+                <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', color: '#34495E', marginBottom: '4px' }}>👤 자녀(학생) 이름 입력</label>
+                <input
+                  type="text"
+                  placeholder="예: 김민수"
+                  value={parentChildNameInput}
+                  onChange={(e) => setParentChildNameInput(e.target.value)}
+                  style={{ width: '100%', padding: '12px', borderRadius: '10px', border: '1px solid #BDC3C7', fontSize: '15px', fontWeight: 'bold' }}
+                  autoFocus
+                />
+              </div>
+
+              <div style={{ textAlign: 'left' }}>
+                <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', color: '#34495E', marginBottom: '4px' }}>🔑 학부모 비밀번호 (4자리 PIN)</label>
+                <input
+                  type="password"
+                  maxLength={4}
+                  placeholder="비밀번호 4자리 (기본: 5678)"
+                  value={parentPinInput}
+                  onChange={(e) => setParentPinInput(e.target.value)}
+                  style={{ width: '100%', padding: '12px', borderRadius: '10px', border: '2px solid #8E44AD', fontSize: '18px', textAlign: 'center', fontWeight: 'bold' }}
+                />
+              </div>
+
+              <button
+                type="submit"
+                style={{ width: '100%', background: '#8E44AD', color: 'white', border: 'none', padding: '14px', borderRadius: '12px', fontWeight: 'bold', fontSize: '16px', cursor: 'pointer', marginTop: '6px' }}
+              >
+                🔓 자녀 학습 리포트 보기 ➔
+              </button>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

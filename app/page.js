@@ -50,22 +50,39 @@ export default function Home() {
   useEffect(() => {
     try {
       const savedSession = sessionStorage.getItem('english_edu_logged_user');
+      const savedTab = sessionStorage.getItem('english_edu_main_tab');
       if (savedSession) {
         const parsed = JSON.parse(savedSession);
         setCurrentUser(parsed);
         setIsLoggedIn(true);
+        if (savedTab) setMainTab(savedTab);
       }
     } catch (e) {
       console.log('Session parse error', e);
     }
   }, []);
 
-  // 로그인 성공 콜백
+  // 학생 로그인 성공 콜백
   const handleLoginSuccess = (studentObj) => {
     setCurrentUser(studentObj);
     setIsLoggedIn(true);
+    setMainTab('flashcard');
     try {
       sessionStorage.setItem('english_edu_logged_user', JSON.stringify(studentObj));
+      sessionStorage.setItem('english_edu_main_tab', 'flashcard');
+    } catch (e) {
+      console.log('Session storage save error', e);
+    }
+  };
+
+  // 👨‍👩‍👧‍👦 학부모 로그인 성공 콜백 (자녀 리포트로 바로 이동!)
+  const handleParentLoginSuccess = (studentObj) => {
+    setCurrentUser(studentObj);
+    setIsLoggedIn(true);
+    setMainTab('parent');
+    try {
+      sessionStorage.setItem('english_edu_logged_user', JSON.stringify(studentObj));
+      sessionStorage.setItem('english_edu_main_tab', 'parent');
     } catch (e) {
       console.log('Session storage save error', e);
     }
@@ -77,6 +94,7 @@ export default function Home() {
     setCurrentUser(null);
     try {
       sessionStorage.removeItem('english_edu_logged_user');
+      sessionStorage.removeItem('english_edu_main_tab');
     } catch (e) {
       console.log('Session storage clear error', e);
     }
@@ -461,9 +479,14 @@ export default function Home() {
     }
   };
 
-  // 🔒 로그인되지 않았을 때는 무조건 [학생 전용 로그인 관문 페이지]만 표시!
+  // 🔒 로그인되지 않았을 때는 무조건 [학생/학부모 로그인 관문 페이지]만 표시!
   if (!isLoggedIn || !currentUser) {
-    return <StudentLoginPage onLoginSuccess={handleLoginSuccess} />;
+    return (
+      <StudentLoginPage
+        onLoginSuccess={handleLoginSuccess}
+        onParentLoginSuccess={handleParentLoginSuccess}
+      />
+    );
   }
 
   return (
