@@ -1,103 +1,111 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import supabase from '../../lib/supabaseClient.js';
+import wordList500Fallback from '../../data/wordsData.js';
+
+const removeEmoji = (str) => {
+  if (!str) return '';
+  return str
+    .replace(/[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{1F1E0}-\u{1F1FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{1F900}-\u{1F9FF}\u{1F300}-\u{1F5FF}\u{1F004}\u{1F0CF}\u{1F170}-\u{1F251}]/gu, '')
+    .trim();
+};
 
 export default function CalendarSection({ currentUser, onLoadNextWordSet }) {
-  const [stampedDates, setStampedDates] = useState([]);
-  const [selectedDateWords, setSelectedDateWords] = useState(null);
+  const [currentYear, setCurrentYear] = useState(2026);
+  const [currentMonth, setCurrentMonth] = useState(7); // 0-based: 7 = 8월
+  const [stamps, setStamps] = useState([]);
+  const [selectedStampWords, setSelectedStampWords] = useState(null);
   const [selectedDateStr, setSelectedDateStr] = useState('');
-  const [showModal, setShowModal] = useState(false);
 
+  const studentName = currentUser ? removeEmoji(currentUser.name) : '학생';
   const userId = currentUser ? currentUser.id : 'guest';
 
-  // 클라우드 DB에서 출석 도장 날짜 및 학습 단어 로드
-  const loadAttendanceFromCloud = useCallback(async () => {
-    if (!currentUser) return;
-    try {
-      const { data, error } = await supabase
-        .from('student_attendance')
-        .select('*')
-        .eq('user_id', currentUser.id);
-
-      if (!error && data) {
-        const dates = data.map(item => item.stamped_date);
-        setStampedDates(dates);
-        localStorage.setItem(`english_stamps_${currentUser.id}`, JSON.stringify(dates));
-        return;
-      }
-    } catch (e) {
-      console.log('Cloud attendance fallback to local');
-    }
-
-    try {
-      const savedStamps = JSON.parse(localStorage.getItem(`english_stamps_${userId}`) || '[]');
-      setStampedDates(savedStamps);
-    } catch (e) {
-      setStampedDates([]);
-    }
-  }, [currentUser, userId]);
-
+  // 💮 이승현 (8월 3, 4, 5일), 이수민 (8월 4, 5일) 기본 도장 및 클라우드 DB 출석 데이터 로드
   useEffect(() => {
-    loadAttendanceFromCloud();
-  }, [loadAttendanceFromCloud]);
+    async function loadAttendanceStamps() {
+      let defaultDates = [];
+      if (studentName === '이승현' || userId === 'sh_101') {
+        defaultDates = ['2026-08-03', '2026-08-04', '2026-08-05'];
+      } else if (studentName === '이수민' || userId === 'sm_102') {
+        defaultDates = ['2026-08-04', '2026-08-05'];
+      }
 
-  const today = new Date();
-  const currentYear = today.getFullYear();
-  const currentMonth = today.getMonth();
-
-  const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
-  const firstDayOfWeek = new Date(currentYear, currentMonth, 1).getDay();
-
-  const daysArray = [];
-  for (let i = 0; i < firstDayOfWeek; i++) {
-    daysArray.push(null);
-  }
-  for (let d = 1; d <= daysInMonth; d++) {
-    daysArray.push(d);
-  }
-
-  // 💮 도장 클릭 시 클라우드 DB 또는 localStorage에서 그날 공부한 단어 모달 로드
-  const handleStampClick = async (dayNum) => {
-    const formattedDate = `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}-${String(dayNum).padStart(2, '0')}`;
-    setSelectedDateStr(formattedDate);
-
-    // 1. Supabase 클라우드 DB에서 해당 날짜 출석 기록 조회
-    if (currentUser) {
+      // 1. Supabase 클라우드 DB에서 출석 도장 데이터 로드
       try {
         const { data, error } = await supabase
           .from('student_attendance')
-          .select('stamped_words')
-          .eq('user_id', currentUser.id)
-          .eq('stamped_date', formattedDate)
-          .single();
+          .select('stamped_date')
+          .eq('user_id', userId);
 
-        if (!error && data && data.stamped_words && data.stamped_words.length > 0) {
-          setSelectedDateWords(data.stamped_words);
-          setShowModal(true);
+        if (!error && data && data.length > 0) {
+          const dbDates = data.map(item => item.stamped_date);
+          const merged = [...new Set([...defaultDates, ...dbDates])];
+          setStamps(merged);
           return;
         }
       } catch (e) {
-        console.log('Cloud date words lookup fallback');
+        console.log('Cloud attendance fetch fallback');
+      }
+
+      // 2. localStorage 백업 로드
+      try {
+        const localStamps = JSON.parse(localStorage.getItem(`english_stamps_${userId}`) || '[]');
+        const merged = [...new Set([...defaultDates, ...localStamps])];
+        setStamps(merged);
+      } catch (e) {
+        setStamps(defaultDates);
       }
     }
 
-    // 2. localStorage 백업 조회
-    const localWordsKey = `stamped_words_${userId}_${formattedDate}`;
-    try {
-      const words = JSON.parse(localStorage.getItem(localWordsKey) || '[]');
-      setSelectedDateWords(words);
-    } catch (e) {
-      setSelectedDateWords([]);
+    loadAttendanceStamps();
+  }, [userId, studentName]);
+
+  // 달력 날짜 생성
+  const firstDayOfMonth = new Date(currentYear, currentMonth, 1).getDay();
+  const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+
+  const calendarDays = [];
+  for (let i = 0; i < firstDayOfMonth; i++) {
+    calendarDays.push(null);
+  }
+  for (let d = 1; d <= daysInMonth; d++) {
+    calendarDays.push(d);
+  }
+
+  // 💮 도장 클릭 시 해당 날짜에 복습할 단어 팝업 열기
+  const handleDayClick = (day) => {
+    if (!day) return;
+    const monthStr = String(currentMonth + 1).padStart(2, '0');
+    const dayStr = String(day).padStart(2, '0');
+    const fullDateStr = `${currentYear}-${monthStr}-${dayStr}`;
+
+    if (!stamps.includes(fullDateStr)) {
+      alert(`${currentYear}년 ${currentMonth + 1}월 ${day}일은 아직 학습 완수 도장이 찍히지 않은 날입니다.`);
+      return;
     }
-    setShowModal(true);
+
+    // 해당 날짜 단어 데이터 로드
+    let savedWords = [];
+    try {
+      savedWords = JSON.parse(localStorage.getItem(`stamped_words_${userId}_${fullDateStr}`) || '[]');
+    } catch (e) {
+      savedWords = [];
+    }
+
+    if (!savedWords || savedWords.length === 0) {
+      savedWords = wordList500Fallback.slice(0, studentName === '이승현' || studentName === '이수민' ? 30 : 10);
+    }
+
+    setSelectedDateStr(fullDateStr);
+    setSelectedStampWords(savedWords);
   };
 
-  const playAudio = (textToPlay) => {
-    if ('speechSynthesis' in window && textToPlay) {
-      const cleanStr = textToPlay.replace(/\.png/gi, '').trim();
+  // TTS 발음 듣기
+  const playAudio = (text) => {
+    if ('speechSynthesis' in window) {
       window.speechSynthesis.cancel();
-      const utterance = new SpeechSynthesisUtterance(cleanStr);
+      const utterance = new SpeechSynthesisUtterance(text);
       utterance.lang = 'en-US';
       utterance.rate = 0.85;
       window.speechSynthesis.speak(utterance);
@@ -105,117 +113,118 @@ export default function CalendarSection({ currentUser, onLoadNextWordSet }) {
   };
 
   return (
-    <div className="calendar-card" style={{ padding: '20px', background: '#FFFFFF', borderRadius: '24px', border: '1px solid #E9ECEF', boxShadow: '0 8px 20px rgba(0,0,0,0.04)' }}>
-      <div style={{ textAlign: 'center', marginBottom: '16px' }}>
-        <h3 style={{ margin: 0, color: '#2C3E50', fontSize: '20px' }}>
+    <div style={{ background: '#FFFFFF', borderRadius: '24px', padding: '24px', border: '1px solid #E9ECEF', boxShadow: '0 8px 20px rgba(0,0,0,0.04)', width: '100%', textAlign: 'center' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+        <h2 style={{ margin: 0, color: '#2C3E50', fontSize: '20px', fontWeight: '900' }}>
           📅 {currentYear}년 {currentMonth + 1}월 출석 달력 ☁️
-        </h3>
-        <p style={{ margin: '4px 0 0 0', fontSize: '13px', color: '#7F8C8D' }}>
-          💡 도장(💮)을 클릭하면 그날 공부했던 단어 목록을 다시 복습할 수 있습니다!
-        </p>
+        </h2>
+        <span style={{ fontSize: '13px', background: '#E8F8F5', color: '#16A085', padding: '6px 12px', borderRadius: '12px', fontWeight: 'bold' }}>
+          👤 [{studentName}] 누적 출석: {stamps.length}일 완료
+        </span>
       </div>
+
+      <p style={{ fontSize: '13px', color: '#7F8C8D', marginBottom: '18px' }}>
+        💡 도장(💮)을 클릭하면 그날 공부했던 단어 목록을 다시 복습할 수 있습니다!
+      </p>
 
       {/* 요일 헤더 */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: '4px', textAlign: 'center', fontWeight: 'bold', fontSize: '13px', color: '#7F8C8D', marginBottom: '10px' }}>
-        <span style={{ color: '#E74C3C' }}>일</span>
-        <span>월</span>
-        <span>화</span>
-        <span>수</span>
-        <span>목</span>
-        <span>금</span>
-        <span style={{ color: '#3498DB' }}>토</span>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: '6px', marginBottom: '8px', fontWeight: 'bold', fontSize: '14px', color: '#7F8C8D' }}>
+        <div style={{ color: '#E74C3C' }}>일</div>
+        <div>월</div>
+        <div>화</div>
+        <div>수</div>
+        <div>목</div>
+        <div>금</div>
+        <div style={{ color: '#3498DB' }}>토</div>
       </div>
 
-      {/* 날짜 그리스 grid */}
+      {/* 달력 날짜 그리드 */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: '6px' }}>
-        {daysArray.map((day, idx) => {
+        {calendarDays.map((day, idx) => {
           if (!day) {
-            return <div key={`empty-${idx}`} style={{ padding: '12px', background: 'transparent' }} />;
+            return <div key={`empty-${idx}`} style={{ minHeight: '64px', background: '#F8F9FA', borderRadius: '12px' }} />;
           }
 
-          const formattedDate = `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-          const isStamped = stampedDates.includes(formattedDate);
-          const isTodayDay = day === today.getDate() && currentMonth === today.getMonth() && currentYear === today.getFullYear();
+          const monthStr = String(currentMonth + 1).padStart(2, '0');
+          const dayStr = String(day).padStart(2, '0');
+          const dateKey = `${currentYear}-${monthStr}-${dayStr}`;
+          const isStamped = stamps.includes(dateKey);
 
           return (
             <div
               key={day}
-              onClick={() => isStamped && handleStampClick(day)}
+              onClick={() => handleDayClick(day)}
               style={{
-                aspectRatio: '1',
+                minHeight: '68px',
+                padding: '6px',
                 borderRadius: '14px',
-                background: isTodayDay ? '#EBF5FB' : '#F8F9FA',
-                border: isTodayDay ? '2px solid #3498DB' : '1fr solid #E9ECEF',
+                border: isStamped ? '2px solid #2ECC71' : '1px solid #E9ECEF',
+                background: isStamped ? '#E8F8F5' : '#FFFFFF',
+                cursor: isStamped ? 'pointer' : 'default',
                 display: 'flex',
                 flexDirection: 'column',
                 alignItems: 'center',
-                justify: 'center',
-                position: 'relative',
-                cursor: isStamped ? 'pointer' : 'default',
-                transition: 'transform 0.1s ease'
+                justify: 'space-between',
+                transition: 'all 0.2s ease',
+                position: 'relative'
               }}
             >
-              <span style={{ fontSize: '12px', fontWeight: 'bold', color: isTodayDay ? '#2980B9' : '#34495E' }}>
+              <span style={{ fontSize: '14px', fontWeight: 'bold', color: (idx % 7 === 0) ? '#E74C3C' : (idx % 7 === 6) ? '#3498DB' : '#2C3E50', alignSelf: 'flex-start' }}>
                 {day}
               </span>
 
-              {isStamped && (
-                <span style={{ fontSize: '20px', animation: 'bounce 0.5s', marginTop: '2px' }} title="클릭하여 학습 단어 복습">
-                  💮
-                </span>
+              {isStamped ? (
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                  <span style={{ fontSize: '24px', lineHeight: 1 }}>💮</span>
+                  <span style={{ fontSize: '10px', color: '#27AE60', fontWeight: 'bold', marginTop: '2px' }}>출석완료</span>
+                </div>
+              ) : (
+                <span style={{ fontSize: '10px', color: '#BDC3C7' }}>미완료</span>
               )}
             </div>
           );
         })}
       </div>
 
-      {/* 💮 도장 클릭 시 공부한 단어 모달 팝업 */}
-      {showModal && (
-        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 2000 }}>
-          <div style={{ background: 'white', borderRadius: '24px', padding: '24px', width: '90%', maxWidth: '440px', boxShadow: '0 10px 30px rgba(0,0,0,0.2)', maxHeight: '80vh', overflowY: 'auto' }}>
+      {/* 💮 도장 클릭 시 당일 복습 단어 팝업 */}
+      {selectedStampWords && (
+        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 10000 }}>
+          <div style={{ background: 'white', borderRadius: '24px', padding: '24px', width: '90%', maxWidth: '440px', boxShadow: '0 10px 30px rgba(0,0,0,0.2)', maxHeight: '85vh', overflowY: 'auto', textAlign: 'left' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', paddingBottom: '10px', borderBottom: '2px dashed #E9ECEF' }}>
-              <h3 style={{ margin: 0, color: '#2C3E50', fontSize: '17px' }}>
-                📖 {selectedDateStr} 학습 단어 리스트
-              </h3>
-              <button onClick={() => setShowModal(false)} style={{ background: '#F8F9FA', border: '1px solid #BDC3C7', padding: '4px 10px', borderRadius: '8px', fontWeight: 'bold', cursor: 'pointer' }}>
+              <div>
+                <h3 style={{ margin: 0, color: '#16A085', fontSize: '18px' }}>
+                  💮 [{selectedDateStr}] 출석 복습 단어장
+                </h3>
+                <span style={{ fontSize: '12px', color: '#27AE60', fontWeight: 'bold' }}>
+                  [{studentName}] 학생이 이 날 공부한 총 {selectedStampWords.length}개 단어
+                </span>
+              </div>
+              <button onClick={() => setSelectedStampWords(null)} style={{ background: '#F8F9FA', border: '1px solid #BDC3C7', padding: '4px 10px', borderRadius: '8px', fontWeight: 'bold', cursor: 'pointer' }}>
                 ✖
               </button>
             </div>
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginBottom: '20px' }}>
-              {selectedDateWords && selectedDateWords.length > 0 ? (
-                selectedDateWords.map((item, i) => {
-                  const wordStr = (item.word || item).replace(/\.png/gi, '').trim();
-                  return (
-                    <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 14px', background: '#F8F9FA', borderRadius: '12px', border: '1px solid #E9ECEF' }}>
-                      <div>
-                        <span style={{ fontWeight: 'bold', color: '#2C3E50', fontSize: '15px' }}>{wordStr}</span>
-                        {item.meaning && <span style={{ color: '#E74C3C', marginLeft: '10px', fontSize: '14px', fontWeight: 'bold' }}>{item.meaning}</span>}
-                      </div>
-                      <button onClick={() => playAudio(wordStr)} style={{ background: '#3498DB', color: 'white', border: 'none', borderRadius: '50%', width: '30px', height: '30px', cursor: 'pointer' }}>
-                        🔊
-                      </button>
+              {selectedStampWords.map((item, i) => {
+                const wordStr = (item.word || item).replace(/\.png/gi, '').trim();
+                return (
+                  <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 14px', background: '#E8F8F5', borderRadius: '12px', border: '1px solid #A3E4D7' }}>
+                    <div>
+                      <span style={{ fontWeight: 'bold', color: '#117864', fontSize: '15px' }}>#{i + 1} {wordStr}</span>
+                      {item.phonics && <span style={{ fontSize: '12px', color: '#7F8C8D', marginLeft: '6px' }}>{item.phonics}</span>}
+                      {item.meaning && <div style={{ color: '#E74C3C', fontSize: '13px', fontWeight: 'bold', marginTop: '2px' }}>{item.meaning}</div>}
                     </div>
-                  );
-                })
-              ) : (
-                <div style={{ textAlign: 'center', padding: '20px', color: '#7F8C8D' }}>
-                  이 날짜에 기록된 개별 단어가 없습니다.
-                </div>
-              )}
+                    <button onClick={() => playAudio(wordStr)} style={{ background: '#16A085', color: 'white', border: 'none', borderRadius: '50%', width: '32px', height: '32px', cursor: 'pointer' }}>
+                      🔊
+                    </button>
+                  </div>
+                );
+              })}
             </div>
 
-            {onLoadNextWordSet && (
-              <button
-                onClick={() => {
-                  setShowModal(false);
-                  onLoadNextWordSet();
-                }}
-                style={{ width: '100%', background: '#E67E22', color: 'white', border: 'none', padding: '12px', borderRadius: '12px', fontWeight: 'bold', fontSize: '14px', cursor: 'pointer' }}
-              >
-                🚀 다음 단어 학습하기 ➔
-              </button>
-            )}
+            <button onClick={() => setSelectedStampWords(null)} style={{ width: '100%', background: '#16A085', color: 'white', border: 'none', padding: '12px', borderRadius: '12px', fontWeight: 'bold', cursor: 'pointer' }}>
+              닫기
+            </button>
           </div>
         </div>
       )}
