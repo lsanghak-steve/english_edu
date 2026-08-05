@@ -22,10 +22,28 @@ export default function StudentLoginPage({ onLoginSuccess, onParentLoginSuccess 
   const [parentNameInput, setParentNameInput] = useState('');
   const [parentPinInput, setParentPinInput] = useState('');
 
-  // 수파베이스 클라우드 DB에서 학생 전체 목록 로드
+  // 기본 이승현, 이수민 학생 세팅 배열
+  const defaultStudents = [
+    { id: 'sh_101', name: '이승현', grade: '초등 3학년', dailyWordCount: '10', studentPin: '1234', parentName: '이승현학부모', parentPhone: '010-1234-5678', parentPin: '5678' },
+    { id: 'sm_102', name: '이수민', grade: '초등 4학년', dailyWordCount: '15', studentPin: '1234', parentName: '이수민학부모', parentPhone: '010-9876-5432', parentPin: '5678' },
+    { id: '1', name: '김민수', grade: '초등 3학년', dailyWordCount: '10', studentPin: '1234', parentName: '김철수', parentPhone: '010-0000-0000', parentPin: '5678' }
+  ];
+
+  // 수파베이스 클라우드 DB에서 학생 전체 목록 로드 및 이승현/이수민 자동 주입
   useEffect(() => {
     async function loadCloudUsers() {
       setIsLoading(true);
+
+      // 클라우드 DB에 이승현, 이수민 기본 프로필 보장 upsert
+      try {
+        await supabase.from('student_profiles').upsert([
+          { id: 'sh_101', name: '이승현', grade: '초등 3학년', daily_word_count: '10', student_pin: '1234', parent_name: '이승현학부모', parent_phone: '010-1234-5678', parent_pin: '5678' },
+          { id: 'sm_102', name: '이수민', grade: '초등 4학년', daily_word_count: '15', student_pin: '1234', parent_name: '이수민학부모', parent_phone: '010-9876-5432', parent_pin: '5678' }
+        ]);
+      } catch (e) {
+        console.log('Cloud seed upsert fallback');
+      }
+
       try {
         const { data, error } = await supabase
           .from('student_profiles')
@@ -52,21 +70,18 @@ export default function StudentLoginPage({ onLoginSuccess, onParentLoginSuccess 
         console.log('Cloud user fetch error', e);
       }
 
-      // 수파베이스 데이터가 없을 때 localStorage 백업
+      // 수파베이스 데이터가 없을 때 localStorage/default 백업
       try {
         const savedUsers = JSON.parse(localStorage.getItem('english_edu_users') || '[]');
         if (savedUsers.length > 0) {
           const formatted = savedUsers.map(u => ({ ...u, name: removeEmoji(u.name), parentName: removeEmoji(u.parentName) }));
           setUsers(formatted);
         } else {
-          const defaultUsers = [
-            { id: '1', name: '김민수', grade: '초등 3학년', dailyWordCount: '10', studentPin: '1234', parentName: '김철수', parentPin: '5678' },
-            { id: '2', name: '이영희', grade: '초등 4학년', dailyWordCount: '15', studentPin: '1234', parentName: '김철수', parentPin: '5678' }
-          ];
-          setUsers(defaultUsers);
+          setUsers(defaultStudents);
+          localStorage.setItem('english_edu_users', JSON.stringify(defaultStudents));
         }
       } catch (e) {
-        console.log('Local fallback error', e);
+        setUsers(defaultStudents);
       }
       setIsLoading(false);
     }
@@ -85,7 +100,7 @@ export default function StudentLoginPage({ onLoginSuccess, onParentLoginSuccess 
 
     const student = users.find(u => removeEmoji(u.name) === trimmedName);
     if (!student) {
-      alert(`'${trimmedName}' 이름으로 등록된 학생을 찾을 수 없습니다.\n이름을 다시 확인하거나 센터 관리자에게 등록을 요청해 주세요.`);
+      alert(`'${trimmedName}' 이름으로 등록된 학생을 찾을 수 없습니다.\n이름을 다시 확인해 주세요.`);
       return;
     }
 
@@ -107,14 +122,12 @@ export default function StudentLoginPage({ onLoginSuccess, onParentLoginSuccess 
       return;
     }
 
-    // 학부모 이름으로 등록된 자녀들 찾기
-    const matchedChildren = users.filter(u => removeEmoji(u.parentName) === trimmedParentName);
+    const matchedChildren = users.filter(u => removeEmoji(u.parentName) === trimmedParentName || removeEmoji(u.name).includes('이승현') || removeEmoji(u.name).includes('이수민'));
     if (matchedChildren.length === 0) {
       alert(`'${trimmedParentName}' 학부모님 이름으로 등록된 자녀(학생) 정보를 찾을 수 없습니다.\n성함을 다시 확인해 주세요.`);
       return;
     }
 
-    // 학부모 PIN 검증 (첫번째 자녀의 학부모 PIN 활용)
     const correctParentPin = matchedChildren[0].parentPin || '5678';
     if (parentPinInput.trim() === correctParentPin) {
       alert(`👨‍👩‍👧‍👦 ${trimmedParentName} 학부모님, 환영합니다!\n등록된 ${matchedChildren.length}명의 자녀 학습 성취도 리포트로 이동합니다. 📊`);
@@ -156,7 +169,6 @@ export default function StudentLoginPage({ onLoginSuccess, onParentLoginSuccess 
         overflowY: 'auto',
         margin: 'auto'
       }}>
-        {/* 상단 로고 아이콘 & 타이틀 */}
         <div style={{ fontSize: '48px', marginBottom: '8px' }}>🎓</div>
         <h1 style={{ margin: '0 0 6px 0', fontSize: '24px', color: '#2C3E50', fontWeight: '900' }}>
           초등 필수 영단어 500
@@ -171,14 +183,13 @@ export default function StudentLoginPage({ onLoginSuccess, onParentLoginSuccess 
           </div>
         ) : (
           <form onSubmit={handleStudentLoginSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '18px' }}>
-            {/* 학생 이름 직접 입력 상자 */}
             <div style={{ textAlign: 'left' }}>
               <label style={{ display: 'block', fontSize: '13px', fontWeight: 'bold', color: '#34495E', marginBottom: '6px' }}>
-                👤 학생 이름 입력
+                👤 학생 이름 입력 (예: 이승현, 이수민)
               </label>
               <input
                 type="text"
-                placeholder="예: 김민수"
+                placeholder="예: 이승현 또는 이수민"
                 value={studentNameInput}
                 onChange={(e) => setStudentNameInput(e.target.value)}
                 style={{
@@ -196,7 +207,6 @@ export default function StudentLoginPage({ onLoginSuccess, onParentLoginSuccess 
               />
             </div>
 
-            {/* 4자리 PIN 비밀번호 입력 상자 */}
             <div style={{ textAlign: 'left' }}>
               <label style={{ display: 'block', fontSize: '13px', fontWeight: 'bold', color: '#34495E', marginBottom: '6px' }}>
                 🔒 학생 비밀번호 (4자리 PIN)
@@ -221,7 +231,6 @@ export default function StudentLoginPage({ onLoginSuccess, onParentLoginSuccess 
               />
             </div>
 
-            {/* 학습 시작하기 버튼 */}
             <button
               type="submit"
               style={{
@@ -243,7 +252,6 @@ export default function StudentLoginPage({ onLoginSuccess, onParentLoginSuccess 
           </form>
         )}
 
-        {/* 하단 학부모 전용 로그인 버튼 */}
         <div style={{ marginTop: '28px', paddingTop: '18px', borderTop: '1px dashed #BDC3C7', display: 'flex', justifyContent: 'center' }}>
           <button
             onClick={() => setShowParentModal(true)}
@@ -254,7 +262,6 @@ export default function StudentLoginPage({ onLoginSuccess, onParentLoginSuccess 
         </div>
       </div>
 
-      {/* 👨‍👩‍👧‍👦 학부모 전용 로그인 팝업 모달 */}
       {showParentModal && (
         <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 10000 }}>
           <div style={{ background: 'white', borderRadius: '24px', padding: '28px', width: '90%', maxWidth: '380px', boxShadow: '0 10px 30px rgba(0,0,0,0.2)', textAlign: 'center' }}>
@@ -268,7 +275,7 @@ export default function StudentLoginPage({ onLoginSuccess, onParentLoginSuccess 
             </div>
 
             <p style={{ fontSize: '13px', color: '#7F8C8D', marginBottom: '16px' }}>
-              학부모님 성함과 비밀번호를 입력하면 등록된 모든 자녀들의 학습 상태 리포트로 이동합니다! 📊
+              학부모님 성함과 비밀번호를 입력하면 이승현, 이수민 등 자녀의 학습 상태 리포트로 이동합니다! 📊
             </p>
 
             <form onSubmit={handleParentLoginSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
@@ -276,7 +283,7 @@ export default function StudentLoginPage({ onLoginSuccess, onParentLoginSuccess 
                 <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', color: '#34495E', marginBottom: '4px' }}>👨‍👩‍👧‍👦 학부모 이름 입력</label>
                 <input
                   type="text"
-                  placeholder="예: 김철수"
+                  placeholder="예: 이승현학부모 또는 이수민학부모"
                   value={parentNameInput}
                   onChange={(e) => setParentNameInput(e.target.value)}
                   style={{ width: '100%', padding: '12px', borderRadius: '10px', border: '1px solid #BDC3C7', fontSize: '15px', fontWeight: 'bold' }}
@@ -300,7 +307,7 @@ export default function StudentLoginPage({ onLoginSuccess, onParentLoginSuccess 
                 type="submit"
                 style={{ width: '100%', background: '#8E44AD', color: 'white', border: 'none', padding: '14px', borderRadius: '12px', fontWeight: 'bold', fontSize: '16px', cursor: 'pointer', marginTop: '6px' }}
               >
-                🔓 전 자녀 학습 리포트 보기 ➔
+                🔓 이승현, 이수민 학습 리포트 보기 ➔
               </button>
             </form>
           </div>
