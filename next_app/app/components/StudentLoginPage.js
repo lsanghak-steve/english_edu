@@ -22,27 +22,18 @@ export default function StudentLoginPage({ onLoginSuccess, onParentLoginSuccess 
   const [parentNameInput, setParentNameInput] = useState('');
   const [parentPinInput, setParentPinInput] = useState('');
 
-  // 기본 이승현, 이수민 학생 세팅 배열
+  // 기본 학생 세팅 배열 (예시: 김철수, 이영희 등)
   const defaultStudents = [
+    { id: '1', name: '김철수', grade: '초등 3학년', dailyWordCount: '10', studentPin: '1234', parentName: '김철수학부모', parentPhone: '010-0000-0000', parentPin: '5678' },
+    { id: '2', name: '이영희', grade: '초등 4학년', dailyWordCount: '15', studentPin: '1234', parentName: '이영희학부모', parentPhone: '010-1111-2222', parentPin: '5678' },
     { id: 'sh_101', name: '이승현', grade: '초등 3학년', dailyWordCount: '10', studentPin: '1234', parentName: '이승현학부모', parentPhone: '010-1234-5678', parentPin: '5678' },
-    { id: 'sm_102', name: '이수민', grade: '초등 4학년', dailyWordCount: '15', studentPin: '1234', parentName: '이수민학부모', parentPhone: '010-9876-5432', parentPin: '5678' },
-    { id: '1', name: '김민수', grade: '초등 3학년', dailyWordCount: '10', studentPin: '1234', parentName: '김철수', parentPhone: '010-0000-0000', parentPin: '5678' }
+    { id: 'sm_102', name: '이수민', grade: '초등 4학년', dailyWordCount: '15', studentPin: '1234', parentName: '이수민학부모', parentPhone: '010-9876-5432', parentPin: '5678' }
   ];
 
-  // 수파베이스 클라우드 DB에서 학생 전체 목록 로드 및 이승현/이수민 자동 주입
+  // 수파베이스 클라우드 DB에서 학생 전체 목록 로드
   useEffect(() => {
     async function loadCloudUsers() {
       setIsLoading(true);
-
-      // 클라우드 DB에 이승현, 이수민 기본 프로필 보장 upsert
-      try {
-        await supabase.from('student_profiles').upsert([
-          { id: 'sh_101', name: '이승현', grade: '초등 3학년', daily_word_count: '10', student_pin: '1234', parent_name: '이승현학부모', parent_phone: '010-1234-5678', parent_pin: '5678' },
-          { id: 'sm_102', name: '이수민', grade: '초등 4학년', daily_word_count: '15', student_pin: '1234', parent_name: '이수민학부모', parent_phone: '010-9876-5432', parent_pin: '5678' }
-        ]);
-      } catch (e) {
-        console.log('Cloud seed upsert fallback');
-      }
 
       try {
         const { data, error } = await supabase
@@ -122,7 +113,7 @@ export default function StudentLoginPage({ onLoginSuccess, onParentLoginSuccess 
       return;
     }
 
-    const matchedChildren = users.filter(u => removeEmoji(u.parentName) === trimmedParentName || removeEmoji(u.name).includes('이승현') || removeEmoji(u.name).includes('이수민'));
+    const matchedChildren = users.filter(u => removeEmoji(u.parentName) === trimmedParentName || removeEmoji(u.name).includes(trimmedParentName));
     if (matchedChildren.length === 0) {
       alert(`'${trimmedParentName}' 학부모님 이름으로 등록된 자녀(학생) 정보를 찾을 수 없습니다.\n성함을 다시 확인해 주세요.`);
       return;
@@ -130,7 +121,7 @@ export default function StudentLoginPage({ onLoginSuccess, onParentLoginSuccess 
 
     const correctParentPin = matchedChildren[0].parentPin || '5678';
     if (parentPinInput.trim() === correctParentPin) {
-      alert(`👨‍👩‍👧‍👦 ${trimmedParentName} 학부모님, 환영합니다!\n등록된 ${matchedChildren.length}명의 자녀 학습 성취도 리포트로 이동합니다. 📊`);
+      alert(`👨‍👩‍👧‍👦 ${trimmedParentName} 학부모님, 환영합니다!\n등록된 자녀 학습 성취도 리포트로 이동합니다. 📊`);
       setShowParentModal(false);
       if (onParentLoginSuccess) {
         onParentLoginSuccess(trimmedParentName, matchedChildren);
@@ -185,11 +176,11 @@ export default function StudentLoginPage({ onLoginSuccess, onParentLoginSuccess 
           <form onSubmit={handleStudentLoginSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '18px' }}>
             <div style={{ textAlign: 'left' }}>
               <label style={{ display: 'block', fontSize: '13px', fontWeight: 'bold', color: '#34495E', marginBottom: '6px' }}>
-                👤 학생 이름 입력 (예: 이승현, 이수민)
+                👤 학생 이름 입력 (예: 김철수, 이영희)
               </label>
               <input
                 type="text"
-                placeholder="예: 이승현 또는 이수민"
+                placeholder="예: 김철수 또는 이영희"
                 value={studentNameInput}
                 onChange={(e) => setStudentNameInput(e.target.value)}
                 style={{
@@ -275,15 +266,15 @@ export default function StudentLoginPage({ onLoginSuccess, onParentLoginSuccess 
             </div>
 
             <p style={{ fontSize: '13px', color: '#7F8C8D', marginBottom: '16px' }}>
-              학부모님 성함과 비밀번호를 입력하면 이승현, 이수민 등 자녀의 학습 상태 리포트로 이동합니다! 📊
+              학부모님 성함과 비밀번호를 입력하면 자녀의 학습 상태 리포트로 이동합니다! 📊
             </p>
 
             <form onSubmit={handleParentLoginSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
               <div style={{ textAlign: 'left' }}>
-                <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', color: '#34495E', marginBottom: '4px' }}>👨‍👩‍👧‍👦 학부모 이름 입력</label>
+                <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', color: '#34495E', marginBottom: '4px' }}>👨‍👩‍👧‍👦 학부모 이름 입력 (예: 김철수, 이영희)</label>
                 <input
                   type="text"
-                  placeholder="예: 이승현학부모 또는 이수민학부모"
+                  placeholder="예: 김철수 또는 이영희"
                   value={parentNameInput}
                   onChange={(e) => setParentNameInput(e.target.value)}
                   style={{ width: '100%', padding: '12px', borderRadius: '10px', border: '1px solid #BDC3C7', fontSize: '15px', fontWeight: 'bold' }}
@@ -307,7 +298,7 @@ export default function StudentLoginPage({ onLoginSuccess, onParentLoginSuccess 
                 type="submit"
                 style={{ width: '100%', background: '#8E44AD', color: 'white', border: 'none', padding: '14px', borderRadius: '12px', fontWeight: 'bold', fontSize: '16px', cursor: 'pointer', marginTop: '6px' }}
               >
-                🔓 이승현, 이수민 학습 리포트 보기 ➔
+                🔓 자녀 학습 리포트 보기 ➔
               </button>
             </form>
           </div>
