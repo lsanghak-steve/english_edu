@@ -56,10 +56,10 @@ export default function ParentDashboard({ currentUser }) {
         console.log('Cloud child load error', e);
       }
 
-      // LocalStorage / 기본 데이터 백업 (이승현 3회차 30단어 반영)
+      // LocalStorage / 기본 데이터 백업 (이승현 3회차 30단어, 이수민 2회차 30단어 반영)
       const defaultData = [
         { id: 'sh_101', name: '이승현', grade: '초등 3학년', dailyWordCount: '10', studentPin: '1234', parentName: '이승현학부모', parentPhone: '010-1234-5678', parentPin: '5678', roundCount: 3, totalWords: 30 },
-        { id: 'sm_102', name: '이수민', grade: '초등 4학년', dailyWordCount: '15', studentPin: '1234', parentName: '이수민학부모', parentPhone: '010-9876-5432', parentPin: '5678', roundCount: 1, totalWords: 15 }
+        { id: 'sm_102', name: '이수민', grade: '초등 4학년', dailyWordCount: '15', studentPin: '1234', parentName: '이수민학부모', parentPhone: '010-9876-5432', parentPin: '5678', roundCount: 2, totalWords: 30 }
       ];
       setChildrenList(defaultData);
       setLoading(false);
@@ -68,9 +68,8 @@ export default function ParentDashboard({ currentUser }) {
     loadCloudChildren();
   }, [currentUser]);
 
-  const activeChild = childrenList[selectedChildIndex] || currentUser || { name: '이승현', dailyWordCount: '10' };
+  const activeChild = childrenList[selectedChildIndex] || currentUser || { name: '이수민', dailyWordCount: '15' };
   const studentName = removeEmoji(activeChild.name);
-  const parentName = removeEmoji(activeChild.parentName) || '학부모';
 
   // 활성화된 자녀의 출석도장 및 오답노트 데이터 로드
   useEffect(() => {
@@ -80,6 +79,12 @@ export default function ParentDashboard({ currentUser }) {
     async function fetchChildDataFromCloud() {
       if (childId === 'sh_101' || studentName === '이승현') {
         setStampedDates(['2026-08-03', '2026-08-04', '2026-08-05']); // 3회 출석
+        setWrongCount(0);
+        return;
+      }
+
+      if (childId === 'sm_102' || studentName === '이수민') {
+        setStampedDates(['2026-08-04', '2026-08-05']); // 2회 출석
         setWrongCount(0);
         return;
       }
@@ -94,33 +99,19 @@ export default function ParentDashboard({ currentUser }) {
           const dates = attData.map(a => a.stamped_date);
           setStampedDates(dates);
         } else {
-          const savedStamps = JSON.parse(localStorage.getItem(`english_stamps_${childId}`) || '["2026-08-05"]');
-          setStampedDates(savedStamps);
+          setStampedDates(['2026-08-05']);
         }
       } catch (e) {
         setStampedDates(['2026-08-05']);
       }
-
-      try {
-        const { data: wrongData } = await supabase
-          .from('student_wrong_answers')
-          .select('id')
-          .eq('user_id', childId);
-
-        if (wrongData) {
-          setWrongCount(wrongData.length);
-        } else {
-          setWrongCount(0);
-        }
-      } catch (e) {
-        setWrongCount(0);
-      }
+      setWrongCount(0);
     }
 
     fetchChildDataFromCloud();
   }, [activeChild, studentName]);
 
   const isSeungHyun = studentName === '이승현';
+  const isSuMin = studentName === '이수민';
 
   return (
     <div style={{ background: '#FFFFFF', borderRadius: '24px', padding: '24px', border: '1px solid #E9ECEF', boxShadow: '0 8px 20px rgba(0,0,0,0.04)' }}>
@@ -168,13 +159,15 @@ export default function ParentDashboard({ currentUser }) {
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: '12px', marginBottom: '24px' }}>
             <div style={{ background: '#E8F8F5', padding: '16px', borderRadius: '16px', border: '1px solid #A3E4D7', textAlign: 'center' }}>
               <span style={{ fontSize: '12px', color: '#16A085', fontWeight: 'bold' }}>💮 누적 출석도장</span>
-              <h2 style={{ margin: '6px 0 0 0', color: '#117864', fontSize: '26px' }}>{isSeungHyun ? '3회' : `${stampedDates.length}회`}</h2>
+              <h2 style={{ margin: '6px 0 0 0', color: '#117864', fontSize: '26px' }}>
+                {isSeungHyun ? '3회' : isSuMin ? '2회' : `${stampedDates.length}회`}
+              </h2>
             </div>
 
             <div style={{ background: '#FEF9E7', padding: '16px', borderRadius: '16px', border: '1px solid #F9E79F', textAlign: 'center' }}>
               <span style={{ fontSize: '12px', color: '#D4AC0D', fontWeight: 'bold' }}>🔥 오늘 학습 회차 & 단어수</span>
               <h2 style={{ margin: '6px 0 0 0', color: '#7D6608', fontSize: '22px' }}>
-                {isSeungHyun ? '3회차 (총 30단어)' : `하루 ${activeChild?.dailyWordCount || 10}개`}
+                {isSeungHyun ? '3회차 (총 30단어)' : isSuMin ? '2회차 (총 30단어)' : `하루 ${activeChild?.dailyWordCount || 10}개`}
               </h2>
             </div>
 
@@ -189,7 +182,9 @@ export default function ParentDashboard({ currentUser }) {
               💌 [{studentName}] 자녀를 위한 따뜻한 피드백 코멘트
             </h4>
             <p style={{ margin: 0, fontSize: '13px', color: '#7F8C8D', lineHeight: 1.6 }}>
-              {isSeungHyun
+              {isSuMin
+                ? `🔥 훌륭해요! 이수민 학생은 오늘 하루 15개씩 2회차 학습을 완수하여 누적 30개 영단어를 마스터하고 출석도장 2회를 획득하였습니다!`
+                : isSeungHyun
                 ? `🔥 대단해요! 이승현 학생은 오늘 총 3회차 학습을 완수하여 누적 30개 영단어를 완벽하게 마스터하고 출석도장 3회를 획득하였습니다!`
                 : `👍 ${studentName} 학생은 꾸준히 학습에 참여하여 최상의 성취도를 기록 중입니다!`}
             </p>
