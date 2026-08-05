@@ -2,214 +2,125 @@
 
 import { useState, useEffect } from 'react';
 
-export default function ParentDashboard({ currentUser }) {
-  const [pinInput, setPinInput] = useState('');
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [parentPin, setParentPin] = useState('1234'); // 기본 PIN 1234
+// 이름에서 이모지 제거 헬퍼 함수
+const removeEmoji = (str) => {
+  if (!str) return '';
+  return str
+    .replace(/[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{1F1E0}-\u{1F1FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{1F900}-\u{1F9FF}\u{1F300}-\u{1F5FF}\u{1F004}\u{1F0CF}\u{1F170}-\u{1F251}]/gu, '')
+    .trim();
+};
 
-  // 학생별 데이터 로드 상태
-  const [stamps, setStamps] = useState([]);
-  const [learnedWords, setLearnedWords] = useState([]);
-  const [wrongAnswers, setWrongAnswers] = useState([]);
+export default function ParentDashboard({ currentUser }) {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [pinInput, setPinInput] = useState('');
+  const [stampedDates, setStampedDates] = useState([]);
+  const [wrongCount, setWrongCount] = useState(0);
+
+  const studentName = currentUser ? removeEmoji(currentUser.name) : '학생';
+  const parentName = currentUser ? removeEmoji(currentUser.parentName) : '학부모';
+  const correctPin = currentUser ? (currentUser.parentPin || '5678') : '5678';
 
   useEffect(() => {
     if (!currentUser) return;
-    const pinKey = `parent_pin_${currentUser.id}`;
-    const savedPin = localStorage.getItem(pinKey) || '1234';
-    setParentPin(savedPin);
-
-    // 내 자녀 전용 데이터 로드
     const stampKey = `english_stamps_${currentUser.id}`;
-    const learnedKey = `learned_words_${currentUser.id}`;
     const wrongKey = `wrong_answers_${currentUser.id}`;
 
     try {
-      setStamps(JSON.parse(localStorage.getItem(stampKey) || '[]'));
+      const savedStamps = JSON.parse(localStorage.getItem(stampKey) || '[]');
+      setStampedDates(savedStamps);
     } catch (e) {
-      setStamps([]);
+      setStampedDates([]);
     }
 
     try {
-      setLearnedWords(JSON.parse(localStorage.getItem(learnedKey) || '[]'));
+      const savedWrong = JSON.parse(localStorage.getItem(wrongKey) || '[]');
+      setWrongCount(savedWrong.length);
     } catch (e) {
-      setLearnedWords([]);
-    }
-
-    try {
-      setWrongAnswers(JSON.parse(localStorage.getItem(wrongKey) || '[]'));
-    } catch (e) {
-      setWrongAnswers([]);
+      setWrongCount(0);
     }
   }, [currentUser]);
 
-  const handleLogin = (e) => {
+  const handlePinSubmit = (e) => {
     e.preventDefault();
-    if (pinInput === parentPin) {
+    if (pinInput.trim() === correctPin) {
       setIsAuthenticated(true);
     } else {
-      alert('비밀번호(PIN)가 일치하지 않습니다. 다시 입력해 주세요.');
+      alert('비밀번호(PIN)가 올바르지 않습니다. 다시 시도해 주세요.');
     }
   };
 
-  const handleChangePin = () => {
-    const newPin = prompt('새로운 학부모 비밀번호 4자리를 입력하세요:', parentPin);
-    if (newPin && newPin.length === 4) {
-      setParentPin(newPin);
-      localStorage.setItem(`parent_pin_${currentUser.id}`, newPin);
-      alert('비밀번호가 성공적으로 변경되었습니다!');
-    } else if (newPin) {
-      alert('비밀번호는 4자리 숫자로 입력해야 합니다.');
-    }
-  };
-
-  if (!currentUser) {
-    return (
-      <div className="word-list-section" style={{ textAlign: 'center', padding: '40px 20px' }}>
-        <h3>👨‍👩‍👧‍👦 학부모 모드</h3>
-        <p style={{ color: '#7F8C8D', marginTop: '8px' }}>상단에서 자녀(학생)를 먼저 선택해 주세요!</p>
-      </div>
-    );
-  }
-
-  // 1. PIN 인증 전 로그인 화면 (오직 내 자녀 데이터만 접근 보호)
   if (!isAuthenticated) {
     return (
-      <div className="word-list-section" style={{ textAlign: 'center', padding: '30px 20px' }}>
-        <div style={{ fontSize: '40px', marginBottom: '10px' }}>🔒</div>
-        <h3 style={{ margin: 0, color: '#2C3E50' }}>{currentUser.name} 학생의 학부모 전용 인증</h3>
-        <p style={{ fontSize: '13px', color: '#7F8C8D', marginTop: '6px' }}>
-          자녀의 학부모 비밀번호 4자리를 입력하세요. (초기 암호: 1234)
+      <div style={{ background: '#FFFFFF', borderRadius: '24px', padding: '30px 20px', border: '1px solid #E9ECEF', textAlign: 'center', boxShadow: '0 8px 20px rgba(0,0,0,0.04)' }}>
+        <h3 style={{ margin: '0 0 10px 0', color: '#8E44AD', fontSize: '20px' }}>
+          🔒 학부모 안심 리포트 인증
+        </h3>
+        <p style={{ fontSize: '14px', color: '#7F8C8D', marginBottom: '20px' }}>
+          자녀({studentName})의 학습 현황을 확인하려면 학부모 비밀번호(4자리 PIN)를 입력해 주세요.
         </p>
 
-        <form onSubmit={handleLogin} style={{ marginTop: '20px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px' }}>
+        <form onSubmit={handlePinSubmit} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px', maxWidth: '300px', margin: '0 auto' }}>
           <input
             type="password"
             maxLength={4}
+            placeholder="학부모 PIN 4자리 (기본: 5678)"
             value={pinInput}
             onChange={(e) => setPinInput(e.target.value)}
-            placeholder="PIN 4자리"
-            style={{
-              width: '160px',
-              padding: '12px',
-              borderRadius: '12px',
-              border: '2px solid #3498DB',
-              fontSize: '22px',
-              textAlign: 'center',
-              letterSpacing: '6px',
-              fontWeight: 'bold'
-            }}
+            style={{ width: '100%', padding: '12px', borderRadius: '12px', border: '2px solid #9B59B6', fontSize: '18px', textAlign: 'center', fontWeight: 'bold' }}
+            autoFocus
           />
           <button
             type="submit"
-            className="btn-primary"
-            style={{ width: '160px', padding: '12px', borderRadius: '12px', fontSize: '15px' }}
+            style={{ width: '100%', background: '#8E44AD', color: 'white', border: 'none', padding: '12px', borderRadius: '12px', fontWeight: 'bold', fontSize: '15px', cursor: 'pointer' }}
           >
-            🔓 학부모 로그인
+            인증하고 리포트 보기
           </button>
         </form>
       </div>
     );
   }
 
-  // 2. 인증 완료 후 학부모 전용 자녀 학습 리포트 대시보드
   return (
-    <div className="word-list-section" style={{ padding: '20px' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', paddingBottom: '12px', borderBottom: '2px dashed #E9ECEF' }}>
+    <div style={{ background: '#FFFFFF', borderRadius: '24px', padding: '24px', border: '1px solid #E9ECEF', boxShadow: '0 8px 20px rgba(0,0,0,0.04)' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px', borderBottom: '2px dashed #E9ECEF', paddingBottom: '14px' }}>
         <div>
-          <h3 style={{ margin: 0, color: '#2C3E50', fontSize: '18px' }}>
-            👨‍👩‍👧‍👦 {currentUser.name} 학생 학부모 대시보드
+          <h3 style={{ margin: 0, color: '#8E44AD', fontSize: '20px' }}>
+            📊 {studentName} 학생의 주간 학습 성취도 리포트
           </h3>
-          <span style={{ fontSize: '12px', color: '#27AE60', fontWeight: 'bold' }}>
-            🔒 보안 승인됨 (내 자녀 데이터 독립 조회)
-          </span>
+          <span style={{ fontSize: '12px', color: '#7F8C8D' }}>학부모 성함: {parentName || '학부모'} 님</span>
         </div>
-        <button
-          onClick={handleChangePin}
-          style={{
-            background: '#F8F9FA',
-            border: '1px solid #BDC3C7',
-            padding: '6px 12px',
-            borderRadius: '10px',
-            fontSize: '12px',
-            cursor: 'pointer',
-            fontWeight: 'bold'
-          }}
-        >
-          ⚙️ 비밀번호 변경
+        <button onClick={() => setIsAuthenticated(false)} style={{ background: '#F8F9FA', border: '1px solid #BDC3C7', padding: '6px 12px', borderRadius: '10px', fontWeight: 'bold', fontSize: '12px', cursor: 'pointer' }}>
+          🔒 잠금
         </button>
       </div>
 
-      {/* 요약 카드 3종 세트 */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '10px', marginBottom: '20px' }}>
-        <div style={{ background: '#E8F8F5', border: '1px solid #A3E4D7', borderRadius: '16px', padding: '12px', textAlign: 'center' }}>
-          <span style={{ fontSize: '11px', color: '#16A085', fontWeight: 'bold' }}>💮 총 출석 도장</span>
-          <h2 style={{ margin: '4px 0 0 0', color: '#27AE60', fontSize: '24px' }}>{stamps.length}일</h2>
+      {/* 요약 카드 세트 */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: '12px', marginBottom: '24px' }}>
+        <div style={{ background: '#E8F8F5', padding: '16px', borderRadius: '16px', border: '1px solid #A3E4D7', textAlign: 'center' }}>
+          <span style={{ fontSize: '12px', color: '#16A085', fontWeight: 'bold' }}>💮 누적 출석도장</span>
+          <h2 style={{ margin: '6px 0 0 0', color: '#117864', fontSize: '26px' }}>{stampedDates.length}회</h2>
         </div>
 
-        <div style={{ background: '#EBF5FB', border: '1px solid #AED6F1', borderRadius: '16px', padding: '12px', textAlign: 'center' }}>
-          <span style={{ fontSize: '11px', color: '#2980B9', fontWeight: 'bold' }}>📚 학습 완료 단어</span>
-          <h2 style={{ margin: '4px 0 0 0', color: '#3498DB', fontSize: '24px' }}>{learnedWords.length}개</h2>
+        <div style={{ background: '#FEF9E7', padding: '16px', borderRadius: '16px', border: '1px solid #F9E79F', textAlign: 'center' }}>
+          <span style={{ fontSize: '12px', color: '#D4AC0D', fontWeight: 'bold' }}>🎯 목표 단어수</span>
+          <h2 style={{ margin: '6px 0 0 0', color: '#7D6608', fontSize: '26px' }}>하루 {currentUser?.dailyWordCount || 10}개</h2>
         </div>
 
-        <div style={{ background: '#FDEDEC', border: '1px solid #FADBD8', borderRadius: '16px', padding: '12px', textAlign: 'center' }}>
-          <span style={{ fontSize: '11px', color: '#C0392B', fontWeight: 'bold' }}>❌ 오답 기록 단어</span>
-          <h2 style={{ margin: '4px 0 0 0', color: '#E74C3C', fontSize: '24px' }}>{wrongAnswers.length}개</h2>
+        <div style={{ background: '#FADBD8', padding: '16px', borderRadius: '16px', border: '1px solid #F5B7B1', textAlign: 'center' }}>
+          <span style={{ fontSize: '12px', color: '#C0392B', fontWeight: 'bold' }}>❌ 오답노트 잔여</span>
+          <h2 style={{ margin: '6px 0 0 0', color: '#78281F', fontSize: '26px' }}>{wrongCount}개</h2>
         </div>
       </div>
 
-      {/* 리포트 섹션 1: 출석 도장 기록 */}
-      <div style={{ background: '#FFFFFF', borderRadius: '16px', padding: '14px', border: '1px solid #E9ECEF', marginBottom: '14px' }}>
-        <h4 style={{ margin: '0 0 10px 0', color: '#2C3E50', fontSize: '14px', display: 'flex', alignItems: 'center', gap: '6px' }}>
-          📅 최근 출석 날짜 기록 ({stamps.length}회)
+      <div style={{ background: '#F8F9FA', padding: '16px', borderRadius: '16px', border: '1px solid #E9ECEF' }}>
+        <h4 style={{ margin: '0 0 8px 0', color: '#2C3E50', fontSize: '15px' }}>
+          💌 학부모를 위한 따뜻한 피드백 코멘트
         </h4>
-        {stamps.length > 0 ? (
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
-            {stamps.map((dateStr, idx) => (
-              <span key={idx} style={{ background: '#E8F8F5', color: '#27AE60', padding: '4px 10px', borderRadius: '10px', fontSize: '12px', fontWeight: 'bold', border: '1px solid #A3E4D7' }}>
-                💮 {dateStr}
-              </span>
-            ))}
-          </div>
-        ) : (
-          <p style={{ fontSize: '12px', color: '#95A5A6', margin: 0 }}>아직 출석 기록이 없습니다.</p>
-        )}
-      </div>
-
-      {/* 리포트 섹션 2: 배운 단어 누적 목록 */}
-      <div style={{ background: '#FFFFFF', borderRadius: '16px', padding: '14px', border: '1px solid #E9ECEF', marginBottom: '14px' }}>
-        <h4 style={{ margin: '0 0 10px 0', color: '#2C3E50', fontSize: '14px', display: 'flex', alignItems: 'center', gap: '6px' }}>
-          📖 완수 완료 영단어 리스트 ({learnedWords.length}개)
-        </h4>
-        {learnedWords.length > 0 ? (
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', maxHeight: '120px', overflowY: 'auto' }}>
-            {learnedWords.map((word, idx) => (
-              <span key={idx} style={{ background: '#F8F9FA', color: '#2C3E50', padding: '4px 10px', borderRadius: '10px', fontSize: '12px', fontWeight: 'bold', border: '1px solid #DEE2E6' }}>
-                ✅ {word}
-              </span>
-            ))}
-          </div>
-        ) : (
-          <p style={{ fontSize: '12px', color: '#95A5A6', margin: 0 }}>아직 완료된 단어가 없습니다.</p>
-        )}
-      </div>
-
-      {/* 리포트 섹션 3: 자녀 집중 점검 오답 노트 */}
-      <div style={{ background: '#FFFFFF', borderRadius: '16px', padding: '14px', border: '1px solid #E9ECEF' }}>
-        <h4 style={{ margin: '0 0 10px 0', color: '#C0392B', fontSize: '14px', display: 'flex', alignItems: 'center', gap: '6px' }}>
-          ❌ 자녀 집중 복습 오답 노트 ({wrongAnswers.length}개)
-        </h4>
-        {wrongAnswers.length > 0 ? (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-            {wrongAnswers.map((item, idx) => (
-              <div key={idx} style={{ background: '#FDEDEC', padding: '8px 12px', borderRadius: '10px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '13px' }}>
-                <span style={{ fontWeight: 'bold', color: '#E74C3C' }}>{item.word}</span>
-                <span style={{ color: '#7F8C8D' }}>{item.meaning}</span>
-              </div>
-            ))}
-          </div>
-        ) : (
-          <p style={{ fontSize: '12px', color: '#27AE60', margin: 0 }}>🎉 자녀의 오답 기록이 없습니다! 아주 훌륭합니다!</p>
-        )}
+        <p style={{ margin: 0, fontSize: '13px', color: '#7F8C8D', lineHeight: 1.6 }}>
+          {stampedDates.length >= 3
+            ? `👍 ${studentName} 학생은 이번 주 꾸준히 학습에 참여하여 아주 훌륭한 성취도를 보이고 있습니다!`
+            : `✏️ ${studentName} 학생이 매일 영단어 플래시카드 퀴즈를 풀 수 있도록 가정에서도 따뜻한 응원 부탁드립니다!`}
+        </p>
       </div>
     </div>
   );
