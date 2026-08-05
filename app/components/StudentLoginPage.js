@@ -86,13 +86,19 @@ export default function StudentLoginPage({ onLoginSuccess }) {
 
   return (
     <div style={{
-      minHeight: '100vh',
-      width: '100%',
+      position: 'fixed',
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      width: '100vw',
+      height: '100vh',
       background: 'linear-gradient(135deg, #EBF5FB 0%, #E8F8F5 100%)',
       display: 'flex',
       alignItems: 'center',
       justify: 'center',
-      padding: '20px'
+      padding: '20px',
+      zIndex: 9999
     }}>
       <div style={{
         background: '#FFFFFF',
@@ -100,9 +106,12 @@ export default function StudentLoginPage({ onLoginSuccess }) {
         padding: '36px 28px',
         width: '100%',
         maxWidth: '420px',
-        boxShadow: '0 12px 36px rgba(0,0,0,0.08)',
+        boxShadow: '0 12px 36px rgba(0,0,0,0.1)',
         textAlign: 'center',
-        border: '2px solid #E9ECEF'
+        border: '2px solid #E9ECEF',
+        maxHeight: '92vh',
+        overflowY: 'auto',
+        margin: 'auto'
       }}>
         {/* 상단 로고 아이콘 & 타이틀 */}
         <div style={{ fontSize: '48px', marginBottom: '8px' }}>🎓</div>
