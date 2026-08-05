@@ -14,18 +14,20 @@ import ParentDashboard from './components/ParentDashboard.js';
 export default function Home() {
   const [currentUser, setCurrentUser] = useState(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [mainTab, setMainTab] = useState('flashcard'); // 'flashcard', 'wordlist', 'quiz', 'myvocab', 'wrongvocab', 'calendar', 'parent'
+  const [mainTab, setMainTab] = useState('flashcard');
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isFlipped, setIsFlipped] = useState(false);
 
-  // Supabase 클라우드 DB 연동 단어 데이터 상태
+  // 달력에서 선택한 학습 날짜 (기본: 오늘 날짜 YYYY-MM-DD)
+  const todayStr = new Date().toISOString().split('T')[0];
+  const [targetStudyDate, setTargetStudyDate] = useState(todayStr);
+
   const [wordList, setWordList] = useState(() =>
     wordList500Fallback.map(w => ({ ...w, gradeLevel: w.gradeLevel || '초등단어' }))
   );
   const [dailyRandomWords, setDailyRandomWords] = useState([]);
   const [studyRound, setStudyRound] = useState(1);
 
-  // 오늘 누적 학습 단어 전체 목록 상태 & 팝업 모달 상태
   const [todayAllLearnedWords, setTodayAllLearnedWords] = useState([]);
   const [showTodayAllModal, setShowTodayAllModal] = useState(false);
 
@@ -34,19 +36,14 @@ export default function Home() {
   const mediaRecorderRef = useRef(null);
   const audioChunksRef = useRef([]);
 
-  // 음성 파동/높낮이 실시간 Visualizer 레퍼런스
   const audioContextRef = useRef(null);
   const analyserRef = useRef(null);
   const animFrameRef = useRef(null);
   const canvasRef = useRef(null);
 
-  // 미션 상태: 1차 녹음 수행 및 퀴즈 2단계 완수 추적
   const [hasRecorded, setHasRecorded] = useState(false);
   const [completedQuizLevels, setCompletedQuizLevels] = useState([]);
 
-  const todayStr = new Date().toISOString().split('T')[0];
-
-  // 세션 세션스토리지 확인 (페이지 새로고침 시에도 유지)
   useEffect(() => {
     try {
       const savedSession = sessionStorage.getItem('english_edu_logged_user');
@@ -62,7 +59,6 @@ export default function Home() {
     }
   }, []);
 
-  // 학생 로그인 성공 콜백
   const handleLoginSuccess = (studentObj) => {
     setCurrentUser(studentObj);
     setIsLoggedIn(true);
@@ -75,7 +71,6 @@ export default function Home() {
     }
   };
 
-  // 👨‍👩‍👧‍👦 학부모 이름 로그인 성공 콜백 (모든 자녀 리포트로 바로 이동!)
   const handleParentLoginSuccess = (parentName, matchedChildren) => {
     const mainChild = matchedChildren[0] || { name: '자녀', parentName };
     setCurrentUser(mainChild);
@@ -89,7 +84,6 @@ export default function Home() {
     }
   };
 
-  // 로그아웃 콜백
   const handleLogout = () => {
     setIsLoggedIn(false);
     setCurrentUser(null);
@@ -127,7 +121,6 @@ export default function Home() {
     loadWordsFromSupabase();
   }, []);
 
-  // 미학습 단어 중 무작위(랜덤) 세트 로드
   const generateDailyRandomWords = useCallback((userObj, fullList) => {
     if (!fullList || fullList.length === 0) return [];
     const userId = userObj ? userObj.id : 'guest';
@@ -153,13 +146,13 @@ export default function Home() {
     return shuffled.slice(0, dailyCount);
   }, []);
 
-  // 학생 선택 시 미학습 무작위 단어 세트 로드 & 미션 상태 로드
   useEffect(() => {
     if (!currentUser || !isLoggedIn) return;
-    const recKey = `record_mission_${currentUser.id}_${todayStr}`;
-    const quizKey = `quiz_mission_${currentUser.id}_${todayStr}`;
-    const dailySetKey = `daily_random_set_${currentUser.id}_${todayStr}`;
-    const todayAllKey = `today_all_learned_${currentUser.id}_${todayStr}`;
+    const dateForMission = targetStudyDate || todayStr;
+    const recKey = `record_mission_${currentUser.id}_${dateForMission}`;
+    const quizKey = `quiz_mission_${currentUser.id}_${dateForMission}`;
+    const dailySetKey = `daily_random_set_${currentUser.id}_${dateForMission}`;
+    const todayAllKey = `today_all_learned_${currentUser.id}_${dateForMission}`;
 
     setHasRecorded(localStorage.getItem(recKey) === 'true');
     try {
@@ -169,7 +162,6 @@ export default function Home() {
       setCompletedQuizLevels([]);
     }
 
-    // 오늘 누적 학습 단어 객체 리스트 로드
     try {
       const savedTodayAll = JSON.parse(localStorage.getItem(todayAllKey) || '[]');
       setTodayAllLearnedWords(savedTodayAll);
@@ -190,19 +182,27 @@ export default function Home() {
       const newRandomSet = generateDailyRandomWords(currentUser, wordList);
       setDailyRandomWords(newRandomSet);
       localStorage.setItem(dailySetKey, JSON.stringify(newRandomSet));
-      // 1회차 세트를 오늘 누적 학습 단어에 기본 등록
       setTodayAllLearnedWords(newRandomSet);
       localStorage.setItem(todayAllKey, JSON.stringify(newRandomSet));
     }
-  }, [currentUser, isLoggedIn, todayStr, wordList, generateDailyRandomWords]);
+  }, [currentUser, isLoggedIn, targetStudyDate, todayStr, wordList, generateDailyRandomWords]);
 
-  // 🚀 [다음 단어 학습] 추가 세트 로드 함수 (오늘 누적 학습 단어 목록 확장)
+  // 📅 출석 달력에서 특정 날짜를 눌렀을 때 학습 시작 핸들러!
+  const handleSelectDateToStudy = (selectedDateStr) => {
+    setTargetStudyDate(selectedDateStr);
+    setMainTab('flashcard');
+    setCurrentIndex(0);
+    setIsFlipped(false);
+    alert(`📅 [${selectedDateStr}] 날짜의 단어 학습을 시작합니다!\n\n플래시카드 단어를 확인하고 2단계 퀴즈를 완수하면 이 날짜에 출석 도장(💮)이 찍힙니다! 🚀`);
+  };
+
   const handleLoadNextWordSet = () => {
     if (!currentUser) return;
     const userId = currentUser.id;
     const dailyCount = parseInt(currentUser.dailyWordCount || 10, 10);
     const learnedKey = `learned_words_${userId}`;
-    const todayAllKey = `today_all_learned_${currentUser.id}_${todayStr}`;
+    const dateForMission = targetStudyDate || todayStr;
+    const todayAllKey = `today_all_learned_${currentUser.id}_${dateForMission}`;
 
     let learnedList = [];
     try {
@@ -224,9 +224,8 @@ export default function Home() {
     const nextRandomSet = [...unlearned].sort(() => Math.random() - 0.5).slice(0, dailyCount);
 
     setDailyRandomWords(nextRandomSet);
-    localStorage.setItem(`daily_random_set_${userId}_${todayStr}`, JSON.stringify(nextRandomSet));
+    localStorage.setItem(`daily_random_set_${userId}_${dateForMission}`, JSON.stringify(nextRandomSet));
 
-    // 오늘 누적 학습 단어 전체 객체 배열 업데이트
     const updatedTodayAll = [...todayAllLearnedWords, ...nextRandomSet];
     setTodayAllLearnedWords(updatedTodayAll);
     localStorage.setItem(todayAllKey, JSON.stringify(updatedTodayAll));
@@ -261,7 +260,6 @@ export default function Home() {
     ? rawExampleKo
     : `나는 멋진 ${currentWord?.meaning || cleanWordStr}을(를) 본다.`;
 
-  // 1. 단어 전용 🔊 TTS 음성 재생 함수
   const playWordAudio = useCallback((wordText) => {
     if ('speechSynthesis' in window) {
       const text = wordText || cleanWordStr;
@@ -273,7 +271,6 @@ export default function Home() {
     }
   }, [cleanWordStr]);
 
-  // 2. 🔊 예문 문장 전용 원어민 TTS 음성 재생 함수
   const playSentenceAudio = useCallback((sentenceText) => {
     if ('speechSynthesis' in window) {
       const textToSpeak = sentenceText || displayExampleEn;
@@ -320,7 +317,6 @@ export default function Home() {
     }
   };
 
-  // 실시간 음성 높낮이 파동 Visualizer
   const drawAudioVisualizer = useCallback(() => {
     if (!analyserRef.current || !canvasRef.current) return;
     const canvas = canvasRef.current;
@@ -375,7 +371,8 @@ export default function Home() {
 
         if (currentUser) {
           setHasRecorded(true);
-          localStorage.setItem(`record_mission_${currentUser.id}_${todayStr}`, 'true');
+          const dateForMission = targetStudyDate || todayStr;
+          localStorage.setItem(`record_mission_${currentUser.id}_${dateForMission}`, 'true');
         }
       };
 
@@ -409,18 +406,19 @@ export default function Home() {
     }
   };
 
-  // 💮 클라우드 DB & localStorage 출석 도장 찍기 및 오늘 공부한 전체 단어 세트 저장 함수
+  // 💮 클라우드 DB & localStorage 출석 도장 찍기 (선택된 날짜 targetStudyDate 에 찍기!)
   const handleStampAttendance = useCallback(async () => {
     if (!currentUser) return;
+    const stampDateKey = targetStudyDate || todayStr;
     const stampKey = `english_stamps_${currentUser.id}`;
-    const stampedWordsKey = `stamped_words_${currentUser.id}_${todayStr}`;
+    const stampedWordsKey = `stamped_words_${currentUser.id}_${stampDateKey}`;
     const wordsToSave = todayAllLearnedWords.length > 0 ? todayAllLearnedWords : safeActiveWords;
 
-    // 1. Supabase 클라우드 DB에 출석도장 및 오늘 학습한 전체 단어 세트 저장
+    // 1. Supabase 클라우드 DB에 선택 날짜 출석도장 저장
     try {
       await supabase.from('student_attendance').insert([{
         user_id: currentUser.id,
-        stamped_date: todayStr,
+        stamped_date: stampDateKey,
         stamped_words: wordsToSave
       }]);
     } catch (e) {
@@ -434,25 +432,26 @@ export default function Home() {
     } catch (e) {
       stamps = [];
     }
-    if (!stamps.includes(todayStr)) {
-      stamps.push(todayStr);
+    if (!stamps.includes(stampDateKey)) {
+      stamps.push(stampDateKey);
       localStorage.setItem(stampKey, JSON.stringify(stamps));
     }
 
     localStorage.setItem(stampedWordsKey, JSON.stringify(wordsToSave));
-  }, [currentUser, todayStr, todayAllLearnedWords, safeActiveWords]);
+  }, [currentUser, targetStudyDate, todayStr, todayAllLearnedWords, safeActiveWords]);
 
   // 💡 2단계 퀴즈 완수 시 출석 도장 찍기 수행!
   const handleQuizLevelComplete = (level) => {
     if (!currentUser) return;
+    const dateForMission = targetStudyDate || todayStr;
     const updated = [...new Set([...completedQuizLevels, level])];
     setCompletedQuizLevels(updated);
-    localStorage.setItem(`quiz_mission_${currentUser.id}_${todayStr}`, JSON.stringify(updated));
+    localStorage.setItem(`quiz_mission_${currentUser.id}_${dateForMission}`, JSON.stringify(updated));
 
     if (level === 2) {
       handleStampAttendance();
       setTimeout(() => {
-        alert(`🎉 축하합니다! 2단계 퀴즈까지 완수하여 오늘 필수 학습 출석 도장이 찍혔습니다! 💮\n(오늘 총 ${todayAllLearnedWords.length || safeActiveWords.length}개 단어 학습 완료!)\n\n더 공부하고 싶다면 [🚀 다음 단어 학습] 버튼을 누르세요!`);
+        alert(`🎉 축하합니다! 2단계 퀴즈까지 완수하여 [${dateForMission}] 출석 도장이 성공적으로 찍혔습니다! 💮\n(오늘 총 ${todayAllLearnedWords.length || safeActiveWords.length}개 단어 학습 완료!)\n\n출석 달력 탭에서 도장을 확인해보세요!`);
         setMainTab('calendar');
       }, 300);
     }
@@ -460,7 +459,6 @@ export default function Home() {
 
   const isQuizL2Done = completedQuizLevels.includes(2);
 
-  // 🖼️ 534개 word_img 전용 이미지 주소 생성 로직
   const getWordImgSrc = (wordObj) => {
     if (!wordObj || !wordObj.word) return '/word_img/Apple.png';
     const wordClean = wordObj.word.replace(/\.png/gi, '').trim();
@@ -480,7 +478,6 @@ export default function Home() {
     }
   };
 
-  // 🔒 로그인되지 않았을 때는 무조건 [학생/학부모 로그인 관문 페이지]만 표시!
   if (!isLoggedIn || !currentUser) {
     return (
       <StudentLoginPage
@@ -492,12 +489,10 @@ export default function Home() {
 
   return (
     <main className="app-container">
-      {/* 🧹 학부모 탭일 때는 학생 헤더 바 숨김! */}
       {mainTab !== 'parent' && (
         <UserManager currentUser={currentUser} setCurrentUser={setCurrentUser} onLogout={handleLogout} />
       )}
 
-      {/* 🧹 학부모 탭일 때는 학생용 미션 스마트 버튼 바 숨김! */}
       {mainTab !== 'parent' && (
         <div style={{
           width: '100%',
@@ -514,7 +509,7 @@ export default function Home() {
         }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
             <span style={{ fontSize: '12px', fontWeight: 'bold', color: '#E67E22', background: '#FEF5E7', padding: '4px 10px', borderRadius: '10px', border: '1px solid #FADBD8' }}>
-              🔥 오늘 {studyRound}회차 학습 중!
+              📅 [{targetStudyDate}] 학습 진행 중
             </span>
 
             <button
@@ -522,7 +517,7 @@ export default function Home() {
               style={{ background: '#27AE60', color: 'white', border: 'none', padding: '4px 10px', borderRadius: '10px', fontWeight: 'bold', fontSize: '12px', cursor: 'pointer', boxShadow: '0 2px 4px rgba(39,174,96,0.2)' }}
               title="오늘 1회차+2회차 등 지금까지 공부한 모든 단어 리스트 한눈에 보기"
             >
-              📖 오늘 총 {todayAllLearnedWords.length || safeActiveWords.length}개 단어 전체 보기
+              📖 학습 단어 {todayAllLearnedWords.length || safeActiveWords.length}개 보기
             </button>
           </div>
 
@@ -608,10 +603,10 @@ export default function Home() {
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', paddingBottom: '10px', borderBottom: '2px dashed #E9ECEF' }}>
               <div>
                 <h3 style={{ margin: 0, color: '#2C3E50', fontSize: '18px' }}>
-                  📖 오늘 학습한 단어 전체 리스트
+                  📖 [{targetStudyDate}] 학습 단어 리스트
                 </h3>
                 <span style={{ fontSize: '12px', color: '#27AE60', fontWeight: 'bold' }}>
-                  🔥 오늘 제 {studyRound}회차 학습까지 총 {todayAllLearnedWords.length || safeActiveWords.length}개 단어 완수!
+                  🔥 총 {todayAllLearnedWords.length || safeActiveWords.length}개 단어 수강 중!
                 </span>
               </div>
               <button onClick={() => setShowTodayAllModal(false)} style={{ background: '#F8F9FA', border: '1px solid #BDC3C7', padding: '4px 10px', borderRadius: '8px', fontWeight: 'bold', cursor: 'pointer' }}>
@@ -785,7 +780,6 @@ export default function Home() {
               </button>
             </div>
 
-            {/* 마이크 녹음 및 실시간 음성 파동/높낮이 Visualizer 그래프 */}
             <div id="record-mission-section" className="voice-recorder-card" style={{ marginTop: '16px', background: '#FFFFFF', borderRadius: '20px', padding: '16px', border: '1px solid #E9ECEF', textAlign: 'center' }}>
               <h4 style={{ margin: '0 0 8px 0', fontSize: '14px', color: '#2C3E50' }}>
                 🎙️ 내 발음 녹음 & 음성 높낮이 그래프 ({cleanWordStr})
@@ -847,9 +841,9 @@ export default function Home() {
         <PersonalVocabSection currentUser={currentUser} onPlayAudio={playWordAudio} initialTab="wrong" />
       )}
 
-      {/* 탭 6: 출석 달력 */}
+      {/* 탭 6: 출석 달력 (날짜 선택 핸들러 연결!) */}
       {mainTab === 'calendar' && (
-        <CalendarSection currentUser={currentUser} onLoadNextWordSet={handleLoadNextWordSet} />
+        <CalendarSection currentUser={currentUser} onSelectDateToStudy={handleSelectDateToStudy} />
       )}
 
       {/* 탭 7: 학부모 리포트 */}

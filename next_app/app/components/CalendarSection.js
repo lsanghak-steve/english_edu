@@ -11,7 +11,7 @@ const removeEmoji = (str) => {
     .trim();
 };
 
-export default function CalendarSection({ currentUser, onLoadNextWordSet }) {
+export default function CalendarSection({ currentUser, onSelectDateToStudy }) {
   const [currentYear, setCurrentYear] = useState(2026);
   const [currentMonth, setCurrentMonth] = useState(7); // 0-based: 7 = 8월
   const [stamps, setStamps] = useState([]);
@@ -73,7 +73,7 @@ export default function CalendarSection({ currentUser, onLoadNextWordSet }) {
     calendarDays.push(d);
   }
 
-  // 💮 도장 클릭 시 해당 날짜에 복습할 단어 팝업 열기
+  // 💮 날짜 클릭 처리 (미완료 시 학습할지 물어보기 / 완료 시 복습 팝업)
   const handleDayClick = (day) => {
     if (!day) return;
     const monthStr = String(currentMonth + 1).padStart(2, '0');
@@ -81,11 +81,16 @@ export default function CalendarSection({ currentUser, onLoadNextWordSet }) {
     const fullDateStr = `${currentYear}-${monthStr}-${dayStr}`;
 
     if (!stamps.includes(fullDateStr)) {
-      alert(`${currentYear}년 ${currentMonth + 1}월 ${day}일은 아직 학습 완수 도장이 찍히지 않은 날입니다.`);
+      const confirmStudy = window.confirm(`📅 [${currentYear}년 ${currentMonth + 1}월 ${day}일] 단어 학습을 시작하시겠습니까?\n\n학습 후 퀴즈를 완료하면 이 날짜에 출석 도장(💮)이 찍힙니다!`);
+      if (confirmStudy) {
+        if (onSelectDateToStudy) {
+          onSelectDateToStudy(fullDateStr);
+        }
+      }
       return;
     }
 
-    // 해당 날짜 단어 데이터 로드
+    // 이미 도장이 찍힌 날짜 단어 데이터 로드
     let savedWords = [];
     try {
       savedWords = JSON.parse(localStorage.getItem(`stamped_words_${userId}_${fullDateStr}`) || '[]');
@@ -124,7 +129,7 @@ export default function CalendarSection({ currentUser, onLoadNextWordSet }) {
       </div>
 
       <p style={{ fontSize: '13px', color: '#7F8C8D', marginBottom: '18px' }}>
-        💡 도장(💮)을 클릭하면 그날 공부했던 단어 목록을 다시 복습할 수 있습니다!
+        💡 날짜를 누르면 <strong>바로 학습을 진행</strong>할 수 있으며, 완수 시 해당 날짜에 <strong>도장(💮)</strong>이 찍힙니다!
       </p>
 
       {/* 요일 헤더 */}
@@ -158,9 +163,9 @@ export default function CalendarSection({ currentUser, onLoadNextWordSet }) {
                 minHeight: '68px',
                 padding: '6px',
                 borderRadius: '14px',
-                border: isStamped ? '2px solid #2ECC71' : '1px solid #E9ECEF',
+                border: isStamped ? '2px solid #2ECC71' : '1px dashed #BDC3C7',
                 background: isStamped ? '#E8F8F5' : '#FFFFFF',
-                cursor: isStamped ? 'pointer' : 'default',
+                cursor: 'pointer',
                 display: 'flex',
                 flexDirection: 'column',
                 alignItems: 'center',
@@ -168,6 +173,7 @@ export default function CalendarSection({ currentUser, onLoadNextWordSet }) {
                 transition: 'all 0.2s ease',
                 position: 'relative'
               }}
+              className="hover-card"
             >
               <span style={{ fontSize: '14px', fontWeight: 'bold', color: (idx % 7 === 0) ? '#E74C3C' : (idx % 7 === 6) ? '#3498DB' : '#2C3E50', alignSelf: 'flex-start' }}>
                 {day}
@@ -179,7 +185,9 @@ export default function CalendarSection({ currentUser, onLoadNextWordSet }) {
                   <span style={{ fontSize: '10px', color: '#27AE60', fontWeight: 'bold', marginTop: '2px' }}>출석완료</span>
                 </div>
               ) : (
-                <span style={{ fontSize: '10px', color: '#BDC3C7' }}>미완료</span>
+                <span style={{ fontSize: '11px', color: '#3498DB', fontWeight: 'bold', background: '#EBF5FB', padding: '2px 6px', borderRadius: '6px' }}>
+                  ✏️ 학습하기
+                </span>
               )}
             </div>
           );
