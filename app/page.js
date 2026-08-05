@@ -3,6 +3,7 @@
 import { useState, useCallback, useRef, useEffect } from 'react';
 import wordList500Fallback from '../data/wordsData.js';
 import supabase from '../lib/supabaseClient.js';
+import StudentLoginPage from './components/StudentLoginPage.js';
 import UserManager from './components/UserManager.js';
 import QuizSection from './components/QuizSection.js';
 import WordListSection from './components/WordListSection.js';
@@ -12,6 +13,7 @@ import ParentDashboard from './components/ParentDashboard.js';
 
 export default function Home() {
   const [currentUser, setCurrentUser] = useState(null);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [mainTab, setMainTab] = useState('flashcard'); // 'flashcard', 'wordlist', 'quiz', 'myvocab', 'wrongvocab', 'calendar', 'parent'
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isFlipped, setIsFlipped] = useState(false);
@@ -43,6 +45,42 @@ export default function Home() {
   const [completedQuizLevels, setCompletedQuizLevels] = useState([]);
 
   const todayStr = new Date().toISOString().split('T')[0];
+
+  // 세션 세션스토리지 확인 (페이지 새로고침 시에도 유지)
+  useEffect(() => {
+    try {
+      const savedSession = sessionStorage.getItem('english_edu_logged_user');
+      if (savedSession) {
+        const parsed = JSON.parse(savedSession);
+        setCurrentUser(parsed);
+        setIsLoggedIn(true);
+      }
+    } catch (e) {
+      console.log('Session parse error', e);
+    }
+  }, []);
+
+  // 로그인 성공 콜백
+  const handleLoginSuccess = (studentObj) => {
+    setCurrentUser(studentObj);
+    setIsLoggedIn(true);
+    try {
+      sessionStorage.setItem('english_edu_logged_user', JSON.stringify(studentObj));
+    } catch (e) {
+      console.log('Session storage save error', e);
+    }
+  };
+
+  // 로그아웃 콜백
+  const handleLogout = () => {
+    setIsLoggedIn(false);
+    setCurrentUser(null);
+    try {
+      sessionStorage.removeItem('english_edu_logged_user');
+    } catch (e) {
+      console.log('Session storage clear error', e);
+    }
+  };
 
   // Supabase 클라우드 DB에서 534개 전체 단어 실시간 로드
   useEffect(() => {
@@ -98,7 +136,7 @@ export default function Home() {
 
   // 학생 선택 시 미학습 무작위 단어 세트 로드 & 미션 상태 로드
   useEffect(() => {
-    if (!currentUser) return;
+    if (!currentUser || !isLoggedIn) return;
     const recKey = `record_mission_${currentUser.id}_${todayStr}`;
     const quizKey = `quiz_mission_${currentUser.id}_${todayStr}`;
     const dailySetKey = `daily_random_set_${currentUser.id}_${todayStr}`;
@@ -137,7 +175,7 @@ export default function Home() {
       setTodayAllLearnedWords(newRandomSet);
       localStorage.setItem(todayAllKey, JSON.stringify(newRandomSet));
     }
-  }, [currentUser, todayStr, wordList, generateDailyRandomWords]);
+  }, [currentUser, isLoggedIn, todayStr, wordList, generateDailyRandomWords]);
 
   // 🚀 [다음 단어 학습] 추가 세트 로드 함수 (오늘 누적 학습 단어 목록 확장)
   const handleLoadNextWordSet = () => {
@@ -229,13 +267,13 @@ export default function Home() {
   }, [displayExampleEn]);
 
   useEffect(() => {
-    if (mainTab === 'flashcard' && currentWord) {
+    if (isLoggedIn && mainTab === 'flashcard' && currentWord) {
       const timer = setTimeout(() => {
         playWordAudio(cleanWordStr);
       }, 200);
       return () => clearTimeout(timer);
     }
-  }, [mainTab, currentIndex, currentWord, playWordAudio, cleanWordStr]);
+  }, [isLoggedIn, mainTab, currentIndex, currentWord, playWordAudio, cleanWordStr]);
 
   const handleCardClick = (e) => {
     if (e.target.closest('button') || e.target.closest('.audio-btn') || e.target.closest('.record-btn')) {
@@ -423,10 +461,15 @@ export default function Home() {
     }
   };
 
+  // 🔒 로그인되지 않았을 때는 무조건 [학생 전용 로그인 관문 페이지]만 표시!
+  if (!isLoggedIn || !currentUser) {
+    return <StudentLoginPage onLoginSuccess={handleLoginSuccess} />;
+  }
+
   return (
     <main className="app-container">
-      {/* 상단 학생 헤더 바 및 모달 제어 */}
-      <UserManager currentUser={currentUser} setCurrentUser={setCurrentUser} />
+      {/* 상단 학생 헤더 바 및 로그아웃 제어 */}
+      <UserManager currentUser={currentUser} setCurrentUser={setCurrentUser} onLogout={handleLogout} />
 
       {/* 실시간 미션 스마트 버튼 바, 🔥 회차 뱃지, 📖 오늘 누적 단어 버튼 및 🚀 [다음 단어 학습] 버튼 */}
       <div style={{
