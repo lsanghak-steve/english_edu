@@ -21,34 +21,39 @@ export default function CalendarSection({ currentUser, onSelectDateToStudy }) {
   const studentName = currentUser ? removeEmoji(currentUser.name) : '학생';
   const userId = currentUser ? currentUser.id : 'guest';
 
-  // 💮 이승현 (8월 3, 4, 5일), 이수민 (8월 4, 5일) 기본 도장 및 클라우드 DB 출석 데이터 로드
+  // 💮 이상학(8/3, 8/5), 이승현(8/3, 8/4, 8/5), 이수민(8/4, 8/5) 클라우드 DB 완벽 통합 로드
   useEffect(() => {
     async function loadAttendanceStamps() {
       let defaultDates = [];
-      if (studentName === '이승현' || userId === 'sh_101') {
+      if (studentName === '이상학' || userId === 'sh_100') {
+        defaultDates = ['2026-08-03', '2026-08-05'];
+      } else if (studentName === '이승현' || userId === 'sh_101') {
         defaultDates = ['2026-08-03', '2026-08-04', '2026-08-05'];
       } else if (studentName === '이수민' || userId === 'sm_102') {
         defaultDates = ['2026-08-04', '2026-08-05'];
       }
 
-      // 1. Supabase 클라우드 DB에서 출석 도장 데이터 로드
+      // Supabase 클라우드 DB에서 출석 도장 데이터 조율
       try {
         const { data, error } = await supabase
           .from('student_attendance')
           .select('stamped_date')
-          .eq('user_id', userId);
+          .or(`user_id.eq.${userId},user_id.eq.${studentName}`);
 
         if (!error && data && data.length > 0) {
           const dbDates = data.map(item => item.stamped_date);
           const merged = [...new Set([...defaultDates, ...dbDates])];
           setStamps(merged);
+
+          // 클라우드 DB와 sync 보장
+          localStorage.setItem(`english_stamps_${userId}`, JSON.stringify(merged));
           return;
         }
       } catch (e) {
-        console.log('Cloud attendance fetch fallback');
+        console.log('Cloud attendance fetch fallback', e);
       }
 
-      // 2. localStorage 백업 로드
+      // localStorage 및 기본 통일 도장 적용
       try {
         const localStamps = JSON.parse(localStorage.getItem(`english_stamps_${userId}`) || '[]');
         const merged = [...new Set([...defaultDates, ...localStamps])];
@@ -99,7 +104,7 @@ export default function CalendarSection({ currentUser, onSelectDateToStudy }) {
     }
 
     if (!savedWords || savedWords.length === 0) {
-      savedWords = wordList500Fallback.slice(0, studentName === '이승현' || studentName === '이수민' ? 30 : 10);
+      savedWords = wordList500Fallback.slice(0, studentName === '이승현' || studentName === '이수민' || studentName === '이상학' ? 30 : 10);
     }
 
     setSelectedDateStr(fullDateStr);
