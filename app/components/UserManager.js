@@ -3,6 +3,14 @@
 import { useState, useEffect } from 'react';
 import supabase from '../../lib/supabaseClient.js';
 
+// 학생 이름 이모지 자동 제거 헬퍼 함수
+const removeEmoji = (str) => {
+  if (!str) return '';
+  return str
+    .replace(/[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{1F1E0}-\u{1F1FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{1F900}-\u{1F9FF}\u{1F300}-\u{1F5FF}]/gu, '')
+    .trim();
+};
+
 export default function UserManager({ currentUser, setCurrentUser, onLogout }) {
   const [users, setUsers] = useState([]);
   const [showAddEditModal, setShowAddEditModal] = useState(false);
@@ -29,11 +37,11 @@ export default function UserManager({ currentUser, setCurrentUser, onLogout }) {
       if (!error && data && data.length > 0) {
         const formatted = data.map(item => ({
           id: item.id,
-          name: item.name,
+          name: removeEmoji(item.name),
           grade: item.grade || '초등 3학년',
           dailyWordCount: item.daily_word_count || '10',
           studentPin: item.student_pin || '1234',
-          parentName: item.parent_name || '',
+          parentName: removeEmoji(item.parent_name),
           parentPhone: item.parent_phone || '',
           parentPin: item.parent_pin || '5678'
         }));
@@ -49,7 +57,8 @@ export default function UserManager({ currentUser, setCurrentUser, onLogout }) {
     try {
       const savedUsers = JSON.parse(localStorage.getItem('english_edu_users') || '[]');
       if (savedUsers.length > 0) {
-        setUsers(savedUsers);
+        const formatted = savedUsers.map(u => ({ ...u, name: removeEmoji(u.name) }));
+        setUsers(formatted);
       }
     } catch (e) {
       console.log('Error loading users', e);
@@ -65,11 +74,11 @@ export default function UserManager({ currentUser, setCurrentUser, onLogout }) {
     if (!currentUser) return;
     setIsEditMode(true);
     setEditingUserId(currentUser.id);
-    setNameInput(currentUser.name || '');
+    setNameInput(removeEmoji(currentUser.name));
     setGradeInput(currentUser.grade || '초등 3학년');
     setDailyCountInput(currentUser.dailyWordCount || '10');
     setStudentPinInput(currentUser.studentPin || '1234');
-    setParentNameInput(currentUser.parentName || '');
+    setParentNameInput(removeEmoji(currentUser.parentName));
     setParentPhoneInput(currentUser.parentPhone || '');
     setParentPinInput(currentUser.parentPin || '5678');
     setShowAddEditModal(true);
@@ -78,18 +87,19 @@ export default function UserManager({ currentUser, setCurrentUser, onLogout }) {
   // 폼 제출 (수정)
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!nameInput.trim()) {
+    const cleanStudentName = removeEmoji(nameInput);
+    if (!cleanStudentName) {
       alert('학생 이름을 입력해 주세요.');
       return;
     }
 
     const updatedUserObj = {
       id: editingUserId,
-      name: nameInput.trim(),
+      name: cleanStudentName,
       grade: gradeInput,
       daily_word_count: dailyCountInput,
       student_pin: studentPinInput.trim() || '1234',
-      parent_name: parentNameInput.trim(),
+      parent_name: removeEmoji(parentNameInput),
       parent_phone: parentPhoneInput.trim(),
       parent_pin: parentPinInput.trim() || '5678'
     };
@@ -104,11 +114,11 @@ export default function UserManager({ currentUser, setCurrentUser, onLogout }) {
       if (u.id === editingUserId) {
         return {
           ...u,
-          name: nameInput.trim(),
+          name: cleanStudentName,
           grade: gradeInput,
           dailyWordCount: dailyCountInput,
           studentPin: studentPinInput.trim() || '1234',
-          parentName: parentNameInput.trim(),
+          parentName: removeEmoji(parentNameInput),
           parentPhone: parentPhoneInput.trim(),
           parentPin: parentPinInput.trim() || '5678'
         };
@@ -126,13 +136,15 @@ export default function UserManager({ currentUser, setCurrentUser, onLogout }) {
     setShowAddEditModal(false);
   };
 
+  const displayName = currentUser ? removeEmoji(currentUser.name) : '';
+
   return (
     <div style={{ width: '100%', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#FFFFFF', padding: '12px 18px', borderRadius: '20px', border: '1px solid #E9ECEF', boxShadow: '0 4px 12px rgba(0,0,0,0.03)', marginBottom: '14px', flexWrap: 'wrap', gap: '10px' }}>
       {/* 현재 로그인된 학생 정보 */}
       <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
         <span style={{ fontSize: '13px', fontWeight: 'bold', color: '#7F8C8D' }}>👤 현재 학습자:</span>
         <span style={{ fontSize: '15px', fontWeight: 'bold', color: '#2C3E50', background: '#F4F6F7', padding: '6px 14px', borderRadius: '12px', border: '1px solid #BDC3C7' }}>
-          {currentUser ? `${currentUser.name} (${currentUser.grade || '초등 3학년'}) • 목표 ${currentUser.dailyWordCount || 10}단어` : '로그인 필요'}
+          {currentUser ? `${displayName} (${currentUser.grade || '초등 3학년'}) • 목표 ${currentUser.dailyWordCount || 10}단어` : '로그인 필요'}
         </span>
 
         {/* ✏️ 내 정보 수정 버튼 */}

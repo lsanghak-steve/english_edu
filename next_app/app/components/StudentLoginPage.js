@@ -3,6 +3,14 @@
 import { useState, useEffect } from 'react';
 import supabase from '../../lib/supabaseClient.js';
 
+// 학생 이름 이모지 자동 제거 헬퍼 함수
+const removeEmoji = (str) => {
+  if (!str) return '';
+  return str
+    .replace(/[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{1F1E0}-\u{1F1FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{1F900}-\u{1F9FF}\u{1F300}-\u{1F5FF}]/gu, '')
+    .trim();
+};
+
 export default function StudentLoginPage({ onLoginSuccess }) {
   const [users, setUsers] = useState([]);
   const [studentNameInput, setStudentNameInput] = useState('');
@@ -22,11 +30,11 @@ export default function StudentLoginPage({ onLoginSuccess }) {
         if (!error && data && data.length > 0) {
           const formatted = data.map(item => ({
             id: item.id,
-            name: item.name,
+            name: removeEmoji(item.name),
             grade: item.grade || '초등 3학년',
             dailyWordCount: item.daily_word_count || '10',
             studentPin: item.student_pin || '1234',
-            parentName: item.parent_name || '',
+            parentName: removeEmoji(item.parent_name),
             parentPhone: item.parent_phone || '',
             parentPin: item.parent_pin || '5678'
           }));
@@ -43,7 +51,8 @@ export default function StudentLoginPage({ onLoginSuccess }) {
       try {
         const savedUsers = JSON.parse(localStorage.getItem('english_edu_users') || '[]');
         if (savedUsers.length > 0) {
-          setUsers(savedUsers);
+          const formatted = savedUsers.map(u => ({ ...u, name: removeEmoji(u.name) }));
+          setUsers(formatted);
         } else {
           const defaultUsers = [
             { id: '1', name: '김민수', grade: '초등 3학년', dailyWordCount: '10', studentPin: '1234' },
@@ -62,14 +71,14 @@ export default function StudentLoginPage({ onLoginSuccess }) {
 
   const handleLoginSubmit = (e) => {
     e.preventDefault();
-    const trimmedName = studentNameInput.trim();
+    const trimmedName = removeEmoji(studentNameInput);
     if (!trimmedName) {
       alert('학생 이름을 입력해 주세요.');
       return;
     }
 
-    // 이름으로 학생 검색
-    const student = users.find(u => (u.name || '').trim() === trimmedName);
+    // 이름으로 학생 검색 (이모지 제외 순수 텍스트 비교)
+    const student = users.find(u => removeEmoji(u.name) === trimmedName);
     if (!student) {
       alert(`'${trimmedName}' 이름으로 등록된 학생을 찾을 수 없습니다.\n이름을 다시 확인하거나 센터 관리자에게 등록을 요청해 주세요.`);
       return;
