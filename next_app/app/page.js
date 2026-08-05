@@ -492,112 +492,114 @@ export default function Home() {
 
   return (
     <main className="app-container">
-      {/* 상단 학생 헤더 바 및 로그아웃 제어 */}
-      <UserManager currentUser={currentUser} setCurrentUser={setCurrentUser} onLogout={handleLogout} />
+      {/* 🧹 학부모 탭일 때는 학생 헤더 바 숨김! */}
+      {mainTab !== 'parent' && (
+        <UserManager currentUser={currentUser} setCurrentUser={setCurrentUser} onLogout={handleLogout} />
+      )}
 
-      {/* 실시간 미션 스마트 버튼 바, 🔥 회차 뱃지, 📖 오늘 누적 단어 버튼 및 🚀 [다음 단어 학습] 버튼 */}
-      <div style={{
-        width: '100%',
-        background: '#FFFFFF',
-        border: '2px solid #EBF5FB',
-        borderRadius: '16px',
-        padding: '10px 14px',
-        display: 'flex',
-        justify: 'space-around',
-        alignItems: 'center',
-        boxShadow: '0 4px 10px rgba(0,0,0,0.03)',
-        gap: '8px',
-        flexWrap: 'wrap'
-      }}>
-        {/* 오늘 N회차 진행 상태 및 오늘 공부한 전체 단어 팝업 버튼 */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-          <span style={{ fontSize: '12px', fontWeight: 'bold', color: '#E67E22', background: '#FEF5E7', padding: '4px 10px', borderRadius: '10px', border: '1px solid #FADBD8' }}>
-            🔥 오늘 {studyRound}회차 학습 중!
-          </span>
+      {/* 🧹 학부모 탭일 때는 학생용 미션 스마트 버튼 바 숨김! */}
+      {mainTab !== 'parent' && (
+        <div style={{
+          width: '100%',
+          background: '#FFFFFF',
+          border: '2px solid #EBF5FB',
+          borderRadius: '16px',
+          padding: '10px 14px',
+          display: 'flex',
+          justify: 'space-around',
+          alignItems: 'center',
+          boxShadow: '0 4px 10px rgba(0,0,0,0.03)',
+          gap: '8px',
+          flexWrap: 'wrap'
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <span style={{ fontSize: '12px', fontWeight: 'bold', color: '#E67E22', background: '#FEF5E7', padding: '4px 10px', borderRadius: '10px', border: '1px solid #FADBD8' }}>
+              🔥 오늘 {studyRound}회차 학습 중!
+            </span>
+
+            <button
+              onClick={() => setShowTodayAllModal(true)}
+              style={{ background: '#27AE60', color: 'white', border: 'none', padding: '4px 10px', borderRadius: '10px', fontWeight: 'bold', fontSize: '12px', cursor: 'pointer', boxShadow: '0 2px 4px rgba(39,174,96,0.2)' }}
+              title="오늘 1회차+2회차 등 지금까지 공부한 모든 단어 리스트 한눈에 보기"
+            >
+              📖 오늘 총 {todayAllLearnedWords.length || safeActiveWords.length}개 단어 전체 보기
+            </button>
+          </div>
 
           <button
-            onClick={() => setShowTodayAllModal(true)}
-            style={{ background: '#27AE60', color: 'white', border: 'none', padding: '4px 10px', borderRadius: '10px', fontWeight: 'bold', fontSize: '12px', cursor: 'pointer', boxShadow: '0 2px 4px rgba(39,174,96,0.2)' }}
-            title="오늘 1회차+2회차 등 지금까지 공부한 모든 단어 리스트 한눈에 보기"
+            onClick={() => {
+              setMainTab('flashcard');
+              setTimeout(() => {
+                const recElement = document.getElementById('record-mission-section');
+                if (recElement) recElement.scrollIntoView({ behavior: 'smooth' });
+              }, 100);
+            }}
+            style={{
+              flex: 1,
+              minWidth: '120px',
+              padding: '8px 12px',
+              borderRadius: '12px',
+              border: hasRecorded ? '2px solid #2ECC71' : '1px solid #3498DB',
+              background: hasRecorded ? '#E8F8F5' : '#EBF5FB',
+              color: hasRecorded ? '#27AE60' : '#2980B9',
+              fontWeight: 'bold',
+              fontSize: '13px',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              justify: 'center',
+              gap: '6px'
+            }}
           >
-            📖 오늘 총 {todayAllLearnedWords.length || safeActiveWords.length}개 단어 전체 보기
+            {hasRecorded ? '✅ 1차 녹음 완료 🎙️' : '🎙️ 1차 녹음 미션 ➔'}
+          </button>
+
+          <button
+            onClick={() => setMainTab('quiz')}
+            style={{
+              flex: 1,
+              minWidth: '120px',
+              padding: '8px 12px',
+              borderRadius: '12px',
+              border: isQuizL2Done ? '2px solid #2ECC71' : '1px solid #9B59B6',
+              background: isQuizL2Done ? '#E8F8F5' : '#F5EEF8',
+              color: isQuizL2Done ? '#27AE60' : '#8E44AD',
+              fontWeight: 'bold',
+              fontSize: '13px',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              justify: 'center',
+              gap: '6px'
+            }}
+          >
+            {isQuizL2Done ? '✅ 퀴즈 완수 (출석도장💮)' : '🧩 2단계 스펠링 퀴즈 ➔'}
+          </button>
+
+          <button
+            onClick={handleLoadNextWordSet}
+            style={{
+              flex: 1,
+              minWidth: '140px',
+              padding: '8px 14px',
+              borderRadius: '12px',
+              border: '2px solid #E67E22',
+              background: '#FEF5E7',
+              color: '#D35400',
+              fontWeight: 'bold',
+              fontSize: '13px',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              justify: 'center',
+              gap: '6px',
+              boxShadow: '0 2px 6px rgba(230,126,34,0.2)'
+            }}
+          >
+            🚀 다음 단어 학습 ➔
           </button>
         </div>
-
-        <button
-          onClick={() => {
-            setMainTab('flashcard');
-            setTimeout(() => {
-              const recElement = document.getElementById('record-mission-section');
-              if (recElement) recElement.scrollIntoView({ behavior: 'smooth' });
-            }, 100);
-          }}
-          style={{
-            flex: 1,
-            minWidth: '120px',
-            padding: '8px 12px',
-            borderRadius: '12px',
-            border: hasRecorded ? '2px solid #2ECC71' : '1px solid #3498DB',
-            background: hasRecorded ? '#E8F8F5' : '#EBF5FB',
-            color: hasRecorded ? '#27AE60' : '#2980B9',
-            fontWeight: 'bold',
-            fontSize: '13px',
-            cursor: 'pointer',
-            display: 'flex',
-            alignItems: 'center',
-            justify: 'center',
-            gap: '6px'
-          }}
-        >
-          {hasRecorded ? '✅ 1차 녹음 완료 🎙️' : '🎙️ 1차 녹음 미션 ➔'}
-        </button>
-
-        <button
-          onClick={() => setMainTab('quiz')}
-          style={{
-            flex: 1,
-            minWidth: '120px',
-            padding: '8px 12px',
-            borderRadius: '12px',
-            border: isQuizL2Done ? '2px solid #2ECC71' : '1px solid #9B59B6',
-            background: isQuizL2Done ? '#E8F8F5' : '#F5EEF8',
-            color: isQuizL2Done ? '#27AE60' : '#8E44AD',
-            fontWeight: 'bold',
-            fontSize: '13px',
-            cursor: 'pointer',
-            display: 'flex',
-            alignItems: 'center',
-            justify: 'center',
-            gap: '6px'
-          }}
-        >
-          {isQuizL2Done ? '✅ 퀴즈 완수 (출석도장💮)' : '🧩 2단계 스펠링 퀴즈 ➔'}
-        </button>
-
-        {/* 🚀 [다음 단어 학습] 스마트 버튼 */}
-        <button
-          onClick={handleLoadNextWordSet}
-          style={{
-            flex: 1,
-            minWidth: '140px',
-            padding: '8px 14px',
-            borderRadius: '12px',
-            border: '2px solid #E67E22',
-            background: '#FEF5E7',
-            color: '#D35400',
-            fontWeight: 'bold',
-            fontSize: '13px',
-            cursor: 'pointer',
-            display: 'flex',
-            alignItems: 'center',
-            justify: 'center',
-            gap: '6px',
-            boxShadow: '0 2px 6px rgba(230,126,34,0.2)'
-          }}
-        >
-          🚀 다음 단어 학습 ➔
-        </button>
-      </div>
+      )}
 
       {/* 📖 오늘 공부한 전체 단어 팝업 모달 */}
       {showTodayAllModal && (
@@ -648,7 +650,7 @@ export default function Home() {
         </div>
       )}
 
-      {/* 메인 7대 탭 메뉴 (❌ 오답노트 전용 독립 탭 추가) */}
+      {/* 메인 7대 탭 메뉴 */}
       <nav className="main-tab-nav" style={{ gap: '2px' }}>
         <button
           className={`main-tab-btn ${mainTab === 'flashcard' ? 'active' : ''}`}
@@ -852,7 +854,7 @@ export default function Home() {
 
       {/* 탭 7: 학부모 리포트 */}
       {mainTab === 'parent' && (
-        <ParentDashboard currentUser={currentUser} />
+        <ParentDashboard currentUser={currentUser} onLogout={handleLogout} />
       )}
     </main>
   );
