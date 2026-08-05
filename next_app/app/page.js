@@ -75,13 +75,14 @@ export default function Home() {
     }
   };
 
-  // 👨‍👩‍👧‍👦 학부모 로그인 성공 콜백 (자녀 리포트로 바로 이동!)
-  const handleParentLoginSuccess = (studentObj) => {
-    setCurrentUser(studentObj);
+  // 👨‍👩‍👧‍👦 학부모 이름 로그인 성공 콜백 (모든 자녀 리포트로 바로 이동!)
+  const handleParentLoginSuccess = (parentName, matchedChildren) => {
+    const mainChild = matchedChildren[0] || { name: '자녀', parentName };
+    setCurrentUser(mainChild);
     setIsLoggedIn(true);
     setMainTab('parent');
     try {
-      sessionStorage.setItem('english_edu_logged_user', JSON.stringify(studentObj));
+      sessionStorage.setItem('english_edu_logged_user', JSON.stringify(mainChild));
       sessionStorage.setItem('english_edu_main_tab', 'parent');
     } catch (e) {
       console.log('Session storage save error', e);
