@@ -123,32 +123,61 @@ export default function Home() {
   }, []);
 
 
-  const generateDailyRandomWords = useCallback((userObj, fullList) => {
-    if (!fullList || fullList.length === 0) return [];
-    const userId = userObj ? userObj.id : 'guest';
-    const userName = userObj && userObj.name ? userObj.name.replace(/[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{1F1E0}-\u{1F1FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{1F900}-\u{1F9FF}\u{1F300}-\u{1F5FF}\u{1F004}\u{1F0CF}\u{1F170}-\u{1F251}]/gu, '').trim() : '';
-    const dailyCount = userObj ? parseInt(userObj.dailyWordCount || 10, 10) : 10;
-    const learnedKey = `learned_words_${userId}`;
+  // ⚡ 로그인한 학생의 학습 수량(dailyWordCount)만큼 Supabase DB에서 안 외운 단어를 스마트 무작위 콕 찍어 로드
+  const loadDailyRandomWordsFromDB = useCallback(async (userObj) => {
+    if (!userObj) return [];
+    const userId = userObj.id || 'guest';
+    const userName = userObj.name ? userObj.name.replace(/[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{1F1E0}-\u{1F1FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{1F900}-\u{1F9FF}\u{1F300}-\u{1F5FF}\u{1F004}\u{1F0CF}\u{1F170}-\u{1F251}]/gu, '').trim() : '';
+    const dailyCount = parseInt(userObj.dailyWordCount || 10, 10);
 
-    let learnedList = [];
     try {
-      learnedList = JSON.parse(localStorage.getItem(learnedKey) || '[]');
+      // 1. Supabase DB에서 해당 학생이 이미 외운 단어 목록 가져오기
+      const { data: learnedData } = await supabase
+        .from('student_learned_words')
+        .select('word')
+        .or(`student_id.eq.${userId},student_id.eq.${userName}`);
+
+      let learnedWordSet = new Set();
+      if (learnedData && learnedData.length > 0) {
+        learnedData.forEach(item => { if (item.word) learnedWordSet.add(item.word.trim()); });
+      }
+
+      // LocalStorage 백업 단어 병합
+      try {
+        const localLearned = JSON.parse(localStorage.getItem(`learned_words_${userId}`) || '[]');
+        localLearned.forEach(w => learnedWordSet.add(w));
+      } catch (e) {}
+
+      // 2. Supabase DB에서 전체 단어 중 안 외운 단어를 학생 수량(dailyCount)만큼만 스마트 로드!
+      const { data: allWordsData } = await supabase.from('words').select('*');
+      if (allWordsData && allWordsData.length > 0) {
+        const formatted = allWordsData.map(item => ({
+          id: item.id,
+          word: (item.word || '').replace(/\.png/gi, '').trim(),
+          phonics: item.phonics || '',
+          meaning: item.meaning,
+          category: item.category || '초등단어',
+          gradeLevel: item.grade_level || '초등단어',
+          exampleEn: (item.example_en || '').replace(/\.png/gi, '').trim(),
+          exampleKo: (item.example_ko || '').replace(/\.png/gi, '').trim(),
+          imageUrl: item.image_url || ''
+        }));
+
+        let unlearned = formatted.filter(w => !learnedWordSet.has(w.word));
+
+        // 800개 단어를 다 외운 경우 무작위 재회독 순환
+        if (unlearned.length < dailyCount) {
+          unlearned = [...formatted];
+        }
+
+        const shuffled = [...unlearned].sort(() => Math.random() - 0.5);
+        return shuffled.slice(0, dailyCount);
+      }
     } catch (e) {
-      learnedList = [];
+      console.log('Daily random words fetch error', e);
     }
-
-    let unlearned = fullList.filter(w => !learnedList.includes(w.word));
-
-    if (unlearned.length < dailyCount) {
-      learnedList = [];
-      localStorage.setItem(learnedKey, JSON.stringify([]));
-      unlearned = [...fullList];
-    }
-
-    const shuffled = [...unlearned].sort(() => Math.random() - 0.5);
-    return shuffled.slice(0, dailyCount);
+    return [];
   }, []);
-
 
   useEffect(() => {
     if (!currentUser || !isLoggedIn) return;
@@ -173,23 +202,32 @@ export default function Home() {
       setTodayAllLearnedWords([]);
     }
 
-    let savedDailySet = [];
-    try {
-      savedDailySet = JSON.parse(localStorage.getItem(dailySetKey) || '[]');
-    } catch (e) {
-      savedDailySet = [];
+    async function syncDailyRandomWords() {
+      let savedDailySet = [];
+      try {
+        savedDailySet = JSON.parse(localStorage.getItem(dailySetKey) || '[]');
+      } catch (e) {
+        savedDailySet = [];
+      }
+
+      if (savedDailySet && savedDailySet.length > 0) {
+        setDailyRandomWords(savedDailySet);
+        setWordList(savedDailySet);
+      } else {
+        const newRandomSet = await loadDailyRandomWordsFromDB(currentUser);
+        if (newRandomSet && newRandomSet.length > 0) {
+          setDailyRandomWords(newRandomSet);
+          setWordList(newRandomSet);
+          localStorage.setItem(dailySetKey, JSON.stringify(newRandomSet));
+          setTodayAllLearnedWords(newRandomSet);
+          localStorage.setItem(todayAllKey, JSON.stringify(newRandomSet));
+        }
+      }
     }
 
-    if (savedDailySet && savedDailySet.length > 0) {
-      setDailyRandomWords(savedDailySet);
-    } else {
-      const newRandomSet = generateDailyRandomWords(currentUser, wordList);
-      setDailyRandomWords(newRandomSet);
-      localStorage.setItem(dailySetKey, JSON.stringify(newRandomSet));
-      setTodayAllLearnedWords(newRandomSet);
-      localStorage.setItem(todayAllKey, JSON.stringify(newRandomSet));
-    }
-  }, [currentUser, isLoggedIn, targetStudyDate, todayStr, wordList, generateDailyRandomWords]);
+    syncDailyRandomWords();
+  }, [currentUser, isLoggedIn, targetStudyDate, todayStr, loadDailyRandomWordsFromDB]);
+
 
   // 📅 출석 달력에서 특정 날짜를 눌렀을 때 학습 시작 핸들러!
   const handleSelectDateToStudy = (selectedDateStr) => {
