@@ -22,44 +22,66 @@ export default function StudentLoginPage({ onLoginSuccess, onParentLoginSuccess 
   const [parentNameInput, setParentNameInput] = useState('');
   const [parentPinInput, setParentPinInput] = useState('');
 
-  // 기본 학생 세팅 배열 (예시: 김철수, 이영희 등)
+  // 기본 학생 세팅 배열 (이상학, 이승현, 이수민 포함)
   const defaultStudents = [
-    { id: '1', name: '김철수', grade: '초등 3학년', dailyWordCount: '10', studentPin: '1234', parentName: '김철수학부모', parentPhone: '010-0000-0000', parentPin: '5678' },
-    { id: '2', name: '이영희', grade: '초등 4학년', dailyWordCount: '15', studentPin: '1234', parentName: '이영희학부모', parentPhone: '010-1111-2222', parentPin: '5678' },
-    { id: 'sh_101', name: '이승현', grade: '초등 3학년', dailyWordCount: '10', studentPin: '1234', parentName: '이승현학부모', parentPhone: '010-1234-5678', parentPin: '5678' },
-    { id: 'sm_102', name: '이수민', grade: '초등 4학년', dailyWordCount: '15', studentPin: '1234', parentName: '이수민학부모', parentPhone: '010-9876-5432', parentPin: '5678' }
+    { id: 'sh_100', name: '이상학', grade: '대학생 및 성인', dailyWordCount: '10', studentPin: '1111', parentName: '이상학학부모', parentPhone: '010-0000-0000', parentPin: '5678' },
+    { id: 'sh_101', name: '이승현', grade: '초등 3학년', dailyWordCount: '10', studentPin: '1111', parentName: '이승현학부모', parentPhone: '010-1234-5678', parentPin: '5678' },
+    { id: 'sm_102', name: '이수민', grade: '초등 4학년', dailyWordCount: '15', studentPin: '1111', parentName: '이수민학부모', parentPhone: '010-9876-5432', parentPin: '5678' }
   ];
 
-  // 수파베이스 클라우드 DB에서 학생 전체 목록 로드
+  // 수파베이스 클라우드 DB에서 학생 전체 목록 로드 (users 및 student_profiles 통합)
   useEffect(() => {
     async function loadCloudUsers() {
       setIsLoading(true);
 
       try {
-        const { data, error } = await supabase
-          .from('student_profiles')
-          .select('*')
-          .order('created_at', { ascending: true });
+        const [res1, res2] = await Promise.allSettled([
+          supabase.from('student_profiles').select('*').order('created_at', { ascending: true }),
+          supabase.from('users').select('*').order('created_at', { ascending: true })
+        ]);
 
-        if (!error && data && data.length > 0) {
-          const formatted = data.map(item => ({
+        let dbUsers = [];
+        if (res1.status === 'fulfilled' && res1.value.data) {
+          dbUsers.push(...res1.value.data.map(item => ({
             id: item.id,
             name: removeEmoji(item.name),
             grade: item.grade || '초등 3학년',
             dailyWordCount: item.daily_word_count || '10',
-            studentPin: item.student_pin || '1234',
+            studentPin: item.student_pin || '1111',
             parentName: removeEmoji(item.parent_name),
             parentPhone: item.parent_phone || '',
             parentPin: item.parent_pin || '5678'
-          }));
-          setUsers(formatted);
-          localStorage.setItem('english_edu_users', JSON.stringify(formatted));
+          })));
+        }
+        if (res2.status === 'fulfilled' && res2.value.data) {
+          dbUsers.push(...res2.value.data.map(item => ({
+            id: item.id,
+            name: removeEmoji(item.name),
+            grade: item.avatar || '초등 3학년',
+            dailyWordCount: String(item.daily_word_count || 10),
+            studentPin: item.pin || '1111',
+            parentName: removeEmoji(item.name) + '학부모',
+            parentPhone: '',
+            parentPin: '5678'
+          })));
+        }
+
+        if (dbUsers.length > 0) {
+          const merged = [...defaultStudents];
+          dbUsers.forEach(u => {
+            if (!merged.some(m => m.id === u.id || m.name === u.name)) {
+              merged.push(u);
+            }
+          });
+          setUsers(merged);
+          localStorage.setItem('english_edu_users', JSON.stringify(merged));
           setIsLoading(false);
           return;
         }
       } catch (e) {
-        console.log('Cloud user fetch error', e);
+        console.log('Cloud user fetch fallback', e);
       }
+
 
       // 수파베이스 데이터가 없을 때 localStorage/default 백업
       try {
