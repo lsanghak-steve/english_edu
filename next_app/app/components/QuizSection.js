@@ -62,23 +62,23 @@ export default function QuizSection({ currentUser, activeWords, onQuizLevelCompl
     }
   }, [currentIndex, currentQuiz, quizLevel, generateOptions, playAudio, cleanWordStr]);
 
-  // ❌ 오답 발생 시 Supabase 클라우드 DB 오답노트에 자동 저장
+  // ❌ 오답 발생 시 Supabase 클라우드 DB wrong_words 보관함에 자동 저장
   const saveWrongAnswer = async (wordObj) => {
     if (!currentUser || !wordObj) return;
     const wordStr = (wordObj.word || wordObj).replace(/\.png/gi, '').trim();
 
     try {
-      await supabase.from('student_wrong_answers').insert([{
-        user_id: currentUser.id,
+      await supabase.from('wrong_words').insert([{
+        student_id: currentUser.id,
         word: wordStr,
         meaning: wordObj.meaning || '뜻 정보 없음',
         phonics: wordObj.phonics || '',
-        category: wordObj.category || '기타',
-        added_at: new Date().toISOString().split('T')[0]
+        category: wordObj.category || '기타'
       }]);
     } catch (e) {
       console.log('Cloud wrong answer save fallback to local');
     }
+
 
     // localStorage 백업 저장
     const wrongKey = `wrong_answers_${currentUser.id}`;

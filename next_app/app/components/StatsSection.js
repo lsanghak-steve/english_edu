@@ -37,15 +37,15 @@ export default function StatsSection({ currentUser, totalWordCount = 500 }) {
       let cloudWrongCount = localWrong.length;
       let cloudLearnedCount = localLearned.length;
 
-      // 2. Supabase 클라우드 DB 실시간 통합 조회
+      // 2. Supabase 클라우드 DB 실시간 통합 조회 (study_records 및 wrong_words 보관함)
       try {
         const [attRes, wrongRes] = await Promise.allSettled([
-          supabase.from('student_attendance').select('stamped_date, stamped_words').or(`user_id.eq.${userId},user_id.eq.${userName}`),
-          supabase.from('student_wrong_answers').select('id').or(`user_id.eq.${userId},user_id.eq.${userName}`)
+          supabase.from('study_records').select('study_date, stamped_words').or(`student_id.eq.${userId},student_id.eq.${userName}`),
+          supabase.from('wrong_words').select('id').or(`student_id.eq.${userId},student_id.eq.${userName}`)
         ]);
 
         if (attRes.status === 'fulfilled' && attRes.value.data) {
-          const dbDates = attRes.value.data.map(item => item.stamped_date).filter(Boolean);
+          const dbDates = attRes.value.data.map(item => item.study_date).filter(Boolean);
           const allDates = [...new Set([...localStamps, ...dbDates])];
           cloudAttendanceCount = allDates.length;
 
@@ -69,6 +69,7 @@ export default function StatsSection({ currentUser, totalWordCount = 500 }) {
       } catch (e) {
         console.log('Cloud stats realtime fetch fallback', e);
       }
+
 
       setStats({
         learnedCount: Math.max(cloudLearnedCount, cloudAttendanceCount * 10),

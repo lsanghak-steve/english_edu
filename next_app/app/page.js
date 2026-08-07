@@ -416,21 +416,16 @@ export default function Home() {
     const wordsToSave = todayAllLearnedWords.length > 0 ? todayAllLearnedWords : safeActiveWords;
     const studentNameClean = (currentUser.name || '').replace(/[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{1F1E0}-\u{1F1FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{1F900}-\u{1F9FF}\u{1F300}-\u{1F5FF}\u{1F004}\u{1F0CF}\u{1F170}-\u{1F251}]/gu, '').trim();
 
-    // 1. Supabase 클라우드 DB에 선택 날짜 출석도장 실시간 다중 전송 (ID 및 이름 기준 모두 등록)
+    // 1. Supabase 클라우드 DB study_records 보관함에 선택 날짜 출석도장 실시간 전송
     try {
-      await Promise.allSettled([
-        supabase.from('student_attendance').insert([
-          { user_id: currentUser.id, stamped_date: stampDateKey, stamped_words: wordsToSave },
-          { user_id: studentNameClean, stamped_date: stampDateKey, stamped_words: wordsToSave }
-        ]),
-        supabase.from('study_records').insert([
-          { student_id: currentUser.id, study_date: stampDateKey, is_stamped: true },
-          { student_id: studentNameClean, study_date: stampDateKey, is_stamped: true }
-        ])
+      await supabase.from('study_records').insert([
+        { student_id: currentUser.id, study_date: stampDateKey, is_stamped: true, stamped_words: wordsToSave },
+        { student_id: studentNameClean, study_date: stampDateKey, is_stamped: true, stamped_words: wordsToSave }
       ]);
     } catch (e) {
       console.log('Cloud attendance save fallback', e);
     }
+
 
     // 2. localStorage 백업 저장
     let stamps = [];
