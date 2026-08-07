@@ -475,15 +475,20 @@ export default function Home() {
           const dateForMission = targetStudyDate || todayStr;
           localStorage.setItem(`record_mission_${currentUser.id}_${dateForMission}`, 'true');
 
-          // Supabase DB audio_records 보관함에 발음 녹음 및 일치율 점수 실시간 기록
+          // Supabase DB audio_records 보관함에 발음 녹음 및 일치율 점수 실시간 2중 안전 기록
           try {
+            const studentIdToUse = currentUser.student_id || currentUser.id || 'guest';
+            const studentNameClean = (currentUser.name || '').replace(/[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{1F1E0}-\u{1F1FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{1F900}-\u{1F9FF}\u{1F300}-\u{1F5FF}\u{1F004}\u{1F0CF}\u{1F170}-\u{1F251}]/gu, '').trim();
+
             supabase.from('audio_records').insert([
-              { student_id: currentUser.id, word: targetWordStr || 'Word', audio_url: `recorded_score_${finalScore}pct` }
+              { student_id: studentIdToUse, word: targetWordStr || 'Word', audio_url: `recorded_score_${finalScore}pct` },
+              { student_id: studentNameClean, word: targetWordStr || 'Word', audio_url: `recorded_score_${finalScore}pct` }
             ]).then(() => {});
           } catch (e) {
             console.log('Cloud audio record save fallback', e);
           }
         }
+
       };
 
       mediaRecorderRef.current.start();
@@ -528,22 +533,32 @@ export default function Home() {
 
     // 1. Supabase 클라우드 DB study_records 및 student_learned_words 보관함에 선택 날짜 출석도장 및 외운 단어 실시간 전송
     try {
+      const studentIdToUse = currentUser.student_id || currentUser.id || 'guest';
       const dbLearnedPayload = wordsToSave.map(w => ({
-        student_id: currentUser.id,
+        student_id: studentIdToUse,
+        word: typeof w === 'string' ? w : w.word,
+        meaning: w.meaning || ''
+      }));
+      const dbLearnedByName = wordsToSave.map(w => ({
+        student_id: studentNameClean,
         word: typeof w === 'string' ? w : w.word,
         meaning: w.meaning || ''
       }));
 
       await Promise.allSettled([
         supabase.from('study_records').insert([
-          { student_id: currentUser.id, study_date: stampDateKey, is_stamped: true, stamped_words: wordsToSave }
+          { student_id: studentIdToUse, study_date: stampDateKey, is_stamped: true, stamped_words: wordsToSave },
+          { student_id: studentNameClean, study_date: stampDateKey, is_stamped: true, stamped_words: wordsToSave }
         ]),
-        supabase.from('student_learned_words').insert(dbLearnedPayload)
+        supabase.from('student_learned_words').insert([
+          ...dbLearnedPayload,
+          ...dbLearnedByName
+        ])
       ]);
-
     } catch (e) {
       console.log('Cloud attendance and learned words save fallback', e);
     }
+
 
 
 
