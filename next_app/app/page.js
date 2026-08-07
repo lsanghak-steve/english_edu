@@ -508,8 +508,23 @@ export default function Home() {
           } catch (e) {
             console.log('Cloud audio record save fallback', e);
           }
+
+          // 💾 3. 내 컴퓨터 다운로드 폴더에 음성 파일(.webm) 자동 다운로드 저장!
+          try {
+            const autoFileName = `${studentIdToUse}_${cleanWord}_${targetStudyDate || todayStr}.webm`;
+            const autoLink = document.createElement('a');
+            autoLink.href = url;
+            autoLink.download = autoFileName;
+            document.body.appendChild(autoLink);
+            autoLink.click();
+            document.body.removeChild(autoLink);
+            console.log(`💾 내 컴퓨터 오디오 파일 자동 저장 완료: ${autoFileName}`);
+          } catch (dlErr) {
+            console.log('Auto download file error', dlErr);
+          }
         }
       };
+
 
 
       mediaRecorderRef.current.start();
