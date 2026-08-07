@@ -104,7 +104,7 @@ export default function QuizSection({ currentUser, activeWords, onQuizLevelCompl
     }
   };
 
-  // 1, 2단계 정답 제출
+  // 1, 2단계 정답 제출 (답변 클릭 시 1초 뒤 자동으로 다음 문제 이동)
   const handleAnswerSelect = (optionItem) => {
     if (selectedAnswer !== null) return;
 
@@ -118,9 +118,14 @@ export default function QuizSection({ currentUser, activeWords, onQuizLevelCompl
       setIsCorrect(false);
       saveWrongAnswer(currentQuiz);
     }
+
+    // ⚡ 1초 후 자동으로 다음 문제로 이동 (다음 버튼도 유지)
+    setTimeout(() => {
+      handleNextQuestion();
+    }, 1000);
   };
 
-  // 3단계 직접 입력 제출
+  // 3단계 직접 입력 제출 (입력 시 1.2초 뒤 자동으로 다음 문제 이동)
   const handleTypedSubmit = (e) => {
     e.preventDefault();
     if (selectedAnswer !== null || !typedInput.trim()) return;
@@ -136,7 +141,13 @@ export default function QuizSection({ currentUser, activeWords, onQuizLevelCompl
       setIsCorrect(false);
       saveWrongAnswer(currentQuiz);
     }
+
+    // ⚡ 1.2초 후 자동으로 다음 문제로 이동 (다음 버튼도 유지)
+    setTimeout(() => {
+      handleNextQuestion();
+    }, 1200);
   };
+
 
   const handleNextQuestion = () => {
     if (currentIndex + 1 >= safeWords.length) {

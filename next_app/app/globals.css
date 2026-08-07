@@ -34,13 +34,14 @@ body {
 
 .app-container {
     width: 100%;
-    max-width: 520px;
+    max-width: 820px;
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 16px;
     margin: 0 auto;
 }
+
 
 /* 메인 탭 메뉴 */
 .main-tab-nav {
@@ -463,3 +464,186 @@ body {
     50% { transform: scale(1.02); }
     100% { transform: scale(1); }
 }
+
+/* ===================================================
+   모바일 & 태블릿 반응형 레이아웃 최적화 (ORCA)
+   =================================================== */
+
+/* 탭 메뉴 가로 스크롤 및 유연한 배치 */
+.main-tab-nav {
+    overflow-x: auto;
+    white-space: nowrap;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none; /* Firefox */
+}
+.main-tab-nav::-webkit-scrollbar {
+    display: none; /* Chrome, Safari */
+}
+
+.main-tab-btn {
+    flex: 0 0 auto;
+    padding: 10px 14px;
+    min-height: 44px;
+}
+
+/* ===================================================
+   학습자 정보 헤더 바 반응형 디자인 (ORCA)
+   =================================================== */
+.user-manager-header-bar {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #FFFFFF;
+    padding: 12px 18px;
+    border-radius: 20px;
+    border: 1px solid #E9ECEF;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+    margin-bottom: 14px;
+    gap: 12px;
+}
+
+.user-info-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: nowrap;
+}
+
+.user-info-label {
+    font-size: 13px;
+    font-weight: bold;
+    color: #7F8C8D;
+    white-space: nowrap;
+}
+
+.user-info-badge {
+    font-size: 14px;
+    font-weight: bold;
+    color: #2C3E50;
+    background: #F4F6F7;
+    padding: 6px 14px;
+    border-radius: 12px;
+    border: 1px solid #BDC3C7;
+    white-space: nowrap;
+}
+
+.user-actions-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.btn-user-edit {
+    background: #E8F8F5;
+    border: 1px solid #2ECC71;
+    color: #27AE60;
+    padding: 8px 14px;
+    border-radius: 12px;
+    font-weight: bold;
+    font-size: 13px;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.2s ease;
+}
+.btn-user-edit:hover {
+    background: #2ECC71;
+    color: white;
+}
+
+.btn-user-logout {
+    background: #E74C3C;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 12px;
+    font-weight: bold;
+    font-size: 13px;
+    cursor: pointer;
+    white-space: nowrap;
+    box-shadow: 0 2px 6px rgba(231,76,60,0.2);
+    transition: all 0.2s ease;
+}
+.btn-user-logout:hover {
+    background: #C0392B;
+}
+
+/* 태블릿 & 모바일 (768px 이하) */
+@media (max-width: 768px) {
+    body {
+        padding: 12px 8px;
+    }
+    
+    .app-container {
+        max-width: 100%;
+        gap: 12px;
+    }
+    
+    .app-title {
+        font-size: 18px;
+    }
+
+    .user-manager-header-bar {
+        flex-direction: column;
+        align-items: stretch;
+        padding: 12px 14px;
+        gap: 10px;
+    }
+    
+    .user-info-group {
+        justify-content: center;
+    }
+
+    .user-actions-group {
+        justify-content: flex-end;
+    }
+}
+
+/* 스마트폰 소형 화면 (480px 이하) */
+@media (max-width: 480px) {
+    .app-header {
+        padding: 12px 14px;
+    }
+
+    .user-manager-header-bar {
+        padding: 10px;
+    }
+
+    .user-info-group {
+        width: 100%;
+        justify-content: center;
+        text-align: center;
+    }
+
+    .user-info-label {
+        display: none;
+    }
+
+    .user-info-badge {
+        width: 100%;
+        text-align: center;
+        font-size: 13px;
+        padding: 8px 10px;
+        white-space: normal;
+        word-break: keep-all;
+    }
+
+    .user-actions-group {
+        width: 100%;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+    }
+
+    .btn-user-edit, .btn-user-logout {
+        width: 100%;
+        text-align: center;
+        padding: 10px 0;
+        min-height: 44px;
+        font-size: 13px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+}
+

@@ -10,6 +10,7 @@ import WordListSection from './components/WordListSection.js';
 import CalendarSection from './components/CalendarSection.js';
 import PersonalVocabSection from './components/PersonalVocabSection.js';
 import ParentDashboard from './components/ParentDashboard.js';
+import StatsSection from './components/StatsSection.js';
 
 export default function Home() {
   const [currentUser, setCurrentUser] = useState(null);
@@ -685,6 +686,13 @@ export default function Home() {
           📅 출석
         </button>
         <button
+          className={`main-tab-btn ${mainTab === 'stats' ? 'active' : ''}`}
+          onClick={() => setMainTab('stats')}
+          style={{ background: mainTab === 'stats' ? '#4ECDC4' : 'transparent', color: mainTab === 'stats' ? 'white' : '#2C3E50', fontWeight: 'bold' }}
+        >
+          📊 학습통계
+        </button>
+        <button
           className={`main-tab-btn ${mainTab === 'parent' ? 'active' : ''}`}
           onClick={() => setMainTab('parent')}
           style={{ background: mainTab === 'parent' ? '#9B59B6' : 'transparent', color: mainTab === 'parent' ? 'white' : '#8E44AD' }}
@@ -849,6 +857,11 @@ export default function Home() {
       {/* 탭 7: 학부모 리포트 */}
       {mainTab === 'parent' && (
         <ParentDashboard currentUser={currentUser} onLogout={handleLogout} />
+      )}
+
+      {/* 탭 8: 📊 학생 학습 성취도 통계 리포트 */}
+      {mainTab === 'stats' && (
+        <StatsSection currentUser={currentUser} totalWordCount={wordList.length || 500} />
       )}
     </main>
   );
