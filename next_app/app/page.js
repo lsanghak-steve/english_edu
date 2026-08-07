@@ -543,6 +543,27 @@ export default function Home() {
     }
   };
 
+  // 💾 내 컴퓨터 다운로드 폴더에 음성 파일(.webm) 안전 저장
+  const downloadRecordedAudio = () => {
+    if (!recordedAudioUrl) {
+      alert('저장할 녹음 파일이 없습니다. 먼저 녹음을 진행해 주세요!');
+      return;
+    }
+    const studentIdToUse = currentUser ? (currentUser.student_id || currentUser.id || 'guest') : 'guest';
+    const cleanWord = currentWord ? (currentWord.word || 'word').replace(/[^a-zA-Z0-9]/g, '') : 'Word';
+    const dateStr = targetStudyDate || todayStr;
+    const fileName = `${studentIdToUse}_${cleanWord}_${dateStr}.webm`;
+
+    const a = document.createElement('a');
+    a.href = recordedAudioUrl;
+    a.download = fileName;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    alert(`💾 [${fileName}] 음성 녹음 파일이 내 컴퓨터 다운로드 폴더에 안전하게 저장되었습니다! 📁`);
+  };
+
+
   // 💮 클라우드 DB & localStorage 출석 도장 찍기 (선택된 날짜 targetStudyDate 에 찍기!)
   const handleStampAttendance = useCallback(async () => {
     if (!currentUser) return;
@@ -1007,10 +1028,16 @@ export default function Home() {
                 )}
 
                 {recordedAudioUrl && (
-                  <button onClick={playRecordedAudio} style={{ background: '#3498DB', color: 'white', border: 'none', padding: '10px 18px', borderRadius: '14px', fontWeight: 'bold', cursor: 'pointer' }}>
-                    ▶️ 내 발음 듣기
-                  </button>
+                  <>
+                    <button onClick={playRecordedAudio} style={{ background: '#3498DB', color: 'white', border: 'none', padding: '10px 18px', borderRadius: '14px', fontWeight: 'bold', cursor: 'pointer' }}>
+                      ▶️ 내 발음 듣기
+                    </button>
+                    <button onClick={downloadRecordedAudio} style={{ background: '#27AE60', color: 'white', border: 'none', padding: '10px 18px', borderRadius: '14px', fontWeight: 'bold', cursor: 'pointer' }}>
+                      💾 내 컴퓨터에 저장 📁
+                    </button>
+                  </>
                 )}
+
               </div>
 
             </div>
