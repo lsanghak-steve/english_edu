@@ -44,7 +44,9 @@ export default function Home() {
   const [hasRecorded, setHasRecorded] = useState(false);
   const [completedQuizLevels, setCompletedQuizLevels] = useState([]);
   const [pronunciationScore, setPronunciationScore] = useState(null);
+  const [userAudioRecordings, setUserAudioRecordings] = useState({});
   const recognitionRef = useRef(null);
+
 
   // 🎯 발음 유사도(일치율 %) 계산 알고리즘
   const calculateMatchScore = (targetStr, spokenStr) => {
@@ -474,6 +476,11 @@ export default function Home() {
           setHasRecorded(true);
           const dateForMission = targetStudyDate || todayStr;
           localStorage.setItem(`record_mission_${currentUser.id}_${dateForMission}`, 'true');
+
+          if (targetWordStr) {
+            setUserAudioRecordings(prev => ({ ...prev, [targetWordStr]: url }));
+          }
+
 
           const studentIdToUse = currentUser.student_id || currentUser.id || 'guest';
           const studentNameClean = (currentUser.name || '').replace(/[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{1F1E0}-\u{1F1FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{1F900}-\u{1F9FF}\u{1F300}-\u{1F5FF}\u{1F004}\u{1F0CF}\u{1F170}-\u{1F251}]/gu, '').trim();
@@ -1062,8 +1069,9 @@ export default function Home() {
 
       {/* 탭 2: 전체 단어 리스트 */}
       {mainTab === 'wordlist' && (
-        <WordListSection words={safeActiveWords} onPlayAudio={playWordAudio} />
+        <WordListSection words={safeActiveWords} onPlayAudio={playWordAudio} userAudioRecordings={userAudioRecordings} />
       )}
+
 
       {/* 탭 3: 영단어 퀴즈 */}
       {mainTab === 'quiz' && (
