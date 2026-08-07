@@ -415,7 +415,19 @@ export default function Home() {
           setHasRecorded(true);
           const dateForMission = targetStudyDate || todayStr;
           localStorage.setItem(`record_mission_${currentUser.id}_${dateForMission}`, 'true');
+
+          // Supabase DB audio_records 보관함에 발음 녹음 내역 실시간 기록
+          try {
+            const currentActiveWord = safeActiveWords[currentIndex];
+            const wordToSave = currentActiveWord ? (typeof currentActiveWord === 'string' ? currentActiveWord : currentActiveWord.word) : 'Word';
+            supabase.from('audio_records').insert([
+              { student_id: currentUser.id, word: wordToSave, audio_url: 'recorded_live_webm' }
+            ]).then(() => {});
+          } catch (e) {
+            console.log('Cloud audio record save fallback', e);
+          }
         }
+
       };
 
       mediaRecorderRef.current.start();
