@@ -461,7 +461,7 @@ export default function Home() {
         if (e.data.size > 0) audioChunksRef.current.push(e.data);
       };
 
-      mediaRecorderRef.current.onstop = () => {
+      mediaRecorderRef.current.onstop = async () => {
         const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/webm' });
         const url = URL.createObjectURL(audioBlob);
         setRecordedAudioUrl(url);
@@ -475,21 +475,42 @@ export default function Home() {
           const dateForMission = targetStudyDate || todayStr;
           localStorage.setItem(`record_mission_${currentUser.id}_${dateForMission}`, 'true');
 
-          // Supabase DB audio_records 보관함에 발음 녹음 및 일치율 점수 실시간 2중 안전 기록
-          try {
-            const studentIdToUse = currentUser.student_id || currentUser.id || 'guest';
-            const studentNameClean = (currentUser.name || '').replace(/[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{1F1E0}-\u{1F1FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{1F900}-\u{1F9FF}\u{1F300}-\u{1F5FF}\u{1F004}\u{1F0CF}\u{1F170}-\u{1F251}]/gu, '').trim();
+          const studentIdToUse = currentUser.student_id || currentUser.id || 'guest';
+          const studentNameClean = (currentUser.name || '').replace(/[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{1F1E0}-\u{1F1FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{1F900}-\u{1F9FF}\u{1F300}-\u{1F5FF}\u{1F004}\u{1F0CF}\u{1F170}-\u{1F251}]/gu, '').trim();
+          const cleanWord = targetWordStr ? targetWordStr.replace(/[^a-zA-Z0-9]/g, '') : 'word';
+          const fileName = `${studentIdToUse}/${cleanWord}_${Date.now()}.webm`;
 
-            supabase.from('audio_records').insert([
-              { student_id: studentIdToUse, word: targetWordStr || 'Word', audio_url: `recorded_score_${finalScore}pct` },
-              { student_id: studentNameClean, word: targetWordStr || 'Word', audio_url: `recorded_score_${finalScore}pct` }
-            ]).then(() => {});
+          let savedAudioUrl = `recorded_score_${finalScore}pct`;
+
+          // 1. Supabase Storage (audio-recordings 버킷)에 오디오 바이너리 파일 영구 업로드 시도
+          try {
+            const { data: uploadData, error: uploadErr } = await supabase.storage
+              .from('audio-recordings')
+              .upload(fileName, audioBlob, { contentType: 'audio/webm', upsert: true });
+
+            if (!uploadErr && uploadData) {
+              const { data: publicUrlData } = supabase.storage.from('audio-recordings').getPublicUrl(fileName);
+              if (publicUrlData && publicUrlData.publicUrl) {
+                savedAudioUrl = publicUrlData.publicUrl;
+              }
+            }
+          } catch (stgErr) {
+            console.log('Supabase storage upload fallback', stgErr);
+          }
+
+          // 2. Supabase DB audio_records 보관함에 영구 오디오 URL 및 발음 점수 실시간 기록
+          try {
+            await supabase.from('audio_records').insert([
+              { student_id: studentIdToUse, word: targetWordStr || 'Word', audio_url: savedAudioUrl },
+              { student_id: studentNameClean, word: targetWordStr || 'Word', audio_url: savedAudioUrl }
+            ]);
+            console.log('🎙️ 오디오 파일 클라우드 저장 완료:', savedAudioUrl);
           } catch (e) {
             console.log('Cloud audio record save fallback', e);
           }
         }
-
       };
+
 
       mediaRecorderRef.current.start();
       setIsRecording(true);
