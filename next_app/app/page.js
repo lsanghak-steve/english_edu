@@ -23,9 +23,8 @@ export default function Home() {
   const todayStr = new Date().toISOString().split('T')[0];
   const [targetStudyDate, setTargetStudyDate] = useState(todayStr);
 
-  const [wordList, setWordList] = useState(() =>
-    wordList500Fallback.map(w => ({ ...w, gradeLevel: w.gradeLevel || '초등단어' }))
-  );
+  // 단어 목록 데이터는 항상 Supabase 클라우드 DB에서 실시간으로 로드
+  const [wordList, setWordList] = useState([]);
   const [dailyRandomWords, setDailyRandomWords] = useState([]);
   const [studyRound, setStudyRound] = useState(1);
 
@@ -96,8 +95,9 @@ export default function Home() {
     }
   };
 
-  // Supabase 클라우드 DB에서 534개 전체 단어 실시간 로드
+  // Supabase 클라우드 DB에서 800개 전체 단어 실시간 로드 (100% DB 전용)
   useEffect(() => {
+
     async function loadWordsFromSupabase() {
       try {
         const { data, error } = await supabase.from('words').select('*').order('id', { ascending: true });
@@ -107,7 +107,7 @@ export default function Home() {
             word: (item.word || '').replace(/\.png/gi, '').trim(),
             phonics: item.phonics || '',
             meaning: item.meaning,
-            category: item.category || '기타',
+            category: item.category || '초등단어',
             gradeLevel: item.grade_level || '초등단어',
             exampleEn: (item.example_en || '').replace(/\.png/gi, '').trim(),
             exampleKo: (item.example_ko || '').replace(/\.png/gi, '').trim(),
@@ -116,11 +116,12 @@ export default function Home() {
           setWordList(formatted);
         }
       } catch (e) {
-        console.log('Using local fallback word list with 초등단어 tag');
+        console.log('Supabase cloud words fetch error', e);
       }
     }
     loadWordsFromSupabase();
   }, []);
+
 
   const generateDailyRandomWords = useCallback((userObj, fullList) => {
     if (!fullList || fullList.length === 0) return [];
