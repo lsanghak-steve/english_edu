@@ -1,84 +1,79 @@
-# 🐬 Orca 전용 프로젝트 완벽 인수인계 가이드 (ORCA_HANDOVER.md) 📖
+# 🐬 ORCA Handover Document (프로젝트 인수인계 문서)
 
-> **한 줄 요약**: Orca 및 다른 AI 에이전트가 본 프로젝트를 곧바로 이어서 개발할 수 있도록 소스코드 이중 디렉토리 구조, 클라우드 DB 테이블 정보, 주요 계정, 배포 설정 및 다음 작업 지침을 정리한 인수인계서입니다.
-
----
-
-## 📌 1. 프로젝트 개요 & 기술 스택
-
-- **프로젝트명**: 초등/중학/고등/수능 필수 영단어 500 학습 교육 웹 플랫폼
-- **주요 스택**: Next.js 14 (App Router), Vanilla CSS, Supabase Cloud DB, GitHub
-- **GitHub 저장소**: `https://github.com/lsanghak-steve/english_edu.git` (`main` 브랜치)
-- **배포 주소**: Vercel 프로덕션 배포
+## 📌 1. 프로젝트 개요 (Project Overview)
+- **프로젝트명**: 초등학생 기초 영어 단어 학습 프로그램 (`english_edu`)
+- **타겟 사용자**: 초등학교 3~5학년 (영어 기초 입문 학생)
+- **기술 스택**: Vanilla HTML5, CSS3, JavaScript (No Framework, 브라우저 직접 실행)
+- **핵심 목표**: 흥미 유발 플래시 카드, 원어민 발음 듣기(TTS), 내 목소리 녹음, 4지선다 퀴즈, 개인별 오답노트, 출석 달력, 다중 학생 로그인 관리 시스템 제공
 
 ---
 
-## ⚠️ 2. 개발 시 반드시 지켜야 할 이중 소스 트리 규칙 (CRITICAL)
+## 📂 2. 주요 파일 구성 및 역할 (File Structure)
 
-본 프로젝트는 아래 2개 디렉토리가 함께 공존합니다. **파일을 수정하거나 생성할 때 2개 경로에 동일하게 코드를 써주어야 컴파일 및 배포가 오류 없이 동작합니다.**
-
-1. **루트 디렉토리**: `app/` (예: `app/page.js`, `app/components/...`)
-2. **Next.js 구동 디렉토리**: `next_app/app/` (예: `next_app/app/page.js`, `next_app/app/components/...`)
-
-> 💡 **Orca 개발 팁**: `app/components/StudentLoginPage.js`를 수정했다면 `next_app/app/components/StudentLoginPage.js`도 반드시 똑같이 업데이트해 주세요.
-
----
-
-## 🗄️ 3. Supabase 클라우드 데이터베이스 연동 정보
-
-- **Supabase URL**: `https://sqonhhqosyszncjfoxfd.supabase.co`
-- **Supabase Anon Key**: `sb_publishable_1trPlZQEdVKMvUYQNV5aVA_nSQqOiuo` (`lib/supabaseClient.js`에 폴백 내장)
-
-### 📊 데이터베이스 주요 테이블 구조
-
-1. **`student_profiles` (학생/학부모 회원 정보)**
-   - `id` (PK, string), `name` (string), `grade` (string), `daily_word_count` (string), `student_pin` (string), `parent_name` (string), `parent_phone` (string), `parent_pin` (string), `reward_points` (number)
-2. **`student_attendance` (출석 도장 및 학습 단어)**
-   - `id` (PK), `user_id` (string), `stamped_date` (YYYY-MM-DD), `stamped_words` (json/array)
-3. **`student_wrong_answers` (퀴즈 오답노트 단어장)**
-   - `id` (PK), `user_id` (string), `word` (string), `meaning` (string), `phonics` (string)
-4. **`student_feedback` (학부모 칭찬 알림장)**
-   - `id` (PK), `user_id` (string), `student_name` (string), `message` (string), `created_at` (timestamp)
-5. **`center_notices` (센터 공지사항)**
-   - `id` (PK), `title` (string), `content` (string), `is_active` (boolean)
-6. **`words` (534개 영단어 DB)**
-   - `id` (PK), `word` (string), `phonics` (string), `meaning` (string), `category` (string), `grade_level` (초등 필수 / 중학 필수 / 고등 필수 / 수능 핵심), `example_en` (string), `example_ko` (string)
+| 파일명 | 역할 및 기능 설명 |
+| :--- | :--- |
+| `index.html` | 메인 웹 페이지 뼈대 (상단 탭, 카드, 퀴즈, 달력, 관리자 모드 구획) |
+| `style.css` | 어린이 맞춤 UI 스타일, 반응형 레이아웃, 3D 카드 뒤집기 애니메이션 |
+| `words_data.js` | 교육부 권장 초등 필수 단어 500선 데이터베이스 |
+| `app.js` | 메인 앱 제어, 플래시 카드 동작, Web Speech API (TTS) 발음 재생 |
+| `audio.js` | MediaRecorder API 기반 마이크 녹음 및 내 발음 다시 듣기 제어 |
+| `quiz.js` | 4지선다형 무작위 퀴즈 생성, 정답/오답 판정 및 오답노트 저장 |
+| `calendar.js` | 당월 달력 계산, 일일 학습 완수 시 '참잘했어요' 출석 도장 표시 |
+| `user_manager.js` | 선생님/부모님 관리자 모드, 학생 등록/삭제, 학생별 PIN 비밀번호 로그인 |
+| `plan.md` | 기획서 및 단계별 개발 진행 체크리스트 |
 
 ---
 
-## 🔑 4. 주요 기본 테스트 계정 정보
+## ✅ 3. 현재까지 구현 완료된 기능 (Completed Features)
 
-- **학생/학부모 1 (이상학)**: 학생 PIN `0815` | 학부모 PIN `0815` | 연락처 `010-4006-9050`
-- **학생/학부모 2 (이승현 - 초등 5학년)**: 학생 PIN `0418` | 학부모 PIN `0815` | 연락처 `010-4006-9050` | 8/3, 8/4, 8/5 3회 완수
-- **학생/학부모 3 (이수민 - 초등 3학년)**: 학생 PIN `0809` | 학부모 PIN `0815` | 연락처 `010-4006-9050` | 8/4, 8/5 2회 완수
+1. **오늘의 플래시 카드 학습**
+   - 귀여운 그림 + 영어 단어 + 한국어 뜻 카드 (클릭 시 3D 뒤집기)
+   - 🔊 **TTS 발음 듣기**: 원어민 음성 재생
+   - 🎤 **발음 녹음 & 들어보기**: 마이크 녹음 후 내 목소리 직접 재생
 
-> 💡 **이모지 규칙**: 모든 학생/학부모 이름 처리 시 `removeEmoji()` 헬퍼 함수를 통과시켜 이름에서 이모지가 기호화되거나 깨지지 않도록 하세요.
+2. **단어 테스트 & 오답노트**
+   - 4지선다 무작위 퀴즈 생성 및 칭찬 이펙트
+   - 틀린 단어 학생별 독립 오답노트 자동 저장
+   - 오답노트에서 재학습 및 외움 체크 시 자동 제거
+
+3. **출석 달력**
+   - 학생별 학습 완료일 출석 도장(참잘했어요) 저장 및 달력 표시
+
+4. **다중 학습자 & 보안 관리자 모드**
+   - 학생 등록/선택 및 4자리 PIN 비밀번호 보안 로그인
+   - 학생별 오답노트 및 출석 데이터 `LocalStorage` 분리 저장
+
+5. **📱 모바일 & 태블릿 반응형 UI 최적화 (ORCA 완수)**
+   - 좁은 화면에서도 탭 바 스크롤 및 4지선다 퀴즈 터치 최적화
+
+6. **📊 학습 성취도 통계 탭 (ORCA 완수)**
+   - 외운 단어 수, 진도율 게이지 바, 퀴즈 통과 수, 성장 칭호 레벨(🌱 새싹 ➔ 🏆 마스터) 리포트 제공
+
+---
+
+## 📋 4. 사용자 맞춤 필수 준수 규칙 (User Rules for ORCA)
+
+> 🚨 **ORCA 작업자는 다음 규칙을 반드시 준수해야 합니다.**
+
+1. **소통 언어**: 모든 진행 설명 및 응답은 **한국어**로 작성합니다.
+2. **비개발자 눈높이 설명**: 
+   - 코드를 보여줄 때는 **해당 코드가 무엇을 하는지 한 줄 요약을 먼저 작성**합니다.
+   - 전문 용어 사용 시 반드시 쉬운 말로 함께 설명합니다.
+3. **작업 승인 절차 (중요)**:
+   - 파일 수정/생성 및 명령 실행 전 **먼저 사용자에게 계획을 설명하고 승인을 받습니다.**
+   - 한 번에 큰 작업을 하지 않고 작은 단계로 나누어 진행합니다.
+   - 각 단계마다 `"다음 단계인 ??? 작업을 진행해도 될까요?"` 라고 확인을 요청합니다.
+4. **금지 사항**:
+   - 기존 파일 절대 삭제 금지 (삭제 필요 시 승인 요청).
+   - API 키, 비밀번호 등 보안 정보를 코드에 포함 금지.
 
 ---
 
-## 🚀 5. 로컬 실행 및 Git 커밋 방법
+## 🚀 5. 향후 권장 작업 (Suggested Next Steps for ORCA)
 
-### 1) 개발 서버 구동
-```bash
-cd next_app
-npm run dev
-```
-- 접속 주소: `http://localhost:3000` (메인 화면) 및 `http://localhost:3000/admin` (관리자 센터)
-
-### 2) Git 커밋 & 푸시
-```bash
-git add app next_app DOCS_FEATURES.md ORCA_HANDOVER.md
-git commit -m "Feat: Update features and sync handover docs"
-git push origin main
-```
+- **UI/UX 미세 개선**: 모바일 및 다양한 화면 크기에서의 레이아웃 반응형 점검
+- **단어 데이터 보강**: 이미지 경로 및 예문 표현 보강
+- **학습 통계 화면**: 학생별 단어 암기율 및 주간/월간 학습 그래프 추가
 
 ---
-
-## 📑 6. Orca가 이어서 진행 가능한 추천 후속 작업 (Next Tasks)
-
-1. **중학/고등/수능 단어 엑셀 엑스포트 및 대량 등록 보강**
-2. **학생 퀴즈 결과 분석 리포트 그래프 UI 개선**
-3. **학부모 화면 알림장 실시간 수신 팝업 추가**
-
----
-*작성일자: 2026년 8월 7일 | 버전: v2.5 Orca Handover Spec*
+*이 인수인계 문서를 바탕으로 작업을 원활히 이어 진행해 주세요.*

@@ -139,29 +139,21 @@ export default function UserManager({ currentUser, setCurrentUser, onLogout }) {
   const displayName = currentUser ? removeEmoji(currentUser.name) : '';
 
   return (
-    <div style={{ width: '100%', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#FFFFFF', padding: '12px 18px', borderRadius: '20px', border: '1px solid #E9ECEF', boxShadow: '0 4px 12px rgba(0,0,0,0.03)', marginBottom: '14px', flexWrap: 'wrap', gap: '10px' }}>
+    <div className="user-manager-header-bar">
       {/* 현재 로그인된 학생 정보 */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
-        <span style={{ fontSize: '13px', fontWeight: 'bold', color: '#7F8C8D' }}>👤 현재 학습자:</span>
-        <span style={{ fontSize: '15px', fontWeight: 'bold', color: '#2C3E50', background: '#F4F6F7', padding: '6px 14px', borderRadius: '12px', border: '1px solid #BDC3C7' }}>
+      <div className="user-info-group">
+        <span className="user-info-label">👤 현재 학습자:</span>
+        <span className="user-info-badge">
           {currentUser ? `${displayName} (${currentUser.grade || '초등 3학년'}) • 목표 ${currentUser.dailyWordCount || 10}단어` : '로그인 필요'}
         </span>
-
-        {/* ✏️ 내 정보 수정 버튼 */}
-        <button
-          onClick={handleOpenEditModal}
-          style={{ background: '#E8F8F5', border: '1px solid #2ECC71', color: '#27AE60', padding: '6px 12px', borderRadius: '10px', fontWeight: 'bold', fontSize: '12px', cursor: 'pointer' }}
-        >
-          ✏️ 내 정보 수정
-        </button>
       </div>
 
-      {/* 🚪 로그아웃 / 학생 변경 버튼 */}
-      <div style={{ display: 'flex', gap: '8px' }}>
-        <button
-          onClick={onLogout}
-          style={{ background: '#E74C3C', color: 'white', border: 'none', padding: '8px 16px', borderRadius: '12px', fontWeight: 'bold', fontSize: '13px', cursor: 'pointer', boxShadow: '0 2px 6px rgba(231,76,60,0.2)' }}
-        >
+      {/* 버튼 액션 그룹 (수정 및 로그아웃) */}
+      <div className="user-actions-group">
+        <button className="btn-user-edit" onClick={handleOpenEditModal}>
+          ✏️ 내 정보 수정
+        </button>
+        <button className="btn-user-logout" onClick={onLogout}>
           🚪 로그아웃 (학생 변경)
         </button>
       </div>
