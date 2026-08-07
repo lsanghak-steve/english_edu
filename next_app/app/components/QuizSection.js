@@ -62,22 +62,34 @@ export default function QuizSection({ currentUser, activeWords, onQuizLevelCompl
     }
   }, [currentIndex, currentQuiz, quizLevel, generateOptions, playAudio, cleanWordStr]);
 
-  // ❌ 오답 발생 시 Supabase 클라우드 DB wrong_words 보관함에 자동 저장
+  // ❌ 오답 발생 시 Supabase 클라우드 DB wrong_words 보관함에 2중 안전 자동 저장
   const saveWrongAnswer = async (wordObj) => {
     if (!currentUser || !wordObj) return;
     const wordStr = (wordObj.word || wordObj).replace(/\.png/gi, '').trim();
+    const studentIdToUse = currentUser.student_id || currentUser.id || 'guest';
+    const studentNameClean = (currentUser.name || '').replace(/[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{1F1E0}-\u{1F1FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{1F900}-\u{1F9FF}\u{1F300}-\u{1F5FF}\u{1F004}\u{1F0CF}\u{1F170}-\u{1F251}]/gu, '').trim();
 
     try {
-      await supabase.from('wrong_words').insert([{
-        student_id: currentUser.id,
-        word: wordStr,
-        meaning: wordObj.meaning || '뜻 정보 없음',
-        phonics: wordObj.phonics || '',
-        category: wordObj.category || '기타'
-      }]);
+      await supabase.from('wrong_words').insert([
+        {
+          student_id: studentIdToUse,
+          word: wordStr,
+          meaning: wordObj.meaning || '뜻 정보 없음',
+          phonics: wordObj.phonics || '',
+          category: wordObj.category || '기초 단어'
+        },
+        {
+          student_id: studentNameClean,
+          word: wordStr,
+          meaning: wordObj.meaning || '뜻 정보 없음',
+          phonics: wordObj.phonics || '',
+          category: wordObj.category || '기초 단어'
+        }
+      ]);
     } catch (e) {
-      console.log('Cloud wrong answer save fallback to local');
+      console.log('Cloud wrong answer save fallback to local', e);
     }
+
 
 
     // localStorage 백업 저장
