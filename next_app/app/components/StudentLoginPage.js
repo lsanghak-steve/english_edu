@@ -22,11 +22,11 @@ export default function StudentLoginPage({ onLoginSuccess, onParentLoginSuccess 
   const [parentNameInput, setParentNameInput] = useState('');
   const [parentPinInput, setParentPinInput] = useState('');
 
-  // 기본 학생 세팅 배열 (이상학, 이승현, 이수민 포함)
+  // 기본 학생 세팅 배열 (고유 학생 코드 lsh_20260807_000001 체계 적용)
   const defaultStudents = [
-    { id: 'sh_100', name: '이상학', grade: '대학생 및 성인', dailyWordCount: '10', studentPin: '1111', parentName: '이상학학부모', parentPhone: '010-0000-0000', parentPin: '5678' },
-    { id: 'sh_101', name: '이승현', grade: '초등 3학년', dailyWordCount: '10', studentPin: '1111', parentName: '이승현학부모', parentPhone: '010-1234-5678', parentPin: '5678' },
-    { id: 'sm_102', name: '이수민', grade: '초등 4학년', dailyWordCount: '15', studentPin: '1111', parentName: '이수민학부모', parentPhone: '010-9876-5432', parentPin: '5678' }
+    { id: 'lsh_20260807_000001', student_id: 'lsh_20260807_000001', name: '이상학', grade: '대학생 및 성인', dailyWordCount: '10', studentPin: '0815', parentName: '이상학학부모', parentPhone: '010-0000-0000', parentPin: '5678' },
+    { id: 'lsh_20260807_000002', student_id: 'lsh_20260807_000002', name: '이승현', grade: '초등 3학년', dailyWordCount: '10', studentPin: '0418', parentName: '이승현학부모', parentPhone: '010-1234-5678', parentPin: '5678' },
+    { id: 'lsm_20260807_000003', student_id: 'lsm_20260807_000003', name: '이수민', grade: '초등 4학년', dailyWordCount: '15', studentPin: '0809', parentName: '이수민학부모', parentPhone: '010-9876-5432', parentPin: '5678' }
   ];
 
   // 수파베이스 클라우드 DB에서 학생 전체 목록 로드 (users 및 student_profiles 통합)
@@ -43,7 +43,8 @@ export default function StudentLoginPage({ onLoginSuccess, onParentLoginSuccess 
         let dbUsers = [];
         if (res1.status === 'fulfilled' && res1.value.data) {
           dbUsers.push(...res1.value.data.map(item => ({
-            id: item.id,
+            id: item.student_id || item.id,
+            student_id: item.student_id || item.id,
             name: removeEmoji(item.name),
             grade: item.grade || '초등 3학년',
             dailyWordCount: item.daily_word_count || '10',
@@ -55,7 +56,8 @@ export default function StudentLoginPage({ onLoginSuccess, onParentLoginSuccess 
         }
         if (res2.status === 'fulfilled' && res2.value.data) {
           dbUsers.push(...res2.value.data.map(item => ({
-            id: item.id,
+            id: item.student_id || item.id,
+            student_id: item.student_id || item.id,
             name: removeEmoji(item.name),
             grade: item.avatar || '초등 3학년',
             dailyWordCount: String(item.daily_word_count || 10),
@@ -65,6 +67,7 @@ export default function StudentLoginPage({ onLoginSuccess, onParentLoginSuccess 
             parentPin: '5678'
           })));
         }
+
 
         if (dbUsers.length > 0) {
           const merged = [...defaultStudents];

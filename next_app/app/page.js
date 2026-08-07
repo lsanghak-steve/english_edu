@@ -467,11 +467,11 @@ export default function Home() {
 
       await Promise.allSettled([
         supabase.from('study_records').insert([
-          { student_id: currentUser.id, study_date: stampDateKey, is_stamped: true, stamped_words: wordsToSave },
-          { student_id: studentNameClean, study_date: stampDateKey, is_stamped: true, stamped_words: wordsToSave }
+          { student_id: currentUser.id, study_date: stampDateKey, is_stamped: true, stamped_words: wordsToSave }
         ]),
         supabase.from('student_learned_words').insert(dbLearnedPayload)
       ]);
+
     } catch (e) {
       console.log('Cloud attendance and learned words save fallback', e);
     }
