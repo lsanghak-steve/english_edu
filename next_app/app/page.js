@@ -914,8 +914,13 @@ export default function Home() {
 
       {/* 탭 8: 📊 학생 학습 성취도 통계 리포트 */}
       {mainTab === 'stats' && (
-        <StatsSection currentUser={currentUser} totalWordCount={wordList.length || 500} />
+        <StatsSection
+          currentUser={currentUser}
+          totalWordCount={wordList.length || 500}
+          onNavigateTab={(tabName) => setMainTab(tabName)}
+        />
       )}
+
     </main>
   );
 }
