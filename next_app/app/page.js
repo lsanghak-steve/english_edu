@@ -125,6 +125,7 @@ export default function Home() {
   const generateDailyRandomWords = useCallback((userObj, fullList) => {
     if (!fullList || fullList.length === 0) return [];
     const userId = userObj ? userObj.id : 'guest';
+    const userName = userObj && userObj.name ? userObj.name.replace(/[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{1F1E0}-\u{1F1FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{1F900}-\u{1F9FF}\u{1F300}-\u{1F5FF}\u{1F004}\u{1F0CF}\u{1F170}-\u{1F251}]/gu, '').trim() : '';
     const dailyCount = userObj ? parseInt(userObj.dailyWordCount || 10, 10) : 10;
     const learnedKey = `learned_words_${userId}`;
 
@@ -146,6 +147,7 @@ export default function Home() {
     const shuffled = [...unlearned].sort(() => Math.random() - 0.5);
     return shuffled.slice(0, dailyCount);
   }, []);
+
 
   useEffect(() => {
     if (!currentUser || !isLoggedIn) return;
@@ -416,15 +418,25 @@ export default function Home() {
     const wordsToSave = todayAllLearnedWords.length > 0 ? todayAllLearnedWords : safeActiveWords;
     const studentNameClean = (currentUser.name || '').replace(/[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{1F1E0}-\u{1F1FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{1F900}-\u{1F9FF}\u{1F300}-\u{1F5FF}\u{1F004}\u{1F0CF}\u{1F170}-\u{1F251}]/gu, '').trim();
 
-    // 1. Supabase 클라우드 DB study_records 보관함에 선택 날짜 출석도장 실시간 전송
+    // 1. Supabase 클라우드 DB study_records 및 student_learned_words 보관함에 선택 날짜 출석도장 및 외운 단어 실시간 전송
     try {
-      await supabase.from('study_records').insert([
-        { student_id: currentUser.id, study_date: stampDateKey, is_stamped: true, stamped_words: wordsToSave },
-        { student_id: studentNameClean, study_date: stampDateKey, is_stamped: true, stamped_words: wordsToSave }
+      const dbLearnedPayload = wordsToSave.map(w => ({
+        student_id: currentUser.id,
+        word: typeof w === 'string' ? w : w.word,
+        meaning: w.meaning || ''
+      }));
+
+      await Promise.allSettled([
+        supabase.from('study_records').insert([
+          { student_id: currentUser.id, study_date: stampDateKey, is_stamped: true, stamped_words: wordsToSave },
+          { student_id: studentNameClean, study_date: stampDateKey, is_stamped: true, stamped_words: wordsToSave }
+        ]),
+        supabase.from('student_learned_words').insert(dbLearnedPayload)
       ]);
     } catch (e) {
-      console.log('Cloud attendance save fallback', e);
+      console.log('Cloud attendance and learned words save fallback', e);
     }
+
 
 
     // 2. localStorage 백업 저장
