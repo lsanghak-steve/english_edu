@@ -33,25 +33,32 @@ export default function CalendarSection({ currentUser, onSelectDateToStudy }) {
         defaultDates = ['2026-08-04', '2026-08-05'];
       }
 
-      // Supabase 클라우드 DB에서 출석 도장 데이터 조율
+      // Supabase 클라우드 DB에서 출석 도장 데이터 (student_attendance 및 study_records 다중 테이블 통합 로드)
       try {
-        const { data, error } = await supabase
-          .from('student_attendance')
-          .select('stamped_date')
-          .or(`user_id.eq.${userId},user_id.eq.${studentName}`);
+        const [res1, res2] = await Promise.allSettled([
+          supabase.from('student_attendance').select('stamped_date').or(`user_id.eq.${userId},user_id.eq.${studentName}`),
+          supabase.from('study_records').select('study_date').or(`student_id.eq.${userId},student_id.eq.${studentName}`)
+        ]);
 
-        if (!error && data && data.length > 0) {
-          const dbDates = data.map(item => item.stamped_date);
-          const merged = [...new Set([...defaultDates, ...dbDates])];
-          setStamps(merged);
-
-          // 클라우드 DB와 sync 보장
-          localStorage.setItem(`english_stamps_${userId}`, JSON.stringify(merged));
-          return;
+        let dbDates = [];
+        if (res1.status === 'fulfilled' && res1.value.data) {
+          dbDates.push(...res1.value.data.map(item => item.stamped_date).filter(Boolean));
         }
+        if (res2.status === 'fulfilled' && res2.value.data) {
+          dbDates.push(...res2.value.data.map(item => item.study_date).filter(Boolean));
+        }
+
+        const localStamps = JSON.parse(localStorage.getItem(`english_stamps_${userId}`) || '[]');
+        const merged = [...new Set([...defaultDates, ...localStamps, ...dbDates])];
+        setStamps(merged);
+
+        // 클라우드 DB와 sync 보장
+        localStorage.setItem(`english_stamps_${userId}`, JSON.stringify(merged));
+        return;
       } catch (e) {
         console.log('Cloud attendance fetch fallback', e);
       }
+
 
       // localStorage 및 기본 통일 도장 적용
       try {
