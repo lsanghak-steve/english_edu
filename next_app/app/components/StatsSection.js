@@ -20,17 +20,19 @@ export default function StatsSection({ currentUser, totalWordCount = 500, onNavi
 
   useEffect(() => {
     if (!currentUser) return;
+    const studentCode = currentUser.student_id || '';
     const userId = currentUser.id || 'guest';
     const userName = currentUser.name ? currentUser.name.replace(/[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{1F1E0}-\u{1F1FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{1F900}-\u{1F9FF}\u{1F300}-\u{1F5FF}\u{1F004}\u{1F0CF}\u{1F170}-\u{1F251}]/gu, '').trim() : '';
+    const queryCond = [studentCode, userId, userName].filter(Boolean).map(id => `student_id.eq.${id}`).join(',');
 
     async function loadRealtimeCloudStats() {
       let localLearned = [];
       let localWrong = [];
       let localStamps = [];
       try {
-        localLearned = JSON.parse(localStorage.getItem(`learned_words_${userId}`) || '[]');
+        localLearned = JSON.parse(localStorage.getItem(`learned_words_${userId}`) || localStorage.getItem(`learned_words_${studentCode}`) || '[]');
         localWrong = JSON.parse(localStorage.getItem(`wrong_answers_${userId}`) || localStorage.getItem(`wrong_words_${userId}`) || '[]');
-        localStamps = JSON.parse(localStorage.getItem(`english_stamps_${userId}`) || '[]');
+        localStamps = JSON.parse(localStorage.getItem(`english_stamps_${userId}`) || localStorage.getItem(`english_stamps_${studentCode}`) || '[]');
       } catch (e) {
         console.log('Local stats parse error', e);
       }
@@ -46,10 +48,11 @@ export default function StatsSection({ currentUser, totalWordCount = 500, onNavi
 
       try {
         const [attRes, wrongRes, learnedRes] = await Promise.allSettled([
-          supabase.from('study_records').select('study_date, stamped_words').or(`student_id.eq.${userId},student_id.eq.${userName}`),
-          supabase.from('wrong_words').select('id').or(`student_id.eq.${userId},student_id.eq.${userName}`),
-          supabase.from('student_learned_words').select('word, meaning, learned_at').or(`student_id.eq.${userId},student_id.eq.${userName}`)
+          supabase.from('study_records').select('study_date, stamped_words').or(queryCond),
+          supabase.from('wrong_words').select('id').or(queryCond),
+          supabase.from('student_learned_words').select('word, meaning, learned_at').or(queryCond)
         ]);
+
 
         if (attRes.status === 'fulfilled' && attRes.value.data) {
           const dbDates = attRes.value.data.map(item => item.study_date).filter(Boolean);

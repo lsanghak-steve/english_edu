@@ -325,11 +325,21 @@ export default function Home() {
     alert(`🎉 🚀 다음 단어 학습 세트(제 ${studyRound + 1}회차)를 불러왔습니다!\n오늘 학습한 총 ${updatedTodayAll.length}개 단어는 상단 [📖 오늘 누적 학습 단어] 버튼으로 언제든 다시 복습할 수 있습니다!`);
   };
 
-  const safeActiveWords = dailyRandomWords.length > 0
-    ? dailyRandomWords
-    : wordList.slice(0, currentUser ? parseInt(currentUser.dailyWordCount || 10, 10) : 10);
+  const userDailyCount = currentUser ? parseInt(currentUser.dailyWordCount || 10, 10) : 10;
+  const fallbackWords = Array.isArray(wordList500Fallback) && wordList500Fallback.length > 0
+    ? wordList500Fallback
+    : [{ id: 1, word: 'Apple', phonics: '/ˈæpəl/', meaning: '사과', category: '과일/음식 🍎', gradeLevel: '초등단어' }];
 
-  const currentWord = safeActiveWords[currentIndex] || safeActiveWords[0] || wordList[0];
+  const baseWordsList = (dailyRandomWords && dailyRandomWords.length > 0)
+    ? dailyRandomWords
+    : ((wordList && wordList.length > 0) ? wordList : fallbackWords);
+
+  const safeActiveWords = (baseWordsList && baseWordsList.length > 0)
+    ? baseWordsList.slice(0, userDailyCount)
+    : fallbackWords.slice(0, userDailyCount);
+
+  const currentWord = safeActiveWords[currentIndex] || safeActiveWords[0] || fallbackWords[0];
+
 
   const cleanWordStr = typeof currentWord === 'string'
     ? currentWord.replace(/\.png/gi, '').trim()
