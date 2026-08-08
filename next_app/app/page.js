@@ -335,13 +335,19 @@ export default function Home() {
     ? currentWord.replace(/\.png/gi, '').trim()
     : (currentWord?.word || 'Word').replace(/\.png/gi, '').trim();
 
-  const cleanMeaningStr = typeof currentWord === 'string'
-    ? '기초 단어'
-    : (currentWord?.meaning || currentWord?.ko || '기초 단어');
+  // 📖 사전(wordList500Fallback)에서 영단어 스펠링 기반 1:1 한글 뜻 및 발음기호 정밀 매칭 보정
+  const matchedDictWord = Array.isArray(wordList500Fallback)
+    ? wordList500Fallback.find(w => (w.word || '').toLowerCase().replace(/\.png/gi, '').trim() === cleanWordStr.toLowerCase())
+    : null;
 
-  const cleanPhonicsStr = typeof currentWord === 'string'
-    ? ''
-    : (currentWord?.phonics || currentWord?.category || '');
+  const cleanMeaningStr = (typeof currentWord === 'object' && currentWord?.meaning && currentWord.meaning !== '기초 단어')
+    ? currentWord.meaning
+    : (matchedDictWord?.meaning || '단어 뜻');
+
+  const cleanPhonicsStr = (typeof currentWord === 'object' && currentWord?.phonics && currentWord.phonics !== '')
+    ? currentWord.phonics
+    : (matchedDictWord?.phonics || matchedDictWord?.category || '');
+
 
   const rawExampleEn = (typeof currentWord === 'object' && currentWord?.exampleEn) ? currentWord.exampleEn.replace(/\.png/gi, '').trim() : '';
   const rawExampleKo = (typeof currentWord === 'object' && currentWord?.exampleKo) ? currentWord.exampleKo.replace(/\.png/gi, '').trim() : '';
