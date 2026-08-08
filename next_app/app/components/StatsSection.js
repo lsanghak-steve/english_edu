@@ -56,19 +56,20 @@ export default function StatsSection({ currentUser, totalWordCount = 500, onNavi
 
       try {
         const [attRes, wrongRes, learnedRes] = await Promise.allSettled([
-          supabase.from('study_records').select('study_date, stamped_words').or(queryCond),
-          supabase.from('wrong_words').select('id').or(queryCond),
-          supabase.from('student_learned_words').select('*').or(queryCond)
+          supabase.from('study_records').select('study_date, stamped_words, student_id'),
+          supabase.from('wrong_words').select('id, student_id'),
+          supabase.from('student_learned_words').select('word, meaning, student_id')
         ]);
 
-
-
-        if (attRes.status === 'fulfilled' && attRes.value.data) {
-          const dbDates = attRes.value.data.map(item => item.study_date).filter(Boolean);
+        if (attRes.status === 'fulfilled' && Array.isArray(attRes.value.data)) {
+          const matchedAtt = attRes.value.data.filter(item => 
+            cleanIds.some(idStr => item.student_id === idStr || (item.student_id && item.student_id.includes(userName)))
+          );
+          const dbDates = matchedAtt.map(item => item.study_date).filter(Boolean);
           const allDates = [...new Set([...localStamps, ...dbDates])];
           cloudAttendanceCount = allDates.length;
 
-          attRes.value.data.forEach(item => {
+          matchedAtt.forEach(item => {
             if (Array.isArray(item.stamped_words)) {
               item.stamped_words.forEach(w => {
                 const wStr = typeof w === 'string' ? w : w.word;
@@ -80,20 +81,28 @@ export default function StatsSection({ currentUser, totalWordCount = 500, onNavi
           });
         }
 
-        if (learnedRes.status === 'fulfilled' && learnedRes.value.data) {
+        if (learnedRes.status === 'fulfilled' && Array.isArray(learnedRes.value.data)) {
           learnedRes.value.data.forEach(item => {
-            if (item.word && !learnedItemsMap.has(item.word)) {
+            const isMatch = cleanIds.some(idStr => 
+              item.student_id === idStr || 
+              (item.student_id && item.student_id.includes(userName))
+            );
+            if (isMatch && item.word) {
               learnedItemsMap.set(item.word, { word: item.word, meaning: item.meaning || '' });
             }
           });
         }
 
-        if (wrongRes.status === 'fulfilled' && wrongRes.value.data) {
-          cloudWrongCount = Math.max(localWrong.length, wrongRes.value.data.length);
+        if (wrongRes.status === 'fulfilled' && Array.isArray(wrongRes.value.data)) {
+          const matchedWrong = wrongRes.value.data.filter(item => 
+            cleanIds.some(idStr => item.student_id === idStr || (item.student_id && item.student_id.includes(userName)))
+          );
+          cloudWrongCount = Math.max(localWrong.length, matchedWrong.length);
         }
       } catch (e) {
         console.log('Cloud stats realtime fetch fallback', e);
       }
+
 
       const allLearnedList = Array.from(learnedItemsMap.values());
       setLearnedWordList(allLearnedList);
