@@ -170,58 +170,83 @@ export default function Home() {
   // ⚡ 로그인한 학생의 학습 수량(dailyWordCount)만큼 Supabase DB에서 안 외운 단어를 스마트 무작위 콕 찍어 로드
   const loadDailyRandomWordsFromDB = useCallback(async (userObj) => {
     if (!userObj) return [];
+    const studentCode = userObj.student_id || '';
     const userId = userObj.id || 'guest';
     const userName = userObj.name ? userObj.name.replace(/[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{1F1E0}-\u{1F1FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{1F900}-\u{1F9FF}\u{1F300}-\u{1F5FF}\u{1F004}\u{1F0CF}\u{1F170}-\u{1F251}]/gu, '').trim() : '';
     const dailyCount = parseInt(userObj.dailyWordCount || 10, 10);
+    const queryCond = [studentCode, userId, userName].filter(Boolean).map(id => `student_id.eq.${id}`).join(',');
 
     try {
-      // 1. Supabase DB에서 해당 학생이 이미 외운 단어 목록 가져오기
-      const { data: learnedData } = await supabase
-        .from('student_learned_words')
-        .select('word')
-        .or(`student_id.eq.${userId},student_id.eq.${userName}`);
+      // 1. Supabase DB에서 해당 학생이 이미 공부한 모든 단어 목록 가져오기 (3중 안전 쿼리)
+      const [learnedRes, studyRes] = await Promise.allSettled([
+        supabase.from('student_learned_words').select('word').or(queryCond),
+        supabase.from('study_records').select('stamped_words').or(queryCond)
+      ]);
 
       let learnedWordSet = new Set();
-      if (learnedData && learnedData.length > 0) {
-        learnedData.forEach(item => { if (item.word) learnedWordSet.add(item.word.trim()); });
+      if (learnedRes.status === 'fulfilled' && learnedRes.value.data) {
+        learnedRes.value.data.forEach(item => {
+          if (item.word) learnedWordSet.add(item.word.trim().toLowerCase());
+        });
+      }
+      if (studyRes.status === 'fulfilled' && studyRes.value.data) {
+        studyRes.value.data.forEach(item => {
+          if (Array.isArray(item.stamped_words)) {
+            item.stamped_words.forEach(w => {
+              const wStr = typeof w === 'string' ? w : w.word;
+              if (wStr) learnedWordSet.add(wStr.trim().toLowerCase());
+            });
+          }
+        });
       }
 
       // LocalStorage 백업 단어 병합
       try {
-        const localLearned = JSON.parse(localStorage.getItem(`learned_words_${userId}`) || '[]');
-        localLearned.forEach(w => learnedWordSet.add(w));
+        const localLearned = JSON.parse(localStorage.getItem(`learned_words_${userId}`) || localStorage.getItem(`learned_words_${studentCode}`) || '[]');
+        localLearned.forEach(w => {
+          const wStr = typeof w === 'string' ? w : w.word;
+          if (wStr) learnedWordSet.add(wStr.trim().toLowerCase());
+        });
       } catch (e) {}
 
-      // 2. Supabase DB에서 전체 단어 중 안 외운 단어를 학생 수량(dailyCount)만큼만 스마트 로드!
+      // 2. Supabase DB에서 전체 800개 단어 중 안 배운 단어만 필터링 후 100% 무작위(랜덤 셔플) 추출!
       const { data: allWordsData } = await supabase.from('words').select('*');
-      if (allWordsData && allWordsData.length > 0) {
-        const formatted = allWordsData.map(item => ({
+      const baseWords = (allWordsData && allWordsData.length > 0) ? allWordsData : wordList500Fallback;
+
+      if (baseWords && baseWords.length > 0) {
+        const formatted = baseWords.map(item => ({
           id: item.id,
           word: (item.word || '').replace(/\.png/gi, '').trim(),
           phonics: item.phonics || '',
           meaning: item.meaning,
           category: item.category || '초등단어',
-          gradeLevel: item.grade_level || '초등단어',
-          exampleEn: (item.example_en || '').replace(/\.png/gi, '').trim(),
-          exampleKo: (item.example_ko || '').replace(/\.png/gi, '').trim(),
+          gradeLevel: item.grade_level || item.gradeLevel || '초등단어',
+          exampleEn: (item.example_en || item.exampleEn || '').replace(/\.png/gi, '').trim(),
+          exampleKo: (item.example_ko || item.exampleKo || '').replace(/\.png/gi, '').trim(),
           imageUrl: item.image_url || ''
         }));
 
-        let unlearned = formatted.filter(w => !learnedWordSet.has(w.word));
+        // 안 배운 단어만 정밀 추출
+        let unlearned = formatted.filter(w => !learnedWordSet.has(w.word.toLowerCase()));
 
-        // 800개 단어를 다 외운 경우 무작위 재회독 순환
+        // 800개 단어를 전부 완독한 경우 전체에서 무작위 셔플 재회독
         if (unlearned.length < dailyCount) {
           unlearned = [...formatted];
         }
 
+        // 무조건 랜덤 셔플
         const shuffled = [...unlearned].sort(() => Math.random() - 0.5);
         return shuffled.slice(0, dailyCount);
       }
     } catch (e) {
       console.log('Daily random words fetch error', e);
     }
-    return [];
+
+    // 폴백 시에도 안 배운 단어 무작위 셔플 추출
+    const shuffledFallback = [...wordList500Fallback].sort(() => Math.random() - 0.5);
+    return shuffledFallback.slice(0, dailyCount);
   }, []);
+
 
   useEffect(() => {
     if (!currentUser || !isLoggedIn) return;
