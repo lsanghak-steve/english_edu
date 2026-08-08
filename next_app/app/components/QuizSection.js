@@ -116,9 +116,12 @@ export default function QuizSection({ currentUser, activeWords, onQuizLevelCompl
     }
   };
 
+  const timerRef = useRef(null);
+  const isMovingRef = useRef(false);
+
   // 1, 2단계 정답 제출 (답변 클릭 시 1초 뒤 자동으로 다음 문제 이동)
   const handleAnswerSelect = (optionItem) => {
-    if (selectedAnswer !== null) return;
+    if (selectedAnswer !== null || isMovingRef.current) return;
 
     setSelectedAnswer(optionItem);
     const optionStr = (optionItem.word || optionItem).replace(/\.png/gi, '').trim();
@@ -131,8 +134,9 @@ export default function QuizSection({ currentUser, activeWords, onQuizLevelCompl
       saveWrongAnswer(currentQuiz);
     }
 
-    // ⚡ 1초 후 자동으로 다음 문제로 이동 (다음 버튼도 유지)
-    setTimeout(() => {
+    // ⚡ 1초 후 자동으로 다음 문제로 이동 (중복 타임아웃 안전 해제)
+    if (timerRef.current) clearTimeout(timerRef.current);
+    timerRef.current = setTimeout(() => {
       handleNextQuestion();
     }, 1000);
   };
@@ -140,7 +144,7 @@ export default function QuizSection({ currentUser, activeWords, onQuizLevelCompl
   // 3단계 직접 입력 제출 (입력 시 1.2초 뒤 자동으로 다음 문제 이동)
   const handleTypedSubmit = (e) => {
     e.preventDefault();
-    if (selectedAnswer !== null || !typedInput.trim()) return;
+    if (selectedAnswer !== null || !typedInput.trim() || isMovingRef.current) return;
 
     const userInput = typedInput.trim().toLowerCase();
     const targetWordLower = cleanWordStr.toLowerCase();
@@ -154,13 +158,25 @@ export default function QuizSection({ currentUser, activeWords, onQuizLevelCompl
       saveWrongAnswer(currentQuiz);
     }
 
-    // ⚡ 1.2초 후 자동으로 다음 문제로 이동 (다음 버튼도 유지)
-    setTimeout(() => {
+    // ⚡ 1.2초 후 자동으로 다음 문제로 이동 (중복 타임아웃 안전 해제)
+    if (timerRef.current) clearTimeout(timerRef.current);
+    timerRef.current = setTimeout(() => {
       handleNextQuestion();
     }, 1200);
   };
 
   const handleNextQuestion = () => {
+    if (timerRef.current) {
+      clearTimeout(timerRef.current);
+      timerRef.current = null;
+    }
+    if (isMovingRef.current) return;
+    isMovingRef.current = true;
+
+    setSelectedAnswer(null);
+    setIsCorrect(null);
+    setTypedInput('');
+
     if (currentIndex + 1 >= safeWords.length) {
       if (quizLevel === 1) {
         alert('🎉 1단계 소리 퀴즈 완료! 필수 학습 완수를 위해 2단계 스펠링 선택 퀴즈로 바로 이동합니다!');
@@ -176,9 +192,15 @@ export default function QuizSection({ currentUser, activeWords, onQuizLevelCompl
     } else {
       setCurrentIndex(prev => prev + 1);
     }
+
+    setTimeout(() => {
+      isMovingRef.current = false;
+    }, 300);
   };
 
   const handleRestart = (level) => {
+    if (timerRef.current) clearTimeout(timerRef.current);
+    isMovingRef.current = false;
     setQuizLevel(level);
     setCurrentIndex(0);
     setScore(0);
@@ -187,6 +209,7 @@ export default function QuizSection({ currentUser, activeWords, onQuizLevelCompl
     setTypedInput('');
     setIsCorrect(null);
   };
+
 
   if (!currentQuiz) {
     return <div style={{ padding: '20px', textAlign: 'center' }}>퀴즈 단어 데이터를 로딩 중입니다...</div>;

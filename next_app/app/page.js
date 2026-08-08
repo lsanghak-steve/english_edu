@@ -48,18 +48,28 @@ export default function Home() {
   const recognitionRef = useRef(null);
 
 
-  // 🎯 발음 유사도(일치율 %) 계산 알고리즘
+  // 🎯 발음 유사도(일치율 %) 정밀 계산 알고리즘 (가짜 보정 제거)
   const calculateMatchScore = (targetStr, spokenStr) => {
-    if (!targetStr) return 90;
+    if (!targetStr) return 0;
     const cleanTarget = targetStr.toLowerCase().replace(/[^a-z]/g, '');
     const cleanSpoken = (spokenStr || '').toLowerCase().replace(/[^a-z]/g, '');
 
-    if (cleanSpoken && cleanTarget === cleanSpoken) return 100;
-    if (cleanSpoken && (cleanSpoken.includes(cleanTarget) || cleanTarget.includes(cleanSpoken))) return 95;
+    // 1. 발음이 들리지 않거나 음성 인식이 실패한 경우 0점~10점 처리
+    if (!cleanSpoken || cleanSpoken.trim() === '') {
+      return 15; // 마이크 소리가 거의 안 들리거나 발음 미인식 시 낮은 점수
+    }
 
+    // 2. 완전히 일치하는 경우 100점
+    if (cleanTarget === cleanSpoken) return 100;
+
+    // 3. 포함 관계인 경우 부분 점수
+    if (cleanSpoken.includes(cleanTarget) || cleanTarget.includes(cleanSpoken)) {
+      const ratio = Math.min(cleanTarget.length, cleanSpoken.length) / Math.max(cleanTarget.length, cleanSpoken.length);
+      return Math.round(ratio * 90);
+    }
+
+    // 4. 레벤슈타인 거리 기반 알파벳 정밀 유사도 산출
     let m = cleanTarget.length, n = cleanSpoken.length;
-    if (n === 0) return Math.floor(Math.random() * 12) + 85;
-
     let dp = Array.from({ length: m + 1 }, () => Array(n + 1).fill(0));
     for (let i = 0; i <= m; i++) dp[i][0] = i;
     for (let j = 0; j <= n; j++) dp[0][j] = j;
@@ -73,8 +83,9 @@ export default function Home() {
     const dist = dp[m][n];
     const maxLen = Math.max(m, n);
     const score = Math.round(((maxLen - dist) / maxLen) * 100);
-    return Math.max(score, Math.floor(Math.random() * 15) + 82);
+    return Math.max(0, Math.min(100, score));
   };
+
 
 
   useEffect(() => {
@@ -676,8 +687,12 @@ export default function Home() {
   const isQuizL2Done = completedQuizLevels.includes(2);
 
   const getWordImgSrc = (wordObj) => {
-    if (!wordObj || !wordObj.word) return '/word_img/Apple.png';
-    const wordClean = wordObj.word.replace(/\.png/gi, '').trim();
+    if (!wordObj) return '/word_img/Apple.png';
+    if (wordObj.image_url && wordObj.image_url.trim() !== '') {
+      return wordObj.image_url;
+    }
+    const wordClean = (wordObj.word || '').replace(/\.png/gi, '').trim();
+    if (!wordClean) return '/word_img/Apple.png';
     const wordCap = wordClean.charAt(0).toUpperCase() + wordClean.slice(1);
     return `/word_img/${wordCap}.png`;
   };
@@ -685,14 +700,18 @@ export default function Home() {
   const handleImageError = (e, wordStr) => {
     const target = e.target;
     const currentSrc = target.src;
-    const wordLower = wordStr.replace(/\.png/gi, '').toLowerCase().trim();
+    const wordClean = (wordStr || '').replace(/\.png/gi, '').trim();
+    const wordLower = wordClean.toLowerCase();
 
-    if (!currentSrc.includes(`/${wordLower}.png`)) {
+    if (currentSrc && !currentSrc.includes(`/${wordLower}.png`)) {
       target.src = `/word_img/${wordLower}.png`;
     } else {
-      target.style.display = 'none';
+      // 이미지가 정말로 없는 단어일 경우 대체 기본 예쁜 대표 단어 이미지로 100% 렌더링
+      target.src = '/word_img/Apple.png';
+      target.onerror = null; // 무한 리프레시 방지
     }
   };
+
 
   if (!isLoggedIn || !currentUser) {
     return (
