@@ -1,7 +1,8 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import supabase from '../../lib/supabaseClient.js';
+
 
 export default function QuizSection({ currentUser, activeWords, onQuizLevelComplete, onLoadNextWordSet }) {
   const [quizLevel, setQuizLevel] = useState(1); // 1: 소리퀴즈, 2: 스펠링 선택, 3: 스펠링 직접 입력
