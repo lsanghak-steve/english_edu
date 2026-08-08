@@ -331,9 +331,20 @@ export default function Home() {
 
   const currentWord = safeActiveWords[currentIndex] || safeActiveWords[0] || wordList[0];
 
-  const cleanWordStr = (currentWord?.word || '').replace(/\.png/gi, '').trim();
-  const rawExampleEn = (currentWord?.exampleEn || '').replace(/\.png/gi, '').trim();
-  const rawExampleKo = (currentWord?.exampleKo || '').replace(/\.png/gi, '').trim();
+  const cleanWordStr = typeof currentWord === 'string'
+    ? currentWord.replace(/\.png/gi, '').trim()
+    : (currentWord?.word || 'Word').replace(/\.png/gi, '').trim();
+
+  const cleanMeaningStr = typeof currentWord === 'string'
+    ? '기초 단어'
+    : (currentWord?.meaning || currentWord?.ko || '기초 단어');
+
+  const cleanPhonicsStr = typeof currentWord === 'string'
+    ? ''
+    : (currentWord?.phonics || currentWord?.category || '');
+
+  const rawExampleEn = (typeof currentWord === 'object' && currentWord?.exampleEn) ? currentWord.exampleEn.replace(/\.png/gi, '').trim() : '';
+  const rawExampleKo = (typeof currentWord === 'object' && currentWord?.exampleKo) ? currentWord.exampleKo.replace(/\.png/gi, '').trim() : '';
 
   const isRealSentenceEn = rawExampleEn && rawExampleEn.split(/\s+/).length >= 2 && !rawExampleEn.toLowerCase().endsWith('.png');
   const isRealSentenceKo = rawExampleKo && rawExampleKo.split(/\s+/).length >= 2 && !rawExampleKo.toLowerCase().endsWith('.png');
@@ -344,7 +355,8 @@ export default function Home() {
 
   const displayExampleKo = isRealSentenceKo
     ? rawExampleKo
-    : `나는 멋진 ${currentWord?.meaning || cleanWordStr}을(를) 본다.`;
+    : `나는 멋진 ${cleanMeaningStr}을(를) 본다.`;
+
 
   const playWordAudio = useCallback((wordText) => {
     if ('speechSynthesis' in window) {
@@ -947,7 +959,7 @@ export default function Home() {
               {/* 앞면: 그림 + 영단어 + 발음기호 + 한글 뜻 */}
               <div className="card-face card-front">
                 <span className="card-category-badge">
-                  {currentWord?.gradeLevel || '초등단어'} • {currentWord?.category}
+                  {(typeof currentWord === 'object' && currentWord?.gradeLevel) || '초등단어'} • {(typeof currentWord === 'object' && currentWord?.category) || '기초'}
                 </span>
 
                 <div style={{ width: '130px', height: '130px', margin: '6px 0', borderRadius: '18px', overflow: 'hidden', boxShadow: '0 6px 16px rgba(0,0,0,0.1)', background: '#FAFAFA', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -959,9 +971,10 @@ export default function Home() {
                   />
                 </div>
 
-                <h2 className="word-en" style={{ margin: '4px 0 0 0' }}>{cleanWordStr}</h2>
-                <p className="word-phonics" style={{ margin: '2px 0 0 0' }}>{currentWord?.phonics}</p>
-                <h3 className="word-ko" style={{ margin: '4px 0 0 0', fontSize: '24px', color: '#FF6B6B' }}>{currentWord?.meaning}</h3>
+                <h2 className="word-en" style={{ margin: '4px 0 0 0', color: '#2C3E50' }}>{cleanWordStr}</h2>
+                {cleanPhonicsStr && <p className="word-phonics" style={{ margin: '2px 0 0 0', color: '#3498DB' }}>{cleanPhonicsStr}</p>}
+                <h3 className="word-ko" style={{ margin: '4px 0 0 0', fontSize: '24px', color: '#FF6B6B' }}>{cleanMeaningStr}</h3>
+
 
                 <div style={{ marginTop: '8px' }}>
                   <button className="audio-btn" onClick={(e) => { e.stopPropagation(); playWordAudio(cleanWordStr); }}>
