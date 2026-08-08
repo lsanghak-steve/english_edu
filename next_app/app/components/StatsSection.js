@@ -129,9 +129,10 @@ export default function StatsSection({ currentUser, totalWordCount = 500, onNavi
   }, [currentUser]);
 
 
-  // 📅 주간 목표 학습량 계산 (일일 학습 수량 × 5일 = 주간 목표 단어 수, 기본 100개)
+  // 📅 주간 목표 학습량 계산 (일일 학습 수량 × 일주일 7일 = 주간 목표 단어 수, 기본 140개)
   const dailyCount = currentUser ? parseInt(currentUser.dailyWordCount || 20, 10) : 20;
-  const weeklyTargetWords = dailyCount * 5;
+  const weeklyTargetWords = dailyCount * 7;
+
 
   // 🎯 주간 단어 달성률 (%) 계산 (최대 100%)
   const percent = Math.min(100, Math.round((stats.learnedCount / weeklyTargetWords) * 100));
