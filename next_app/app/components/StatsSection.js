@@ -129,8 +129,12 @@ export default function StatsSection({ currentUser, totalWordCount = 500, onNavi
   }, [currentUser]);
 
 
-  // 달성률 (%) 계산
-  const percent = totalWordCount > 0 ? Math.min(100, Math.round((stats.learnedCount / totalWordCount) * 100)) : 0;
+  // 📅 주간 목표 학습량 계산 (일일 학습 수량 × 5일 = 주간 목표 단어 수, 기본 100개)
+  const dailyCount = currentUser ? parseInt(currentUser.dailyWordCount || 20, 10) : 20;
+  const weeklyTargetWords = dailyCount * 5;
+
+  // 🎯 주간 단어 달성률 (%) 계산 (최대 100%)
+  const percent = Math.min(100, Math.round((stats.learnedCount / weeklyTargetWords) * 100));
 
   // 외운 단어 수에 따른 성장 칭호 레벨 결정
   const getBadgeInfo = (count) => {
@@ -177,7 +181,7 @@ export default function StatsSection({ currentUser, totalWordCount = 500, onNavi
         </div>
       </div>
 
-      {/* 진도율 그래픽 바 (Progress Bar) */}
+      {/* 진도율 그래픽 바 (Progress Bar - 주간 학습량 기준!) */}
       <div
         style={{
           background: 'white',
@@ -188,7 +192,7 @@ export default function StatsSection({ currentUser, totalWordCount = 500, onNavi
         }}
       >
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: '8px' }}>
-          <span style={{ fontSize: '15px', fontWeight: '800', color: '#2C3E50' }}>🎯 단어 정복 달성률</span>
+          <span style={{ fontSize: '15px', fontWeight: '800', color: '#2C3E50' }}>🎯 주간 단어 정복 달성률</span>
           <span style={{ fontSize: '18px', fontWeight: '900', color: '#4ECDC4' }}>{percent}%</span>
         </div>
         
@@ -213,10 +217,11 @@ export default function StatsSection({ currentUser, totalWordCount = 500, onNavi
             }}
           />
         </div>
-        <div style={{ fontSize: '12px', color: '#95A5A6', textAlign: 'right', marginTop: '6px', fontWeight: 'bold' }}>
-          {stats.learnedCount} / {totalWordCount} 단어 완료
+        <div style={{ fontSize: '12px', color: '#7F8C8D', textAlign: 'right', marginTop: '6px', fontWeight: 'bold' }}>
+          이번 주 <span style={{ color: '#27AE60' }}>{stats.learnedCount}</span> / <span style={{ color: '#2980B9' }}>{weeklyTargetWords}</span> 단어 완료 ({percent}%)
         </div>
       </div>
+
 
       {/* 4개 성과 카드 그리드 */}
       <div
