@@ -117,22 +117,24 @@ export default function QuizSection({ currentUser, activeWords, onQuizLevelCompl
     const studentNameClean = (currentUser.name || '').replace(/[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{1F1E0}-\u{1F1FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{1F900}-\u{1F9FF}\u{1F300}-\u{1F5FF}\u{1F004}\u{1F0CF}\u{1F170}-\u{1F251}]/gu, '').trim();
 
     try {
-      await supabase.from('wrong_words').insert([
-        {
-          student_id: studentIdToUse,
-          word: wordStr,
-          meaning: wordObj.meaning || '뜻 정보 없음',
-          phonics: wordObj.phonics || '',
-          category: wordObj.category || '기초 단어'
-        },
-        {
+      const payloadMap = new Map();
+      payloadMap.set(studentIdToUse, {
+        student_id: studentIdToUse,
+        word: wordStr,
+        meaning: wordObj.meaning || '뜻 정보 없음',
+        phonics: wordObj.phonics || '',
+        category: wordObj.category || '기초 단어'
+      });
+      if (studentNameClean) {
+        payloadMap.set(studentNameClean, {
           student_id: studentNameClean,
           word: wordStr,
           meaning: wordObj.meaning || '뜻 정보 없음',
           phonics: wordObj.phonics || '',
           category: wordObj.category || '기초 단어'
-        }
-      ]);
+        });
+      }
+      await supabase.from('wrong_words').insert(Array.from(payloadMap.values()));
     } catch (e) {}
 
     const wrongKey = `wrong_answers_${currentUser.id}`;

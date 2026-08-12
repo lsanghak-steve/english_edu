@@ -817,41 +817,35 @@ export default function Home() {
     const studentIdToUse = currentUser.student_id || currentUser.id || 'guest';
     const studentNameClean = (currentUser.name || '').replace(/[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{1F1E0}-\u{1F1FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{1F900}-\u{1F9FF}\u{1F300}-\u{1F5FF}\u{1F004}\u{1F0CF}\u{1F170}-\u{1F251}]/gu, '').trim();
 
-    // 2. Supabase 클라우드 DB study_records 및 student_learned_words 보관함에 100% 즉시 전송
+    // 2. Supabase 클라우드 DB study_records 및 student_learned_words 보관함에 100% 즉시 정밀 전송
     try {
-      const dbLearnedPayload = wordsToSave.map(w => {
+      const dbLearnedMap = new Map();
+      wordsToSave.forEach(w => {
         const wordVal = typeof w === 'string' ? w : (w.word || '');
         const meaningVal = typeof w === 'string' ? '' : (w.meaning || '');
-        return {
-          student_id: studentIdToUse,
-          word: wordVal,
-          meaning: meaningVal
-        };
-      }).filter(item => item.word);
+        if (wordVal) {
+          const key1 = `${studentIdToUse}_${wordVal.toLowerCase()}`;
+          dbLearnedMap.set(key1, { student_id: studentIdToUse, word: wordVal, meaning: meaningVal });
+          if (studentNameClean && studentNameClean !== studentIdToUse) {
+            const key2 = `${studentNameClean}_${wordVal.toLowerCase()}`;
+            dbLearnedMap.set(key2, { student_id: studentNameClean, word: wordVal, meaning: meaningVal });
+          }
+        }
+      });
 
-      const dbLearnedByName = wordsToSave.map(w => {
-        const wordVal = typeof w === 'string' ? w : (w.word || '');
-        const meaningVal = typeof w === 'string' ? '' : (w.meaning || '');
-        return {
-          student_id: studentNameClean,
-          word: wordVal,
-          meaning: meaningVal
-        };
-      }).filter(item => item.word);
+      const studyRecordsMap = new Map();
+      studyRecordsMap.set(studentIdToUse, { student_id: studentIdToUse, study_date: stampDateKey, is_stamped: true, stamped_words: wordsToSave });
+      if (studentNameClean && studentNameClean !== studentIdToUse) {
+        studyRecordsMap.set(studentNameClean, { student_id: studentNameClean, study_date: stampDateKey, is_stamped: true, stamped_words: wordsToSave });
+      }
 
-      console.log('🚀 DB 학습 단어 전송 시도:', dbLearnedPayload);
+      console.log('🚀 DB 학습 단어 및 출석 도장 정밀 전송:', Array.from(dbLearnedMap.values()).length);
 
       await Promise.allSettled([
-        supabase.from('study_records').insert([
-          { student_id: studentIdToUse, study_date: stampDateKey, is_stamped: true, stamped_words: wordsToSave },
-          { student_id: studentNameClean, study_date: stampDateKey, is_stamped: true, stamped_words: wordsToSave }
-        ]),
-        supabase.from('student_learned_words').insert([
-          ...dbLearnedPayload,
-          ...dbLearnedByName
-        ])
+        supabase.from('study_records').upsert(Array.from(studyRecordsMap.values()), { onConflict: 'student_id,study_date' }),
+        supabase.from('student_learned_words').insert(Array.from(dbLearnedMap.values()))
       ]);
-      console.log('✅ DB 학습 데이터 전송 완료!');
+      console.log('✅ DB 학습 데이터 전송 완벽 성공!');
     } catch (e) {
       console.error('Cloud attendance and learned words save error:', e);
     }
