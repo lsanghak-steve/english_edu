@@ -1490,66 +1490,79 @@ export default function Home() {
         );
       })()}
 
-      {/* 메인 7대 탭 메뉴 */}
-      <nav className="main-tab-nav" style={{ gap: '2px' }}>
-        <button
-          className={`main-tab-btn ${mainTab === 'flashcard' ? 'active' : ''}`}
-          onClick={() => setMainTab('flashcard')}
-        >
-          🎴 플래시카드
-        </button>
-        <button
-          className={`main-tab-btn ${mainTab === 'wordlist' ? 'active' : ''}`}
-          onClick={() => setMainTab('wordlist')}
-        >
-          📋 단어 리스트
-        </button>
-        <button
-          className={`main-tab-btn ${mainTab === 'quiz' ? 'active' : ''}`}
-          onClick={() => setMainTab('quiz')}
-        >
-          ❓ 퀴즈
-        </button>
-        <button
-          className={`main-tab-btn ${mainTab === 'myvocab' ? 'active' : ''}`}
-          onClick={() => setMainTab('myvocab')}
-        >
-          ⭐ 나만의 단어장
-        </button>
-        <button
-          className={`main-tab-btn ${mainTab === 'wrongvocab' ? 'active' : ''}`}
-          onClick={() => setMainTab('wrongvocab')}
-          style={{ background: mainTab === 'wrongvocab' ? '#E74C3C' : 'transparent', color: mainTab === 'wrongvocab' ? 'white' : '#C0392B', fontWeight: 'bold' }}
-        >
-          ❌ 퀴즈 오답노트 ☁️
-        </button>
-        <button
-          className={`main-tab-btn ${mainTab === 'day6' ? 'active' : ''}`}
-          onClick={() => setMainTab('day6')}
-          style={{ background: mainTab === 'day6' ? '#6C5CE7' : 'transparent', color: mainTab === 'day6' ? 'white' : '#8E44AD', fontWeight: 'bold' }}
-        >
-          🗓️ Day 6 주간복습 💮
-        </button>
-        <button
-          className={`main-tab-btn ${mainTab === 'calendar' ? 'active' : ''}`}
-          onClick={() => setMainTab('calendar')}
-        >
-          📅 출석
-        </button>
-        <button
-          className={`main-tab-btn ${mainTab === 'stats' ? 'active' : ''}`}
-          onClick={() => setMainTab('stats')}
-          style={{ background: mainTab === 'stats' ? '#4ECDC4' : 'transparent', color: mainTab === 'stats' ? 'white' : '#2C3E50', fontWeight: 'bold' }}
-        >
-          📊 학습통계
-        </button>
-        <button
-          className={`main-tab-btn ${mainTab === 'parent' ? 'active' : ''}`}
-          onClick={() => setMainTab('parent')}
-          style={{ background: mainTab === 'parent' ? '#9B59B6' : 'transparent', color: mainTab === 'parent' ? 'white' : '#8E44AD' }}
-        >
-          👨‍👩‍👧‍👦 학부모
-        </button>
+      {/* 📂 카테고리 그룹형 스마트 2단 내비게이션 바 (전체 메뉴 100% 한눈에 보이기) */}
+      <nav className="category-nav-wrapper">
+        {/* 그룹 1: 📖 핵심 단어 학습 코스 */}
+        <div className="category-nav-group">
+          <span className="category-label" style={{ background: '#E8F8F5', color: '#27AE60', border: '1px solid #A3E4D7' }}>
+            📖 핵심 학습 코스
+          </span>
+          <button
+            className={`nav-pill-btn ${mainTab === 'flashcard' ? 'active' : ''}`}
+            onClick={() => setMainTab('flashcard')}
+          >
+            🎴 플래시카드
+          </button>
+          <button
+            className={`nav-pill-btn ${mainTab === 'wordlist' ? 'active' : ''}`}
+            onClick={() => setMainTab('wordlist')}
+          >
+            📋 단어 리스트
+          </button>
+          <button
+            className={`nav-pill-btn ${mainTab === 'quiz' ? 'active' : ''}`}
+            onClick={() => setMainTab('quiz')}
+          >
+            ❓ 1~4단계 퀴즈
+          </button>
+          <button
+            className={`nav-pill-btn ${mainTab === 'myvocab' ? 'active' : ''}`}
+            onClick={() => setMainTab('myvocab')}
+          >
+            ⭐ 나만의 단어장
+          </button>
+        </div>
+
+        {/* 그룹 2: 💥 오답 & 주간복습 & 학습통계 리포터 */}
+        <div className="category-nav-group">
+          <span className="category-label" style={{ background: '#F5EEF8', color: '#8E44AD', border: '1px solid #D7BDE2' }}>
+            💥 오답·복습·리포트
+          </span>
+          <button
+            className={`nav-pill-btn ${mainTab === 'wrongvocab' ? 'active' : ''}`}
+            onClick={() => setMainTab('wrongvocab')}
+            style={{ background: mainTab === 'wrongvocab' ? '#E74C3C' : '#FDEDEC', color: mainTab === 'wrongvocab' ? 'white' : '#C0392B', borderColor: '#F5B7B1' }}
+          >
+            ❌ 퀴즈 오답노트 ☁️
+          </button>
+          <button
+            className={`nav-pill-btn ${mainTab === 'day6' ? 'active' : ''}`}
+            onClick={() => setMainTab('day6')}
+            style={{ background: mainTab === 'day6' ? '#6C5CE7' : '#F5EEF8', color: mainTab === 'day6' ? 'white' : '#8E44AD', borderColor: '#D7BDE2' }}
+          >
+            🗓️ Day 6 주간복습 💮
+          </button>
+          <button
+            className={`nav-pill-btn ${mainTab === 'calendar' ? 'active' : ''}`}
+            onClick={() => setMainTab('calendar')}
+          >
+            📅 출석 달력
+          </button>
+          <button
+            className={`nav-pill-btn ${mainTab === 'stats' ? 'active' : ''}`}
+            onClick={() => setMainTab('stats')}
+            style={{ background: mainTab === 'stats' ? '#4ECDC4' : '#E8F8F5', color: mainTab === 'stats' ? 'white' : '#16A085', borderColor: '#A3E4D7' }}
+          >
+            📊 학습통계
+          </button>
+          <button
+            className={`nav-pill-btn ${mainTab === 'parent' ? 'active' : ''}`}
+            onClick={() => setMainTab('parent')}
+            style={{ background: mainTab === 'parent' ? '#9B59B6' : '#F5EEF8', color: mainTab === 'parent' ? 'white' : '#8E44AD', borderColor: '#D7BDE2' }}
+          >
+            👨‍👩‍👧‍👦 학부모
+          </button>
+        </div>
       </nav>
 
       {/* 탭 1: 플래시카드 학습 코스 */}
