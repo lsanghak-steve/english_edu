@@ -79,7 +79,7 @@ export default function AdminPage() {
             cursor: 'pointer'
           }}
         >
-          📖 2,000개 영단어 DB 통합 관리자
+          📖 5,000개 영단어 DB 통합 관리자 (초등·중등·고등)
         </button>
 
         <button
