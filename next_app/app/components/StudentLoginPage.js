@@ -15,7 +15,7 @@ export default function StudentLoginPage({ onLoginSuccess, onParentLoginSuccess 
   const [users, setUsers] = useState([]);
   const [studentNameInput, setStudentNameInput] = useState('');
   const [pinInput, setPinInput] = useState('');
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
 
   // 학부모 로그인 모달 상태
   const [showParentModal, setShowParentModal] = useState(false);
@@ -24,25 +24,32 @@ export default function StudentLoginPage({ onLoginSuccess, onParentLoginSuccess 
 
   // 기본 학생 세팅 배열 (고유 학생 코드 lsh_20260807_000001 체계 적용)
   const defaultStudents = [
-    { id: 'lsh_20260807_000001', student_id: 'lsh_20260807_000001', name: '이상학', grade: '대학생 및 성인', dailyWordCount: '10', studentPin: '0815', parentName: '이상학학부모', parentPhone: '010-0000-0000', parentPin: '5678' },
-    { id: 'lsh_20260807_000002', student_id: 'lsh_20260807_000002', name: '이승현', grade: '초등 3학년', dailyWordCount: '10', studentPin: '0418', parentName: '이승현학부모', parentPhone: '010-1234-5678', parentPin: '5678' },
-    { id: 'lsm_20260807_000003', student_id: 'lsm_20260807_000003', name: '이수민', grade: '초등 4학년', dailyWordCount: '15', studentPin: '0809', parentName: '이수민학부모', parentPhone: '010-9876-5432', parentPin: '5678' }
+    { id: 'lsh_20260807_000001', student_id: 'lsh_20260807_000001', name: '이상학', grade: '대학생 및 성인', studyGradeLevel: '중등단어', dailyWordCount: '20', studentPin: '0815', parentName: '이상학학부모', parentPhone: '010-0000-0000', parentPin: '5678' },
+    { id: 'lsh_20260807_000002', student_id: 'lsh_20260807_000002', name: '이승현', grade: '초등 3학년', studyGradeLevel: '초등단어', dailyWordCount: '10', studentPin: '0418', parentName: '이승현학부모', parentPhone: '010-1234-5678', parentPin: '5678' },
+    { id: 'lsm_20260807_000003', student_id: 'lsm_20260807_000003', name: '이수민', grade: '초등 4학년', studyGradeLevel: '초등단어', dailyWordCount: '10', studentPin: '0809', parentName: '이수민학부모', parentPhone: '010-9876-5432', parentPin: '5678' }
   ];
 
-  // 수파베이스 클라우드 DB에서 학생 전체 목록 로드 (users 및 student_profiles 통합)
+  // 수파베이스 클라우드 DB에서 학생 전체 목록 로드 (빠른 비동기 백그라운드 연동)
   useEffect(() => {
-    async function loadCloudUsers() {
-      setIsLoading(true);
+    // 1. LocalStorage 로컬 캐시 즉시 로드 (0.01초 반응)
+    try {
+      const savedUsers = JSON.parse(localStorage.getItem('english_edu_users') || '[]');
+      if (savedUsers.length > 0) {
+        const formatted = savedUsers.map(u => ({ ...u, name: removeEmoji(u.name), parentName: removeEmoji(u.parentName) }));
+        setUsers(formatted);
+      } else {
+        setUsers(defaultStudents);
+      }
+    } catch (e) {
+      setUsers(defaultStudents);
+    }
 
+    // 2. Supabase DB 배경 백그라운드 최신 동기화
+    async function loadCloudUsersAsync() {
       try {
-        const [res1, res2] = await Promise.allSettled([
-          supabase.from('student_profiles').select('*').order('created_at', { ascending: true }),
-          supabase.from('users').select('*').order('created_at', { ascending: true })
-        ]);
-
-        let dbUsers = [];
-        if (res2.status === 'fulfilled' && res2.value.data) {
-          dbUsers.push(...res2.value.data.map(item => ({
+        const { data: dbData } = await supabase.from('users').select('*').order('created_at', { ascending: true });
+        if (dbData && dbData.length > 0) {
+          const cloudUsers = dbData.map(item => ({
             id: item.student_id || item.id,
             db_id: item.id,
             student_id: item.student_id || item.id,
@@ -56,74 +63,20 @@ export default function StudentLoginPage({ onLoginSuccess, onParentLoginSuccess 
             parentName: removeEmoji(item.name) + '학부모',
             parentPhone: '',
             parentPin: '5678'
-          })));
-        }
-        if (res1.status === 'fulfilled' && res1.value.data) {
-          res1.value.data.forEach(item => {
-            const clean = removeEmoji(item.name);
-            const foundIdx = dbUsers.findIndex(u => u.name === clean);
-            const profileObj = {
-              id: item.student_id || item.id,
-              student_id: item.student_id || item.id,
-              name: clean,
-              grade: item.grade || '초등 3학년',
-              studyGradeLevel: item.study_grade_level || '초등단어',
-              study_grade_level: item.study_grade_level || '초등단어',
-              dailyWordCount: String(item.daily_word_count || 10),
-              daily_word_count: item.daily_word_count || 10,
-              studentPin: item.student_pin || '1111',
-              parentName: removeEmoji(item.parent_name) || (clean + '학부모'),
-              parentPhone: item.parent_phone || '',
-              parentPin: item.parent_pin || '5678'
-            };
-            if (foundIdx >= 0) {
-              dbUsers[foundIdx] = { ...dbUsers[foundIdx], ...profileObj };
-            } else {
-              dbUsers.push(profileObj);
-            }
-          });
-        }
+          }));
 
-        if (dbUsers.length > 0) {
           const userMap = new Map();
-          // 클라우드 DB 데이터 우선 적용
-          dbUsers.forEach(u => {
-            if (u.name) userMap.set(u.name, u);
-          });
-          // 기본 더미 데이터 백업 추가
-          defaultStudents.forEach(d => {
-            if (!userMap.has(d.name)) {
-              userMap.set(d.name, d);
-            }
-          });
+          cloudUsers.forEach(u => { if (u.name) userMap.set(u.name, u); });
+          defaultStudents.forEach(d => { if (!userMap.has(d.name)) userMap.set(d.name, d); });
+
           const mergedList = Array.from(userMap.values());
           setUsers(mergedList);
           localStorage.setItem('english_edu_users', JSON.stringify(mergedList));
-          setIsLoading(false);
-          return;
         }
-      } catch (e) {
-        console.log('Cloud user fetch fallback', e);
-      }
-
-
-      // 수파베이스 데이터가 없을 때 localStorage/default 백업
-      try {
-        const savedUsers = JSON.parse(localStorage.getItem('english_edu_users') || '[]');
-        if (savedUsers.length > 0) {
-          const formatted = savedUsers.map(u => ({ ...u, name: removeEmoji(u.name), parentName: removeEmoji(u.parentName) }));
-          setUsers(formatted);
-        } else {
-          setUsers(defaultStudents);
-          localStorage.setItem('english_edu_users', JSON.stringify(defaultStudents));
-        }
-      } catch (e) {
-        setUsers(defaultStudents);
-      }
-      setIsLoading(false);
+      } catch (e) {}
     }
 
-    loadCloudUsers();
+    loadCloudUsersAsync();
   }, []);
 
   // 학생 로그인 제출
@@ -208,7 +161,7 @@ export default function StudentLoginPage({ onLoginSuccess, onParentLoginSuccess 
       }}>
         <div style={{ fontSize: '48px', marginBottom: '8px' }}>🎓</div>
         <h1 style={{ margin: '0 0 6px 0', fontSize: '24px', color: '#2C3E50', fontWeight: '900' }}>
-          초등 필수 영단어 500
+          Steve Voca (스티브 보카)
         </h1>
         <p style={{ margin: '0 0 24px 0', fontSize: '14px', color: '#7F8C8D', fontWeight: 'bold' }}>
           🔒 이름과 4자리 비밀번호를 입력해 주세요
