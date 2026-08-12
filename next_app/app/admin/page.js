@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import AdminWordManager from '../components/AdminWordManager.js';
 import AdminStudentManager from '../components/AdminStudentManager.js';
 
@@ -8,6 +8,10 @@ export default function AdminPage() {
   const [pinInput, setPinInput] = useState('');
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [adminTab, setAdminTab] = useState('words'); // 'words', 'students'
+
+  useEffect(() => {
+    document.title = "Steve Voca 관리자 - 센터 통합 관리 시스템";
+  }, []);
 
   const handleLogin = (e) => {
     e.preventDefault();

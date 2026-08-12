@@ -19,6 +19,10 @@ export default function Home() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isFlipped, setIsFlipped] = useState(false);
 
+  useEffect(() => {
+    document.title = "Steve Voca - 초/중/고 5,000개 영단어 스마트 학습관";
+  }, []);
+
   // 달력에서 선택한 학습 날짜 (기본: 오늘 날짜 YYYY-MM-DD)
   const todayStr = new Date().toISOString().split('T')[0];
   const [targetStudyDate, setTargetStudyDate] = useState(todayStr);
