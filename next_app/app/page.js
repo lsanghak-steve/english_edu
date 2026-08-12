@@ -1531,7 +1531,9 @@ export default function Home() {
       {mainTab === 'flashcard' && (
         <>
           <header className="app-header">
-            <h1 className="app-title" style={{ margin: 0 }}>초등 필수 영단어 500</h1>
+            <h1 className="app-title" style={{ margin: 0 }}>
+              Steve Voca (스티브 보카) {currentUser?.studyGradeLevel || currentUser?.study_grade_level || '중등단어'}
+            </h1>
           </header>
 
           <div className="flashcard-wrapper">
@@ -1539,7 +1541,7 @@ export default function Home() {
               {/* 앞면: 그림 + 영단어 + 발음기호 + 한글 뜻 */}
               <div className="card-face card-front">
                 <span className="card-category-badge">
-                  {(typeof currentWord === 'object' && currentWord?.gradeLevel) || '초등단어'} • {(typeof currentWord === 'object' && currentWord?.category) || '기초'}
+                  {(typeof currentWord === 'object' && (currentWord?.grade_level || currentWord?.gradeLevel)) || currentUser?.studyGradeLevel || currentUser?.study_grade_level || '중등단어'} • {(typeof currentWord === 'object' && currentWord?.category) || '기초'}
                 </span>
 
                 <div style={{ width: '130px', height: '130px', margin: '6px 0', borderRadius: '18px', overflow: 'hidden', boxShadow: '0 6px 16px rgba(0,0,0,0.1)', background: '#FAFAFA', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
