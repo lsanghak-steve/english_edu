@@ -367,17 +367,26 @@ export default function Home() {
     const checkAndSyncProfile = async () => {
       try {
         const studentIdToSearch = currentUser.student_id || currentUser.id;
-        const studentNameClean = (currentUser.name || '').replace(/[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{1F1E0}-\u{1F1FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{1F900}-\u{1F9FF}\u{1F300}-\u{1F5FF}\u{1F004}\u{1F0CF}\u{1F170}-\u{1F251}]/gu, '').trim();
+        const rawName = currentUser.name || '';
+        const studentNameClean = rawName.replace(/\(.*?\)/g, '').replace(/[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{1F1E0}-\u{1F1FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{1F900}-\u{1F9FF}\u{1F300}-\u{1F5FF}\u{1F004}\u{1F0CF}\u{1F170}-\u{1F251}]/gu, '').trim();
 
         let dbUser = null;
-        const { data } = await supabase
-          .from('users')
-          .select('*')
-          .or(`student_id.eq.${studentIdToSearch},id.eq.${studentIdToSearch},name.eq.${studentNameClean}`)
-          .limit(1);
+        if (studentIdToSearch && studentIdToSearch.length > 5) {
+          const { data } = await supabase
+            .from('users')
+            .select('*')
+            .or(`student_id.eq.${studentIdToSearch},id.eq.${studentIdToSearch},name.ilike.%${studentNameClean}%`)
+            .limit(1);
+          if (data && data[0]) dbUser = data[0];
+        }
 
-        if (data && data[0]) {
-          dbUser = data[0];
+        if (!dbUser && studentNameClean) {
+          const { data } = await supabase
+            .from('users')
+            .select('*')
+            .ilike('name', `%${studentNameClean}%`)
+            .limit(1);
+          if (data && data[0]) dbUser = data[0];
         }
 
         if (dbUser) {
@@ -403,6 +412,7 @@ export default function Home() {
             const newRandoms = await loadDailyRandomWordsFromDB(updatedUser);
             if (newRandoms && newRandoms.length > 0) {
               setDailyRandomWords(newRandoms);
+              setWordList(newRandoms);
             }
           }
         }

@@ -41,43 +41,64 @@ export default function StudentLoginPage({ onLoginSuccess, onParentLoginSuccess 
         ]);
 
         let dbUsers = [];
-        if (res1.status === 'fulfilled' && res1.value.data) {
-          dbUsers.push(...res1.value.data.map(item => ({
-            id: item.student_id || item.id,
-            student_id: item.student_id || item.id,
-            name: removeEmoji(item.name),
-            grade: item.grade || '초등 3학년',
-            dailyWordCount: item.daily_word_count || '10',
-            studentPin: item.student_pin || '1111',
-            parentName: removeEmoji(item.parent_name),
-            parentPhone: item.parent_phone || '',
-            parentPin: item.parent_pin || '5678'
-          })));
-        }
         if (res2.status === 'fulfilled' && res2.value.data) {
           dbUsers.push(...res2.value.data.map(item => ({
             id: item.student_id || item.id,
+            db_id: item.id,
             student_id: item.student_id || item.id,
             name: removeEmoji(item.name),
-            grade: item.avatar || '초등 3학년',
+            grade: item.grade || item.avatar || '초등 3학년',
+            studyGradeLevel: item.study_grade_level || '초등단어',
+            study_grade_level: item.study_grade_level || '초등단어',
             dailyWordCount: String(item.daily_word_count || 10),
+            daily_word_count: item.daily_word_count || 10,
             studentPin: item.pin || '1111',
             parentName: removeEmoji(item.name) + '학부모',
             parentPhone: '',
             parentPin: '5678'
           })));
         }
-
-
-        if (dbUsers.length > 0) {
-          const merged = [...defaultStudents];
-          dbUsers.forEach(u => {
-            if (!merged.some(m => m.id === u.id || m.name === u.name)) {
-              merged.push(u);
+        if (res1.status === 'fulfilled' && res1.value.data) {
+          res1.value.data.forEach(item => {
+            const clean = removeEmoji(item.name);
+            const foundIdx = dbUsers.findIndex(u => u.name === clean);
+            const profileObj = {
+              id: item.student_id || item.id,
+              student_id: item.student_id || item.id,
+              name: clean,
+              grade: item.grade || '초등 3학년',
+              studyGradeLevel: item.study_grade_level || '초등단어',
+              study_grade_level: item.study_grade_level || '초등단어',
+              dailyWordCount: String(item.daily_word_count || 10),
+              daily_word_count: item.daily_word_count || 10,
+              studentPin: item.student_pin || '1111',
+              parentName: removeEmoji(item.parent_name) || (clean + '학부모'),
+              parentPhone: item.parent_phone || '',
+              parentPin: item.parent_pin || '5678'
+            };
+            if (foundIdx >= 0) {
+              dbUsers[foundIdx] = { ...dbUsers[foundIdx], ...profileObj };
+            } else {
+              dbUsers.push(profileObj);
             }
           });
-          setUsers(merged);
-          localStorage.setItem('english_edu_users', JSON.stringify(merged));
+        }
+
+        if (dbUsers.length > 0) {
+          const userMap = new Map();
+          // 클라우드 DB 데이터 우선 적용
+          dbUsers.forEach(u => {
+            if (u.name) userMap.set(u.name, u);
+          });
+          // 기본 더미 데이터 백업 추가
+          defaultStudents.forEach(d => {
+            if (!userMap.has(d.name)) {
+              userMap.set(d.name, d);
+            }
+          });
+          const mergedList = Array.from(userMap.values());
+          setUsers(mergedList);
+          localStorage.setItem('english_edu_users', JSON.stringify(mergedList));
           setIsLoading(false);
           return;
         }
