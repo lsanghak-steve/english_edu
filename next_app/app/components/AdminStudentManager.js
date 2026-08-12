@@ -204,25 +204,33 @@ export default function AdminStudentManager() {
     setStudents(updatedList);
     localStorage.setItem('english_edu_users', JSON.stringify(updatedList));
 
-    // Supabase DB `users` 테이블에 학습 레벨(study_grade_level) 및 목표 수량 정밀 저장 (UUID/이름 일치 처리)
+    // Supabase DB `users` 테이블에 학습 레벨(study_grade_level) 및 목표 수량 정밀 저장 (신규 insert / 기존 update 100% 분기 처리)
     try {
-      if (editingStudent?.id && editingStudent.id.includes('-')) {
-        await supabase.from('users').update({
-          name: cleanName,
-          pin: studentPin,
-          daily_word_count: wordCountInt,
-          study_grade_level: studyGradeLevel,
-          grade: grade
-        }).eq('id', editingStudent.id);
-      } else {
-        await supabase.from('users').update({
-          study_grade_level: studyGradeLevel,
-          daily_word_count: wordCountInt,
-          pin: studentPin,
-          grade: grade
-        }).ilike('name', `%${cleanName}%`);
+      const payload = {
+        name: cleanName,
+        pin: studentPin,
+        daily_word_count: wordCountInt,
+        study_grade_level: studyGradeLevel
+      };
+
+      let existingRow = null;
+      if (editingStudent?.id && String(editingStudent.id).includes('-')) {
+        const { data } = await supabase.from('users').select('*').eq('id', editingStudent.id).limit(1);
+        if (data && data[0]) existingRow = data[0];
       }
-      console.log('☁️ DB 학생 학습 레벨 저장 완벽 성공:', studyGradeLevel);
+      if (!existingRow) {
+        const { data } = await supabase.from('users').select('*').ilike('name', `%${cleanName}%`).limit(1);
+        if (data && data[0]) existingRow = data[0];
+      }
+
+      if (existingRow) {
+        await supabase.from('users').update(payload).eq('id', existingRow.id);
+        console.log('☁️ DB 기존 학생 정보 수정 완수:', cleanName);
+      } else {
+        payload.student_id = editingStudent?.student_id || `user_${Date.now()}`;
+        await supabase.from('users').insert(payload);
+        console.log('☁️ DB 신규 학생 등록 완수:', cleanName);
+      }
     } catch (err) {
       console.log('Cloud student save error', err);
     }

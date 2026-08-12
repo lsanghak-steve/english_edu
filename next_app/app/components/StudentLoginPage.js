@@ -82,13 +82,17 @@ export default function StudentLoginPage({ onLoginSuccess, onParentLoginSuccess 
   // 학생 로그인 제출
   const handleStudentLoginSubmit = (e) => {
     e.preventDefault();
-    const trimmedName = removeEmoji(studentNameInput);
+    const trimmedName = removeEmoji(studentNameInput).replace(/\(.*?\)/g, '').trim();
     if (!trimmedName) {
       alert('학생 이름을 입력해 주세요.');
       return;
     }
 
-    const student = users.find(u => removeEmoji(u.name) === trimmedName);
+    const student = users.find(u => {
+      const dbNameClean = removeEmoji(u.name || '').replace(/\(.*?\)/g, '').trim();
+      return dbNameClean === trimmedName || dbNameClean.includes(trimmedName) || trimmedName.includes(dbNameClean);
+    });
+
     if (!student) {
       alert(`'${trimmedName}' 이름으로 등록된 학생을 찾을 수 없습니다.\n이름을 다시 확인해 주세요.`);
       return;
