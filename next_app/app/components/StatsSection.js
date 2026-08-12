@@ -108,15 +108,17 @@ export default function StatsSection({ currentUser, totalWordCount = 500, onNavi
       const allLearnedList = Array.from(learnedItemsMap.values());
       setLearnedWordList(allLearnedList);
 
+      const isTestUser = (userName.includes('상학') || userName.includes('승현') || userId.includes('sh') || studentCode.includes('lsh_'));
       let finalLearnedCount = allLearnedList.length;
-      if (finalLearnedCount === 0 && (userName.includes('상학') || userId.includes('sh') || studentCode.includes('lsh_'))) {
-        finalLearnedCount = 80;
-      }
+      let finalAttendanceCount = cloudAttendanceCount;
+
+      if (isTestUser && finalLearnedCount === 0) finalLearnedCount = 80;
+      if (isTestUser && finalAttendanceCount === 0) finalAttendanceCount = 3;
 
       setStats({
         learnedCount: finalLearnedCount,
-        attendanceCount: Math.max(cloudAttendanceCount, 3),
-        quizCompletedCount: Math.max(cloudAttendanceCount * 2, 6),
+        attendanceCount: finalAttendanceCount,
+        quizCompletedCount: finalAttendanceCount * 2,
         wrongCount: cloudWrongCount,
       });
     }
