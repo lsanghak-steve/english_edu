@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import Link from 'next/link';
 
 export default function LandingPage() {
@@ -17,7 +17,6 @@ export default function LandingPage() {
   const [parentName, setParentName] = useState('');
   const [parentPhone, setParentPhone] = useState('');
   const [parentPin, setParentPin] = useState('');
-  const [childPin, setChildPin] = useState('');
 
   const [academyName, setAcademyName] = useState('');
   const [directorName, setDirectorName] = useState('');
@@ -90,7 +89,7 @@ export default function LandingPage() {
     }
   };
 
-  // Onboarding Submit Handle
+  // Onboarding / Consultation Submit Handle
   const handleAuthSubmit = (e) => {
     e.preventDefault();
     if (selectedRole === 'student') {
@@ -98,7 +97,7 @@ export default function LandingPage() {
         alert('이름과 비밀번호(4자리 PIN)를 입력해주세요.');
         return;
       }
-      alert(`🎉 ${studentName} 학생 계정이 생성되었습니다!\n학습 화면으로 이동합니다.`);
+      alert(`🎉 ${studentName} 학생 계정이 생성되었습니다!\n무료 학습 화면으로 이동합니다.`);
     } else if (selectedRole === 'parent') {
       if (!parentName.trim() || !parentPin.trim()) {
         alert('학부모 성함과 비밀번호를 입력해주세요.');
@@ -106,263 +105,259 @@ export default function LandingPage() {
       }
       alert(`🎉 ${parentName} 학부모님 계정이 등록되었습니다!\n자녀 안심 대시보드로 이동합니다.`);
     } else {
-      if (!academyName.trim() || !directorName.trim()) {
-        alert('학원명과 원장님 성함을 입력해주세요.');
+      if (!academyName.trim() || !directorName.trim() || !academyPhone.trim()) {
+        alert('학원명, 원장님 성함 및 연락처를 모두 입력해주세요.');
         return;
       }
-      alert(`🎉 ${academyName} 센터 관리자 계정이 등록되었습니다!\n선생님 관리자 센터로 이동합니다.`);
+      alert(`📞 ${academyName} (${directorName} 원장님) 도입 상담 신청이 접수되었습니다!\n담당자가 확인 후 바로 연락드리겠습니다.`);
     }
     setShowAuthModal(false);
-    window.location.href = '/';
+    if (selectedRole !== 'academy') {
+      window.location.href = '/';
+    }
+  };
+
+  const openAcademyConsultModal = () => {
+    setSelectedRole('academy');
+    setShowAuthModal(true);
   };
 
   return (
     <div className="landing-root">
-      {/* 🌟 1. Navigation Fixed Header */}
-      <header className="nav-header">
-        <div className="nav-container">
+      {/* 🍏 1. Floating Apple-style Capsule Header */}
+      <header className="apple-nav-wrapper">
+        <div className="apple-nav-capsule">
           <div className="nav-logo" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
-            <span className="logo-badge">steve</span>
-            <span className="logo-main">voca</span>
-            <span className="logo-tag">🎓</span>
+            <span className="logo-apple-icon"></span>
+            <span className="logo-main">steve voca</span>
           </div>
 
           <nav className="nav-menu">
-            <a href="#features">주요 기능</a>
-            <a href="#parent">학부모 안심</a>
-            <a href="#academy">선생님 PDF 인쇄</a>
-            <a href="#demo">1분 맛보기</a>
+            <a href="#features">기능</a>
+            <a href="#parent">학부모 리포트</a>
+            <a href="#academy">PDF 인쇄</a>
+            <a href="#demo">맛보기</a>
             <a href="#pricing">요금 안내</a>
-            <a href="#faq">FAQ</a>
           </nav>
 
           <div className="nav-actions">
-            <Link href="/" className="btn-secondary">
-              학습 앱 바로가기 ➔
+            <Link href="/" className="btn-apple-secondary">
+              학습 앱 ➔
             </Link>
-            <button className="btn-primary" onClick={() => setShowAuthModal(true)}>
-              🚀 7일 무료 수강신청
+            <button className="btn-apple-primary" onClick={() => setShowAuthModal(true)}>
+              🎁 100% 무료 가입
             </button>
           </div>
         </div>
       </header>
 
-      {/* 🚀 2. Hero Section */}
+      {/* 🍏 2. Hero Section with iPhone 16 Pro Frame Mockup */}
       <section className="hero-section">
         <div className="hero-container">
           <div className="hero-content">
-            <div className="hero-pill">
-              <span>🔥 초·중·고 필수 5,000 영단어 DB 완비</span>
+            <div className="apple-pill-tag">
+              <span>🎁 학생 & 학부모 100% 무료 | 🏫 학원 별도 문의</span>
             </div>
             <h1 className="hero-title">
-              듣고, 말하고, 퀴즈로 완성하는<br />
-              <span className="highlight-text">차세대 영단어 에듀테크</span> steve voca
+              Master English Vocabulary.<br />
+              <span className="highlight-text">Effortlessly.</span>
             </h1>
             <p className="hero-subtitle">
-              학생은 🎙️ <strong>실시간 음성 파동 녹음</strong>과 🎚️ <strong>0.75x~1.25x 맞춤 음성 속도 조절</strong>로 즐겁게 외우고,<br />
-              학부모는 💮 <strong>출석 달력 도장</strong>으로 안심하며, 선생님은 🖨️ <strong>1초 만에 PDF 시험지</strong>를 인쇄합니다.
+              직관적인 🎙️ <strong>음성 파동 녹음</strong>, 🎚️ <strong>0.75x~1.25x 맞춤 속도 조절</strong>,<br />
+              💮 <strong>학부모 출석 달력</strong>, 🖨️ <strong>원클릭 6종 PDF 인쇄</strong>까지.<br />
+              학생/학부모는 100% 무료! (학원/공부방 도입은 <strong>따로 연락해 주세요</strong>)
             </p>
+            
             <div className="hero-btn-group">
-              <button className="btn-hero-primary" onClick={() => setShowAuthModal(true)}>
-                🚀 7일 무료 수강신청하기
+              <button className="btn-hero-apple" onClick={() => setShowAuthModal(true)}>
+                🎁 100% 무료 회원가입하기
               </button>
-              <a href="#demo" className="btn-hero-outline">
-                🎧 1분 기능 맛보기
-              </a>
+              <button className="btn-hero-glass" onClick={openAcademyConsultModal}>
+                📞 학원 도입 문의하기
+              </button>
             </div>
 
-            <div className="hero-stats">
-              <div className="stat-item">
-                <span className="stat-num">5,000+</span>
-                <span className="stat-label">초/중/고 필두 영단어</span>
+            <div className="apple-stats-bar">
+              <div className="stat-box">
+                <span className="stat-val">0원</span>
+                <span className="stat-desc">학생/학부모 무료</span>
               </div>
-              <div className="stat-divider"></div>
-              <div className="stat-item">
-                <span className="stat-num">0.75x~1.25x</span>
-                <span className="stat-label">음성 재생 속도 조절</span>
+              <div className="stat-sep"></div>
+              <div className="stat-box">
+                <span className="stat-val">따로 연락</span>
+                <span className="stat-desc">학원/공부방 문의</span>
               </div>
-              <div className="stat-divider"></div>
-              <div className="stat-item">
-                <span className="stat-num">6종</span>
-                <span className="stat-label">원클릭 PDF 시험지 인쇄</span>
+              <div className="stat-sep"></div>
+              <div className="stat-box">
+                <span className="stat-val">6종</span>
+                <span className="stat-desc">PDF 워크시트</span>
               </div>
             </div>
           </div>
 
-          {/* Right Hero Visual UI Card */}
-          <div className="hero-visual">
-            <div className="visual-card main-card">
-              <div className="card-top">
-                <span className="card-cat">초등 필수 • 파닉스</span>
-                <span className="card-streak">🔥 14일 연속 학습 중</span>
-              </div>
-              <div className="card-word">Adventure</div>
-              <div className="card-phonics">[əd'ventʃər]</div>
-              <div className="card-meaning">모험, 신나고 놀라운 경험</div>
-
-              {/* Speed control indicator badge */}
-              <div className="speed-badge-bar">
-                <span>🎚️ 음성 재생 속도:</span>
-                <span className="speed-chip active">🐢 0.75x</span>
-                <span className="speed-chip">⚡ 1.0x</span>
-                <span className="speed-chip">🚀 1.25x</span>
+          {/* 📱 Realistic iPhone 16 Pro Bezel Mockup Frame */}
+          <div className="iphone-mockup-wrapper">
+            <div className="iphone-frame">
+              {/* iPhone Dynamic Island Notch */}
+              <div className="iphone-dynamic-island">
+                <span className="camera-lens"></span>
               </div>
 
-              <div className="audio-visualizer-box">
-                <div className="waveform-header">
-                  <span>🎙️ 실시간 내 발음 녹음 주파수 파동</span>
-                  <span className="rec-dot">● REC</span>
+              {/* iPhone Screen Content */}
+              <div className="iphone-screen">
+                <div className="app-status-bar">
+                  <span>9:41</span>
+                  <span>📶 5G 🔋</span>
                 </div>
-                <div className="waveform-bars">
-                  <span className="bar b1"></span>
-                  <span className="bar b2"></span>
-                  <span className="bar b3"></span>
-                  <span className="bar b4"></span>
-                  <span className="bar b5"></span>
-                  <span className="bar b4"></span>
-                  <span className="bar b3"></span>
-                  <span className="bar b2"></span>
-                  <span className="bar b5"></span>
-                  <span className="bar b1"></span>
-                </div>
-                <div className="score-badge">
-                  AI 발음 일치도: <strong>94점 (합격 🎉)</strong>
-                </div>
-              </div>
 
-              <div className="card-footer-badges">
-                <div className="stamp-badge">
-                  <span className="stamp-icon">💮</span>
-                  <span>오늘 출석 도장 완료</span>
+                <div className="app-header-mini">
+                  <span className="app-badge">steve voca</span>
+                  <span className="free-badge">🎁 Free</span>
                 </div>
-                <div className="hp-badge">
-                  <span>💚💚💚</span>
-                  <span>하트 3개 완벽</span>
+
+                <div className="iphone-card">
+                  <div className="card-tag-mini">초등 필수 • 파닉스</div>
+                  <h3 className="card-title-mini">Adventure</h3>
+                  <p className="card-phonics-mini">[əd'ventʃər]</p>
+                  <p className="card-meaning-mini">모험, 신나고 놀라운 경험</p>
+
+                  <div className="mini-speed-bar">
+                    <span className="speed-tag active">🐢 0.75x</span>
+                    <span className="speed-tag">⚡ 1.0x</span>
+                    <span className="speed-tag">🚀 1.25x</span>
+                  </div>
+
+                  <div className="mini-waveform-box">
+                    <div className="wave-lbl">🎙️ 내 발음 실시간 주파수</div>
+                    <div className="wave-bars-mini">
+                      <span className="wb w1"></span>
+                      <span className="wb w2"></span>
+                      <span className="wb w3"></span>
+                      <span className="wb w4"></span>
+                      <span className="wb w5"></span>
+                      <span className="wb w3"></span>
+                    </div>
+                    <div className="ai-score">AI 점수: 94점 (합격 🎉)</div>
+                  </div>
+
+                  <div className="mini-badges-row">
+                    <span className="mini-stamp">💮 출석 완수</span>
+                    <span className="mini-hp">💚💚💚</span>
+                  </div>
                 </div>
+
+                {/* iPhone Home Bar */}
+                <div className="iphone-home-bar"></div>
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* 🎓 3. Feature Section 1: 학생 4단계 스마트 학습관 */}
-      <section id="features" className="section feature-section">
+      {/* 🍏 3. Features Section */}
+      <section id="features" className="section">
         <div className="section-container">
           <div className="section-header">
-            <span className="section-tag">FOR STUDENTS</span>
-            <h2 className="section-title">공부가 아닌 게임처럼! 몰입형 4단계 학습법</h2>
-            <p className="section-desc">
-              단순 암기의 지루함을 깨고, 듣기, 말하기, 선택하기, 주관식 쓰기까지 감각을 통합하여 오래 기억합니다.
-            </p>
+            <span className="apple-subheading">Seamless Learning</span>
+            <h2 className="apple-heading">감각을 통합하는 4단계 스마트 암기</h2>
+            <p className="apple-body">아이폰 UI처럼 직관적인 디자인으로 몰입감을 높여 기억을 오래 유지시킵니다.</p>
           </div>
 
           <div className="grid-4">
-            <div className="feature-card">
-              <div className="card-step-num">Step 1</div>
-              <div className="card-icon">🎴</div>
-              <h3>플래시카드 & 🎚️ 음성 속도 조절</h3>
-              <p>5,000개 단어의 원어민 발음(🔊)과 추천 예문. <strong>0.75x 슬로우 모드 / 1.0x 정속 / 1.25x 스피드</strong>로 맞춤 청취.</p>
+            <div className="apple-card">
+              <div className="apple-card-icon">🎴</div>
+              <h3>플래시카드 & 🎚️ 속도 조절</h3>
+              <p>원어민 음성을 <strong>0.75x(느리게) / 1.0x(보통) / 1.25x(빠르게)</strong>로 맞춤 청취.</p>
             </div>
 
-            <div className="feature-card">
-              <div className="card-step-num">Step 2</div>
-              <div className="card-icon">🎙️</div>
-              <h3>발음 녹음 & 파동 시각화</h3>
-              <p>마이크로 영어 단어를 직접 읽고 내 음성 주파수 그래프 파동을 원어민과 실시간으로 비교 체험.</p>
+            <div className="apple-card">
+              <div className="apple-card-icon">🎙️</div>
+              <h3>음성 파동 Visualizer</h3>
+              <p>마이크로 영어 단어를 읽고 주파수 이퀄라이저 그래프로 실시간 발음 일치도 측정.</p>
             </div>
 
-            <div className="feature-card">
-              <div className="card-step-num">Step 3</div>
-              <div className="card-icon">❓</div>
-              <h3>4단계 스마트 멀티 퀴즈</h3>
-              <p>1단계 소리 듣기 ➔ 2단계 스펠선택(출석도장 💮 수여) ➔ 3단계 AI 녹음 ➔ 4단계 주관식 쓰기까지 단계별 완수.</p>
+            <div className="apple-card">
+              <div className="apple-card-icon">❓</div>
+              <h3>4단계 멀티 퀴즈</h3>
+              <p>1단계 소리 ➔ 2단계 선택(출석도장 💮) ➔ 3단계 녹음 ➔ 4단계 쓰기 주관식 마스터.</p>
             </div>
 
-            <div className="feature-card">
-              <div className="card-step-num">Step 4</div>
-              <div className="card-icon">🔥</div>
-              <h3>연속 스트릭 & 칭찬 뱃지</h3>
-              <p>듀오링고 스타일의 🔥 3일/7일/30일 연속 출석 스트릭과 왕관 뱃지를 모으며 자기주도 학습 습관 형성.</p>
+            <div className="apple-card">
+              <div className="apple-card-icon">🔥</div>
+              <h3>연속 학습 스트릭</h3>
+              <p>🔥 3일/7일/30일 연속 출석 스트릭과 왕관 뱃지로 지속적인 자기주도 학습 습관 형성.</p>
             </div>
           </div>
         </div>
       </section>
 
-      {/* 👨‍👩‍👧‍👦 4. Feature Section 2: 학부모 안심 자녀 리포트 */}
+      {/* 🍏 4. Parent Section */}
       <section id="parent" className="section parent-section">
         <div className="section-container">
           <div className="grid-2 align-center">
-            <div className="parent-text">
-              <span className="section-tag">FOR PARENTS</span>
-              <h2 className="section-title">스마트폰으로 한눈에 보는 자녀 안심 학습 리포트</h2>
-              <p className="section-desc">
-                아이가 오늘 공부를 했는지 물어볼 필요가 없습니다. 학부모 전용 대시보드에서 출석 도장과 공부한 단어, 오답노트를 실시간으로 확인하세요.
+            <div className="parent-text-box">
+              <span className="apple-subheading">Parent Dashboard</span>
+              <h2 className="apple-heading">스마트폰으로 한눈에 보는 자녀 안심 리포트</h2>
+              <p className="apple-body">
+                학부모 전용 iOS 스타일 대시보드에서 자녀의 출석 달력과 오답노트를 실시간으로 확인하세요.
               </p>
 
-              <ul className="check-list">
-                <li>
-                  <span className="check-icon">💮</span>
+              <div className="apple-feature-list">
+                <div className="f-item">
+                  <span className="f-icon">💮</span>
                   <div>
-                    <strong>참잘했어요 출석 달력 도장</strong>
-                    <p>퀴즈를 완수한 날짜에 콕 찍히는 참잘했어요 도장. 날짜를 클릭하면 그날 공부한 30개 단어 팝업 복습 제공.</p>
+                    <h4>참잘했어요 출석 달력</h4>
+                    <p>퀴즈 완수 시 도장이 콕 찍히는 달력. 날짜를 클릭하면 당일 공부한 단어 팝업 복습 제공.</p>
                   </div>
-                </li>
-                <li>
-                  <span className="check-icon">❌</span>
+                </div>
+                <div className="f-item">
+                  <span className="f-icon">❌</span>
                   <div>
-                    <strong>클라우드 실시간 오답노트</strong>
-                    <p>아이가 퀴즈에서 틀린 단어만 클라우드 DB에 자동 저장되어 오답을 완벽히 마스터할 때까지 관리.</p>
+                    <h4>실시간 클라우드 오답노트</h4>
+                    <p>틀린 단어만 클라우드 DB에 자동 모아 완벽히 마스터할 때까지 맞춤 관리.</p>
                   </div>
-                </li>
-                <li>
-                  <span className="check-icon">👨‍👩‍👧‍👦</span>
-                  <div>
-                    <strong>다자녀 통합 관리 탭</strong>
-                    <p>첫째, 둘째 자녀 학습 현황을 탭 클릭 한 번으로 손쉽게 전환하여 통합 조회.</p>
-                  </div>
-                </li>
-              </ul>
+                </div>
+              </div>
             </div>
 
-            <div className="parent-preview-card">
-              <div className="preview-header">
-                <span>👨‍👩‍👧‍👦 학부모 안심 대시보드 미리보기</span>
-                <span className="badge-live">Live Sync</span>
+            <div className="apple-dashboard-card">
+              <div className="dash-header">
+                <span>👨‍👩‍👧‍👦 자녀 안심 리포트</span>
+                <span className="dash-live-chip">Live Sync</span>
+              </div>
+              <div className="ios-segmented-control">
+                <button className="seg-btn active">👦 첫째 이승현</button>
+                <button className="seg-btn">👧 둘째 이수민</button>
               </div>
 
-              <div className="child-tabs">
-                <div className="child-tab active">👦 첫째: 이승현 (초5)</div>
-                <div className="child-tab">👧 둘째: 이수민 (초3)</div>
-              </div>
-
-              <div className="stats-row">
-                <div className="stat-card">
-                  <span className="s-icon">💮</span>
-                  <span className="s-val">184개</span>
-                  <span className="s-lbl">누적 출석도장</span>
+              <div className="dash-metrics-grid">
+                <div className="m-card">
+                  <span className="m-icon">💮</span>
+                  <span className="m-val">184개</span>
+                  <span className="m-lbl">누적 도장</span>
                 </div>
-                <div className="stat-card">
-                  <span className="s-icon">📖</span>
-                  <span className="s-val">20단어</span>
-                  <span className="s-lbl">오늘 공부한 단어</span>
+                <div className="m-card">
+                  <span className="m-icon">📖</span>
+                  <span className="m-val">20단어</span>
+                  <span className="m-lbl">오늘 공부</span>
                 </div>
-                <div className="stat-card">
-                  <span className="s-icon">❌</span>
-                  <span className="s-val">12개</span>
-                  <span className="s-lbl">오답노트 잔여</span>
+                <div className="m-card">
+                  <span className="m-icon">❌</span>
+                  <span className="m-val">12개</span>
+                  <span className="m-lbl">오답 잔여</span>
                 </div>
               </div>
 
-              <div className="mini-calendar">
-                <div className="cal-title">📅 2026년 8월 학습 달력</div>
-                <div className="cal-grid">
-                  <div className="cal-day">월<span className="cal-stamp">💮</span></div>
-                  <div className="cal-day">화<span className="cal-stamp">💮</span></div>
-                  <div className="cal-day">수<span className="cal-stamp">💮</span></div>
-                  <div className="cal-day">목<span className="cal-stamp">💮</span></div>
-                  <div className="cal-day">금<span className="cal-stamp">💮</span></div>
-                  <div className="cal-day sat">토</div>
-                  <div className="cal-day sun">일</div>
+              <div className="ios-calendar-box">
+                <div className="cal-hdr">📅 2026년 8월 학습 달력</div>
+                <div className="cal-days-grid">
+                  <div className="c-day">월 <span>💮</span></div>
+                  <div className="c-day">화 <span>💮</span></div>
+                  <div className="c-day">수 <span>💮</span></div>
+                  <div className="c-day">목 <span>💮</span></div>
+                  <div className="c-day">금 <span>💮</span></div>
+                  <div className="c-day">토</div>
+                  <div className="c-day">일</div>
                 </div>
               </div>
             </div>
@@ -370,103 +365,99 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* 🏫 5. Feature Section 3: 학원/공부방 원클릭 6종 PDF 인쇄 */}
-      <section id="academy" className="section academy-section">
+      {/* 🍏 5. Academy PDF Generator Gallery */}
+      <section id="academy" className="section">
         <div className="section-container">
           <div className="section-header">
-            <span className="section-tag">FOR TEACHERS & ACADEMIES</span>
-            <h2 className="section-title">단어 시험지 제작 0초! 원클릭 6종 PDF 워크시트 인쇄</h2>
-            <p className="section-desc">
-              선생님의 교재 준비 시간을 혁신적으로 줄여드립니다. 클릭 한 번으로 고품질 오프라인 시험지와 워크시트를 인쇄하세요.
-            </p>
+            <span className="apple-subheading">For Teachers</span>
+            <h2 className="apple-heading">원클릭 6종 PDF 워크시트 인쇄</h2>
+            <p className="apple-body">단어 시험지 제작 시간을 0초로 단축시켜 드립니다. (학원 도입은 <strong>따로 연락주세요</strong>)</p>
           </div>
 
           <div className="grid-6">
-            <div className="pdf-card">
-              <div className="pdf-badge">📝 양식 1</div>
+            <div className="apple-pdf-card">
+              <span className="pdf-tag">📝 양식 1</span>
               <h4>4지선다 시험지</h4>
-              <p>객관식 뜻/스펠링 테스트용 전문 시험지</p>
-              <button className="btn-pdf-preview" onClick={() => alert('📝 [시험지 양식] 미리보기가 생성되었습니다.')}>미리보기 ➔</button>
+              <p>객관식 뜻/스펠링 테스트지</p>
+              <button className="btn-apple-action" onClick={() => alert('📝 [시험지 양식] 미리보기')}>미리보기 ➔</button>
             </div>
 
-            <div className="pdf-card">
-              <div className="pdf-badge">📋 양식 2</div>
+            <div className="apple-pdf-card">
+              <span className="pdf-tag">📋 양식 2</span>
               <h4>2열 단어 리스트</h4>
-              <p>영어-한글 뜻 대조 일괄 암기용 표</p>
-              <button className="btn-pdf-preview" onClick={() => alert('📋 [2열 단어장] 미리보기가 생성되었습니다.')}>미리보기 ➔</button>
+              <p>영어-한글 뜻 대조 표</p>
+              <button className="btn-apple-action" onClick={() => alert('📋 [2열 단어장] 미리보기')}>미리보기 ➔</button>
             </div>
 
-            <div className="pdf-card">
-              <div className="pdf-badge">📄 양식 3</div>
-              <h4>빈칸 채우기 연습지</h4>
-              <p>스펠링 받아쓰기 및 빈칸 테스트지</p>
-              <button className="btn-pdf-preview" onClick={() => alert('📄 [빈칸 연습지] 미리보기가 생성되었습니다.')}>미리보기 ➔</button>
+            <div className="apple-pdf-card">
+              <span className="pdf-tag">📄 양식 3</span>
+              <h4>빈칸 채우기</h4>
+              <p>스펠링 받아쓰기 연습지</p>
+              <button className="btn-apple-action" onClick={() => alert('📄 [빈칸 연습지] 미리보기')}>미리보기 ➔</button>
             </div>
 
-            <div className="pdf-card">
-              <div className="pdf-badge">🎴 양식 4</div>
+            <div className="apple-pdf-card">
+              <span className="pdf-tag">🎴 양식 4</span>
               <h4>절취선 단어 카드</h4>
-              <p>손으로 잘라 활용하는 오프라인 실물 카드</p>
-              <button className="btn-pdf-preview" onClick={() => alert('🎴 [단어 카드] 미리보기가 생성되었습니다.')}>미리보기 ➔</button>
+              <p>오프라인 실물 단어 카드</p>
+              <button className="btn-apple-action" onClick={() => alert('🎴 [단어 카드] 미리보기')}>미리보기 ➔</button>
             </div>
 
-            <div className="pdf-card">
-              <div className="pdf-badge">🎲 양식 5</div>
+            <div className="apple-pdf-card">
+              <span className="pdf-tag">🎲 양식 5</span>
               <h4>단어 빙고판 (4x4)</h4>
-              <p>수업 중 다 함께 즐기는 단어 빙고 게임판</p>
-              <button className="btn-pdf-preview" onClick={() => alert('🎲 [단어 빙고판] 미리보기가 생성되었습니다.')}>미리보기 ➔</button>
+              <p>학습용 단어 빙고 게임판</p>
+              <button className="btn-apple-action" onClick={() => alert('🎲 [단어 빙고판] 미리보기')}>미리보기 ➔</button>
             </div>
 
-            <div className="pdf-card">
-              <div className="pdf-badge">✍️ 양식 6</div>
-              <h4>4선지 따라쓰기 노트</h4>
-              <p>초등 파닉스/영단어 4선 노트 연습지</p>
-              <button className="btn-pdf-preview" onClick={() => alert('✍️ [4선지 노트] 미리보기가 생성되었습니다.')}>미리보기 ➔</button>
+            <div className="apple-pdf-card">
+              <span className="pdf-tag">✍️ 양식 6</span>
+              <h4>4선지 따라쓰기</h4>
+              <p>영단어 4선 노트 연습지</p>
+              <button className="btn-apple-action" onClick={() => alert('✍️ [4선지 노트] 미리보기')}>미리보기 ➔</button>
             </div>
           </div>
         </div>
       </section>
 
-      {/* 🎮 6. Interactive Live Demo Widget with Audio Speed Control */}
+      {/* 🍏 6. Interactive Demo Widget */}
       <section id="demo" className="section demo-section">
         <div className="section-container">
           <div className="section-header">
-            <span className="section-tag">TRY BEFORE REGISTER</span>
-            <h2 className="section-title">가입 없이 체험하는 1분 인터랙티브 맛보기 데모</h2>
-            <p className="section-desc">
-              음성 재생 속도를 선택하여 단어 소리를 직접 들어보세요!
-            </p>
+            <span className="apple-subheading">Interactive Experience</span>
+            <h2 className="apple-heading">1분 맛보기 체험 위젯</h2>
+            <p className="apple-body">음성 속도를 조절하여 발음을 직접 들어보세요.</p>
           </div>
 
-          <div className="demo-widget-container">
-            {/* Speed Selector Widget */}
-            <div className="speed-selector-widget">
-              <span className="speed-label">🎚️ 음성 재생 속도 선택:</span>
+          <div className="apple-demo-container">
+            {/* Speed Selector */}
+            <div className="ios-segmented-bar">
+              <span className="speed-lbl">🎚️ 음성 속도:</span>
               <button
-                className={`speed-btn ${demoAudioSpeed === 0.75 ? 'active' : ''}`}
+                className={`seg-speed-btn ${demoAudioSpeed === 0.75 ? 'active' : ''}`}
                 onClick={() => setDemoAudioSpeed(0.75)}
               >
-                🐢 0.75x (느리게 / 슬로우)
+                🐢 0.75x (슬로우)
               </button>
               <button
-                className={`speed-btn ${demoAudioSpeed === 1.0 ? 'active' : ''}`}
+                className={`seg-speed-btn ${demoAudioSpeed === 1.0 ? 'active' : ''}`}
                 onClick={() => setDemoAudioSpeed(1.0)}
               >
-                ⚡ 1.0x (보통 정속)
+                ⚡ 1.0x (보통)
               </button>
               <button
-                className={`speed-btn ${demoAudioSpeed === 1.25 ? 'active' : ''}`}
+                className={`seg-speed-btn ${demoAudioSpeed === 1.25 ? 'active' : ''}`}
                 onClick={() => setDemoAudioSpeed(1.25)}
               >
-                🚀 1.25x (빠르게 / 스피드)
+                🚀 1.25x (빠르게)
               </button>
             </div>
 
-            <div className="demo-tabs">
+            <div className="demo-words-pills">
               {demoWords.map((w, idx) => (
                 <button
                   key={idx}
-                  className={`demo-tab-btn ${demoWordIndex === idx ? 'active' : ''}`}
+                  className={`word-pill ${demoWordIndex === idx ? 'active' : ''}`}
                   onClick={() => {
                     setDemoWordIndex(idx);
                     setIsDemoFlipped(false);
@@ -474,21 +465,20 @@ export default function LandingPage() {
                     setDemoQuizIsCorrect(null);
                   }}
                 >
-                  단어 {idx + 1}: {w.word} ({w.category})
+                  {w.word} ({w.category})
                 </button>
               ))}
             </div>
 
-            <div className="demo-box">
-              {/* Card flipping demo */}
-              <div className="demo-card-side">
-                <div className={`demo-flashcard ${isDemoFlipped ? 'flipped' : ''}`} onClick={() => setIsDemoFlipped(!isDemoFlipped)}>
-                  <div className="flashcard-front">
-                    <span className="hint-flip">👆 카드를 클릭하면 뒤집어집니다</span>
-                    <h3 className="demo-word-text">{currentDemoWord.word}</h3>
-                    <p className="demo-phonics-text">{currentDemoWord.phonics}</p>
+            <div className="demo-flex-layout">
+              <div className="demo-card-box">
+                <div className={`apple-flashcard ${isDemoFlipped ? 'flipped' : ''}`} onClick={() => setIsDemoFlipped(!isDemoFlipped)}>
+                  <div className="card-front">
+                    <span className="flip-hint">👆 카드를 터치하면 뒤집어집니다</span>
+                    <h3>{currentDemoWord.word}</h3>
+                    <p>{currentDemoWord.phonics}</p>
                     <button
-                      className="btn-tts"
+                      className="btn-apple-tts"
                       onClick={(e) => {
                         e.stopPropagation();
                         playWordAudio(currentDemoWord.word);
@@ -497,68 +487,42 @@ export default function LandingPage() {
                       {isDemoAudioPlaying ? `🔊 재생 중 (${demoAudioSpeed}x)...` : `🔊 발음 듣기 (${demoAudioSpeed}x)`}
                     </button>
                   </div>
-                  <div className="flashcard-back">
+                  <div className="card-back">
                     <h3>{currentDemoWord.meaning}</h3>
-                    <p className="example-en">"{currentDemoWord.exampleEn}"</p>
-                    <p className="example-ko">{currentDemoWord.exampleKo}</p>
-                    <button
-                      className="btn-tts-sub"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        playWordAudio(currentDemoWord.exampleEn);
-                      }}
-                    >
-                      🔊 예문 음성 듣기 ({demoAudioSpeed}x)
-                    </button>
+                    <p className="ex-en">"{currentDemoWord.exampleEn}"</p>
+                    <p className="ex-ko">{currentDemoWord.exampleKo}</p>
                   </div>
                 </div>
               </div>
 
-              {/* Live Quiz demo */}
-              <div className="demo-quiz-side">
-                <div className="quiz-box-header">
-                  <h4>❓ [맛보기 퀴즈] 단어의 올바른 뜻을 골라보세요!</h4>
-                  <button className="btn-sound-quiz" onClick={() => playWordAudio(currentDemoWord.word)}>
-                    🔊 단어 소리 듣기 ({demoAudioSpeed}x 배속)
-                  </button>
-                </div>
-
+              <div className="demo-quiz-box">
+                <h4>❓ [맛보기 퀴즈] {currentDemoWord.word}의 올바른 뜻은?</h4>
                 <div className="quiz-options">
                   <button
-                    className={`quiz-opt ${demoQuizSelected === 0 ? 'wrong' : ''}`}
+                    className={`quiz-opt-btn ${demoQuizSelected === 0 ? 'wrong' : ''}`}
                     onClick={() => handleDemoQuizChoice(0)}
                   >
                     1. 웅장하고 오래된 건물
                   </button>
                   <button
-                    className={`quiz-opt ${demoQuizSelected === 1 ? 'correct' : ''}`}
+                    className={`quiz-opt-btn ${demoQuizSelected === 1 ? 'correct' : ''}`}
                     onClick={() => handleDemoQuizChoice(1)}
                   >
                     2. {currentDemoWord.meaning}
                   </button>
                   <button
-                    className={`quiz-opt ${demoQuizSelected === 2 ? 'wrong' : ''}`}
+                    className={`quiz-opt-btn ${demoQuizSelected === 2 ? 'wrong' : ''}`}
                     onClick={() => handleDemoQuizChoice(2)}
                   >
                     3. 조용히 쉬는 휴식 시간
                   </button>
-                  <button
-                    className={`quiz-opt ${demoQuizSelected === 3 ? 'wrong' : ''}`}
-                    onClick={() => handleDemoQuizChoice(3)}
-                  >
-                    4. 친절하고 다정한 인사말
-                  </button>
                 </div>
 
                 {demoQuizIsCorrect === true && (
-                  <div className="quiz-feedback correct-bg">
-                    🎉 <strong>정답입니다!</strong> 대단해요! 출석 도장(💮)이 발급되는 순간입니다.
-                  </div>
+                  <div className="feedback-badge correct">🎉 정답입니다! 출석 도장(💮) 발급 완료!</div>
                 )}
                 {demoQuizIsCorrect === false && (
-                  <div className="quiz-feedback wrong-bg">
-                    ❌ <strong>아쉬워요!</strong> 정답은 2번입니다. 오답노트에 자동 저장됩니다.
-                  </div>
+                  <div className="feedback-badge wrong">❌ 아쉬워요! 정답은 2번입니다.</div>
                 )}
               </div>
             </div>
@@ -566,157 +530,147 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* 💳 7. Pricing Section */}
-      <section id="pricing" className="section pricing-section">
+      {/* 🍏 7. Pricing Section - Free for Students / Contact Us for Academies */}
+      <section id="pricing" className="section">
         <div className="section-container">
           <div className="section-header">
-            <span className="section-tag">PRICING PLANS</span>
-            <h2 className="section-title">투명하고 합리적인 요금 안내</h2>
-            <p className="section-desc">
-              신규 회원 누구나 7일간 전 기능을 무료로 체험하실 수 있습니다.
-            </p>
+            <span className="apple-subheading">Pricing Policy</span>
+            <h2 className="apple-heading">요금 및 맞춤 신청 안내</h2>
+            <p className="apple-body">개인 학생과 학부모는 100% 무료이며, 학원/공부방 도입은 별도로 연락해 주세요.</p>
           </div>
 
-          <div className="grid-3">
-            <div className="pricing-card">
-              <div className="plan-name">무료 체험 플랜</div>
-              <div className="plan-price">0원 <span>/ 7일간</span></div>
-              <p className="plan-desc">모든 신규 가입자 대상 무료 체험</p>
-              <ul className="plan-features">
-                <li>✓ 초/중/고 체험 단어 100개</li>
-                <li>✓ 🎚️ 0.75x~1.25x 음성 속도 조절</li>
-                <li>✓ 4단계 스마트 퀴즈 맛보기</li>
-                <li>✓ 기본 출석 달력 체험</li>
-              </ul>
-              <button className="btn-plan-outline" onClick={() => setShowAuthModal(true)}>
-                7일 무료체험 시작
-              </button>
-            </div>
-
-            <div className="pricing-card popular">
-              <div className="pop-badge">인기 선택</div>
-              <div className="plan-name">개인 / 학부모 플랜</div>
-              <div className="plan-price">9,900원 <span>/ 월</span></div>
-              <p className="plan-desc">개인 학생 및 자녀 학습 관리용</p>
-              <ul className="plan-features">
-                <li>✓ 초·중·고 5,000개 전 단어 오픈</li>
+          <div className="grid-2">
+            <div className="apple-pricing-card featured">
+              <div className="feat-chip">🎓 학생 & 학부모 회원</div>
+              <div className="plan-title">전 기능 100% 평생 무료</div>
+              <div className="plan-cost">0원 <span>/ 평생</span></div>
+              <ul className="plan-list">
+                <li>✓ 초·중·고 5,000개 전 단어 DB 무료 오픈</li>
                 <li>✓ 🎚️ **0.75x/1.0x/1.25x 맞춤 속도 조절**</li>
-                <li>✓ 🎙️ 음성 파동 녹음 & 4단계 퀴즈</li>
-                <li>✓ 💮 학부모 안심 출석 달력</li>
-                <li>✓ ❌ 무제한 실시간 오답노트</li>
+                <li>✓ 🎙️ 음성 파동 Visualizer 녹음</li>
+                <li>✓ ❓ 4단계 스마트 멀티 퀴즈</li>
+                <li>✓ 🏆 주간 랭킹전 참여 & 뱃지 수여</li>
+                <li>✓ 🔗 친구 초대 다단계 복리 추천 포인트</li>
+                <li>✓ 💮 학부모 안심 출석 달력 & ❌ 오답노트</li>
               </ul>
-              <button className="btn-plan-primary" onClick={() => setShowAuthModal(true)}>
-                개인 수강신청 하기
+              <button className="btn-plan-btn primary" onClick={() => setShowAuthModal(true)}>
+                🎁 100% 무료 회원가입하기
               </button>
             </div>
 
-            <div className="pricing-card">
-              <div className="plan-name">학원 / 공부방 플랜</div>
-              <div className="plan-price">39,000원 <span>/ 월</span></div>
-              <p className="plan-desc">선생님 및 학원 수강생 통합 관리</p>
-              <ul className="plan-features">
-                <li>✓ 수강생 30명 기본 포함</li>
-                <li>✓ 🖨️ 원클릭 6종 PDF 인쇄 무제한</li>
-                <li>✓ 수강생 진도 통합 디렉토리</li>
-                <li>✓ 📥 학원 자체 단어장 엑셀 업로드</li>
+            <div className="apple-pricing-card contact-card">
+              <div className="feat-chip academy-chip">🏫 선생님 & 학원 / 공부방</div>
+              <div className="plan-title">학원 도입 맞춤 솔루션</div>
+              <div className="plan-cost contact-text">📞 따로 연락 주세요 <span>(별도 문의)</span></div>
+              <ul className="plan-list">
+                <li>✓ 수강생 인원 맞춤 관리 디렉토리</li>
+                <li>✓ 🖨️ **원클릭 6종 PDF 시험지/워크시트 인쇄 지원**</li>
+                <li>✓ 📥 학원 자체 단어장 커스텀 엑셀 업로드 지원</li>
+                <li>✓ 학원 전용 프린트 헤더/로고 서식 셋팅</li>
+                <li>✓ 전담 담당자 1:1 방문/전화 온보딩 안내</li>
               </ul>
-              <button className="btn-plan-outline" onClick={() => setShowAuthModal(true)}>
-                학원/공부방 신청
+              <button className="btn-plan-btn outline-dark" onClick={openAcademyConsultModal}>
+                📞 학원 도입 문의하기 (따로 연락)
               </button>
             </div>
           </div>
         </div>
       </section>
 
-      {/* 🙋‍♂️ 8. FAQ Section */}
+      {/* 🍏 8. FAQ Section */}
       <section id="faq" className="section faq-section">
         <div className="section-container">
           <div className="section-header">
-            <span className="section-tag">FAQ</span>
-            <h2 className="section-title">자주 묻는 질문</h2>
+            <span className="apple-subheading">FAQ</span>
+            <h2 className="apple-heading">자주 묻는 질문</h2>
           </div>
 
-          <div className="faq-list">
+          <div className="apple-faq-list">
             {[
               {
+                q: 'Q. 학생과 학부모는 정말 무료로 사용할 수 있나요?',
+                a: '네! 초·중·고 5,000개 전 단어 학습, 음성 속도 조절, 주간 랭킹전, 학부모 출석 리포트까지 학생과 학부모는 100% 무료로 이용하실 수 있습니다.'
+              },
+              {
+                q: 'Q. 학원/공부방 도입은 어떻게 신청하나요?',
+                a: '학원 원장님 및 선생님은 [학원 도입 문의하기] 버튼을 통해 연락처를 남겨주시면, 담당자가 확인 후 직접 연락드려 안내 및 인쇄 서식 셋팅을 도와드립니다.'
+              },
+              {
                 q: 'Q. 단어 발음이 빠른 아이들은 천천히 들을 수 있나요?',
-                a: '네! 단어 카드 및 예문 재생 시 🎚️ 0.75x 배속(슬로우 모드) 옵션을 지원하여 어린 학생이나 파닉스 입문자도 또박또박 느린 발음으로 반복 청취할 수 있습니다.'
-              },
-              {
-                q: 'Q. 초등학생 아이 혼자서도 공부할 수 있나요?',
-                a: '네! 플래시카드 음성 들려주기와 4단계 스마트 퀴즈가 직관적인 UI로 구성되어 있어, 초등학생도 스스로 버튼을 누르며 재미있게 공부할 수 있습니다.'
-              },
-              {
-                q: 'Q. 학부모 계정은 자녀와 어떻게 연동하나요?',
-                a: '학부모 회원가입 시 자녀가 설정한 4자리 PIN 번호만 입력하면 즉시 연결되어 학부모 안심 대시보드에서 출석 달력과 오답노트를 조회하실 수 있습니다.'
-              },
-              {
-                q: 'Q. 학원에서 PDF 시험지를 프린트할 때 추가 비용이 드나요?',
-                a: '아닙니다! 학원/공부방 플랜 이용 시 4지선다 시험지, 단어 리스트, 워크시트, 단어 카드, 빙고판, 4선지 노트 등 6종 양식을 무제한으로 PDF 다운로드 및 인쇄하실 수 있습니다.'
+                a: '네! 🎚️ 0.75x 배속(슬로우 모드) 옵션을 지원하여 어린 학생이나 파닉스 입문자도 느린 발음으로 또박또박 반복 청취할 수 있습니다.'
               }
             ].map((faq, idx) => (
               <div
                 key={idx}
-                className={`faq-item ${openFaqIndex === idx ? 'open' : ''}`}
+                className={`apple-faq-item ${openFaqIndex === idx ? 'open' : ''}`}
                 onClick={() => setOpenFaqIndex(openFaqIndex === idx ? -1 : idx)}
               >
-                <div className="faq-q">
+                <div className="faq-q-text">
                   <span>{faq.q}</span>
-                  <span className="faq-arrow">{openFaqIndex === idx ? '▲' : '▼'}</span>
+                  <span>{openFaqIndex === idx ? '−' : '+'}</span>
                 </div>
-                {openFaqIndex === idx && <div className="faq-a">{faq.a}</div>}
+                {openFaqIndex === idx && <div className="faq-a-text">{faq.a}</div>}
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* 🚀 9. Bottom CTA Section */}
-      <section className="cta-banner-section">
-        <div className="cta-container">
-          <h2>지금 바로 steve voca와 함께 영단어 학습을 시작해보세요!</h2>
-          <p>7일간 모든 기능을 제한 없이 무료로 체험하실 수 있습니다.</p>
-          <button className="btn-cta-large" onClick={() => setShowAuthModal(true)}>
-            🚀 7일 무료 수강신청하기
-          </button>
+      {/* 🍏 9. Bottom CTA */}
+      <section className="apple-cta-section">
+        <div className="cta-box">
+          <h2>Start Learning English Vocabulary Today.</h2>
+          <p>학생/학부모는 100% 무료! 학원 도입은 언제든지 따로 연락 주세요.</p>
+          <div className="cta-btn-flex">
+            <button className="btn-hero-apple" onClick={() => setShowAuthModal(true)}>
+              🎁 100% 무료 회원가입하기
+            </button>
+            <button className="btn-hero-glass" onClick={openAcademyConsultModal}>
+              📞 학원 도입 문의하기
+            </button>
+          </div>
         </div>
-      </footer>
+      </section>
 
-      {/* 🔐 10. Registration / Onboarding Modal */}
+      {/* 🔐 Onboarding & Consultation Modal */}
       {showAuthModal && (
         <div className="modal-overlay" onClick={() => setShowAuthModal(false)}>
-          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+          <div className="apple-modal-box" onClick={(e) => e.stopPropagation()}>
             <button className="modal-close" onClick={() => setShowAuthModal(false)}>✕</button>
-            <div className="modal-header">
-              <h3>🎓 steve voca 3초 간편 수강신청</h3>
-              <p>원하시는 가입 회원 유형을 선택해 주세요.</p>
+            <div className="modal-hdr">
+              <h3>
+                {selectedRole === 'academy' ? '📞 학원/공부방 도입 문의 신청' : '🎓 steve voca 100% 무료 가입'}
+              </h3>
+              <p>
+                {selectedRole === 'academy' ? '담당자가 확인 후 직접 따로 연락을 드리겠습니다.' : '회원 유형을 선택해 주세요.'}
+              </p>
             </div>
 
-            <div className="role-selector">
+            <div className="ios-modal-tabs">
               <button
-                className={`role-btn ${selectedRole === 'student' ? 'active' : ''}`}
+                className={`tab-item ${selectedRole === 'student' ? 'active' : ''}`}
                 onClick={() => setSelectedRole('student')}
               >
-                🎓 학생 가입
+                학생
               </button>
               <button
-                className={`role-btn ${selectedRole === 'parent' ? 'active' : ''}`}
+                className={`tab-item ${selectedRole === 'parent' ? 'active' : ''}`}
                 onClick={() => setSelectedRole('parent')}
               >
-                👨‍👩‍👧‍👦 학부모 가입
+                학부모
               </button>
               <button
-                className={`role-btn ${selectedRole === 'academy' ? 'active' : ''}`}
+                className={`tab-item ${selectedRole === 'academy' ? 'active' : ''}`}
                 onClick={() => setSelectedRole('academy')}
               >
-                🏫 학원/공부방 가입
+                🏫 학원/공부방 (따로 연락)
               </button>
             </div>
 
             <form onSubmit={handleAuthSubmit} className="modal-form">
               {selectedRole === 'student' && (
                 <>
-                  <div className="form-group">
+                  <div className="form-fld">
                     <label>학생 이름</label>
                     <input
                       type="text"
@@ -725,7 +679,7 @@ export default function LandingPage() {
                       onChange={(e) => setStudentName(e.target.value)}
                     />
                   </div>
-                  <div className="form-group">
+                  <div className="form-fld">
                     <label>학년 선택</label>
                     <select value={studentGrade} onChange={(e) => setStudentGrade(e.target.value)}>
                       <option>초등 1~2학년</option>
@@ -735,16 +689,16 @@ export default function LandingPage() {
                       <option>고등학교 1~3학년</option>
                     </select>
                   </div>
-                  <div className="form-group">
-                    <label>하루 목표 학습 단어 수</label>
+                  <div className="form-fld">
+                    <label>하루 목표 학습량</label>
                     <select value={dailyGoal} onChange={(e) => setDailyGoal(e.target.value)}>
                       <option value="10">하루 10단어</option>
                       <option value="20">하루 20단어 (추천)</option>
                       <option value="30">하루 30단어</option>
                     </select>
                   </div>
-                  <div className="form-group">
-                    <label>학생 비밀번호 (4자리 PIN)</label>
+                  <div className="form-fld">
+                    <label>비밀번호 (4자리 PIN)</label>
                     <input
                       type="password"
                       maxLength={4}
@@ -753,12 +707,15 @@ export default function LandingPage() {
                       onChange={(e) => setStudentPin(e.target.value)}
                     />
                   </div>
+                  <button type="submit" className="btn-modal-apple">
+                    🚀 100% 무료 회원가입하기
+                  </button>
                 </>
               )}
 
               {selectedRole === 'parent' && (
                 <>
-                  <div className="form-group">
+                  <div className="form-fld">
                     <label>학부모 성함</label>
                     <input
                       type="text"
@@ -767,7 +724,7 @@ export default function LandingPage() {
                       onChange={(e) => setParentName(e.target.value)}
                     />
                   </div>
-                  <div className="form-group">
+                  <div className="form-fld">
                     <label>연락처</label>
                     <input
                       type="tel"
@@ -776,32 +733,25 @@ export default function LandingPage() {
                       onChange={(e) => setParentPhone(e.target.value)}
                     />
                   </div>
-                  <div className="form-group">
-                    <label>학부모 비밀번호 (4자리 PIN)</label>
+                  <div className="form-fld">
+                    <label>비밀번호 (4자리 PIN)</label>
                     <input
                       type="password"
                       maxLength={4}
-                      placeholder="숫자 4자리 (예: 0815)"
+                      placeholder="숫자 4자리"
                       value={parentPin}
                       onChange={(e) => setParentPin(e.target.value)}
                     />
                   </div>
-                  <div className="form-group">
-                    <label>연동할 자녀 학생 PIN 번호 (선택)</label>
-                    <input
-                      type="password"
-                      maxLength={4}
-                      placeholder="자녀 학생 PIN 4자리"
-                      value={childPin}
-                      onChange={(e) => setChildPin(e.target.value)}
-                    />
-                  </div>
+                  <button type="submit" className="btn-modal-apple">
+                    🚀 100% 무료 회원가입하기
+                  </button>
                 </>
               )}
 
               {selectedRole === 'academy' && (
                 <>
-                  <div className="form-group">
+                  <div className="form-fld">
                     <label>학원 / 공부방 명칭</label>
                     <input
                       type="text"
@@ -810,8 +760,8 @@ export default function LandingPage() {
                       onChange={(e) => setAcademyName(e.target.value)}
                     />
                   </div>
-                  <div className="form-group">
-                    <label>원장님 / 대표 선생님 성함</label>
+                  <div className="form-fld">
+                    <label>원장님 성함</label>
                     <input
                       type="text"
                       placeholder="예: 김원장"
@@ -819,8 +769,8 @@ export default function LandingPage() {
                       onChange={(e) => setDirectorName(e.target.value)}
                     />
                   </div>
-                  <div className="form-group">
-                    <label>연락처</label>
+                  <div className="form-fld">
+                    <label>연락받으실 전화번호</label>
                     <input
                       type="tel"
                       placeholder="010-0000-0000"
@@ -828,1073 +778,500 @@ export default function LandingPage() {
                       onChange={(e) => setAcademyPhone(e.target.value)}
                     />
                   </div>
+                  <button type="submit" className="btn-modal-apple contact-btn">
+                    📞 상담 신청하기 (따로 연락)
+                  </button>
                 </>
               )}
-
-              <button type="submit" className="btn-modal-submit">
-                🚀 수강신청 및 학습 시작하기
-              </button>
             </form>
           </div>
         </div>
       )}
 
       {/* Footer */}
-      <footer className="landing-footer">
-        <div className="footer-container">
-          <p>© 2026 steve voca. All rights reserved. 초·중·고 5,000 영단어 스마트 에듀테크</p>
-        </div>
+      <footer className="apple-footer">
+        <p>© 2026 steve voca. All rights reserved. Designed for Apple iOS & Web.</p>
       </footer>
 
-      {/* Scoped Styling */}
+      {/* Scoped Apple Style Sheet */}
       <style jsx global>{`
-        * {
-          box-sizing: border-box;
-          margin: 0;
-          padding: 0;
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
-          font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-          color: #0F172A;
-          background-color: #F8FAFC;
-          line-height: 1.6;
+          font-family: -apple-system, 'SF Pro Display', 'SF Pro Text', BlinkMacSystemFont, 'Pretendard', sans-serif;
+          color: #1D1D1F;
+          background-color: #F5F5F7;
+          line-height: 1.5;
+          letter-spacing: -0.015em;
         }
-        a {
-          text-decoration: none;
-          color: inherit;
-        }
+        a { text-decoration: none; color: inherit; }
       `}</style>
 
       <style jsx>{`
-        /* Header */
-        .nav-header {
+        /* Apple Floating Capsule Header */
+        .apple-nav-wrapper {
           position: fixed;
-          top: 0;
+          top: 16px;
           left: 0;
           right: 0;
-          height: 72px;
-          background: rgba(255, 255, 255, 0.95);
-          backdrop-filter: blur(10px);
-          border-bottom: 1px solid #E2E8F0;
+          display: flex;
+          justify-content: center;
           z-index: 1000;
+          padding: 0 16px;
         }
-        .nav-container {
-          max-width: 1200px;
-          margin: 0 auto;
-          height: 100%;
+        .apple-nav-capsule {
+          background: rgba(255, 255, 255, 0.85);
+          backdrop-filter: blur(20px) saturate(180%);
+          -webkit-backdrop-filter: blur(20px) saturate(180%);
+          border: 1px solid rgba(255, 255, 255, 0.6);
+          border-radius: 999px;
+          padding: 8px 12px 8px 24px;
           display: flex;
           align-items: center;
+          gap: 36px;
+          box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06), 0 1px 3px rgba(0, 0, 0, 0.03);
+          max-width: 1000px;
+          width: 100%;
           justify-content: space-between;
-          padding: 0 24px;
         }
         .nav-logo {
           display: flex;
           align-items: center;
-          gap: 4px;
-          font-size: 24px;
+          gap: 6px;
+          font-size: 19px;
           font-weight: 800;
           cursor: pointer;
+          color: #1D1D1F;
         }
-        .logo-badge {
-          color: #4F46E5;
-        }
-        .logo-main {
-          color: #0F172A;
-        }
-        .logo-tag {
+        .logo-apple-icon {
           font-size: 20px;
+          color: #0071E3;
         }
         .nav-menu {
           display: flex;
-          gap: 28px;
+          gap: 24px;
+          font-size: 14px;
           font-weight: 600;
-          color: #475569;
-          font-size: 15px;
+          color: #515154;
         }
         .nav-menu a:hover {
-          color: #4F46E5;
+          color: #0071E3;
         }
         .nav-actions {
           display: flex;
-          gap: 12px;
+          gap: 8px;
         }
-        .btn-secondary {
-          padding: 10px 18px;
-          border-radius: 8px;
-          background: #F1F5F9;
-          color: #334155;
-          font-size: 14px;
+        .btn-apple-secondary {
+          padding: 8px 16px;
+          border-radius: 999px;
+          background: rgba(0, 0, 0, 0.05);
+          color: #1D1D1F;
+          font-size: 13px;
           font-weight: 600;
         }
-        .btn-secondary:hover {
-          background: #E2E8F0;
-        }
-        .btn-primary {
-          padding: 10px 20px;
-          border-radius: 8px;
-          background: #4F46E5;
+        .btn-apple-primary {
+          padding: 8px 18px;
+          border-radius: 999px;
+          background: #0071E3;
           color: #FFFFFF;
-          font-size: 14px;
+          font-size: 13px;
           font-weight: 700;
           border: none;
           cursor: pointer;
-          transition: transform 0.2s, background 0.2s;
-        }
-        .btn-primary:hover {
-          background: #4338CA;
-          transform: translateY(-1px);
+          box-shadow: 0 4px 12px rgba(0, 113, 227, 0.3);
         }
 
         /* Hero */
         .hero-section {
-          padding-top: 130px;
-          padding-bottom: 90px;
-          background: linear-gradient(180deg, #EEF2FF 0%, #F8FAFC 100%);
+          padding-top: 150px;
+          padding-bottom: 100px;
         }
         .hero-container {
           max-width: 1200px;
           margin: 0 auto;
           padding: 0 24px;
           display: grid;
-          grid-template-columns: 1.1fr 0.9fr;
-          gap: 48px;
+          grid-template-columns: 1fr 1fr;
+          gap: 60px;
           align-items: center;
         }
-        .hero-pill {
+        .apple-pill-tag {
           display: inline-block;
           padding: 6px 14px;
-          background: #E0E7FF;
-          color: #3730A3;
-          border-radius: 20px;
+          border-radius: 999px;
+          background: rgba(0, 113, 227, 0.1);
+          color: #0071E3;
           font-size: 13px;
           font-weight: 700;
           margin-bottom: 20px;
         }
         .hero-title {
-          font-size: 42px;
-          font-weight: 900;
-          line-height: 1.25;
-          color: #0F172A;
+          font-size: 52px;
+          font-weight: 800;
+          line-height: 1.15;
+          letter-spacing: -0.025em;
+          color: #1D1D1F;
           margin-bottom: 20px;
-          letter-spacing: -0.5px;
         }
         .highlight-text {
-          color: #4F46E5;
+          color: #0071E3;
         }
         .hero-subtitle {
-          font-size: 17px;
-          color: #475569;
-          margin-bottom: 32px;
+          font-size: 18px;
+          color: #86868B;
           line-height: 1.6;
+          margin-bottom: 36px;
         }
         .hero-btn-group {
           display: flex;
           gap: 16px;
-          margin-bottom: 40px;
+          margin-bottom: 48px;
         }
-        .btn-hero-primary {
+        .btn-hero-apple {
           padding: 16px 32px;
-          font-size: 17px;
-          font-weight: 800;
-          background: #4F46E5;
+          border-radius: 999px;
+          background: #0071E3;
           color: #FFFFFF;
+          font-size: 17px;
+          font-weight: 700;
           border: none;
-          border-radius: 12px;
           cursor: pointer;
-          box-shadow: 0 10px 25px -5px rgba(79, 70, 229, 0.4);
-          transition: transform 0.2s, background 0.2s;
+          box-shadow: 0 8px 20px rgba(0, 113, 227, 0.35);
+          transition: transform 0.2s;
         }
-        .btn-hero-primary:hover {
-          background: #4338CA;
-          transform: translateY(-2px);
+        .btn-hero-apple:hover {
+          transform: scale(1.02);
+          background: #0077ED;
         }
-        .btn-hero-outline {
+        .btn-hero-glass {
           padding: 16px 28px;
+          border-radius: 999px;
+          background: rgba(255, 255, 255, 0.85);
+          color: #1D1D1F;
+          border: 1px solid rgba(0, 0, 0, 0.12);
           font-size: 16px;
           font-weight: 700;
-          background: #FFFFFF;
-          color: #334155;
-          border: 2px solid #CBD5E1;
-          border-radius: 12px;
           cursor: pointer;
-          transition: border-color 0.2s;
         }
-        .btn-hero-outline:hover {
-          border-color: #4F46E5;
-          color: #4F46E5;
-        }
-        .hero-stats {
+
+        .apple-stats-bar {
           display: flex;
           align-items: center;
           gap: 24px;
           padding-top: 24px;
-          border-top: 1px solid #E2E8F0;
+          border-top: 1px solid rgba(0, 0, 0, 0.08);
         }
-        .stat-item {
-          display: flex;
-          flex-direction: column;
-        }
-        .stat-num {
-          font-size: 24px;
-          font-weight: 800;
-          color: #0F172A;
-        }
-        .stat-label {
-          font-size: 13px;
-          color: #64748B;
-        }
-        .stat-divider {
-          width: 1px;
-          height: 36px;
-          background: #CBD5E1;
-        }
-
-        /* Hero Visual Card */
-        .hero-visual {
-          display: flex;
-          justify-content: center;
-        }
-        .visual-card {
-          background: #FFFFFF;
-          border-radius: 20px;
-          padding: 32px;
-          box-shadow: 0 20px 40px -15px rgba(15, 23, 42, 0.12);
-          border: 1px solid #E2E8F0;
-          width: 100%;
-          max-width: 440px;
-        }
-        .card-top {
-          display: flex;
-          justify-content: space-between;
-          margin-bottom: 16px;
-          font-size: 13px;
-          font-weight: 700;
-        }
-        .card-cat {
-          color: #4F46E5;
-        }
-        .card-streak {
-          color: #D97706;
-        }
-        .card-word {
-          font-size: 36px;
-          font-weight: 900;
-          color: #0F172A;
-        }
-        .card-phonics {
-          font-size: 15px;
-          color: #64748B;
-          margin-bottom: 8px;
-        }
-        .card-meaning {
-          font-size: 18px;
-          font-weight: 700;
-          color: #1E293B;
-          margin-bottom: 16px;
-        }
-
-        .speed-badge-bar {
-          display: flex;
-          align-items: center;
-          gap: 8px;
-          font-size: 12px;
-          font-weight: 700;
-          color: #475569;
-          margin-bottom: 16px;
-          background: #F1F5F9;
-          padding: 8px 12px;
-          border-radius: 10px;
-        }
-        .speed-chip {
-          padding: 2px 8px;
-          border-radius: 6px;
-          background: #FFFFFF;
-          color: #64748B;
-          font-size: 11px;
-        }
-        .speed-chip.active {
-          background: #4F46E5;
-          color: #FFFFFF;
-        }
-
-        .audio-visualizer-box {
-          background: #F8FAFC;
-          border: 1px solid #E2E8F0;
-          border-radius: 14px;
-          padding: 16px;
-          margin-bottom: 20px;
-        }
-        .waveform-header {
-          display: flex;
-          justify-content: space-between;
-          font-size: 12px;
-          font-weight: 700;
-          color: #475569;
-          margin-bottom: 12px;
-        }
-        .rec-dot {
-          color: #EF4444;
-          animation: blink 1.2s infinite;
-        }
-        @keyframes blink {
-          0%, 100% { opacity: 1; }
-          50% { opacity: 0.3; }
-        }
-        .waveform-bars {
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          gap: 6px;
-          height: 48px;
-          margin-bottom: 12px;
-        }
-        .bar {
-          width: 6px;
-          background: linear-gradient(180deg, #4F46E5 0%, #10B981 100%);
-          border-radius: 4px;
-          animation: wave 1.2s ease-in-out infinite alternate;
-        }
-        .b1 { height: 16px; animation-delay: 0.1s; }
-        .b2 { height: 36px; animation-delay: 0.3s; }
-        .b3 { height: 48px; animation-delay: 0.5s; }
-        .b4 { height: 28px; animation-delay: 0.2s; }
-        .b5 { height: 40px; animation-delay: 0.4s; }
-        @keyframes wave {
-          0% { transform: scaleY(0.4); }
-          100% { transform: scaleY(1); }
-        }
-
-        .score-badge {
-          text-align: center;
-          font-size: 13px;
-          color: #065F46;
-          background: #D1FAE5;
-          padding: 6px 12px;
-          border-radius: 8px;
-        }
-        .card-footer-badges {
-          display: flex;
-          justify-content: space-between;
-          font-size: 13px;
-          font-weight: 700;
-        }
-        .stamp-badge {
-          color: #BE185D;
-          background: #FCE7F3;
-          padding: 6px 12px;
-          border-radius: 8px;
-          display: flex;
-          align-items: center;
-          gap: 6px;
-        }
-        .hp-badge {
-          color: #047857;
-          background: #D1FAE5;
-          padding: 6px 12px;
-          border-radius: 8px;
-          display: flex;
-          align-items: center;
-          gap: 6px;
-        }
-
-        /* Sections Common */
-        .section {
-          padding: 90px 24px;
-        }
-        .section-container {
-          max-width: 1200px;
-          margin: 0 auto;
-        }
-        .section-header {
-          text-align: center;
-          max-width: 700px;
-          margin: 0 auto 60px;
-        }
-        .section-tag {
-          font-size: 13px;
-          font-weight: 800;
-          color: #4F46E5;
-          letter-spacing: 1px;
-          margin-bottom: 8px;
-          display: block;
-        }
-        .section-title {
-          font-size: 34px;
-          font-weight: 800;
-          color: #0F172A;
-          margin-bottom: 16px;
-          letter-spacing: -0.5px;
-        }
-        .section-desc {
-          font-size: 17px;
-          color: #64748B;
-        }
-
-        /* Grid layouts */
-        .grid-4 {
-          display: grid;
-          grid-template-columns: repeat(4, 1fr);
-          gap: 24px;
-        }
-        .grid-2 {
-          display: grid;
-          grid-template-columns: 1fr 1fr;
-          gap: 48px;
-        }
-        .grid-6 {
-          display: grid;
-          grid-template-columns: repeat(3, 1fr);
-          gap: 24px;
-        }
-        .grid-3 {
-          display: grid;
-          grid-template-columns: repeat(3, 1fr);
-          gap: 32px;
-        }
-
-        /* Feature Cards */
-        .feature-card {
-          background: #FFFFFF;
-          border-radius: 16px;
-          padding: 32px 24px;
-          border: 1px solid #E2E8F0;
-          transition: transform 0.2s, box-shadow 0.2s;
-        }
-        .feature-card:hover {
-          transform: translateY(-4px);
-          box-shadow: 0 12px 30px -10px rgba(15, 23, 42, 0.08);
-        }
-        .card-step-num {
-          font-size: 12px;
-          font-weight: 800;
-          color: #4F46E5;
-          background: #EEF2FF;
-          display: inline-block;
-          padding: 4px 10px;
-          border-radius: 6px;
-          margin-bottom: 16px;
-        }
-        .card-icon {
-          font-size: 36px;
-          margin-bottom: 16px;
-        }
-        .feature-card h3 {
-          font-size: 20px;
-          font-weight: 800;
-          color: #0F172A;
-          margin-bottom: 12px;
-        }
-        .feature-card p {
-          font-size: 14px;
-          color: #64748B;
-          line-height: 1.6;
-        }
-
-        /* Parent Section */
-        .parent-section {
-          background: #FFFFFF;
-        }
-        .align-center {
-          align-items: center;
-        }
-        .check-list {
-          list-style: none;
-          margin-top: 32px;
-          display: flex;
-          flex-direction: column;
-          gap: 24px;
-        }
-        .check-list li {
-          display: flex;
-          gap: 16px;
-        }
-        .check-icon {
-          font-size: 28px;
-        }
-        .check-list strong {
-          display: block;
-          font-size: 17px;
-          color: #0F172A;
-          margin-bottom: 4px;
-        }
-        .check-list p {
-          font-size: 14px;
-          color: #64748B;
-        }
-
-        .parent-preview-card {
-          background: #F8FAFC;
-          border: 1px solid #CBD5E1;
-          border-radius: 20px;
-          padding: 28px;
-          box-shadow: 0 16px 32px -10px rgba(15, 23, 42, 0.08);
-        }
-        .preview-header {
-          display: flex;
-          justify-content: space-between;
-          font-weight: 800;
-          margin-bottom: 20px;
-          font-size: 15px;
-        }
-        .badge-live {
-          color: #10B981;
-          background: #D1FAE5;
-          padding: 2px 8px;
-          border-radius: 6px;
-          font-size: 12px;
-        }
-        .child-tabs {
-          display: flex;
-          gap: 12px;
-          margin-bottom: 20px;
-        }
-        .child-tab {
-          padding: 10px 16px;
-          border-radius: 10px;
-          background: #E2E8F0;
-          font-size: 13px;
-          font-weight: 700;
-          color: #475569;
-          cursor: pointer;
-        }
-        .child-tab.active {
-          background: #4F46E5;
-          color: #FFFFFF;
-        }
-        .stats-row {
-          display: grid;
-          grid-template-columns: repeat(3, 1fr);
-          gap: 12px;
-          margin-bottom: 24px;
-        }
-        .stat-card {
-          background: #FFFFFF;
-          border-radius: 12px;
-          padding: 16px;
-          text-align: center;
-          border: 1px solid #E2E8F0;
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-        }
-        .s-icon { font-size: 24px; margin-bottom: 4px; }
-        .s-val { font-size: 18px; font-weight: 800; color: #0F172A; }
-        .s-lbl { font-size: 11px; color: #64748B; }
-
-        .mini-calendar {
-          background: #FFFFFF;
-          border-radius: 12px;
-          padding: 16px;
-          border: 1px solid #E2E8F0;
-        }
-        .cal-title {
-          font-size: 13px;
-          font-weight: 800;
-          margin-bottom: 12px;
-          color: #334155;
-        }
-        .cal-grid {
-          display: grid;
-          grid-template-columns: repeat(7, 1fr);
-          gap: 6px;
-          text-align: center;
-          font-size: 12px;
-          font-weight: 700;
-        }
-        .cal-day {
-          background: #F1F5F9;
-          padding: 8px 4px;
-          border-radius: 8px;
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-        }
-        .cal-stamp {
-          font-size: 14px;
-          margin-top: 4px;
-        }
-
-        /* Academy Section */
-        .pdf-card {
-          background: #FFFFFF;
-          border-radius: 16px;
-          padding: 24px;
-          border: 1px solid #E2E8F0;
-          text-align: center;
-        }
-        .pdf-badge {
-          display: inline-block;
-          font-size: 12px;
-          font-weight: 800;
-          color: #0369A1;
-          background: #E0F2FE;
-          padding: 4px 10px;
-          border-radius: 6px;
-          margin-bottom: 12px;
-        }
-        .pdf-card h4 {
-          font-size: 18px;
-          font-weight: 800;
-          margin-bottom: 8px;
-          color: #0F172A;
-        }
-        .pdf-card p {
-          font-size: 13px;
-          color: #64748B;
-          margin-bottom: 20px;
-        }
-        .btn-pdf-preview {
-          width: 100%;
-          padding: 10px;
-          border-radius: 8px;
-          background: #0F172A;
-          color: #FFFFFF;
-          font-weight: 700;
-          font-size: 13px;
-          border: none;
-          cursor: pointer;
-        }
-        .btn-pdf-preview:hover {
-          background: #334155;
-        }
-
-        /* Demo Section */
-        .demo-section {
-          background: #EEF2FF;
-        }
-        .demo-widget-container {
-          background: #FFFFFF;
-          border-radius: 24px;
-          padding: 36px;
-          box-shadow: 0 20px 40px -15px rgba(79, 70, 229, 0.15);
-          border: 1px solid #C7D2FE;
-        }
-        .speed-selector-widget {
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          gap: 12px;
-          margin-bottom: 28px;
-          background: #F8FAFC;
-          padding: 12px 20px;
-          border-radius: 14px;
-          border: 1px solid #E2E8F0;
-        }
-        .speed-label {
-          font-size: 14px;
-          font-weight: 800;
-          color: #334155;
-        }
-        .speed-btn {
-          padding: 8px 16px;
-          border-radius: 10px;
-          border: 1px solid #CBD5E1;
-          background: #FFFFFF;
-          font-size: 13px;
-          font-weight: 700;
-          color: #475569;
-          cursor: pointer;
-        }
-        .speed-btn.active {
-          background: #4F46E5;
-          color: #FFFFFF;
-          border-color: #4F46E5;
-        }
-
-        .demo-tabs {
-          display: flex;
-          gap: 12px;
-          margin-bottom: 32px;
-          justify-content: center;
-        }
-        .demo-tab-btn {
-          padding: 12px 24px;
-          border-radius: 12px;
-          background: #F1F5F9;
-          border: none;
-          font-weight: 700;
-          font-size: 14px;
-          color: #475569;
-          cursor: pointer;
-        }
-        .demo-tab-btn.active {
-          background: #4F46E5;
-          color: #FFFFFF;
-        }
-        .demo-box {
-          display: grid;
-          grid-template-columns: 1fr 1fr;
-          gap: 36px;
-        }
-        .demo-flashcard {
-          height: 280px;
-          background: linear-gradient(135deg, #4F46E5 0%, #3730A3 100%);
-          border-radius: 20px;
-          color: #FFFFFF;
-          padding: 32px;
-          display: flex;
-          flex-direction: column;
-          justify-content: center;
-          align-items: center;
-          text-align: center;
-          cursor: pointer;
-        }
-        .hint-flip {
-          font-size: 12px;
-          opacity: 0.8;
-          margin-bottom: 16px;
-        }
-        .demo-word-text {
-          font-size: 40px;
-          font-weight: 900;
-          margin-bottom: 8px;
-        }
-        .demo-phonics-text {
-          font-size: 16px;
-          opacity: 0.9;
-          margin-bottom: 24px;
-        }
-        .btn-tts, .btn-tts-sub {
-          padding: 10px 20px;
-          border-radius: 20px;
-          background: rgba(255, 255, 255, 0.2);
-          border: 1px solid rgba(255, 255, 255, 0.4);
-          color: #FFFFFF;
-          font-weight: 700;
-          font-size: 14px;
-          cursor: pointer;
-        }
-        .btn-tts:hover {
-          background: rgba(255, 255, 255, 0.3);
-        }
-
-        .demo-quiz-side {
-          background: #F8FAFC;
-          border-radius: 20px;
-          padding: 28px;
-          border: 1px solid #E2E8F0;
-        }
-        .quiz-box-header h4 {
-          font-size: 16px;
-          font-weight: 800;
-          color: #0F172A;
-          margin-bottom: 12px;
-        }
-        .btn-sound-quiz {
-          padding: 6px 14px;
-          border-radius: 8px;
-          background: #E0E7FF;
-          color: #4F46E5;
-          font-weight: 700;
-          font-size: 13px;
-          border: none;
-          cursor: pointer;
-          margin-bottom: 20px;
-        }
-        .quiz-options {
-          display: flex;
-          flex-direction: column;
-          gap: 10px;
-          margin-bottom: 20px;
-        }
-        .quiz-opt {
-          padding: 14px 18px;
-          border-radius: 12px;
-          background: #FFFFFF;
-          border: 2px solid #E2E8F0;
-          text-align: left;
-          font-size: 14px;
-          font-weight: 700;
-          color: #334155;
-          cursor: pointer;
-        }
-        .quiz-opt:hover {
-          border-color: #4F46E5;
-        }
-        .quiz-opt.correct {
-          background: #D1FAE5;
-          border-color: #10B981;
-          color: #065F46;
-        }
-        .quiz-opt.wrong {
-          background: #FEE2E2;
-          border-color: #EF4444;
-          color: #991B1B;
-        }
-        .quiz-feedback {
-          padding: 12px 16px;
-          border-radius: 10px;
-          font-size: 14px;
-          font-weight: 700;
-        }
-        .correct-bg { background: #D1FAE5; color: #065F46; }
-        .wrong-bg { background: #FEE2E2; color: #991B1B; }
-
-        /* Pricing Cards */
-        .pricing-card {
-          background: #FFFFFF;
-          border-radius: 20px;
-          padding: 40px 32px;
-          border: 1px solid #E2E8F0;
-          position: relative;
-          display: flex;
-          flex-direction: column;
-        }
-        .pricing-card.popular {
-          border: 2px solid #4F46E5;
-          box-shadow: 0 16px 36px -10px rgba(79, 70, 229, 0.2);
-        }
-        .pop-badge {
-          position: absolute;
-          top: -14px;
-          left: 50%;
-          transform: translateX(-50%);
-          background: #4F46E5;
-          color: #FFFFFF;
-          padding: 4px 14px;
-          border-radius: 20px;
-          font-size: 12px;
-          font-weight: 800;
-        }
-        .plan-name {
-          font-size: 20px;
-          font-weight: 800;
-          color: #0F172A;
-          margin-bottom: 8px;
-        }
-        .plan-price {
-          font-size: 38px;
-          font-weight: 900;
-          color: #0F172A;
-          margin-bottom: 12px;
-        }
-        .plan-price span {
-          font-size: 16px;
-          color: #64748B;
-          font-weight: 600;
-        }
-        .plan-desc {
-          font-size: 14px;
-          color: #64748B;
-          margin-bottom: 28px;
-          padding-bottom: 24px;
-          border-bottom: 1px solid #E2E8F0;
-        }
-        .plan-features {
-          list-style: none;
-          margin-bottom: 36px;
-          display: flex;
-          flex-direction: column;
-          gap: 14px;
-          font-size: 14px;
-          color: #334155;
-          font-weight: 600;
-          flex-grow: 1;
-        }
-        .btn-plan-primary {
-          width: 100%;
-          padding: 14px;
-          border-radius: 12px;
-          background: #4F46E5;
-          color: #FFFFFF;
-          font-weight: 800;
-          font-size: 15px;
-          border: none;
-          cursor: pointer;
-        }
-        .btn-plan-outline {
-          width: 100%;
-          padding: 14px;
-          border-radius: 12px;
-          background: #FFFFFF;
-          color: #334155;
-          border: 2px solid #CBD5E1;
-          font-weight: 800;
-          font-size: 15px;
-          cursor: pointer;
-        }
-
-        /* FAQ */
-        .faq-section {
-          background: #FFFFFF;
-        }
-        .faq-list {
-          max-width: 800px;
-          margin: 0 auto;
-          display: flex;
-          flex-direction: column;
-          gap: 16px;
-        }
-        .faq-item {
-          border: 1px solid #E2E8F0;
-          border-radius: 14px;
-          padding: 20px 24px;
-          cursor: pointer;
-        }
-        .faq-item.open {
-          background: #F8FAFC;
-          border-color: #C7D2FE;
-        }
-        .faq-q {
-          display: flex;
-          justify-content: space-between;
-          font-size: 17px;
-          font-weight: 800;
-          color: #0F172A;
-        }
-        .faq-a {
-          margin-top: 14px;
-          padding-top: 14px;
-          border-top: 1px solid #E2E8F0;
-          font-size: 15px;
-          color: #475569;
-          line-height: 1.6;
-        }
-
-        /* CTA Banner */
-        .cta-banner-section {
-          padding: 80px 24px;
-          background: linear-gradient(135deg, #4F46E5 0%, #312E81 100%);
-          color: #FFFFFF;
-          text-align: center;
-        }
-        .cta-container {
-          max-width: 800px;
-          margin: 0 auto;
-        }
-        .cta-container h2 {
-          font-size: 34px;
-          font-weight: 900;
-          margin-bottom: 16px;
-        }
-        .cta-container p {
-          font-size: 18px;
-          opacity: 0.9;
-          margin-bottom: 32px;
-        }
-        .btn-cta-large {
-          padding: 18px 40px;
-          border-radius: 14px;
-          background: #10B981;
-          color: #FFFFFF;
-          font-size: 18px;
-          font-weight: 900;
-          border: none;
-          cursor: pointer;
-        }
-
-        /* Footer */
-        .landing-footer {
-          padding: 32px 24px;
-          background: #0F172A;
-          color: #94A3B8;
-          text-align: center;
-          font-size: 14px;
-        }
-
-        /* Modal */
-        .modal-overlay {
-          position: fixed;
-          top: 0;
-          left: 0;
-          right: 0;
-          bottom: 0;
-          background: rgba(15, 23, 42, 0.7);
-          backdrop-filter: blur(4px);
-          z-index: 2000;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          padding: 24px;
-        }
-        .modal-content {
-          background: #FFFFFF;
-          border-radius: 24px;
-          max-width: 500px;
-          width: 100%;
-          padding: 36px;
-          position: relative;
-        }
-        .modal-close {
-          position: absolute;
-          top: 20px;
-          right: 20px;
-          background: none;
-          border: none;
-          font-size: 20px;
-          cursor: pointer;
-          color: #64748B;
-        }
-        .modal-header {
-          text-align: center;
-          margin-bottom: 24px;
-        }
-        .modal-header h3 {
+        .stat-val {
           font-size: 22px;
           font-weight: 800;
-          color: #0F172A;
+          color: #1D1D1F;
+          display: block;
+        }
+        .stat-desc {
+          font-size: 13px;
+          color: #86868B;
+        }
+        .stat-sep {
+          width: 1px;
+          height: 32px;
+          background: rgba(0, 0, 0, 0.1);
+        }
+
+        /* 📱 iPhone Frame Mockup */
+        .iphone-mockup-wrapper {
+          display: flex;
+          justify-content: center;
+        }
+        .iphone-frame {
+          width: 320px;
+          height: 640px;
+          background: #000000;
+          border-radius: 54px;
+          padding: 12px;
+          box-shadow: 0 30px 60px -15px rgba(0, 0, 0, 0.3), 0 0 0 4px #2D2D2E, 0 0 0 8px #1A1A1A;
+          position: relative;
+        }
+        .iphone-dynamic-island {
+          position: absolute;
+          top: 20px;
+          left: 50%;
+          transform: translateX(-50%);
+          width: 96px;
+          height: 28px;
+          background: #000000;
+          border-radius: 20px;
+          z-index: 10;
+          display: flex;
+          align-items: center;
+          justify-content: flex-end;
+          padding-right: 10px;
+        }
+        .camera-lens {
+          width: 10px;
+          height: 10px;
+          border-radius: 50%;
+          background: #111115;
+          border: 1px solid #222228;
+        }
+        .iphone-screen {
+          width: 100%;
+          height: 100%;
+          background: #F5F5F7;
+          border-radius: 42px;
+          overflow: hidden;
+          padding: 38px 16px 16px;
+          display: flex;
+          flex-direction: column;
+          position: relative;
+        }
+        .app-status-bar {
+          display: flex;
+          justify-content: space-between;
+          font-size: 11px;
+          font-weight: 700;
+          color: #1D1D1F;
+          margin-bottom: 12px;
+        }
+        .app-header-mini {
+          display: flex;
+          justify-content: space-between;
+          font-size: 12px;
+          font-weight: 800;
+          margin-bottom: 16px;
+        }
+        .app-badge { color: #0071E3; }
+        .free-badge { color: #34C759; background: #E8F9ED; padding: 2px 6px; border-radius: 6px; }
+
+        .iphone-card {
+          background: #FFFFFF;
+          border-radius: 24px;
+          padding: 20px 16px;
+          box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+          border: 1px solid rgba(0, 0, 0, 0.04);
+        }
+        .card-tag-mini { font-size: 10px; color: #0071E3; font-weight: 700; margin-bottom: 4px; }
+        .card-title-mini { font-size: 26px; font-weight: 800; color: #1D1D1F; margin-bottom: 2px; }
+        .card-phonics-mini { font-size: 12px; color: #86868B; margin-bottom: 6px; }
+        .card-meaning-mini { font-size: 14px; font-weight: 700; color: #1D1D1F; margin-bottom: 14px; }
+
+        .mini-speed-bar {
+          display: flex;
+          gap: 4px;
+          margin-bottom: 12px;
+        }
+        .speed-tag {
+          font-size: 10px;
+          padding: 2px 6px;
+          border-radius: 6px;
+          background: #F5F5F7;
+          color: #86868B;
+        }
+        .speed-tag.active { background: #0071E3; color: #FFFFFF; font-weight: 700; }
+
+        .mini-waveform-box {
+          background: #F5F5F7;
+          border-radius: 14px;
+          padding: 10px;
+          margin-bottom: 14px;
+        }
+        .wave-lbl { font-size: 10px; font-weight: 700; color: #515154; margin-bottom: 6px; }
+        .wave-bars-mini {
+          display: flex;
+          gap: 4px;
+          align-items: center;
+          justify-content: center;
+          height: 24px;
           margin-bottom: 6px;
         }
-        .modal-header p {
-          font-size: 14px;
-          color: #64748B;
-        }
-        .role-selector {
+        .wb { width: 4px; background: #0071E3; border-radius: 2px; height: 16px; }
+        .w1 { height: 8px; } .w2 { height: 18px; } .w3 { height: 24px; } .w4 { height: 14px; } .w5 { height: 20px; }
+        .ai-score { font-size: 10px; text-align: center; color: #34C759; font-weight: 700; }
+
+        .mini-badges-row {
           display: flex;
-          gap: 8px;
-          margin-bottom: 24px;
-          background: #F1F5F9;
-          padding: 4px;
-          border-radius: 12px;
+          justify-content: space-between;
+          font-size: 10px;
+          font-weight: 700;
         }
-        .role-btn {
+        .mini-stamp { color: #D0145A; background: #FCE7F3; padding: 4px 8px; border-radius: 6px; }
+        .mini-hp { color: #34C759; background: #E8F9ED; padding: 4px 8px; border-radius: 6px; }
+
+        .iphone-home-bar {
+          position: absolute;
+          bottom: 8px;
+          left: 50%;
+          transform: translateX(-50%);
+          width: 120px;
+          height: 4px;
+          background: #000000;
+          border-radius: 2px;
+        }
+
+        /* Apple Squircle Sections */
+        .section { padding: 100px 24px; }
+        .section-container { max-width: 1100px; margin: 0 auto; }
+        .section-header { text-align: center; max-width: 680px; margin: 0 auto 60px; }
+        .apple-subheading { font-size: 14px; font-weight: 700; color: #0071E3; text-transform: uppercase; letter-spacing: 0.05em; display: block; margin-bottom: 8px; }
+        .apple-heading { font-size: 38px; font-weight: 800; color: #1D1D1F; letter-spacing: -0.02em; margin-bottom: 14px; }
+        .apple-body { font-size: 18px; color: #86868B; }
+
+        .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; }
+        .grid-6 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+
+        .apple-card {
+          background: #FFFFFF;
+          border-radius: 28px;
+          padding: 32px 24px;
+          border: 1px solid rgba(0, 0, 0, 0.04);
+          box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
+          transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .apple-card:hover {
+          transform: scale(1.02);
+          box-shadow: 0 16px 40px rgba(0, 0, 0, 0.08);
+        }
+        .apple-card-icon { font-size: 38px; margin-bottom: 20px; }
+        .apple-card h3 { font-size: 20px; font-weight: 800; color: #1D1D1F; margin-bottom: 10px; }
+        .apple-card p { font-size: 14px; color: #86868B; line-height: 1.6; }
+
+        /* Parent Section */
+        .parent-section { background: #FFFFFF; border-radius: 36px; margin: 40px 0; }
+        .apple-feature-list { margin-top: 32px; display: flex; flex-direction: column; gap: 20px; }
+        .f-item { display: flex; gap: 16px; }
+        .f-icon { font-size: 24px; }
+        .f-item h4 { font-size: 16px; font-weight: 700; color: #1D1D1F; }
+        .f-item p { font-size: 14px; color: #86868B; }
+
+        .apple-dashboard-card {
+          background: #F5F5F7;
+          border-radius: 28px;
+          padding: 28px;
+          border: 1px solid rgba(0, 0, 0, 0.04);
+        }
+        .dash-header { display: flex; justify-content: space-between; font-weight: 800; margin-bottom: 16px; font-size: 15px; }
+        .dash-live-chip { color: #34C759; background: #E8F9ED; padding: 2px 8px; border-radius: 999px; font-size: 11px; }
+
+        .ios-segmented-control {
+          display: flex;
+          background: rgba(0, 0, 0, 0.06);
+          padding: 3px;
+          border-radius: 12px;
+          margin-bottom: 20px;
+        }
+        .seg-btn {
           flex: 1;
-          padding: 10px;
-          border-radius: 8px;
+          padding: 8px;
+          border-radius: 10px;
           border: none;
           background: transparent;
           font-size: 13px;
           font-weight: 700;
-          color: #475569;
+          color: #515154;
           cursor: pointer;
         }
-        .role-btn.active {
+        .seg-btn.active { background: #FFFFFF; color: #1D1D1F; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); }
+
+        .dash-metrics-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 20px; }
+        .m-card { background: #FFFFFF; border-radius: 16px; padding: 14px; text-align: center; display: flex; flex-direction: column; align-items: center; }
+        .m-icon { font-size: 20px; }
+        .m-val { font-size: 17px; font-weight: 800; color: #1D1D1F; }
+        .m-lbl { font-size: 11px; color: #86868B; }
+
+        .ios-calendar-box { background: #FFFFFF; border-radius: 16px; padding: 16px; }
+        .cal-hdr { font-size: 13px; font-weight: 700; margin-bottom: 10px; color: #1D1D1F; }
+        .cal-days-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; text-align: center; font-size: 11px; font-weight: 600; }
+        .c-day { background: #F5F5F7; padding: 6px 2px; border-radius: 6px; display: flex; flex-direction: column; align-items: center; }
+
+        /* Apple PDF Cards */
+        .apple-pdf-card {
           background: #FFFFFF;
-          color: #4F46E5;
+          border-radius: 24px;
+          padding: 24px;
+          border: 1px solid rgba(0, 0, 0, 0.04);
+          text-align: center;
+          box-shadow: 0 8px 24px rgba(0, 0, 0, 0.03);
         }
-        .modal-form {
-          display: flex;
-          flex-direction: column;
-          gap: 16px;
-        }
-        .form-group {
-          display: flex;
-          flex-direction: column;
-          gap: 6px;
-        }
-        .form-group label {
-          font-size: 13px;
-          font-weight: 700;
-          color: #334155;
-        }
-        .form-group input, .form-group select {
-          padding: 12px 14px;
-          border-radius: 10px;
-          border: 1px solid #CBD5E1;
-          font-size: 14px;
-          outline: none;
-        }
-        .btn-modal-submit {
-          margin-top: 12px;
-          padding: 14px;
-          border-radius: 12px;
-          background: #4F46E5;
-          color: #FFFFFF;
-          font-size: 16px;
-          font-weight: 800;
-          border: none;
-          cursor: pointer;
-        }
+        .pdf-tag { font-size: 11px; font-weight: 700; color: #0071E3; background: rgba(0, 113, 227, 0.08); padding: 4px 10px; border-radius: 999px; display: inline-block; margin-bottom: 12px; }
+        .apple-pdf-card h4 { font-size: 17px; font-weight: 800; color: #1D1D1F; margin-bottom: 6px; }
+        .apple-pdf-card p { font-size: 13px; color: #86868B; margin-bottom: 18px; }
+        .btn-apple-action { width: 100%; padding: 10px; border-radius: 999px; background: #1D1D1F; color: #FFFFFF; font-size: 13px; font-weight: 700; border: none; cursor: pointer; }
+
+        /* Demo Section */
+        .demo-section { background: #FFFFFF; border-radius: 36px; margin: 40px 0; }
+        .apple-demo-container { max-width: 900px; margin: 0 auto; }
+        .ios-segmented-bar { display: flex; justify-content: center; align-items: center; gap: 8px; margin-bottom: 24px; }
+        .speed-lbl { font-size: 13px; font-weight: 700; color: #515154; }
+        .seg-speed-btn { padding: 8px 16px; border-radius: 999px; border: 1px solid rgba(0, 0, 0, 0.1); background: #F5F5F7; font-size: 13px; font-weight: 600; color: #515154; cursor: pointer; }
+        .seg-speed-btn.active { background: #0071E3; color: #FFFFFF; border-color: #0071E3; font-weight: 700; }
+
+        .demo-words-pills { display: flex; justify-content: center; gap: 10px; margin-bottom: 32px; }
+        .word-pill { padding: 10px 20px; border-radius: 999px; background: #F5F5F7; border: none; font-size: 14px; font-weight: 600; color: #515154; cursor: pointer; }
+        .word-pill.active { background: #1D1D1F; color: #FFFFFF; font-weight: 700; }
+
+        .demo-flex-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; }
+        .apple-flashcard { height: 260px; background: linear-gradient(135deg, #1D1D1F 0%, #3A3A3C 100%); border-radius: 28px; color: #FFFFFF; padding: 28px; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; cursor: pointer; }
+        .flip-hint { font-size: 11px; opacity: 0.7; margin-bottom: 12px; }
+        .apple-flashcard h3 { font-size: 36px; font-weight: 900; margin-bottom: 6px; }
+        .apple-flashcard p { font-size: 14px; opacity: 0.8; margin-bottom: 20px; }
+        .btn-apple-tts { padding: 8px 18px; border-radius: 999px; background: rgba(255, 255, 255, 0.2); border: 1px solid rgba(255, 255, 255, 0.3); color: #FFFFFF; font-weight: 700; font-size: 13px; cursor: pointer; }
+
+        .demo-quiz-box { background: #F5F5F7; border-radius: 28px; padding: 28px; border: 1px solid rgba(0, 0, 0, 0.04); }
+        .demo-quiz-box h4 { font-size: 15px; font-weight: 800; color: #1D1D1F; margin-bottom: 16px; }
+        .quiz-options { display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px; }
+        .quiz-opt-btn { padding: 12px 16px; border-radius: 16px; background: #FFFFFF; border: 1px solid rgba(0, 0, 0, 0.08); text-align: left; font-size: 14px; font-weight: 600; color: #1D1D1F; cursor: pointer; }
+        .quiz-opt-btn.correct { background: #E8F9ED; border-color: #34C759; color: #1D8A38; font-weight: 700; }
+        .quiz-opt-btn.wrong { background: #FFEBEB; border-color: #FF3B30; color: #D0145A; font-weight: 700; }
+        .feedback-badge { padding: 10px 14px; border-radius: 12px; font-size: 13px; font-weight: 700; }
+        .feedback-badge.correct { background: #E8F9ED; color: #1D8A38; }
+        .feedback-badge.wrong { background: #FFEBEB; color: #D0145A; }
+
+        /* Pricing Cards */
+        .apple-pricing-card { background: #FFFFFF; border-radius: 28px; padding: 36px 28px; border: 1px solid rgba(0, 0, 0, 0.04); box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04); display: flex; flex-direction: column; position: relative; }
+        .apple-pricing-card.featured { border: 2px solid #34C759; box-shadow: 0 16px 40px rgba(52, 199, 89, 0.15); }
+        .apple-pricing-card.contact-card { border: 2px solid #0071E3; box-shadow: 0 16px 40px rgba(0, 113, 227, 0.12); }
+        .feat-chip { position: absolute; top: -12px; left: 50%; transform: translateX(-50%); background: #34C759; color: #FFFFFF; padding: 4px 12px; border-radius: 999px; font-size: 11px; font-weight: 800; }
+        .feat-chip.academy-chip { background: #0071E3; }
+        .plan-title { font-size: 20px; font-weight: 800; color: #1D1D1F; margin-bottom: 6px; }
+        .plan-cost { font-size: 36px; font-weight: 800; color: #1D1D1F; margin-bottom: 20px; }
+        .plan-cost.contact-text { font-size: 28px; color: #0071E3; }
+        .plan-cost span { font-size: 14px; color: #86868B; font-weight: 500; }
+        .plan-list { list-style: none; margin-bottom: 32px; display: flex; flex-direction: column; gap: 12px; font-size: 14px; color: #515154; flex-grow: 1; }
+        .btn-plan-btn { width: 100%; padding: 14px; border-radius: 999px; font-size: 15px; font-weight: 700; border: none; cursor: pointer; }
+        .btn-plan-btn.primary { background: #34C759; color: #FFFFFF; box-shadow: 0 4px 14px rgba(52, 199, 89, 0.3); }
+        .btn-plan-btn.outline-dark { background: #0071E3; color: #FFFFFF; box-shadow: 0 4px 14px rgba(0, 113, 227, 0.3); }
+
+        /* FAQ */
+        .apple-faq-list { max-width: 760px; margin: 0 auto; display: flex; flex-direction: column; gap: 12px; }
+        .apple-faq-item { background: #FFFFFF; border-radius: 20px; padding: 20px 24px; border: 1px solid rgba(0, 0, 0, 0.04); cursor: pointer; }
+        .faq-q-text { display: flex; justify-content: space-between; font-size: 16px; font-weight: 700; color: #1D1D1F; }
+        .faq-a-text { margin-top: 12px; padding-top: 12px; border-top: 1px solid #F5F5F7; font-size: 14px; color: #86868B; line-height: 1.6; }
+
+        /* CTA */
+        .apple-cta-section { padding: 90px 24px; text-align: center; }
+        .cta-box { max-width: 760px; margin: 0 auto; background: #FFFFFF; border-radius: 36px; padding: 60px 32px; box-shadow: 0 20px 50px rgba(0, 0, 0, 0.06); }
+        .cta-box h2 { font-size: 32px; font-weight: 800; color: #1D1D1F; margin-bottom: 12px; }
+        .cta-box p { font-size: 17px; color: #86868B; margin-bottom: 32px; }
+        .cta-btn-flex { display: flex; justify-content: center; gap: 16px; }
+
+        /* Footer */
+        .apple-footer { padding: 32px 24px; text-align: center; font-size: 13px; color: #86868B; border-top: 1px solid rgba(0, 0, 0, 0.06); }
+
+        /* Modal */
+        .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.4); backdrop-filter: blur(8px); z-index: 2000; display: flex; align-items: center; justify-content: center; padding: 24px; }
+        .apple-modal-box { background: #FFFFFF; border-radius: 32px; max-width: 480px; width: 100%; padding: 36px; position: relative; box-shadow: 0 30px 60px rgba(0, 0, 0, 0.15); }
+        .modal-close { position: absolute; top: 20px; right: 20px; background: rgba(0,0,0,0.05); border: none; width: 28px; height: 28px; border-radius: 50%; cursor: pointer; color: #86868B; font-weight: 800; }
+        .modal-hdr { text-align: center; margin-bottom: 24px; }
+        .modal-hdr h3 { font-size: 20px; font-weight: 800; color: #1D1D1F; margin-bottom: 4px; }
+        .modal-hdr p { font-size: 13px; color: #86868B; }
+        .ios-modal-tabs { display: flex; background: #F5F5F7; padding: 4px; border-radius: 12px; margin-bottom: 20px; }
+        .tab-item { flex: 1; padding: 8px; border-radius: 8px; border: none; background: transparent; font-size: 12px; font-weight: 700; color: #86868B; cursor: pointer; }
+        .tab-item.active { background: #FFFFFF; color: #1D1D1F; box-shadow: 0 2px 6px rgba(0,0,0,0.08); }
+        .modal-form { display: flex; flex-direction: column; gap: 14px; }
+        .form-fld { display: flex; flex-direction: column; gap: 6px; }
+        .form-fld label { font-size: 12px; font-weight: 700; color: #515154; }
+        .form-fld input, .form-fld select { padding: 12px; border-radius: 12px; border: 1px solid #E5E5EA; background: #F5F5F7; font-size: 14px; outline: none; }
+        .btn-modal-apple { margin-top: 12px; padding: 14px; border-radius: 999px; background: #0071E3; color: #FFFFFF; font-size: 15px; font-weight: 700; border: none; cursor: pointer; box-shadow: 0 4px 14px rgba(0, 113, 227, 0.3); }
+        .btn-modal-apple.contact-btn { background: #0071E3; }
       `}</style>
     </div>
   );
