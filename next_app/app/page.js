@@ -519,7 +519,10 @@ export default function Home() {
         savedDailySet = [];
       }
 
-      if (savedDailySet && savedDailySet.length > 0) {
+      const targetCount = parseInt(currentUser?.dailyWordCount || currentUser?.daily_word_count || 10, 10);
+
+      // 로컬 세트의 개수가 현재 학생의 목표 수량(예: 20개)과 정확히 일치할 때만 캐시 사용, 다르면 DB 라이브 로드!
+      if (savedDailySet && savedDailySet.length === targetCount && savedDailySet.length > 0) {
         setDailyRandomWords(savedDailySet);
         setWordList(savedDailySet);
       } else {
