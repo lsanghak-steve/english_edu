@@ -144,7 +144,11 @@ export default function UserManager({ currentUser, setCurrentUser, onLogout }) {
     localStorage.setItem('english_edu_users', JSON.stringify(updatedUsers));
 
     const updatedCurrent = updatedUsers.find(u => u.id === editingUserId);
-    if (updatedCurrent) setCurrentUser(updatedCurrent);
+    if (updatedCurrent) {
+      setCurrentUser(updatedCurrent);
+      localStorage.setItem('english_edu_current_user', JSON.stringify(updatedCurrent));
+      window.dispatchEvent(new Event('user_profile_updated'));
+    }
 
     alert(`🎉 학생 정보 및 학습 레벨(${studyGradeLevelInput})이 클라우드 DB에 성공적으로 저장되었습니다!`);
     setShowAddEditModal(false);

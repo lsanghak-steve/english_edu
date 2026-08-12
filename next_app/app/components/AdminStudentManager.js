@@ -204,37 +204,49 @@ export default function AdminStudentManager() {
     setStudents(updatedList);
     localStorage.setItem('english_edu_users', JSON.stringify(updatedList));
 
-    // Supabase DB `users` 테이블에 학습 레벨(study_grade_level) 실시간 upsert 저장
+    // Supabase DB `users` 테이블에 학습 레벨(study_grade_level) 및 목표 수량 정밀 저장 (UUID/이름 일치 처리)
     try {
-      await supabase.from('users').upsert({
-        id: studentIdToUse,
-        name: cleanName,
-        pin: studentPin,
-        daily_word_count: wordCountInt,
-        study_grade_level: studyGradeLevel,
-        grade: grade
-      });
-      console.log('☁️ DB 학생 학습 레벨 저장 성공:', studyGradeLevel);
+      if (editingStudent?.id && editingStudent.id.includes('-')) {
+        await supabase.from('users').update({
+          name: cleanName,
+          pin: studentPin,
+          daily_word_count: wordCountInt,
+          study_grade_level: studyGradeLevel,
+          grade: grade
+        }).eq('id', editingStudent.id);
+      } else {
+        await supabase.from('users').update({
+          study_grade_level: studyGradeLevel,
+          daily_word_count: wordCountInt,
+          pin: studentPin,
+          grade: grade
+        }).ilike('name', `%${cleanName}%`);
+      }
+      console.log('☁️ DB 학생 학습 레벨 저장 완벽 성공:', studyGradeLevel);
     } catch (err) {
       console.log('Cloud student save error', err);
     }
 
-    // ⚡ 현재 학습자 활성 세션(english_edu_current_user)에 실시간 업데이트 동기화
+    // ⚡ 현재 학습자 활성 세션(english_edu_current_user)에 실시간 강제 업데이트 동기화
     try {
       const currentActiveStr = localStorage.getItem('english_edu_current_user');
       if (currentActiveStr) {
         const currentActive = JSON.parse(currentActiveStr);
-        if (currentActive && (currentActive.id === studentIdToUse || currentActive.name === cleanName)) {
-          const updatedActive = {
-            ...currentActive,
-            studyGradeLevel: studyGradeLevel,
-            study_grade_level: studyGradeLevel,
-            dailyWordCount: String(wordCountInt),
-            daily_word_count: wordCountInt
-          };
-          localStorage.setItem('english_edu_current_user', JSON.stringify(updatedActive));
-          window.dispatchEvent(new Event('storage'));
-          window.dispatchEvent(new Event('user_profile_updated'));
+        if (currentActive) {
+          const activeNameClean = removeEmoji(currentActive.name || '');
+          if (activeNameClean === cleanName || currentActive.id === studentIdToUse) {
+            const updatedActive = {
+              ...currentActive,
+              studyGradeLevel: studyGradeLevel,
+              study_grade_level: studyGradeLevel,
+              dailyWordCount: String(wordCountInt),
+              daily_word_count: wordCountInt
+            };
+            localStorage.setItem('english_edu_current_user', JSON.stringify(updatedActive));
+            window.dispatchEvent(new Event('storage'));
+            window.dispatchEvent(new Event('user_profile_updated'));
+            console.log('⚡ 활성 학생 세션 실시간 레벨 갱신 완수:', updatedActive);
+          }
         }
       }
     } catch (e) {}
