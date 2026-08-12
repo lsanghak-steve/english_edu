@@ -1071,126 +1071,243 @@ export default function Home() {
         </div>
       )}
 
-      {/* 🚀 [1번 미개발 기능 구현] 학습 단계별 진도 저장 & 이어서 학습 비주얼 스테퍼 바 */}
-      {mainTab !== 'parent' && (
-        <div style={{
-          width: '100%',
-          background: 'linear-gradient(135deg, #F8F9FA 0%, #EBF5FB 100%)',
-          border: '2px solid #D4E6F1',
-          borderRadius: '16px',
-          padding: '12px 14px',
-          marginTop: '10px',
-          marginBottom: '10px',
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '8px',
-          boxShadow: '0 4px 12px rgba(0,0,0,0.03)'
-        }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '8px' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+      {/* 🚀 [1번 미개발 기능 보완] 학습 단계별 진도 저장 & 이어서 학습 비주얼 스테퍼 바 (Duolingo 3D Style) */}
+      {mainTab !== 'parent' && (() => {
+        // 📊 5단계 종합 진도율(%) 계산
+        let progressPct = Math.round(((currentIndex + 1) / Math.max(safeActiveWords.length, 1)) * 30);
+        if (hasRecorded) progressPct += 20;
+        if (completedQuizLevels.includes(1)) progressPct += 25;
+        if (completedQuizLevels.includes(2)) progressPct = 100;
+
+        return (
+          <div style={{
+            width: '100%',
+            background: '#FFFFFF',
+            border: '2px solid #E5E5E5',
+            borderBottom: '5px solid #CECECE',
+            borderRadius: '24px',
+            padding: '16px 18px',
+            marginTop: '8px',
+            marginBottom: '8px',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '12px',
+            boxShadow: '0 4px 12px rgba(0,0,0,0.03)'
+          }}>
+            {/* 상단 텍스트 및 이어서 학습 안내 / 다시 학습 버튼 */}
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '8px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <span style={{
+                  background: '#58CC02',
+                  border: '1px solid #46A302',
+                  borderBottom: '3px solid #46A302',
+                  color: 'white',
+                  fontSize: '12px',
+                  fontWeight: '900',
+                  padding: '4px 12px',
+                  borderRadius: '12px',
+                  whiteSpace: 'nowrap'
+                }}>
+                  ⚡ 5단계 진도 저장 중
+                </span>
+                <span style={{ fontSize: '14px', fontWeight: '800', color: '#3C3C3C' }}>
+                  {resumeNotice || `▶ 현재 학습 위치: 단어 #${currentIndex + 1} / ${safeActiveWords.length}`}
+                </span>
+              </div>
+
+              <button
+                onClick={handleRestartStudyProgress}
+                style={{
+                  background: '#FFFFFF',
+                  color: '#FF4B4B',
+                  border: '2px solid #FF4B4B',
+                  borderBottom: '4px solid #EA2B2B',
+                  padding: '6px 14px',
+                  borderRadius: '12px',
+                  fontSize: '12px',
+                  fontWeight: '900',
+                  cursor: 'pointer',
+                  whiteSpace: 'nowrap',
+                  transition: 'all 0.15s ease'
+                }}
+                title="현재 세트 단어를 1번 카드부터 다시 공부합니다"
+              >
+                🔄 처음부터 다시 학습
+              </button>
+            </div>
+
+            {/* 🟢 듀오링고 게이미피케이션 실시간 진도율 프로그레스 바 */}
+            <div style={{ width: '100%', background: '#E5E5E5', borderRadius: '12px', height: '18px', position: 'relative', overflow: 'hidden', border: '1px solid #D6D6D6' }}>
+              <div style={{
+                width: `${Math.min(Math.max(progressPct, 5), 100)}%`,
+                height: '100%',
+                background: progressPct >= 100 ? 'linear-gradient(180deg, #FFC800 0%, #FF9600 100%)' : 'linear-gradient(180deg, #89E219 0%, #58CC02 100%)',
+                borderRadius: '12px',
+                transition: 'width 0.4s ease-in-out',
+                boxShadow: 'inset 0 2px 0 rgba(255,255,255,0.4)'
+              }} />
               <span style={{
-                background: '#2980B9',
-                color: 'white',
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
                 fontSize: '11px',
                 fontWeight: '900',
-                padding: '3px 8px',
-                borderRadius: '8px',
-                letterSpacing: '0.5px'
+                color: progressPct > 50 ? '#FFFFFF' : '#4B4B4B',
+                textShadow: progressPct > 50 ? '0 1px 2px rgba(0,0,0,0.5)' : 'none'
               }}>
-                📍 이어서 학습 자동 저장
-              </span>
-              <span style={{ fontSize: '13px', fontWeight: 'bold', color: '#2C3E50' }}>
-                {resumeNotice || `▶ 현재 학습 위치: 단어 #${currentIndex + 1} / ${safeActiveWords.length}`}
+                🔥 오늘 목표의 {progressPct}% 완수!
               </span>
             </div>
 
-            <button
-              onClick={handleRestartStudyProgress}
-              style={{
-                background: '#FFFFFF',
-                color: '#E74C3C',
-                border: '1px solid #E74C3C',
-                padding: '4px 10px',
-                borderRadius: '10px',
-                fontSize: '11px',
-                fontWeight: 'bold',
-                cursor: 'pointer'
-              }}
-              title="현재 세트 단어를 1번 카드부터 다시 공부합니다"
-            >
-              🔄 처음부터 다시 학습
-            </button>
-          </div>
+            {/* 5단계 원클릭 3D 클릭가능 스테퍼 (Clickable Interactive Stepper) */}
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '6px', paddingTop: '4px', flexWrap: 'wrap' }}>
+              {/* 1단계: 플래시카드 */}
+              <button
+                type="button"
+                onClick={() => {
+                  setMainTab('flashcard');
+                  saveStudyProgress({ mainTab: 'flashcard' });
+                }}
+                style={{
+                  flex: 1,
+                  minWidth: '85px',
+                  textAlign: 'center',
+                  padding: '8px 6px',
+                  borderRadius: '12px',
+                  border: mainTab === 'flashcard' ? '2px solid #1899D6' : '2px solid #E5E5E5',
+                  borderBottom: mainTab === 'flashcard' ? '4px solid #1899D6' : '4px solid #CECECE',
+                  background: mainTab === 'flashcard' ? '#1CB0F6' : '#FFFFFF',
+                  color: mainTab === 'flashcard' ? 'white' : '#777777',
+                  fontSize: '11px',
+                  fontWeight: '900',
+                  cursor: 'pointer'
+                }}
+              >
+                1️⃣ 🎴 카드 ({currentIndex + 1}/{safeActiveWords.length})
+              </button>
 
-          {/* 5단계 비주얼 스테퍼 (Visual Stepper Progress) */}
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '4px', paddingTop: '4px', borderTop: '1px dashed #D4E6F1' }}>
-            <div style={{
-              flex: 1,
-              textAlign: 'center',
-              padding: '6px 4px',
-              borderRadius: '8px',
-              background: mainTab === 'flashcard' ? '#3498DB' : '#E8F8F5',
-              color: mainTab === 'flashcard' ? 'white' : '#27AE60',
-              fontSize: '11px',
-              fontWeight: 'bold'
-            }}>
-              1️⃣ 🎴 카드 ({currentIndex + 1}/{safeActiveWords.length})
-            </div>
-            <span style={{ color: '#BDC3C7', fontSize: '10px' }}>➔</span>
-            <div style={{
-              flex: 1,
-              textAlign: 'center',
-              padding: '6px 4px',
-              borderRadius: '8px',
-              background: hasRecorded ? '#E8F8F5' : '#FEF5E7',
-              color: hasRecorded ? '#27AE60' : '#E67E22',
-              fontSize: '11px',
-              fontWeight: 'bold'
-            }}>
-              2️⃣ 🎙️ 녹음 {hasRecorded ? '✅' : '⏳'}
-            </div>
-            <span style={{ color: '#BDC3C7', fontSize: '10px' }}>➔</span>
-            <div style={{
-              flex: 1,
-              textAlign: 'center',
-              padding: '6px 4px',
-              borderRadius: '8px',
-              background: completedQuizLevels.includes(1) ? '#E8F8F5' : (mainTab === 'quiz' && initialQuizLevel === 1 ? '#F5EEF8' : '#F8F9FA'),
-              color: completedQuizLevels.includes(1) ? '#27AE60' : (mainTab === 'quiz' && initialQuizLevel === 1 ? '#8E44AD' : '#95A5A6'),
-              fontSize: '11px',
-              fontWeight: 'bold'
-            }}>
-              3️⃣ 🔊 1단계 퀴즈 {completedQuizLevels.includes(1) ? '✅' : '⏳'}
-            </div>
-            <span style={{ color: '#BDC3C7', fontSize: '10px' }}>➔</span>
-            <div style={{
-              flex: 1,
-              textAlign: 'center',
-              padding: '6px 4px',
-              borderRadius: '8px',
-              background: completedQuizLevels.includes(2) ? '#E8F8F5' : (mainTab === 'quiz' && initialQuizLevel === 2 ? '#F5EEF8' : '#F8F9FA'),
-              color: completedQuizLevels.includes(2) ? '#27AE60' : (mainTab === 'quiz' && initialQuizLevel === 2 ? '#8E44AD' : '#95A5A6'),
-              fontSize: '11px',
-              fontWeight: 'bold'
-            }}>
-              4️⃣ 🧩 2단계 퀴즈 {completedQuizLevels.includes(2) ? '✅' : '⏳'}
-            </div>
-            <span style={{ color: '#BDC3C7', fontSize: '10px' }}>➔</span>
-            <div style={{
-              flex: 1,
-              textAlign: 'center',
-              padding: '6px 4px',
-              borderRadius: '8px',
-              background: completedQuizLevels.includes(2) ? '#27AE60' : '#F8F9FA',
-              color: completedQuizLevels.includes(2) ? 'white' : '#95A5A6',
-              fontSize: '11px',
-              fontWeight: 'bold'
-            }}>
-              5️⃣ 💮 출석도장 {completedQuizLevels.includes(2) ? '완료' : '대기'}
+              <span style={{ color: '#CECECE', fontSize: '10px', fontWeight: 'bold' }}>➔</span>
+
+              {/* 2단계: 녹음 미션 */}
+              <button
+                type="button"
+                onClick={() => {
+                  setMainTab('flashcard');
+                  saveStudyProgress({ mainTab: 'flashcard' });
+                  setTimeout(() => {
+                    const el = document.getElementById('record-mission-section');
+                    if (el) el.scrollIntoView({ behavior: 'smooth' });
+                  }, 100);
+                }}
+                style={{
+                  flex: 1,
+                  minWidth: '85px',
+                  textAlign: 'center',
+                  padding: '8px 6px',
+                  borderRadius: '12px',
+                  border: hasRecorded ? '2px solid #46A302' : '2px solid #E5E5E5',
+                  borderBottom: hasRecorded ? '4px solid #46A302' : '4px solid #CECECE',
+                  background: hasRecorded ? '#E5F8D0' : '#FFFFFF',
+                  color: hasRecorded ? '#46A302' : '#777777',
+                  fontSize: '11px',
+                  fontWeight: '900',
+                  cursor: 'pointer'
+                }}
+              >
+                2️⃣ 🎙️ 녹음 {hasRecorded ? '✅' : '⏳'}
+              </button>
+
+              <span style={{ color: '#CECECE', fontSize: '10px', fontWeight: 'bold' }}>➔</span>
+
+              {/* 3단계: 1단계 소리 퀴즈 */}
+              <button
+                type="button"
+                onClick={() => {
+                  setMainTab('quiz');
+                  setInitialQuizLevel(1);
+                  saveStudyProgress({ mainTab: 'quiz', initialQuizLevel: 1 });
+                }}
+                style={{
+                  flex: 1,
+                  minWidth: '85px',
+                  textAlign: 'center',
+                  padding: '8px 6px',
+                  borderRadius: '12px',
+                  border: completedQuizLevels.includes(1) ? '2px solid #46A302' : (mainTab === 'quiz' && initialQuizLevel === 1 ? '2px solid #B75DFF' : '2px solid #E5E5E5'),
+                  borderBottom: completedQuizLevels.includes(1) ? '4px solid #46A302' : (mainTab === 'quiz' && initialQuizLevel === 1 ? '4px solid #B75DFF' : '4px solid #CECECE'),
+                  background: completedQuizLevels.includes(1) ? '#E5F8D0' : (mainTab === 'quiz' && initialQuizLevel === 1 ? '#CE82FF' : '#FFFFFF'),
+                  color: completedQuizLevels.includes(1) ? '#46A302' : (mainTab === 'quiz' && initialQuizLevel === 1 ? 'white' : '#777777'),
+                  fontSize: '11px',
+                  fontWeight: '900',
+                  cursor: 'pointer'
+                }}
+              >
+                3️⃣ 🔊 소리퀴즈 {completedQuizLevels.includes(1) ? '✅' : '⏳'}
+              </button>
+
+              <span style={{ color: '#CECECE', fontSize: '10px', fontWeight: 'bold' }}>➔</span>
+
+              {/* 4단계: 2단계 스펠링 퀴즈 */}
+              <button
+                type="button"
+                onClick={() => {
+                  setMainTab('quiz');
+                  setInitialQuizLevel(2);
+                  saveStudyProgress({ mainTab: 'quiz', initialQuizLevel: 2 });
+                }}
+                style={{
+                  flex: 1,
+                  minWidth: '85px',
+                  textAlign: 'center',
+                  padding: '8px 6px',
+                  borderRadius: '12px',
+                  border: completedQuizLevels.includes(2) ? '2px solid #46A302' : (mainTab === 'quiz' && initialQuizLevel === 2 ? '2px solid #B75DFF' : '2px solid #E5E5E5'),
+                  borderBottom: completedQuizLevels.includes(2) ? '4px solid #46A302' : (mainTab === 'quiz' && initialQuizLevel === 2 ? '4px solid #B75DFF' : '4px solid #CECECE'),
+                  background: completedQuizLevels.includes(2) ? '#E5F8D0' : (mainTab === 'quiz' && initialQuizLevel === 2 ? '#CE82FF' : '#FFFFFF'),
+                  color: completedQuizLevels.includes(2) ? '#46A302' : (mainTab === 'quiz' && initialQuizLevel === 2 ? 'white' : '#777777'),
+                  fontSize: '11px',
+                  fontWeight: '900',
+                  cursor: 'pointer'
+                }}
+              >
+                4️⃣ 🧩 스펠링퀴즈 {completedQuizLevels.includes(2) ? '✅' : '⏳'}
+              </button>
+
+              <span style={{ color: '#CECECE', fontSize: '10px', fontWeight: 'bold' }}>➔</span>
+
+              {/* 5단계: 출석 도장 */}
+              <button
+                type="button"
+                onClick={() => {
+                  setMainTab('calendar');
+                  saveStudyProgress({ mainTab: 'calendar' });
+                }}
+                style={{
+                  flex: 1,
+                  minWidth: '85px',
+                  textAlign: 'center',
+                  padding: '8px 6px',
+                  borderRadius: '12px',
+                  border: completedQuizLevels.includes(2) ? '2px solid #46A302' : '2px solid #E5E5E5',
+                  borderBottom: completedQuizLevels.includes(2) ? '4px solid #46A302' : '4px solid #CECECE',
+                  background: completedQuizLevels.includes(2) ? '#58CC02' : '#FFFFFF',
+                  color: completedQuizLevels.includes(2) ? 'white' : '#777777',
+                  fontSize: '11px',
+                  fontWeight: '900',
+                  cursor: 'pointer'
+                }}
+              >
+                5️⃣ 💮 출석도장 {completedQuizLevels.includes(2) ? '완료' : '대기'}
+              </button>
             </div>
           </div>
-        </div>
-      )}
+        );
+      })()}
 
       {/* 메인 7대 탭 메뉴 */}
       <nav className="main-tab-nav" style={{ gap: '2px' }}>
