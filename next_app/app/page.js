@@ -843,7 +843,8 @@ export default function Home() {
             console.log('Cloud audio record save fallback', e);
           }
 
-          // 💾 3. 내 컴퓨터 다운로드 폴더에 음성 파일(.webm) 자동 다운로드 저장!
+          // 💾 3. 음성 파일 클라우드 연동 (자동 다운로드는 잠금 설정)
+          /* 
           try {
             const autoFileName = `${studentIdToUse}_${cleanWord}_${targetStudyDate || todayStr}.webm`;
             const autoLink = document.createElement('a');
@@ -852,10 +853,8 @@ export default function Home() {
             document.body.appendChild(autoLink);
             autoLink.click();
             document.body.removeChild(autoLink);
-            console.log(`💾 내 컴퓨터 오디오 파일 자동 저장 완료: ${autoFileName}`);
-          } catch (dlErr) {
-            console.log('Auto download file error', dlErr);
-          }
+          } catch (dlErr) {}
+          */
         }
       };
 
@@ -1702,14 +1701,9 @@ export default function Home() {
                 )}
 
                 {recordedAudioUrl && (
-                  <>
-                    <button onClick={playRecordedAudio} style={{ background: '#3498DB', color: 'white', border: 'none', padding: '10px 18px', borderRadius: '14px', fontWeight: 'bold', cursor: 'pointer' }}>
-                      ▶️ 내 발음 듣기
-                    </button>
-                    <button onClick={downloadRecordedAudio} style={{ background: '#27AE60', color: 'white', border: 'none', padding: '10px 18px', borderRadius: '14px', fontWeight: 'bold', cursor: 'pointer' }}>
-                      💾 내 컴퓨터에 저장 📁
-                    </button>
-                  </>
+                  <button onClick={playRecordedAudio} style={{ background: '#3498DB', color: 'white', border: 'none', padding: '10px 18px', borderRadius: '14px', fontWeight: 'bold', cursor: 'pointer' }}>
+                    ▶️ 내 발음 듣기
+                  </button>
                 )}
 
               </div>

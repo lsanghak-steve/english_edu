@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 
 export default function LandingPage() {
@@ -27,7 +27,7 @@ export default function LandingPage() {
   const [demoWordIndex, setDemoWordIndex] = useState(0);
   const [isDemoFlipped, setIsDemoFlipped] = useState(false);
   const [isDemoAudioPlaying, setIsDemoAudioPlaying] = useState(false);
-  const [isDemoRecording, setIsDemoRecording] = useState(false);
+  const [demoAudioSpeed, setDemoAudioSpeed] = useState(1.0); // 0.75x, 1.0x, 1.25x
   const [demoQuizSelected, setDemoQuizSelected] = useState(null);
   const [demoQuizIsCorrect, setDemoQuizIsCorrect] = useState(null);
 
@@ -64,26 +64,25 @@ export default function LandingPage() {
 
   const currentDemoWord = demoWords[demoWordIndex];
 
-  // Play TTS audio using Web Speech API
-  const playWordAudio = (text) => {
+  // Play TTS audio with custom speed rate (0.75, 1.0, 1.25)
+  const playWordAudio = (text, customRate = demoAudioSpeed) => {
     if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
       window.speechSynthesis.cancel();
       const utterance = new SpeechSynthesisUtterance(text);
       utterance.lang = 'en-US';
-      utterance.rate = 0.85;
+      utterance.rate = customRate;
       setIsDemoAudioPlaying(true);
       utterance.onend = () => setIsDemoAudioPlaying(false);
       utterance.onerror = () => setIsDemoAudioPlaying(false);
       window.speechSynthesis.speak(utterance);
     } else {
-      alert(`[🔊 음성 재생 예시] "${text}" 발음이 재생됩니다.`);
+      alert(`[🔊 음성 재생예시 (${customRate}x 배속)] "${text}"`);
     }
   };
 
   // Demo Quiz Handle Submit
   const handleDemoQuizChoice = (index) => {
     setDemoQuizSelected(index);
-    // Index 1 is correct answer ("모험, 신나고 놀라운 경험")
     if (index === 1) {
       setDemoQuizIsCorrect(true);
     } else {
@@ -114,7 +113,6 @@ export default function LandingPage() {
       alert(`🎉 ${academyName} 센터 관리자 계정이 등록되었습니다!\n선생님 관리자 센터로 이동합니다.`);
     }
     setShowAuthModal(false);
-    // Redirect to main learning app
     window.location.href = '/';
   };
 
@@ -161,7 +159,7 @@ export default function LandingPage() {
               <span className="highlight-text">차세대 영단어 에듀테크</span> steve voca
             </h1>
             <p className="hero-subtitle">
-              학생은 🎙️ <strong>실시간 음성 파동 녹음</strong>과 <strong>4단계 퀴즈</strong>로 즐겁게 외우고,<br />
+              학생은 🎙️ <strong>실시간 음성 파동 녹음</strong>과 🎚️ <strong>0.75x~1.25x 맞춤 음성 속도 조절</strong>로 즐겁게 외우고,<br />
               학부모는 💮 <strong>출석 달력 도장</strong>으로 안심하며, 선생님은 🖨️ <strong>1초 만에 PDF 시험지</strong>를 인쇄합니다.
             </p>
             <div className="hero-btn-group">
@@ -180,8 +178,8 @@ export default function LandingPage() {
               </div>
               <div className="stat-divider"></div>
               <div className="stat-item">
-                <span className="stat-num">4단계</span>
-                <span className="stat-label">스마트 멀티 퀴즈</span>
+                <span className="stat-num">0.75x~1.25x</span>
+                <span className="stat-label">음성 재생 속도 조절</span>
               </div>
               <div className="stat-divider"></div>
               <div className="stat-item">
@@ -201,6 +199,14 @@ export default function LandingPage() {
               <div className="card-word">Adventure</div>
               <div className="card-phonics">[əd'ventʃər]</div>
               <div className="card-meaning">모험, 신나고 놀라운 경험</div>
+
+              {/* Speed control indicator badge */}
+              <div className="speed-badge-bar">
+                <span>🎚️ 음성 재생 속도:</span>
+                <span className="speed-chip active">🐢 0.75x</span>
+                <span className="speed-chip">⚡ 1.0x</span>
+                <span className="speed-chip">🚀 1.25x</span>
+              </div>
 
               <div className="audio-visualizer-box">
                 <div className="waveform-header">
@@ -254,8 +260,8 @@ export default function LandingPage() {
             <div className="feature-card">
               <div className="card-step-num">Step 1</div>
               <div className="card-icon">🎴</div>
-              <h3>플래시카드 & 원어민 TTS</h3>
-              <p>5,000개 단어의 원어민 발음(🔊)과 알파벳, 파닉스, 추천 예문을 감상하며 카드 뒤집기로 직관적 암기.</p>
+              <h3>플래시카드 & 🎚️ 음성 속도 조절</h3>
+              <p>5,000개 단어의 원어민 발음(🔊)과 추천 예문. <strong>0.75x 슬로우 모드 / 1.0x 정속 / 1.25x 스피드</strong>로 맞춤 청취.</p>
             </div>
 
             <div className="feature-card">
@@ -421,18 +427,41 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* 🎮 6. Interactive Live Demo Widget */}
+      {/* 🎮 6. Interactive Live Demo Widget with Audio Speed Control */}
       <section id="demo" className="section demo-section">
         <div className="section-container">
           <div className="section-header">
             <span className="section-tag">TRY BEFORE REGISTER</span>
             <h2 className="section-title">가입 없이 체험하는 1분 인터랙티브 맛보기 데모</h2>
             <p className="section-desc">
-              아래 퀴즈와 발음 듣기를 지금 직접 클릭해서 경험해 보세요!
+              음성 재생 속도를 선택하여 단어 소리를 직접 들어보세요!
             </p>
           </div>
 
           <div className="demo-widget-container">
+            {/* Speed Selector Widget */}
+            <div className="speed-selector-widget">
+              <span className="speed-label">🎚️ 음성 재생 속도 선택:</span>
+              <button
+                className={`speed-btn ${demoAudioSpeed === 0.75 ? 'active' : ''}`}
+                onClick={() => setDemoAudioSpeed(0.75)}
+              >
+                🐢 0.75x (느리게 / 슬로우)
+              </button>
+              <button
+                className={`speed-btn ${demoAudioSpeed === 1.0 ? 'active' : ''}`}
+                onClick={() => setDemoAudioSpeed(1.0)}
+              >
+                ⚡ 1.0x (보통 정속)
+              </button>
+              <button
+                className={`speed-btn ${demoAudioSpeed === 1.25 ? 'active' : ''}`}
+                onClick={() => setDemoAudioSpeed(1.25)}
+              >
+                🚀 1.25x (빠르게 / 스피드)
+              </button>
+            </div>
+
             <div className="demo-tabs">
               {demoWords.map((w, idx) => (
                 <button
@@ -465,7 +494,7 @@ export default function LandingPage() {
                         playWordAudio(currentDemoWord.word);
                       }}
                     >
-                      {isDemoAudioPlaying ? '🔊 재생 중...' : '🔊 발음 듣기'}
+                      {isDemoAudioPlaying ? `🔊 재생 중 (${demoAudioSpeed}x)...` : `🔊 발음 듣기 (${demoAudioSpeed}x)`}
                     </button>
                   </div>
                   <div className="flashcard-back">
@@ -479,7 +508,7 @@ export default function LandingPage() {
                         playWordAudio(currentDemoWord.exampleEn);
                       }}
                     >
-                      🔊 예문 음성 듣기
+                      🔊 예문 음성 듣기 ({demoAudioSpeed}x)
                     </button>
                   </div>
                 </div>
@@ -490,7 +519,7 @@ export default function LandingPage() {
                 <div className="quiz-box-header">
                   <h4>❓ [맛보기 퀴즈] 단어의 올바른 뜻을 골라보세요!</h4>
                   <button className="btn-sound-quiz" onClick={() => playWordAudio(currentDemoWord.word)}>
-                    🔊 단어 소리 다시 듣기
+                    🔊 단어 소리 듣기 ({demoAudioSpeed}x 배속)
                   </button>
                 </div>
 
@@ -549,23 +578,21 @@ export default function LandingPage() {
           </div>
 
           <div className="grid-3">
-            {/* Free Plan */}
             <div className="pricing-card">
               <div className="plan-name">무료 체험 플랜</div>
               <div className="plan-price">0원 <span>/ 7일간</span></div>
               <p className="plan-desc">모든 신규 가입자 대상 무료 체험</p>
               <ul className="plan-features">
                 <li>✓ 초/중/고 체험 단어 100개</li>
+                <li>✓ 🎚️ 0.75x~1.25x 음성 속도 조절</li>
                 <li>✓ 4단계 스마트 퀴즈 맛보기</li>
                 <li>✓ 기본 출석 달력 체험</li>
-                <li>✓ 1:1 학습 상담 연결</li>
               </ul>
               <button className="btn-plan-outline" onClick={() => setShowAuthModal(true)}>
                 7일 무료체험 시작
               </button>
             </div>
 
-            {/* Basic Plan */}
             <div className="pricing-card popular">
               <div className="pop-badge">인기 선택</div>
               <div className="plan-name">개인 / 학부모 플랜</div>
@@ -573,17 +600,16 @@ export default function LandingPage() {
               <p className="plan-desc">개인 학생 및 자녀 학습 관리용</p>
               <ul className="plan-features">
                 <li>✓ 초·중·고 5,000개 전 단어 오픈</li>
+                <li>✓ 🎚️ **0.75x/1.0x/1.25x 맞춤 속도 조절**</li>
                 <li>✓ 🎙️ 음성 파동 녹음 & 4단계 퀴즈</li>
                 <li>✓ 💮 학부모 안심 출석 달력</li>
                 <li>✓ ❌ 무제한 실시간 오답노트</li>
-                <li>✓ 다자녀 통합 조회 탭</li>
               </ul>
               <button className="btn-plan-primary" onClick={() => setShowAuthModal(true)}>
                 개인 수강신청 하기
               </button>
             </div>
 
-            {/* Pro Plan */}
             <div className="pricing-card">
               <div className="plan-name">학원 / 공부방 플랜</div>
               <div className="plan-price">39,000원 <span>/ 월</span></div>
@@ -593,7 +619,6 @@ export default function LandingPage() {
                 <li>✓ 🖨️ 원클릭 6종 PDF 인쇄 무제한</li>
                 <li>✓ 수강생 진도 통합 디렉토리</li>
                 <li>✓ 📥 학원 자체 단어장 엑셀 업로드</li>
-                <li>✓ 전담 원장님 고객지원센터</li>
               </ul>
               <button className="btn-plan-outline" onClick={() => setShowAuthModal(true)}>
                 학원/공부방 신청
@@ -614,6 +639,10 @@ export default function LandingPage() {
           <div className="faq-list">
             {[
               {
+                q: 'Q. 단어 발음이 빠른 아이들은 천천히 들을 수 있나요?',
+                a: '네! 단어 카드 및 예문 재생 시 🎚️ 0.75x 배속(슬로우 모드) 옵션을 지원하여 어린 학생이나 파닉스 입문자도 또박또박 느린 발음으로 반복 청취할 수 있습니다.'
+              },
+              {
                 q: 'Q. 초등학생 아이 혼자서도 공부할 수 있나요?',
                 a: '네! 플래시카드 음성 들려주기와 4단계 스마트 퀴즈가 직관적인 UI로 구성되어 있어, 초등학생도 스스로 버튼을 누르며 재미있게 공부할 수 있습니다.'
               },
@@ -624,10 +653,6 @@ export default function LandingPage() {
               {
                 q: 'Q. 학원에서 PDF 시험지를 프린트할 때 추가 비용이 드나요?',
                 a: '아닙니다! 학원/공부방 플랜 이용 시 4지선다 시험지, 단어 리스트, 워크시트, 단어 카드, 빙고판, 4선지 노트 등 6종 양식을 무제한으로 PDF 다운로드 및 인쇄하실 수 있습니다.'
-              },
-              {
-                q: 'Q. 5,000개 단어 외에 학원 교재 단어를 추가할 수 있나요?',
-                a: '네, 센터 관리자 페이지에서 엑셀(CSV) 파일 업로드 기능으로 학원 자체 커리큘럼 단어장을 손쉽게 대량 등록하실 수 있습니다.'
               }
             ].map((faq, idx) => (
               <div
@@ -655,7 +680,7 @@ export default function LandingPage() {
             🚀 7일 무료 수강신청하기
           </button>
         </div>
-      </section>
+      </footer>
 
       {/* 🔐 10. Registration / Onboarding Modal */}
       {showAuthModal && (
@@ -1065,7 +1090,31 @@ export default function LandingPage() {
           font-size: 18px;
           font-weight: 700;
           color: #1E293B;
-          margin-bottom: 24px;
+          margin-bottom: 16px;
+        }
+
+        .speed-badge-bar {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          font-size: 12px;
+          font-weight: 700;
+          color: #475569;
+          margin-bottom: 16px;
+          background: #F1F5F9;
+          padding: 8px 12px;
+          border-radius: 10px;
+        }
+        .speed-chip {
+          padding: 2px 8px;
+          border-radius: 6px;
+          background: #FFFFFF;
+          color: #64748B;
+          font-size: 11px;
+        }
+        .speed-chip.active {
+          background: #4F46E5;
+          color: #FFFFFF;
         }
 
         .audio-visualizer-box {
@@ -1420,6 +1469,38 @@ export default function LandingPage() {
           box-shadow: 0 20px 40px -15px rgba(79, 70, 229, 0.15);
           border: 1px solid #C7D2FE;
         }
+        .speed-selector-widget {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 12px;
+          margin-bottom: 28px;
+          background: #F8FAFC;
+          padding: 12px 20px;
+          border-radius: 14px;
+          border: 1px solid #E2E8F0;
+        }
+        .speed-label {
+          font-size: 14px;
+          font-weight: 800;
+          color: #334155;
+        }
+        .speed-btn {
+          padding: 8px 16px;
+          border-radius: 10px;
+          border: 1px solid #CBD5E1;
+          background: #FFFFFF;
+          font-size: 13px;
+          font-weight: 700;
+          color: #475569;
+          cursor: pointer;
+        }
+        .speed-btn.active {
+          background: #4F46E5;
+          color: #FFFFFF;
+          border-color: #4F46E5;
+        }
+
         .demo-tabs {
           display: flex;
           gap: 12px;
@@ -1457,8 +1538,6 @@ export default function LandingPage() {
           align-items: center;
           text-align: center;
           cursor: pointer;
-          position: relative;
-          transition: transform 0.4s;
         }
         .hint-flip {
           font-size: 12px;
@@ -1528,7 +1607,6 @@ export default function LandingPage() {
           font-weight: 700;
           color: #334155;
           cursor: pointer;
-          transition: border-color 0.2s, background 0.2s;
         }
         .quiz-opt:hover {
           border-color: #4F46E5;
@@ -1652,7 +1730,6 @@ export default function LandingPage() {
           border-radius: 14px;
           padding: 20px 24px;
           cursor: pointer;
-          transition: background 0.2s;
         }
         .faq-item.open {
           background: #F8FAFC;
@@ -1704,10 +1781,6 @@ export default function LandingPage() {
           font-weight: 900;
           border: none;
           cursor: pointer;
-          box-shadow: 0 10px 25px -5px rgba(16, 185, 129, 0.5);
-        }
-        .btn-cta-large:hover {
-          background: #059669;
         }
 
         /* Footer */
@@ -1741,7 +1814,6 @@ export default function LandingPage() {
           width: 100%;
           padding: 36px;
           position: relative;
-          box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
         }
         .modal-close {
           position: absolute;
@@ -1789,7 +1861,6 @@ export default function LandingPage() {
         .role-btn.active {
           background: #FFFFFF;
           color: #4F46E5;
-          box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
         }
         .modal-form {
           display: flex;
@@ -1813,9 +1884,6 @@ export default function LandingPage() {
           font-size: 14px;
           outline: none;
         }
-        .form-group input:focus, .form-group select:focus {
-          border-color: #4F46E5;
-        }
         .btn-modal-submit {
           margin-top: 12px;
           padding: 14px;
@@ -1826,9 +1894,6 @@ export default function LandingPage() {
           font-weight: 800;
           border: none;
           cursor: pointer;
-        }
-        .btn-modal-submit:hover {
-          background: #4338CA;
         }
       `}</style>
     </div>
