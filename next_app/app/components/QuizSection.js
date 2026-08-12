@@ -291,16 +291,15 @@ export default function QuizSection({ currentUser, activeWords, onQuizLevelCompl
 
     if (currentIndex + 1 >= safeWords.length) {
       if (quizLevel === 1) {
-        alert('🎉 1단계 소리 퀴즈 완료! 필수 학습 완수를 위해 2단계 스펠링 선택 퀴즈로 바로 이동합니다!');
+        alert('🎉 1단계 소리 퀴즈 완료! 필수 완수를 위해 2단계 스펠링 선택 퀴즈로 바로 이동합니다!');
         handleRestart(2);
       } else if (quizLevel === 2) {
         if (onQuizLevelComplete) onQuizLevelComplete(2);
-        alert('🎉 2단계 스펠링 선택 퀴즈 완료 (출석도장💮)! 3단계 마이크 발음 녹음 퀴즈(75점 이상 합격)로 바로 도전합니다!');
-        handleRestart(3);
+        setIsQuizEnded(true);
+        alert('🎉 [오늘 필수 학습 완수!] 2단계 스펠링 선택 퀴즈 완료로 출석 도장(💮)을 받았습니다! 🌟\n\n추가 도전을 원하시면 [3단계 마이크 녹음]이나 [4단계 직접쓰기]를 선택하여 자유롭게 공부하세요!');
       } else if (quizLevel === 3) {
         if (onQuizLevelComplete) onQuizLevelComplete(3);
-        alert('🎉 3단계 마이크 발음 녹음 퀴즈 완수! 4단계 스펠링 직접 쓰기 최고 난이도 퀴즈로 이동합니다!');
-        handleRestart(4);
+        setIsQuizEnded(true);
       } else {
         setIsQuizEnded(true);
         if (onQuizLevelComplete) onQuizLevelComplete(4);
@@ -334,7 +333,7 @@ export default function QuizSection({ currentUser, activeWords, onQuizLevelCompl
 
   return (
     <div className="quiz-section-card" style={{ padding: '24px', background: '#FFFFFF', borderRadius: '24px', border: '2px solid #E5E5E5', borderBottom: '5px solid #CECECE', boxShadow: '0 8px 20px rgba(0,0,0,0.04)' }}>
-      {/* 4대 퀴즈 레벨 탭 (Duolingo Style 3D Tabs) */}
+      {/* 4대 퀴즈 레벨 탭 (Level 1~2: 필수, Level 3~4: 선택 심화) */}
       <div style={{ display: 'flex', gap: '6px', marginBottom: '20px', flexWrap: 'wrap' }}>
         <button
           onClick={() => handleRestart(1)}
@@ -352,7 +351,7 @@ export default function QuizSection({ currentUser, activeWords, onQuizLevelCompl
             cursor: 'pointer'
           }}
         >
-          🔊 1단계 소리
+          🔊 1단계 소리 (필수)
         </button>
         <button
           onClick={() => handleRestart(2)}
@@ -370,7 +369,7 @@ export default function QuizSection({ currentUser, activeWords, onQuizLevelCompl
             cursor: 'pointer'
           }}
         >
-          🧩 2단계 선택 (필수)
+          🧩 2단계 선택 (필수💮)
         </button>
         <button
           onClick={() => handleRestart(3)}
@@ -388,7 +387,7 @@ export default function QuizSection({ currentUser, activeWords, onQuizLevelCompl
             cursor: 'pointer'
           }}
         >
-          🎙️ 3단계 녹음 (75점+)
+          🎙️ 3단계 녹음 (선택⭐)
         </button>
         <button
           onClick={() => handleRestart(4)}
@@ -406,7 +405,7 @@ export default function QuizSection({ currentUser, activeWords, onQuizLevelCompl
             cursor: 'pointer'
           }}
         >
-          ✍️ 4단계 직접쓰기
+          ✍️ 4단계 직접쓰기 (선택⭐)
         </button>
       </div>
 
@@ -657,25 +656,50 @@ export default function QuizSection({ currentUser, activeWords, onQuizLevelCompl
         /* 퀴즈 결과 화면 */
         <div style={{ textAlign: 'center', padding: '30px 10px' }}>
           <h2 style={{ color: '#3C3C3C', margin: '0 0 10px 0', fontSize: '24px', fontWeight: '900' }}>
-            🎉 퀴즈 모든 단계 완수 축하합니다! 🏆
+            {quizLevel === 2 ? '🎉 필수 학습 완수! 출석 도장(💮) 획득! 🏆' : `🎉 ${quizLevel}단계 퀴즈 완수 축하합니다! 🏆`}
           </h2>
-          <p style={{ fontSize: '20px', fontWeight: '900', color: '#58CC02', margin: '0 0 20px 0' }}>
+          <p style={{ fontSize: '20px', fontWeight: '900', color: '#58CC02', margin: '0 0 14px 0' }}>
             최종 점수: {score} / {safeWords.length}점
           </p>
+
+          {quizLevel === 2 && (
+            <p style={{ fontSize: '13px', color: '#D35400', background: '#FEF5E7', padding: '8px 14px', borderRadius: '12px', display: 'inline-block', border: '1px solid #FADBD8', marginBottom: '20px', fontWeight: 'bold' }}>
+              🌟 2단계 퀴즈까지 완료하여 오늘 필수 학습 도장이 찍혔습니다!<br />
+              더 공부하고 싶다면 아래 선택 심화 퀴즈(3단계 녹음 / 4단계 직접쓰기)에 도전해보세요!
+            </p>
+          )}
 
           <div style={{ display: 'flex', justifyContent: 'center', gap: '10px', flexWrap: 'wrap' }}>
             {onLoadNextWordSet && (
               <button
                 onClick={onLoadNextWordSet}
-                style={{ background: '#FF9600', color: 'white', border: 'none', borderBottom: '4px solid #D35400', padding: '14px 28px', borderRadius: '16px', fontWeight: '900', fontSize: '16px', cursor: 'pointer' }}
+                style={{ background: '#58CC02', color: 'white', border: 'none', borderBottom: '4px solid #46A302', padding: '14px 24px', borderRadius: '16px', fontWeight: '900', fontSize: '15px', cursor: 'pointer' }}
               >
                 🚀 다음 10단어 학습 ➔
               </button>
             )}
 
+            {quizLevel <= 2 && (
+              <button
+                onClick={() => handleRestart(3)}
+                style={{ background: '#FF9600', color: 'white', border: 'none', borderBottom: '4px solid #D35400', padding: '14px 24px', borderRadius: '16px', fontWeight: '900', fontSize: '15px', cursor: 'pointer' }}
+              >
+                🎙️ 3단계 마이크 녹음 도전 (선택⭐) ➔
+              </button>
+            )}
+
+            {quizLevel <= 3 && (
+              <button
+                onClick={() => handleRestart(4)}
+                style={{ background: '#CE82FF', color: 'white', border: 'none', borderBottom: '4px solid #8E44AD', padding: '14px 24px', borderRadius: '16px', fontWeight: '900', fontSize: '15px', cursor: 'pointer' }}
+              >
+                ✍️ 4단계 주관식 쓰기 도전 (선택⭐) ➔
+              </button>
+            )}
+
             <button
               onClick={() => handleRestart(quizLevel)}
-              style={{ background: '#1CB0F6', color: 'white', border: 'none', borderBottom: '4px solid #1899D6', padding: '14px 28px', borderRadius: '16px', fontWeight: '900', fontSize: '16px', cursor: 'pointer' }}
+              style={{ background: '#1CB0F6', color: 'white', border: 'none', borderBottom: '4px solid #1899D6', padding: '14px 24px', borderRadius: '16px', fontWeight: '900', fontSize: '15px', cursor: 'pointer' }}
             >
               🔄 다시 풀기
             </button>
