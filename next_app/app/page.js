@@ -1164,8 +1164,8 @@ export default function Home() {
               </span>
             </div>
 
-            {/* 5단계 원클릭 3D 클릭가능 스테퍼 (Clickable Interactive Stepper) */}
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '6px', paddingTop: '4px', flexWrap: 'wrap' }}>
+            {/* 6단계 원클릭 3D 클릭가능 스테퍼 (Clickable Interactive Stepper - 퀴즈 4단계 확장 연동) */}
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '4px', paddingTop: '4px', flexWrap: 'wrap' }}>
               {/* 1단계: 플래시카드 */}
               <button
                 type="button"
@@ -1175,15 +1175,15 @@ export default function Home() {
                 }}
                 style={{
                   flex: 1,
-                  minWidth: '85px',
+                  minWidth: '70px',
                   textAlign: 'center',
-                  padding: '8px 6px',
+                  padding: '6px 4px',
                   borderRadius: '12px',
                   border: mainTab === 'flashcard' ? '2px solid #1899D6' : '2px solid #E5E5E5',
                   borderBottom: mainTab === 'flashcard' ? '4px solid #1899D6' : '4px solid #CECECE',
                   background: mainTab === 'flashcard' ? '#1CB0F6' : '#FFFFFF',
                   color: mainTab === 'flashcard' ? 'white' : '#777777',
-                  fontSize: '11px',
+                  fontSize: '10px',
                   fontWeight: '900',
                   cursor: 'pointer'
                 }}
@@ -1191,7 +1191,7 @@ export default function Home() {
                 1️⃣ 🎴 카드 ({currentIndex + 1}/{safeActiveWords.length})
               </button>
 
-              <span style={{ color: '#CECECE', fontSize: '10px', fontWeight: 'bold' }}>➔</span>
+              <span style={{ color: '#CECECE', fontSize: '9px', fontWeight: 'bold' }}>➔</span>
 
               {/* 2단계: 녹음 미션 */}
               <button
@@ -1206,15 +1206,15 @@ export default function Home() {
                 }}
                 style={{
                   flex: 1,
-                  minWidth: '85px',
+                  minWidth: '70px',
                   textAlign: 'center',
-                  padding: '8px 6px',
+                  padding: '6px 4px',
                   borderRadius: '12px',
                   border: hasRecorded ? '2px solid #46A302' : '2px solid #E5E5E5',
                   borderBottom: hasRecorded ? '4px solid #46A302' : '4px solid #CECECE',
                   background: hasRecorded ? '#E5F8D0' : '#FFFFFF',
                   color: hasRecorded ? '#46A302' : '#777777',
-                  fontSize: '11px',
+                  fontSize: '10px',
                   fontWeight: '900',
                   cursor: 'pointer'
                 }}
@@ -1222,9 +1222,9 @@ export default function Home() {
                 2️⃣ 🎙️ 녹음 {hasRecorded ? '✅' : '⏳'}
               </button>
 
-              <span style={{ color: '#CECECE', fontSize: '10px', fontWeight: 'bold' }}>➔</span>
+              <span style={{ color: '#CECECE', fontSize: '9px', fontWeight: 'bold' }}>➔</span>
 
-              {/* 3단계: 1단계 소리 퀴즈 */}
+              {/* 3단계: 퀴즈 1단계 소리 */}
               <button
                 type="button"
                 onClick={() => {
@@ -1234,15 +1234,15 @@ export default function Home() {
                 }}
                 style={{
                   flex: 1,
-                  minWidth: '85px',
+                  minWidth: '70px',
                   textAlign: 'center',
-                  padding: '8px 6px',
+                  padding: '6px 4px',
                   borderRadius: '12px',
-                  border: completedQuizLevels.includes(1) ? '2px solid #46A302' : (mainTab === 'quiz' && initialQuizLevel === 1 ? '2px solid #B75DFF' : '2px solid #E5E5E5'),
-                  borderBottom: completedQuizLevels.includes(1) ? '4px solid #46A302' : (mainTab === 'quiz' && initialQuizLevel === 1 ? '4px solid #B75DFF' : '4px solid #CECECE'),
-                  background: completedQuizLevels.includes(1) ? '#E5F8D0' : (mainTab === 'quiz' && initialQuizLevel === 1 ? '#CE82FF' : '#FFFFFF'),
+                  border: completedQuizLevels.includes(1) ? '2px solid #46A302' : (mainTab === 'quiz' && initialQuizLevel === 1 ? '2px solid #1899D6' : '2px solid #E5E5E5'),
+                  borderBottom: completedQuizLevels.includes(1) ? '4px solid #46A302' : (mainTab === 'quiz' && initialQuizLevel === 1 ? '4px solid #1899D6' : '4px solid #CECECE'),
+                  background: completedQuizLevels.includes(1) ? '#E5F8D0' : (mainTab === 'quiz' && initialQuizLevel === 1 ? '#1CB0F6' : '#FFFFFF'),
                   color: completedQuizLevels.includes(1) ? '#46A302' : (mainTab === 'quiz' && initialQuizLevel === 1 ? 'white' : '#777777'),
-                  fontSize: '11px',
+                  fontSize: '10px',
                   fontWeight: '900',
                   cursor: 'pointer'
                 }}
@@ -1250,9 +1250,9 @@ export default function Home() {
                 3️⃣ 🔊 소리퀴즈 {completedQuizLevels.includes(1) ? '✅' : '⏳'}
               </button>
 
-              <span style={{ color: '#CECECE', fontSize: '10px', fontWeight: 'bold' }}>➔</span>
+              <span style={{ color: '#CECECE', fontSize: '9px', fontWeight: 'bold' }}>➔</span>
 
-              {/* 4단계: 2단계 스펠링 퀴즈 */}
+              {/* 4단계: 퀴즈 2단계 스펠링 선택 */}
               <button
                 type="button"
                 onClick={() => {
@@ -1262,25 +1262,81 @@ export default function Home() {
                 }}
                 style={{
                   flex: 1,
-                  minWidth: '85px',
+                  minWidth: '70px',
                   textAlign: 'center',
-                  padding: '8px 6px',
+                  padding: '6px 4px',
                   borderRadius: '12px',
-                  border: completedQuizLevels.includes(2) ? '2px solid #46A302' : (mainTab === 'quiz' && initialQuizLevel === 2 ? '2px solid #B75DFF' : '2px solid #E5E5E5'),
-                  borderBottom: completedQuizLevels.includes(2) ? '4px solid #46A302' : (mainTab === 'quiz' && initialQuizLevel === 2 ? '4px solid #B75DFF' : '4px solid #CECECE'),
-                  background: completedQuizLevels.includes(2) ? '#E5F8D0' : (mainTab === 'quiz' && initialQuizLevel === 2 ? '#CE82FF' : '#FFFFFF'),
+                  border: completedQuizLevels.includes(2) ? '2px solid #46A302' : (mainTab === 'quiz' && initialQuizLevel === 2 ? '2px solid #46A302' : '2px solid #E5E5E5'),
+                  borderBottom: completedQuizLevels.includes(2) ? '4px solid #46A302' : (mainTab === 'quiz' && initialQuizLevel === 2 ? '4px solid #46A302' : '4px solid #CECECE'),
+                  background: completedQuizLevels.includes(2) ? '#E5F8D0' : (mainTab === 'quiz' && initialQuizLevel === 2 ? '#58CC02' : '#FFFFFF'),
                   color: completedQuizLevels.includes(2) ? '#46A302' : (mainTab === 'quiz' && initialQuizLevel === 2 ? 'white' : '#777777'),
-                  fontSize: '11px',
+                  fontSize: '10px',
                   fontWeight: '900',
                   cursor: 'pointer'
                 }}
               >
-                4️⃣ 🧩 스펠링퀴즈 {completedQuizLevels.includes(2) ? '✅' : '⏳'}
+                4️⃣ 🧩 선택퀴즈 {completedQuizLevels.includes(2) ? '✅' : '⏳'}
               </button>
 
-              <span style={{ color: '#CECECE', fontSize: '10px', fontWeight: 'bold' }}>➔</span>
+              <span style={{ color: '#CECECE', fontSize: '9px', fontWeight: 'bold' }}>➔</span>
 
-              {/* 5단계: 출석 도장 */}
+              {/* 5단계: 퀴즈 3단계 발음 녹음 (75점+) */}
+              <button
+                type="button"
+                onClick={() => {
+                  setMainTab('quiz');
+                  setInitialQuizLevel(3);
+                  saveStudyProgress({ mainTab: 'quiz', initialQuizLevel: 3 });
+                }}
+                style={{
+                  flex: 1,
+                  minWidth: '70px',
+                  textAlign: 'center',
+                  padding: '6px 4px',
+                  borderRadius: '12px',
+                  border: completedQuizLevels.includes(3) ? '2px solid #46A302' : (mainTab === 'quiz' && initialQuizLevel === 3 ? '2px solid #D35400' : '2px solid #E5E5E5'),
+                  borderBottom: completedQuizLevels.includes(3) ? '4px solid #46A302' : (mainTab === 'quiz' && initialQuizLevel === 3 ? '4px solid #D35400' : '4px solid #CECECE'),
+                  background: completedQuizLevels.includes(3) ? '#E5F8D0' : (mainTab === 'quiz' && initialQuizLevel === 3 ? '#FF9600' : '#FFFFFF'),
+                  color: completedQuizLevels.includes(3) ? '#46A302' : (mainTab === 'quiz' && initialQuizLevel === 3 ? 'white' : '#777777'),
+                  fontSize: '10px',
+                  fontWeight: '900',
+                  cursor: 'pointer'
+                }}
+              >
+                5️⃣ 🎙️ 녹음퀴즈 {completedQuizLevels.includes(3) ? '✅' : '⏳'}
+              </button>
+
+              <span style={{ color: '#CECECE', fontSize: '9px', fontWeight: 'bold' }}>➔</span>
+
+              {/* 6단계: 퀴즈 4단계 주관식 직접 쓰기 */}
+              <button
+                type="button"
+                onClick={() => {
+                  setMainTab('quiz');
+                  setInitialQuizLevel(4);
+                  saveStudyProgress({ mainTab: 'quiz', initialQuizLevel: 4 });
+                }}
+                style={{
+                  flex: 1,
+                  minWidth: '70px',
+                  textAlign: 'center',
+                  padding: '6px 4px',
+                  borderRadius: '12px',
+                  border: completedQuizLevels.includes(4) ? '2px solid #46A302' : (mainTab === 'quiz' && initialQuizLevel === 4 ? '2px solid #8E44AD' : '2px solid #E5E5E5'),
+                  borderBottom: completedQuizLevels.includes(4) ? '4px solid #46A302' : (mainTab === 'quiz' && initialQuizLevel === 4 ? '4px solid #8E44AD' : '4px solid #CECECE'),
+                  background: completedQuizLevels.includes(4) ? '#E5F8D0' : (mainTab === 'quiz' && initialQuizLevel === 4 ? '#CE82FF' : '#FFFFFF'),
+                  color: completedQuizLevels.includes(4) ? '#46A302' : (mainTab === 'quiz' && initialQuizLevel === 4 ? 'white' : '#777777'),
+                  fontSize: '10px',
+                  fontWeight: '900',
+                  cursor: 'pointer'
+                }}
+              >
+                6️⃣ ✍️ 직접쓰기 {completedQuizLevels.includes(4) ? '✅' : '⏳'}
+              </button>
+
+              <span style={{ color: '#CECECE', fontSize: '9px', fontWeight: 'bold' }}>➔</span>
+
+              {/* 7단계: 출석 도장 */}
               <button
                 type="button"
                 onClick={() => {
@@ -1289,20 +1345,20 @@ export default function Home() {
                 }}
                 style={{
                   flex: 1,
-                  minWidth: '85px',
+                  minWidth: '70px',
                   textAlign: 'center',
-                  padding: '8px 6px',
+                  padding: '6px 4px',
                   borderRadius: '12px',
                   border: completedQuizLevels.includes(2) ? '2px solid #46A302' : '2px solid #E5E5E5',
                   borderBottom: completedQuizLevels.includes(2) ? '4px solid #46A302' : '4px solid #CECECE',
                   background: completedQuizLevels.includes(2) ? '#58CC02' : '#FFFFFF',
                   color: completedQuizLevels.includes(2) ? 'white' : '#777777',
-                  fontSize: '11px',
+                  fontSize: '10px',
                   fontWeight: '900',
                   cursor: 'pointer'
                 }}
               >
-                5️⃣ 💮 출석도장 {completedQuizLevels.includes(2) ? '완료' : '대기'}
+                7️⃣ 💮 출석도장 {completedQuizLevels.includes(2) ? '완료' : '대기'}
               </button>
             </div>
           </div>
