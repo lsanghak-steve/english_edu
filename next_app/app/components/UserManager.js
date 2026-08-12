@@ -151,7 +151,8 @@ export default function UserManager({ currentUser, setCurrentUser, onLogout }) {
   };
 
   const displayName = currentUser ? removeEmoji(currentUser.name) : '';
-  const currentStudyLevel = currentUser ? (currentUser.studyGradeLevel || currentUser.study_grade_level || (currentUser.grade && currentUser.grade.includes('중등') ? '중등단어' : '초등단어')) : '초등단어';
+  const currentStudyLevel = currentUser ? (currentUser.studyGradeLevel || currentUser.study_grade_level || '초등단어') : '초등단어';
+  const currentDailyCount = currentUser ? (currentUser.dailyWordCount || currentUser.daily_word_count || '10') : '10';
 
   return (
     <div className="user-manager-header-bar">
@@ -159,7 +160,7 @@ export default function UserManager({ currentUser, setCurrentUser, onLogout }) {
       <div className="user-info-group">
         <span className="user-info-label">👤 현재 학습자:</span>
         <span className="user-info-badge">
-          {currentUser ? `${displayName} (${currentUser.grade || '초등 3학년'}) • 레벨: ${currentStudyLevel} • 목표 ${currentUser.dailyWordCount || 10}단어` : '로그인 필요'}
+          {currentUser ? `${displayName} (${currentUser.grade || '초등 3학년'}) • 레벨: ${currentStudyLevel} • 목표 ${currentDailyCount}단어` : '로그인 필요'}
         </span>
       </div>
 

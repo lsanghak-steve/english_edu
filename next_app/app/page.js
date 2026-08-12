@@ -339,6 +339,65 @@ export default function Home() {
   }, []);
 
 
+  // ⚡ [관리자-학생 화면 실시간 레벨 & 단어수 동기화 Engine]
+  useEffect(() => {
+    if (!currentUser || !isLoggedIn) return;
+
+    const checkAndSyncProfile = async () => {
+      try {
+        const studentIdToSearch = currentUser.student_id || currentUser.id;
+        const studentNameClean = (currentUser.name || '').replace(/[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{1F1E0}-\u{1F1FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{1F900}-\u{1F9FF}\u{1F300}-\u{1F5FF}\u{1F004}\u{1F0CF}\u{1F170}-\u{1F251}]/gu, '').trim();
+
+        let dbUser = null;
+        const { data } = await supabase
+          .from('users')
+          .select('*')
+          .or(`student_id.eq.${studentIdToSearch},id.eq.${studentIdToSearch},name.eq.${studentNameClean}`)
+          .limit(1);
+
+        if (data && data[0]) {
+          dbUser = data[0];
+        }
+
+        if (dbUser) {
+          const cloudLevel = dbUser.study_grade_level || '초등단어';
+          const cloudCount = String(dbUser.daily_word_count || '10');
+
+          const curLevel = currentUser.studyGradeLevel || currentUser.study_grade_level || '초등단어';
+          const curCount = String(currentUser.dailyWordCount || currentUser.daily_word_count || '10');
+
+          if (cloudLevel !== curLevel || cloudCount !== curCount) {
+            console.log(`🔄 [실시간 프로필 동기화] 레벨: ${curLevel} -> ${cloudLevel}, 목표: ${curCount} -> ${cloudCount}`);
+            const updatedUser = {
+              ...currentUser,
+              studyGradeLevel: cloudLevel,
+              study_grade_level: cloudLevel,
+              dailyWordCount: cloudCount,
+              daily_word_count: cloudCount
+            };
+            setCurrentUser(updatedUser);
+            localStorage.setItem('english_edu_current_user', JSON.stringify(updatedUser));
+            const newRandoms = await loadDailyRandomWordsFromDB(updatedUser);
+            if (newRandoms && newRandoms.length > 0) {
+              setDailyRandomWords(newRandoms);
+            }
+          }
+        }
+      } catch (e) {}
+    };
+
+    checkAndSyncProfile();
+    const interval = setInterval(checkAndSyncProfile, 2000);
+    window.addEventListener('user_profile_updated', checkAndSyncProfile);
+    window.addEventListener('storage', checkAndSyncProfile);
+
+    return () => {
+      clearInterval(interval);
+      window.removeEventListener('user_profile_updated', checkAndSyncProfile);
+      window.removeEventListener('storage', checkAndSyncProfile);
+    };
+  }, [currentUser, isLoggedIn, loadDailyRandomWordsFromDB]);
+
   useEffect(() => {
     if (!currentUser || !isLoggedIn) return;
     const dateForMission = targetStudyDate || todayStr;

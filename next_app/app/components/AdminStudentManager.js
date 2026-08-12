@@ -219,6 +219,26 @@ export default function AdminStudentManager() {
       console.log('Cloud student save error', err);
     }
 
+    // ⚡ 현재 학습자 활성 세션(english_edu_current_user)에 실시간 업데이트 동기화
+    try {
+      const currentActiveStr = localStorage.getItem('english_edu_current_user');
+      if (currentActiveStr) {
+        const currentActive = JSON.parse(currentActiveStr);
+        if (currentActive && (currentActive.id === studentIdToUse || currentActive.name === cleanName)) {
+          const updatedActive = {
+            ...currentActive,
+            studyGradeLevel: studyGradeLevel,
+            study_grade_level: studyGradeLevel,
+            dailyWordCount: String(wordCountInt),
+            daily_word_count: wordCountInt
+          };
+          localStorage.setItem('english_edu_current_user', JSON.stringify(updatedActive));
+          window.dispatchEvent(new Event('storage'));
+          window.dispatchEvent(new Event('user_profile_updated'));
+        }
+      }
+    } catch (e) {}
+
     alert(`🎉 [${cleanName}] 학생의 학습 레벨 [${studyGradeLevel}] 및 설정 정보가 성공적으로 저장되었습니다!`);
     setIsStudentModalOpen(false);
   };
@@ -473,7 +493,9 @@ export default function AdminStudentManager() {
                           padding: '4px 10px',
                           borderRadius: '8px',
                           fontWeight: 'bold',
-                          fontSize: '12px'
+                          fontSize: '12px',
+                          whiteSpace: 'nowrap',
+                          display: 'inline-block'
                         }}>
                           {levelBadge.label}
                         </span>
