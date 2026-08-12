@@ -11,6 +11,7 @@ import CalendarSection from './components/CalendarSection.js';
 import PersonalVocabSection from './components/PersonalVocabSection.js';
 import ParentDashboard from './components/ParentDashboard.js';
 import StatsSection from './components/StatsSection.js';
+import Day6ReviewSection from './components/Day6ReviewSection.js';
 
 export default function Home() {
   const [currentUser, setCurrentUser] = useState(null);
@@ -1520,6 +1521,13 @@ export default function Home() {
           ❌ 퀴즈 오답노트 ☁️
         </button>
         <button
+          className={`main-tab-btn ${mainTab === 'day6' ? 'active' : ''}`}
+          onClick={() => setMainTab('day6')}
+          style={{ background: mainTab === 'day6' ? '#6C5CE7' : 'transparent', color: mainTab === 'day6' ? 'white' : '#8E44AD', fontWeight: 'bold' }}
+        >
+          🗓️ Day 6 주간복습 💮
+        </button>
+        <button
           className={`main-tab-btn ${mainTab === 'calendar' ? 'active' : ''}`}
           onClick={() => setMainTab('calendar')}
         >
@@ -1738,6 +1746,15 @@ export default function Home() {
           currentUser={currentUser}
           totalWordCount={wordList.length || 500}
           onNavigateTab={(tabName) => setMainTab(tabName)}
+        />
+      )}
+
+      {/* 탭 9: 🗓️ Day 6 주간 종합 오답 복습 데이 */}
+      {mainTab === 'day6' && (
+        <Day6ReviewSection
+          currentUser={currentUser}
+          safeActiveWords={safeActiveWords}
+          onQuizComplete={fetchStudyRecordsFromDB}
         />
       )}
 
