@@ -249,22 +249,36 @@ export default function Home() {
     if (!userObj) return [];
     const studentCode = userObj.student_id || '';
     const userId = userObj.id || 'guest';
-    const userName = userObj.name ? userObj.name.replace(/[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{1F1E0}-\u{1F1FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{1F900}-\u{1F9FF}\u{1F300}-\u{1F5FF}\u{1F004}\u{1F0CF}\u{1F170}-\u{1F251}]/gu, '').trim() : '';
+    const rawName = userObj.name || '';
+    const userName = rawName.replace(/\(.*?\)/g, '').replace(/[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{1F1E0}-\u{1F1FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{1F900}-\u{1F9FF}\u{1F300}-\u{1F5FF}\u{1F004}\u{1F0CF}\u{1F170}-\u{1F251}]/gu, '').trim();
 
     let targetGradeLevel = userObj.studyGradeLevel || userObj.study_grade_level || '초등단어';
     let dailyCount = parseInt(userObj.dailyWordCount || userObj.daily_word_count || 10, 10);
 
     // ☁️ 100% Supabase DB `users` 테이블에서 최신 학습 레벨 & 일일 목표 단어 수 즉시 라이브 조회
     try {
-      const { data: liveUserData } = await supabase
-        .from('users')
-        .select('study_grade_level, daily_word_count')
-        .or(`student_id.eq.${studentCode},id.eq.${userId},name.eq.${userName}`)
-        .limit(1);
+      let liveUserData = null;
+      if (studentCode || userId) {
+        const { data: dbByCode } = await supabase
+          .from('users')
+          .select('study_grade_level, daily_word_count')
+          .or(`student_id.eq.${studentCode},id.eq.${userId},student_id.eq.${userId}`)
+          .limit(1);
+        if (dbByCode && dbByCode[0]) liveUserData = dbByCode[0];
+      }
 
-      if (liveUserData && liveUserData[0]) {
-        if (liveUserData[0].study_grade_level) targetGradeLevel = liveUserData[0].study_grade_level;
-        if (liveUserData[0].daily_word_count) dailyCount = parseInt(liveUserData[0].daily_word_count, 10);
+      if (!liveUserData && userName) {
+        const { data: dbByName } = await supabase
+          .from('users')
+          .select('study_grade_level, daily_word_count')
+          .ilike('name', `%${userName}%`)
+          .limit(1);
+        if (dbByName && dbByName[0]) liveUserData = dbByName[0];
+      }
+
+      if (liveUserData) {
+        if (liveUserData.study_grade_level) targetGradeLevel = liveUserData.study_grade_level;
+        if (liveUserData.daily_word_count) dailyCount = parseInt(liveUserData.daily_word_count, 10);
         console.log(`☁️ [Supabase DB 100% 라이브 조율] 레벨: ${targetGradeLevel}, 목표 단어 수: ${dailyCount}개`);
       }
     } catch (e) {}
