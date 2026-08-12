@@ -8,6 +8,7 @@ export default function AdminWordManager() {
     const [words, setWords] = useState([]);
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedCategory, setSelectedCategory] = useState('전체');
+    const [selectedGrade, setSelectedGrade] = useState('전체');
 
     // 신규 단어 추가 폼 상태
     const [showAddForm, setShowAddForm] = useState(false);
@@ -15,6 +16,7 @@ export default function AdminWordManager() {
     const [newMeaning, setNewMeaning] = useState('');
     const [newPhonics, setNewPhonics] = useState('');
     const [newCategory, setNewCategory] = useState('과일 & 음식 🍎');
+    const [newGradeLevel, setNewGradeLevel] = useState('초등단어');
     const [newExampleEn, setNewExampleEn] = useState('');
     const [newExampleKo, setNewExampleKo] = useState('');
 
@@ -25,6 +27,7 @@ export default function AdminWordManager() {
         meaning: '',
         phonics: '',
         category: '',
+        grade_level: '초등단어',
         example_en: '',
         example_ko: ''
     });
@@ -40,16 +43,28 @@ export default function AdminWordManager() {
         }
     }, []);
 
-    // Supabase DB에서 전체 단어 로드
+    // Supabase DB에서 서버 1,000개 수량 제한을 완벽 우회하여 2,000개+ 전체 단어 페이징 로드
     const fetchWords = useCallback(async () => {
         try {
-            const { data, error } = await supabase
-                .from('words')
-                .select('*')
-                .order('id', { ascending: true });
+            let allData = [];
+            let from = 0;
+            const step = 1000;
 
-            if (!error && data && data.length > 0) {
-                setWords(data);
+            while (true) {
+                const { data, error } = await supabase
+                    .from('words')
+                    .select('*')
+                    .order('id', { ascending: true })
+                    .range(from, from + step - 1);
+
+                if (error || !data || data.length === 0) break;
+                allData = allData.concat(data);
+                if (data.length < step) break;
+                from += step;
+            }
+
+            if (allData.length > 0) {
+                setWords(allData);
             } else {
                 setWords(fallbackWords.map((w, idx) => ({ id: idx + 1, ...w, example_en: w.exampleEn, example_ko: w.exampleKo })));
             }
@@ -65,8 +80,15 @@ export default function AdminWordManager() {
     // 카테고리 목록
     const categories = ['전체', ...new Set(words.map(w => w.category || '기타'))];
 
-    // 실시간 검색 & 카테고리 필터링
+    // 초등 / 중등 / 고등 단어 개수 파악
+    const elemCount = words.filter(w => (w.grade_level === '초등단어' || (!w.grade_level && (w.id < 1000 && !w.category?.includes('중등'))))).length;
+    const middleCount = words.filter(w => (w.grade_level === '중등단어' || (!w.grade_level && (w.id >= 1000 || w.category?.includes('중등'))))).length;
+    const highCount = words.filter(w => w.grade_level === '고등단어').length;
+
+    // 실시간 검색 & 학년/카테고리 필터링
     const filteredWords = words.filter(w => {
+        const itemGrade = w.grade_level || (w.category && w.category.includes('중등') ? '중등단어' : (w.id >= 1000 ? '중등단어' : '초등단어'));
+        const matchGrade = selectedGrade === '전체' || itemGrade === selectedGrade;
         const matchCat = selectedCategory === '전체' || w.category === selectedCategory;
         const exEn = w.example_en || w.exampleEn || '';
         const exKo = w.example_ko || w.exampleKo || '';
@@ -76,7 +98,7 @@ export default function AdminWordManager() {
             (w.phonics || '').includes(searchQuery) ||
             exEn.toLowerCase().includes(searchQuery.toLowerCase()) ||
             exKo.includes(searchQuery);
-        return matchCat && matchSearch;
+        return matchGrade && matchCat && matchSearch;
     });
 
     // 신규 단어 추가 (DB 저장)
@@ -89,6 +111,7 @@ export default function AdminWordManager() {
             meaning: newMeaning.trim(),
             phonics: newPhonics.trim() || `[${newWord.trim().toLowerCase()}]`,
             category: newCategory,
+            grade_level: newGradeLevel,
             example_en: newExampleEn.trim() || `I like ${newWord.trim()}.`,
             example_ko: newExampleKo.trim() || `나는 ${newMeaning.trim()}을(를) 좋아해요.`,
             image_url: `https://sqonhhqosyszncjfoxfd.supabase.co/storage/v1/object/public/word_images/${newWord.trim()}.png`
@@ -98,7 +121,7 @@ export default function AdminWordManager() {
             const { data, error } = await supabase.from('words').insert([newItem]).select();
             if (!error && data && data.length > 0) {
                 setWords([data[0], ...words]);
-                alert(`🎉 [${newItem.word}] 단어가 클라우드 DB에 추가되었습니다!`);
+                alert(`🎉 [${newItem.word}] (${newGradeLevel}) 단어가 클라우드 DB에 추가되었습니다!`);
                 setNewWord('');
                 setNewMeaning('');
                 setNewPhonics('');
@@ -113,12 +136,14 @@ export default function AdminWordManager() {
 
     // 수정 모드 시작
     const handleStartEdit = (w) => {
+        const itemGrade = w.grade_level || (w.category && w.category.includes('중등') ? '중등단어' : (w.id >= 1000 ? '중등단어' : '초등단어'));
         setEditingWordId(w.id);
         setEditForm({
             word: w.word,
             meaning: w.meaning,
             phonics: w.phonics || '',
             category: w.category || '기타',
+            grade_level: itemGrade,
             example_en: w.example_en || w.exampleEn || '',
             example_ko: w.example_ko || w.exampleKo || ''
         });
@@ -134,6 +159,7 @@ export default function AdminWordManager() {
                     meaning: editForm.meaning,
                     phonics: editForm.phonics,
                     category: editForm.category,
+                    grade_level: editForm.grade_level,
                     example_en: editForm.example_en,
                     example_ko: editForm.example_ko
                 })
@@ -142,7 +168,7 @@ export default function AdminWordManager() {
             if (!error) {
                 setWords(words.map(w => w.id === id ? { ...w, ...editForm } : w));
                 setEditingWordId(null);
-                alert('단어 정보가 수정되었습니다!');
+                alert('단어 정보 및 학교 구분이 수정되었습니다!');
             }
         } catch (e) {
             alert('수정 실패');
@@ -165,8 +191,8 @@ export default function AdminWordManager() {
     return (
         <div style={{ background: '#FFFFFF', borderRadius: '20px', padding: '16px', border: '1px solid #E9ECEF' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px', flexWrap: 'wrap', gap: '10px' }}>
-                <h4 style={{ margin: 0, color: '#2C3E50', fontSize: '15px', fontWeight: 'bold' }}>
-                    📚 Supabase DB 534개 영단어 통합 관리함 ({filteredWords.length}개 검색됨)
+                <h4 style={{ margin: 0, color: '#2C3E50', fontSize: '16px', fontWeight: 'bold' }}>
+                  📚 Supabase DB 전체 {words.length.toLocaleString()}개 영단어 통합 관리함 ({filteredWords.length.toLocaleString()}개 표출됨)
                 </h4>
                 <button
                     onClick={() => setShowAddForm(!showAddForm)}
@@ -174,6 +200,76 @@ export default function AdminWordManager() {
                 >
                     ➕ 신규 영단어 추가
                 </button>
+            </div>
+
+            {/* 🏫 초등 / 중등 / 고등 / 전체 즉시 확인 원클릭 탭 버튼 */}
+            <div style={{ display: 'flex', gap: '8px', marginBottom: '12px', flexWrap: 'wrap' }}>
+                <button
+                    type="button"
+                    onClick={() => setSelectedGrade('전체')}
+                    style={{
+                        padding: '8px 14px',
+                        borderRadius: '10px',
+                        border: selectedGrade === '전체' ? '2px solid #2980B9' : '1px solid #BDC3C7',
+                        background: selectedGrade === '전체' ? '#2980B9' : '#FFFFFF',
+                        color: selectedGrade === '전체' ? '#FFFFFF' : '#2C3E50',
+                        fontWeight: 'bold',
+                        fontSize: '13px',
+                        cursor: 'pointer'
+                    }}
+                >
+                    🎒🏫🎓 전체 영단어 ({words.length.toLocaleString()}개)
+                </button>
+                <button
+                    type="button"
+                    onClick={() => setSelectedGrade('초등단어')}
+                    style={{
+                        padding: '8px 14px',
+                        borderRadius: '10px',
+                        border: selectedGrade === '초등단어' ? '2px solid #E67E22' : '1px solid #BDC3C7',
+                        background: selectedGrade === '초등단어' ? '#FEF5E7' : '#FFFFFF',
+                        color: selectedGrade === '초등단어' ? '#D35400' : '#2C3E50',
+                        fontWeight: 'bold',
+                        fontSize: '13px',
+                        cursor: 'pointer'
+                    }}
+                >
+                    🎒 초등 영단어 ({elemCount.toLocaleString()}개)
+                </button>
+                <button
+                    type="button"
+                    onClick={() => setSelectedGrade('중등단어')}
+                    style={{
+                        padding: '8px 14px',
+                        borderRadius: '10px',
+                        border: selectedGrade === '중등단어' ? '2px solid #3498DB' : '1px solid #BDC3C7',
+                        background: selectedGrade === '중등단어' ? '#EBF5FB' : '#FFFFFF',
+                        color: selectedGrade === '중등단어' ? '#2980B9' : '#2C3E50',
+                        fontWeight: 'bold',
+                        fontSize: '13px',
+                        cursor: 'pointer'
+                    }}
+                >
+                    🏫 중등 영단어 ({middleCount.toLocaleString()}개)
+                </button>
+                {highCount > 0 && (
+                    <button
+                        type="button"
+                        onClick={() => setSelectedGrade('고등단어')}
+                        style={{
+                            padding: '8px 14px',
+                            borderRadius: '10px',
+                            border: selectedGrade === '고등단어' ? '2px solid #9B59B6' : '1px solid #BDC3C7',
+                            background: selectedGrade === '고등단어' ? '#F5EEF8' : '#FFFFFF',
+                            color: selectedGrade === '고등단어' ? '#8E44AD' : '#2C3E50',
+                            fontWeight: 'bold',
+                            fontSize: '13px',
+                            cursor: 'pointer'
+                        }}
+                    >
+                        🎓 고등 영단어 ({highCount.toLocaleString()}개)
+                    </button>
+                )}
             </div>
 
             {/* 신규 단어 추가 폼 */}
@@ -185,7 +281,12 @@ export default function AdminWordManager() {
                         <input type="text" placeholder="한글 뜻 (사과)" value={newMeaning} onChange={e => setNewMeaning(e.target.value)} style={{ padding: '8px', borderRadius: '8px', border: '1px solid #CCC', fontSize: '12px' }} required />
                         <input type="text" placeholder="발음기호 ([æpl])" value={newPhonics} onChange={e => setNewPhonics(e.target.value)} style={{ padding: '8px', borderRadius: '8px', border: '1px solid #CCC', fontSize: '12px' }} />
                     </div>
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '6px', marginBottom: '8px' }}>
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr', gap: '6px', marginBottom: '8px' }}>
+                        <select value={newGradeLevel} onChange={e => setNewGradeLevel(e.target.value)} style={{ padding: '8px', borderRadius: '8px', border: '1px solid #CCC', fontSize: '12px', fontWeight: 'bold' }}>
+                            <option value="초등단어">🎒 초등단어</option>
+                            <option value="중등단어">🏫 중등단어</option>
+                            <option value="고등단어">🎓 고등단어</option>
+                        </select>
                         <select value={newCategory} onChange={e => setNewCategory(e.target.value)} style={{ padding: '8px', borderRadius: '8px', border: '1px solid #CCC', fontSize: '12px' }}>
                             <option value="과일 & 음식 🍎">과일 & 음식 🍎</option>
                             <option value="동물 🐶">동물 🐶</option>
@@ -205,7 +306,7 @@ export default function AdminWordManager() {
                 </form>
             )}
 
-            {/* 실시간 단어 검색 바 및 카테고리 필터 */}
+            {/* 실시간 단어 검색 바 및 학교 구분/카테고리 필터 */}
             <div style={{ display: 'flex', gap: '8px', marginBottom: '12px' }}>
                 <input
                     type="text"
@@ -214,6 +315,16 @@ export default function AdminWordManager() {
                     onChange={e => setSearchQuery(e.target.value)}
                     style={{ flex: 1, padding: '8px 12px', borderRadius: '10px', border: '1px solid #BDC3C7', fontSize: '12px' }}
                 />
+                <select
+                    value={selectedGrade}
+                    onChange={e => setSelectedGrade(e.target.value)}
+                    style={{ padding: '8px 10px', borderRadius: '10px', border: '1px solid #BDC3C7', fontSize: '12px', fontWeight: 'bold', background: '#EBF5FB', color: '#2980B9' }}
+                >
+                    <option value="전체">🎒🏫 전체 학년</option>
+                    <option value="초등단어">🎒 초등단어만</option>
+                    <option value="중등단어">🏫 중등단어만</option>
+                    <option value="고등단어">🎓 고등단어만</option>
+                </select>
                 <select
                     value={selectedCategory}
                     onChange={e => setSelectedCategory(e.target.value)}
@@ -231,6 +342,7 @@ export default function AdminWordManager() {
                     <thead>
                         <tr style={{ background: '#F8F9FA', borderBottom: '1px solid #DDD', color: '#7F8C8D', textAlign: 'left' }}>
                             <th style={{ padding: '8px' }}>No</th>
+                            <th style={{ padding: '8px' }}>학교 구분</th>
                             <th style={{ padding: '8px' }}>🔊 영단어 & 소리</th>
                             <th style={{ padding: '8px' }}>발음</th>
                             <th style={{ padding: '8px' }}>한글 뜻</th>
@@ -242,12 +354,20 @@ export default function AdminWordManager() {
                         {filteredWords.map((w, idx) => {
                             const exEn = w.example_en || w.exampleEn || '';
                             const exKo = w.example_ko || w.exampleKo || '';
+                            const gradeTag = w.grade_level || (w.category && w.category.includes('중등') ? '중등단어' : (w.id >= 1000 ? '중등단어' : '초등단어'));
 
                             return (
                                 <tr key={w.id || idx} style={{ borderBottom: '1px solid #F1F1F1' }}>
                                     {editingWordId === w.id ? (
                                         <>
                                             <td style={{ padding: '6px' }}>{w.id}</td>
+                                            <td style={{ padding: '6px' }}>
+                                                <select value={editForm.grade_level} onChange={e => setEditForm({ ...editForm, grade_level: e.target.value })} style={{ padding: '4px', fontSize: '11px' }}>
+                                                    <option value="초등단어">초등</option>
+                                                    <option value="중등단어">중등</option>
+                                                    <option value="고등단어">고등</option>
+                                                </select>
+                                            </td>
                                             <td style={{ padding: '6px' }}>
                                                 <input type="text" value={editForm.word} onChange={e => setEditForm({ ...editForm, word: e.target.value })} style={{ width: '90%', padding: '4px' }} />
                                             </td>
@@ -269,6 +389,20 @@ export default function AdminWordManager() {
                                     ) : (
                                         <>
                                             <td style={{ padding: '8px', color: '#95A5A6' }}>{w.id}</td>
+                                            <td style={{ padding: '8px' }}>
+                                                <span style={{
+                                                    display: 'inline-block',
+                                                    padding: '2px 6px',
+                                                    borderRadius: '6px',
+                                                    fontSize: '11px',
+                                                    fontWeight: 'bold',
+                                                    background: gradeTag === '중등단어' ? '#EBF5FB' : (gradeTag === '고등단어' ? '#F5EEF8' : '#FEF5E7'),
+                                                    color: gradeTag === '중등단어' ? '#2980B9' : (gradeTag === '고등단어' ? '#8E44AD' : '#D35400'),
+                                                    border: `1px solid ${gradeTag === '중등단어' ? '#3498DB' : (gradeTag === '고등단어' ? '#9B59B6' : '#E67E22')}`
+                                                }}>
+                                                    {gradeTag === '중등단어' ? '🏫 중등' : (gradeTag === '고등단어' ? '🎓 고등' : '🎒 초등')}
+                                                </span>
+                                            </td>
                                             <td style={{ padding: '8px', fontWeight: 'bold', color: '#2C3E50' }}>
                                                 <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                                                     <span>{w.word}</span>

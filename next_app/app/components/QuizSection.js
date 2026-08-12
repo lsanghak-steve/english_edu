@@ -4,8 +4,14 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import supabase from '../../lib/supabaseClient.js';
 
 
-export default function QuizSection({ currentUser, activeWords, onQuizLevelComplete, onLoadNextWordSet }) {
-  const [quizLevel, setQuizLevel] = useState(1); // 1: 소리퀴즈, 2: 스펠링 선택, 3: 스펠링 직접 입력
+export default function QuizSection({ currentUser, activeWords, onQuizLevelComplete, onLoadNextWordSet, initialQuizLevel = 1 }) {
+  const [quizLevel, setQuizLevel] = useState(initialQuizLevel || 1); // 1: 소리퀴즈, 2: 스펠링 선택, 3: 스펠링 직접 입력
+
+  useEffect(() => {
+    if (initialQuizLevel) {
+      setQuizLevel(initialQuizLevel);
+    }
+  }, [initialQuizLevel]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [options, setOptions] = useState([]);
   const [selectedAnswer, setSelectedAnswer] = useState(null);

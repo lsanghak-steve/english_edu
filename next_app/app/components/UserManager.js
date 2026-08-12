@@ -20,6 +20,7 @@ export default function UserManager({ currentUser, setCurrentUser, onLogout }) {
   // 등록/수정 폼 입력 상태
   const [nameInput, setNameInput] = useState('');
   const [gradeInput, setGradeInput] = useState('초등 3학년');
+  const [studyGradeLevelInput, setStudyGradeLevelInput] = useState('초등단어');
   const [dailyCountInput, setDailyCountInput] = useState('10');
   const [studentPinInput, setStudentPinInput] = useState('1234');
   const [parentNameInput, setParentNameInput] = useState('');
@@ -29,19 +30,21 @@ export default function UserManager({ currentUser, setCurrentUser, onLogout }) {
   // Supabase 클라우드 DB에서 학생 목록 로드 (실패 시 localStorage 백업)
   const loadUsersFromCloud = async () => {
     try {
-      const { data, error } = await supabase
-        .from('student_profiles')
+      // 1. users 테이블 로드 (기본 회원 테이블)
+      const { data: usersData, error: usersErr } = await supabase
+        .from('users')
         .select('*')
         .order('created_at', { ascending: true });
 
-      if (!error && data && data.length > 0) {
-        const formatted = data.map(item => ({
-          id: item.id,
+      if (!usersErr && usersData && usersData.length > 0) {
+        const formatted = usersData.map(item => ({
+          id: item.student_id || item.id,
           name: removeEmoji(item.name),
-          grade: item.grade || '초등 3학년',
-          dailyWordCount: item.daily_word_count || '10',
-          studentPin: item.student_pin || '1234',
-          parentName: removeEmoji(item.parent_name),
+          grade: item.avatar || item.grade || '초등 3학년',
+          studyGradeLevel: item.study_grade_level || (item.avatar && item.avatar.includes('중등') ? '중등단어' : (item.avatar && item.avatar.includes('고등') ? '고등단어' : '초등단어')),
+          dailyWordCount: String(item.daily_word_count || '10'),
+          studentPin: item.pin || item.student_pin || '1234',
+          parentName: removeEmoji(item.parent_name || (item.name + '학부모')),
           parentPhone: item.parent_phone || '',
           parentPin: item.parent_pin || '5678'
         }));
@@ -50,7 +53,7 @@ export default function UserManager({ currentUser, setCurrentUser, onLogout }) {
         return;
       }
     } catch (e) {
-      console.log('Supabase cloud profiles table fallback');
+      console.log('Supabase cloud users table fallback');
     }
 
     // localStorage 백업 로드
@@ -76,6 +79,7 @@ export default function UserManager({ currentUser, setCurrentUser, onLogout }) {
     setEditingUserId(currentUser.id);
     setNameInput(removeEmoji(currentUser.name));
     setGradeInput(currentUser.grade || '초등 3학년');
+    setStudyGradeLevelInput(currentUser.studyGradeLevel || currentUser.study_grade_level || (currentUser.grade && currentUser.grade.includes('중등') ? '중등단어' : '초등단어'));
     setDailyCountInput(currentUser.dailyWordCount || '10');
     setStudentPinInput(currentUser.studentPin || '1234');
     setParentNameInput(removeEmoji(currentUser.parentName));
@@ -93,19 +97,28 @@ export default function UserManager({ currentUser, setCurrentUser, onLogout }) {
       return;
     }
 
-    const updatedUserObj = {
+    const userPayload = {
       id: editingUserId,
       name: cleanStudentName,
-      grade: gradeInput,
-      daily_word_count: dailyCountInput,
-      student_pin: studentPinInput.trim() || '1234',
-      parent_name: removeEmoji(parentNameInput),
-      parent_phone: parentPhoneInput.trim(),
-      parent_pin: parentPinInput.trim() || '5678'
+      avatar: gradeInput,
+      study_grade_level: studyGradeLevelInput,
+      daily_word_count: parseInt(dailyCountInput, 10),
+      pin: studentPinInput.trim() || '1234'
     };
 
     try {
-      await supabase.from('student_profiles').upsert([updatedUserObj]);
+      await supabase.from('users').upsert([userPayload]);
+      await supabase.from('student_profiles').upsert([{
+        id: editingUserId,
+        name: cleanStudentName,
+        grade: gradeInput,
+        study_grade_level: studyGradeLevelInput,
+        daily_word_count: dailyCountInput,
+        student_pin: studentPinInput.trim() || '1234',
+        parent_name: removeEmoji(parentNameInput),
+        parent_phone: parentPhoneInput.trim(),
+        parent_pin: parentPinInput.trim() || '5678'
+      }]);
     } catch (e) {
       console.log('Cloud update fallback to local');
     }
@@ -116,6 +129,7 @@ export default function UserManager({ currentUser, setCurrentUser, onLogout }) {
           ...u,
           name: cleanStudentName,
           grade: gradeInput,
+          studyGradeLevel: studyGradeLevelInput,
           dailyWordCount: dailyCountInput,
           studentPin: studentPinInput.trim() || '1234',
           parentName: removeEmoji(parentNameInput),
@@ -132,11 +146,12 @@ export default function UserManager({ currentUser, setCurrentUser, onLogout }) {
     const updatedCurrent = updatedUsers.find(u => u.id === editingUserId);
     if (updatedCurrent) setCurrentUser(updatedCurrent);
 
-    alert('학생 정보가 클라우드 DB에 성공적으로 저장 및 동기화되었습니다!');
+    alert(`🎉 학생 정보 및 학습 레벨(${studyGradeLevelInput})이 클라우드 DB에 성공적으로 저장되었습니다!`);
     setShowAddEditModal(false);
   };
 
   const displayName = currentUser ? removeEmoji(currentUser.name) : '';
+  const currentStudyLevel = currentUser ? (currentUser.studyGradeLevel || currentUser.study_grade_level || (currentUser.grade && currentUser.grade.includes('중등') ? '중등단어' : '초등단어')) : '초등단어';
 
   return (
     <div className="user-manager-header-bar">
@@ -144,7 +159,7 @@ export default function UserManager({ currentUser, setCurrentUser, onLogout }) {
       <div className="user-info-group">
         <span className="user-info-label">👤 현재 학습자:</span>
         <span className="user-info-badge">
-          {currentUser ? `${displayName} (${currentUser.grade || '초등 3학년'}) • 목표 ${currentUser.dailyWordCount || 10}단어` : '로그인 필요'}
+          {currentUser ? `${displayName} (${currentUser.grade || '초등 3학년'}) • 레벨: ${currentStudyLevel} • 목표 ${currentUser.dailyWordCount || 10}단어` : '로그인 필요'}
         </span>
       </div>
 
@@ -182,6 +197,23 @@ export default function UserManager({ currentUser, setCurrentUser, onLogout }) {
                   onChange={(e) => setNameInput(e.target.value)}
                   style={{ width: '100%', padding: '10px 12px', borderRadius: '10px', border: '1px solid #BDC3C7', fontSize: '14px' }}
                 />
+              </div>
+
+              {/* 📖 학습할 단어 레벨 선택 (신규) */}
+              <div style={{ background: '#F8F9FA', padding: '10px 12px', borderRadius: '12px', border: '1px solid #D4E6F1' }}>
+                <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', color: '#2980B9', marginBottom: '4px' }}>
+                  📖 학습할 단어 레벨 (난이도 선택)
+                </label>
+                <select
+                  value={studyGradeLevelInput}
+                  onChange={(e) => setStudyGradeLevelInput(e.target.value)}
+                  style={{ width: '100%', padding: '10px 12px', borderRadius: '10px', border: '2px solid #3498DB', fontSize: '14px', fontWeight: 'bold', background: '#EBF5FB', color: '#2980B9' }}
+                >
+                  <option value="초등단어">🎒 초등 영단어 (기초 파닉스 ~ 필수 800단어)</option>
+                  <option value="중등단어">🏫 중등 영단어 (중학 내신 ~ 필수 1,200단어)</option>
+                  <option value="고등단어">🎓 고등 영단어 (수능/모의고사 대비)</option>
+                  <option value="전체">🎒🏫🎓 전체 단어 통합 학습</option>
+                </select>
               </div>
 
               {/* 2. 학년 & 학습 수량 (2열 배치) */}

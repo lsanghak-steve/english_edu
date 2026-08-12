@@ -47,6 +47,43 @@ export default function Home() {
   const [userAudioRecordings, setUserAudioRecordings] = useState({});
   const recognitionRef = useRef(null);
 
+  const [initialQuizLevel, setInitialQuizLevel] = useState(1);
+  const [resumeNotice, setResumeNotice] = useState(null);
+  const [isProgressLoaded, setIsProgressLoaded] = useState(false);
+
+  // 💾 1. [학습 단계별 진도 저장 & 이어서 학습 Engine]
+  const saveStudyProgress = useCallback((overrides = {}) => {
+    if (!currentUser || !isLoggedIn) return;
+    const dateForMission = targetStudyDate || todayStr;
+    const progressKey = `study_progress_${currentUser.id}_${dateForMission}`;
+
+    const currentProgress = {
+      currentIndex: overrides.currentIndex !== undefined ? overrides.currentIndex : currentIndex,
+      mainTab: overrides.mainTab !== undefined ? overrides.mainTab : mainTab,
+      completedQuizLevels: overrides.completedQuizLevels !== undefined ? overrides.completedQuizLevels : completedQuizLevels,
+      hasRecorded: overrides.hasRecorded !== undefined ? overrides.hasRecorded : hasRecorded,
+      initialQuizLevel: overrides.initialQuizLevel !== undefined ? overrides.initialQuizLevel : initialQuizLevel,
+      updatedAt: new Date().toISOString()
+    };
+
+    try {
+      localStorage.setItem(progressKey, JSON.stringify(currentProgress));
+    } catch (e) {
+      console.log('Progress save error', e);
+    }
+
+    try {
+      const studentIdToUse = currentUser.student_id || currentUser.id || 'guest';
+      supabase.from('study_records').upsert({
+        student_id: studentIdToUse,
+        study_date: dateForMission,
+        last_index: currentProgress.currentIndex,
+        last_tab: currentProgress.mainTab,
+        quiz_levels: currentProgress.completedQuizLevels
+      }, { onConflict: 'student_id,study_date' }).then(() => {}).catch(() => {});
+    } catch (e) {}
+  }, [currentUser, isLoggedIn, targetStudyDate, todayStr, currentIndex, mainTab, completedQuizLevels, hasRecorded, initialQuizLevel]);
+
 
   // 🎯 발음 유사도(일치율 %) 정밀 계산 알고리즘 (가짜 보정 제거)
   const calculateMatchScore = (targetStr, spokenStr) => {
@@ -141,12 +178,27 @@ export default function Home() {
 
   // Supabase 클라우드 DB에서 800개 전체 단어 실시간 로드 (100% DB 전용)
   useEffect(() => {
-
     async function loadWordsFromSupabase() {
       try {
-        const { data, error } = await supabase.from('words').select('*').order('id', { ascending: true });
-        if (!error && data && data.length > 0) {
-          const formatted = data.map(item => ({
+        let allData = [];
+        let from = 0;
+        const step = 1000;
+
+        while (true) {
+          const { data, error } = await supabase
+            .from('words')
+            .select('*')
+            .order('id', { ascending: true })
+            .range(from, from + step - 1);
+
+          if (error || !data || data.length === 0) break;
+          allData = allData.concat(data);
+          if (data.length < step) break;
+          from += step;
+        }
+
+        if (allData.length > 0) {
+          const formatted = allData.map(item => ({
             id: item.id,
             word: (item.word || '').replace(/\.png/gi, '').trim(),
             phonics: item.phonics || '',
@@ -209,8 +261,19 @@ export default function Home() {
         });
       } catch (e) {}
 
-      // 2. Supabase DB에서 전체 800개 단어 중 안 배운 단어만 필터링 후 100% 무작위(랜덤 셔플) 추출!
-      const { data: allWordsData } = await supabase.from('words').select('*');
+      // 2. 학생이 선택한 학습 단어 레벨 (studyGradeLevel: 초등단어 / 중등단어 / 고등단어 / 전체)
+      const targetGradeLevel = userObj.studyGradeLevel || userObj.study_grade_level || (userObj.grade && userObj.grade.includes('중등') ? '중등단어' : '초등단어');
+
+      let allWordsData = [];
+      let from = 0;
+      const step = 1000;
+      while (true) {
+        const { data, error } = await supabase.from('words').select('*').order('id', { ascending: true }).range(from, from + step - 1);
+        if (error || !data || data.length === 0) break;
+        allWordsData = allWordsData.concat(data);
+        if (data.length < step) break;
+        from += step;
+      }
       const baseWords = (allWordsData && allWordsData.length > 0) ? allWordsData : wordList500Fallback;
 
       if (baseWords && baseWords.length > 0) {
@@ -220,18 +283,25 @@ export default function Home() {
           phonics: item.phonics || '',
           meaning: item.meaning,
           category: item.category || '초등단어',
-          gradeLevel: item.grade_level || item.gradeLevel || '초등단어',
+          gradeLevel: item.grade_level || item.gradeLevel || (item.category && item.category.includes('중등') ? '중등단어' : (item.id >= 1000 ? '중등단어' : '초등단어')),
           exampleEn: (item.example_en || item.exampleEn || '').replace(/\.png/gi, '').trim(),
           exampleKo: (item.example_ko || item.exampleKo || '').replace(/\.png/gi, '').trim(),
           imageUrl: item.image_url || ''
         }));
 
-        // 안 배운 단어만 정밀 추출
-        let unlearned = formatted.filter(w => !learnedWordSet.has(w.word.toLowerCase()));
+        // 학생이 지정한 학습 레벨(초등/중등/고등) 필터링
+        let levelFiltered = formatted;
+        if (targetGradeLevel !== '전체') {
+          levelFiltered = formatted.filter(w => w.gradeLevel === targetGradeLevel);
+          if (levelFiltered.length === 0) levelFiltered = formatted; // 수량이 부족할 시 전체 폴백
+        }
 
-        // 800개 단어를 전부 완독한 경우 전체에서 무작위 셔플 재회독
+        // 안 배운 단어만 정밀 추출
+        let unlearned = levelFiltered.filter(w => !learnedWordSet.has(w.word.toLowerCase()));
+
+        // 해당 레벨의 단어를 전부 완독한 경우 해당 레벨 전체에서 무작위 셔플 재회독
         if (unlearned.length < dailyCount) {
-          unlearned = [...formatted];
+          unlearned = [...levelFiltered];
         }
 
         // 무조건 랜덤 셔플
@@ -255,10 +325,14 @@ export default function Home() {
     const quizKey = `quiz_mission_${currentUser.id}_${dateForMission}`;
     const dailySetKey = `daily_random_set_${currentUser.id}_${dateForMission}`;
     const todayAllKey = `today_all_learned_${currentUser.id}_${dateForMission}`;
+    const progressKey = `study_progress_${currentUser.id}_${dateForMission}`;
 
-    setHasRecorded(localStorage.getItem(recKey) === 'true');
+    const recStatus = localStorage.getItem(recKey) === 'true';
+    setHasRecorded(recStatus);
+
+    let storedQuiz = [];
     try {
-      const storedQuiz = JSON.parse(localStorage.getItem(quizKey) || '[]');
+      storedQuiz = JSON.parse(localStorage.getItem(quizKey) || '[]');
       setCompletedQuizLevels(storedQuiz);
     } catch (e) {
       setCompletedQuizLevels([]);
@@ -270,6 +344,44 @@ export default function Home() {
     } catch (e) {
       setTodayAllLearnedWords([]);
     }
+
+    // 🚀 [이어서 학습 Engine] 저장된 진도 복원 (Smart Auto-Resume)
+    let savedProgress = null;
+    try {
+      savedProgress = JSON.parse(localStorage.getItem(progressKey) || 'null');
+    } catch (e) {
+      savedProgress = null;
+    }
+
+    const userDailyCount = parseInt(currentUser.dailyWordCount || 10, 10);
+
+    if (savedProgress) {
+      const savedIdx = typeof savedProgress.currentIndex === 'number' ? savedProgress.currentIndex : 0;
+      setCurrentIndex(savedIdx);
+
+      if (storedQuiz.includes(2)) {
+        // 이미 2단계 스펠링 퀴즈 완수
+        setResumeNotice(`🎉 [학습 완수] [${dateForMission}] 출석 도장(💮) 수여 완료! 이어서 복습하거나 다음 세트를 공부하세요.`);
+      } else if (storedQuiz.includes(1)) {
+        // 1단계 소리 퀴즈 완료 ➔ 2단계 스펠링 퀴즈로 자동 이동
+        setMainTab('quiz');
+        setInitialQuizLevel(2);
+        setResumeNotice(`▶ [이어서 학습] 1단계 소리 퀴즈 완료! 2단계 스펠링 선택 퀴즈(필수)로 자동 연결되었습니다. 🧩`);
+      } else if (savedProgress.mainTab === 'quiz' || savedIdx >= userDailyCount - 1) {
+        // 퀴즈 탭 또는 카드 학습 완료 ➔ 1단계 소리 퀴즈로 자동 이동
+        setMainTab('quiz');
+        setInitialQuizLevel(1);
+        setResumeNotice(`▶ [이어서 학습] 1단계 소리 퀴즈부터 이어서 학습합니다. 🔊`);
+      } else {
+        // 플래시카드 진행 중
+        if (savedProgress.mainTab) setMainTab(savedProgress.mainTab);
+        setResumeNotice(`▶ [이어서 학습] 이전 학습 위치 (단어 #${savedIdx + 1})부터 이어서 학습합니다! 🎴`);
+      }
+    } else {
+      setResumeNotice(null);
+    }
+
+    setIsProgressLoaded(true);
 
     async function syncDailyRandomWords() {
       let savedDailySet = [];
@@ -296,6 +408,19 @@ export default function Home() {
 
     syncDailyRandomWords();
   }, [currentUser, isLoggedIn, targetStudyDate, todayStr, loadDailyRandomWordsFromDB]);
+
+  // 🔄 처음부터 다시 학습하기
+  const handleRestartStudyProgress = () => {
+    setCurrentIndex(0);
+    setMainTab('flashcard');
+    setInitialQuizLevel(1);
+    const dateForMission = targetStudyDate || todayStr;
+    if (currentUser) {
+      const progressKey = `study_progress_${currentUser.id}_${dateForMission}`;
+      localStorage.removeItem(progressKey);
+    }
+    setResumeNotice(`🔄 처음부터 학습을 시작합니다! (단어 #1)`);
+  };
 
 
   // 📅 출석 달력에서 특정 날짜를 눌렀을 때 학습 시작 핸들러!
@@ -387,8 +512,8 @@ export default function Home() {
   const rawExampleEn = (typeof currentWord === 'object' && currentWord?.exampleEn) ? currentWord.exampleEn.replace(/\.png/gi, '').trim() : '';
   const rawExampleKo = (typeof currentWord === 'object' && currentWord?.exampleKo) ? currentWord.exampleKo.replace(/\.png/gi, '').trim() : '';
 
-  const isRealSentenceEn = rawExampleEn && rawExampleEn.split(/\s+/).length >= 2 && !rawExampleEn.toLowerCase().endsWith('.png');
-  const isRealSentenceKo = rawExampleKo && rawExampleKo.split(/\s+/).length >= 2 && !rawExampleKo.toLowerCase().endsWith('.png');
+  const isRealSentenceEn = rawExampleEn && /[a-zA-Z]/.test(rawExampleEn) && !rawExampleEn.includes('제작완료') && !rawExampleEn.toLowerCase().endsWith('.png') && rawExampleEn.split(/\s+/).length >= 2;
+  const isRealSentenceKo = rawExampleKo && !rawExampleKo.includes('.png') && !rawExampleKo.includes('제작완료') && rawExampleKo.trim().length >= 2;
 
   const displayExampleEn = isRealSentenceEn
     ? rawExampleEn
@@ -440,7 +565,9 @@ export default function Home() {
   const handlePrev = () => {
     setIsFlipped(false);
     setRecordedAudioUrl(null);
-    setCurrentIndex(prev => (prev > 0 ? prev - 1 : safeActiveWords.length - 1));
+    const newIdx = currentIndex > 0 ? currentIndex - 1 : safeActiveWords.length - 1;
+    setCurrentIndex(newIdx);
+    saveStudyProgress({ currentIndex: newIdx });
   };
 
   const handleNext = () => {
@@ -450,9 +577,13 @@ export default function Home() {
     if (currentIndex + 1 >= safeActiveWords.length) {
       alert('🎉 선택한 세트 단어를 모두 보았습니다! 1단계 소리 퀴즈로 자동 이동합니다!');
       setMainTab('quiz');
+      setInitialQuizLevel(1);
       setCurrentIndex(0);
+      saveStudyProgress({ mainTab: 'quiz', initialQuizLevel: 1, currentIndex: 0 });
     } else {
-      setCurrentIndex(prev => prev + 1);
+      const newIdx = currentIndex + 1;
+      setCurrentIndex(newIdx);
+      saveStudyProgress({ currentIndex: newIdx });
     }
   };
 
@@ -540,6 +671,7 @@ export default function Home() {
           setHasRecorded(true);
           const dateForMission = targetStudyDate || todayStr;
           localStorage.setItem(`record_mission_${currentUser.id}_${dateForMission}`, 'true');
+          saveStudyProgress({ hasRecorded: true });
 
           if (targetWordStr) {
             setUserAudioRecordings(prev => ({ ...prev, [targetWordStr]: url }));
@@ -727,9 +859,11 @@ export default function Home() {
     const updated = [...new Set([...completedQuizLevels, level])];
     setCompletedQuizLevels(updated);
     localStorage.setItem(`quiz_mission_${currentUser.id}_${dateForMission}`, JSON.stringify(updated));
+    saveStudyProgress({ completedQuizLevels: updated });
 
     if (level === 2) {
       handleStampAttendance();
+      saveStudyProgress({ completedQuizLevels: updated, mainTab: 'calendar' });
       setTimeout(() => {
         alert(`🎉 축하합니다! 2단계 퀴즈까지 완수하여 [${dateForMission}] 출석 도장이 성공적으로 찍혔습니다! 💮\n(오늘 총 ${todayAllLearnedWords.length || safeActiveWords.length}개 단어 학습 완료!)\n\n출석 달력 탭에서 도장을 확인해보세요!`);
         setMainTab('calendar');
@@ -755,13 +889,17 @@ export default function Home() {
     const currentSrc = target.src;
     const wordClean = (wordStr || '').replace(/\.png/gi, '').trim();
     const wordLower = wordClean.toLowerCase();
+    const wordCap = wordClean ? wordClean.charAt(0).toUpperCase() + wordClean.slice(1) : '';
 
-    if (currentSrc && !currentSrc.includes(`/${wordLower}.png`)) {
+    if (currentSrc && !currentSrc.includes(`/${wordLower}.png`) && !currentSrc.includes(`/${wordCap}.png`)) {
       target.src = `/word_img/${wordLower}.png`;
+    } else if (currentSrc && !currentSrc.includes(`/${wordCap}.png`)) {
+      target.src = `/word_img/${wordCap}.png`;
     } else {
-      // 이미지가 정말로 없는 단어일 경우 대체 기본 예쁜 대표 단어 이미지로 100% 렌더링
-      target.src = '/word_img/Apple.png';
-      target.onerror = null; // 무한 리프레시 방지
+      // 이미지가 없는 단어일 경우 잘못된 사과(Apple) 대신 깔끔한 단어 알파벳 플레이스홀더 렌더링
+      const firstLetter = wordCap ? wordCap.charAt(0).toUpperCase() : '📖';
+      target.src = `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="120" height="120" viewBox="0 0 120 120"><rect width="100%" height="100%" fill="%23F8F9FA" rx="16"/><text x="50%" y="45%" dominant-baseline="middle" text-anchor="middle" font-family="sans-serif" font-size="36" font-weight="bold" fill="%233498DB">${encodeURIComponent(firstLetter)}</text><text x="50%" y="75%" dominant-baseline="middle" text-anchor="middle" font-family="sans-serif" font-size="12" font-weight="bold" fill="%237F8C8D">${encodeURIComponent(wordClean || 'Word')}</text></svg>`;
+      target.onerror = null;
     }
   };
 
@@ -929,6 +1067,127 @@ export default function Home() {
             >
               닫기
             </button>
+          </div>
+        </div>
+      )}
+
+      {/* 🚀 [1번 미개발 기능 구현] 학습 단계별 진도 저장 & 이어서 학습 비주얼 스테퍼 바 */}
+      {mainTab !== 'parent' && (
+        <div style={{
+          width: '100%',
+          background: 'linear-gradient(135deg, #F8F9FA 0%, #EBF5FB 100%)',
+          border: '2px solid #D4E6F1',
+          borderRadius: '16px',
+          padding: '12px 14px',
+          marginTop: '10px',
+          marginBottom: '10px',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '8px',
+          boxShadow: '0 4px 12px rgba(0,0,0,0.03)'
+        }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '8px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <span style={{
+                background: '#2980B9',
+                color: 'white',
+                fontSize: '11px',
+                fontWeight: '900',
+                padding: '3px 8px',
+                borderRadius: '8px',
+                letterSpacing: '0.5px'
+              }}>
+                📍 이어서 학습 자동 저장
+              </span>
+              <span style={{ fontSize: '13px', fontWeight: 'bold', color: '#2C3E50' }}>
+                {resumeNotice || `▶ 현재 학습 위치: 단어 #${currentIndex + 1} / ${safeActiveWords.length}`}
+              </span>
+            </div>
+
+            <button
+              onClick={handleRestartStudyProgress}
+              style={{
+                background: '#FFFFFF',
+                color: '#E74C3C',
+                border: '1px solid #E74C3C',
+                padding: '4px 10px',
+                borderRadius: '10px',
+                fontSize: '11px',
+                fontWeight: 'bold',
+                cursor: 'pointer'
+              }}
+              title="현재 세트 단어를 1번 카드부터 다시 공부합니다"
+            >
+              🔄 처음부터 다시 학습
+            </button>
+          </div>
+
+          {/* 5단계 비주얼 스테퍼 (Visual Stepper Progress) */}
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '4px', paddingTop: '4px', borderTop: '1px dashed #D4E6F1' }}>
+            <div style={{
+              flex: 1,
+              textAlign: 'center',
+              padding: '6px 4px',
+              borderRadius: '8px',
+              background: mainTab === 'flashcard' ? '#3498DB' : '#E8F8F5',
+              color: mainTab === 'flashcard' ? 'white' : '#27AE60',
+              fontSize: '11px',
+              fontWeight: 'bold'
+            }}>
+              1️⃣ 🎴 카드 ({currentIndex + 1}/{safeActiveWords.length})
+            </div>
+            <span style={{ color: '#BDC3C7', fontSize: '10px' }}>➔</span>
+            <div style={{
+              flex: 1,
+              textAlign: 'center',
+              padding: '6px 4px',
+              borderRadius: '8px',
+              background: hasRecorded ? '#E8F8F5' : '#FEF5E7',
+              color: hasRecorded ? '#27AE60' : '#E67E22',
+              fontSize: '11px',
+              fontWeight: 'bold'
+            }}>
+              2️⃣ 🎙️ 녹음 {hasRecorded ? '✅' : '⏳'}
+            </div>
+            <span style={{ color: '#BDC3C7', fontSize: '10px' }}>➔</span>
+            <div style={{
+              flex: 1,
+              textAlign: 'center',
+              padding: '6px 4px',
+              borderRadius: '8px',
+              background: completedQuizLevels.includes(1) ? '#E8F8F5' : (mainTab === 'quiz' && initialQuizLevel === 1 ? '#F5EEF8' : '#F8F9FA'),
+              color: completedQuizLevels.includes(1) ? '#27AE60' : (mainTab === 'quiz' && initialQuizLevel === 1 ? '#8E44AD' : '#95A5A6'),
+              fontSize: '11px',
+              fontWeight: 'bold'
+            }}>
+              3️⃣ 🔊 1단계 퀴즈 {completedQuizLevels.includes(1) ? '✅' : '⏳'}
+            </div>
+            <span style={{ color: '#BDC3C7', fontSize: '10px' }}>➔</span>
+            <div style={{
+              flex: 1,
+              textAlign: 'center',
+              padding: '6px 4px',
+              borderRadius: '8px',
+              background: completedQuizLevels.includes(2) ? '#E8F8F5' : (mainTab === 'quiz' && initialQuizLevel === 2 ? '#F5EEF8' : '#F8F9FA'),
+              color: completedQuizLevels.includes(2) ? '#27AE60' : (mainTab === 'quiz' && initialQuizLevel === 2 ? '#8E44AD' : '#95A5A6'),
+              fontSize: '11px',
+              fontWeight: 'bold'
+            }}>
+              4️⃣ 🧩 2단계 퀴즈 {completedQuizLevels.includes(2) ? '✅' : '⏳'}
+            </div>
+            <span style={{ color: '#BDC3C7', fontSize: '10px' }}>➔</span>
+            <div style={{
+              flex: 1,
+              textAlign: 'center',
+              padding: '6px 4px',
+              borderRadius: '8px',
+              background: completedQuizLevels.includes(2) ? '#27AE60' : '#F8F9FA',
+              color: completedQuizLevels.includes(2) ? 'white' : '#95A5A6',
+              fontSize: '11px',
+              fontWeight: 'bold'
+            }}>
+              5️⃣ 💮 출석도장 {completedQuizLevels.includes(2) ? '완료' : '대기'}
+            </div>
           </div>
         </div>
       )}
@@ -1153,6 +1412,7 @@ export default function Home() {
           activeWords={safeActiveWords}
           onQuizLevelComplete={handleQuizLevelComplete}
           onLoadNextWordSet={handleLoadNextWordSet}
+          initialQuizLevel={initialQuizLevel}
         />
       )}
 
