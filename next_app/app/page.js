@@ -376,6 +376,8 @@ export default function Home() {
               daily_word_count: cloudCount
             };
             setCurrentUser(updatedUser);
+            sessionStorage.setItem('english_edu_logged_user', JSON.stringify(updatedUser));
+            localStorage.setItem('english_edu_logged_user', JSON.stringify(updatedUser));
             localStorage.setItem('english_edu_current_user', JSON.stringify(updatedUser));
             const newRandoms = await loadDailyRandomWordsFromDB(updatedUser);
             if (newRandoms && newRandoms.length > 0) {

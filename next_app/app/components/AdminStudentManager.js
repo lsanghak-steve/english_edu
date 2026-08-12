@@ -227,21 +227,23 @@ export default function AdminStudentManager() {
       console.log('Cloud student save error', err);
     }
 
-    // ⚡ 현재 학습자 활성 세션(english_edu_current_user)에 실시간 강제 업데이트 동기화
+    // ⚡ 현재 학습자 활성 세션(english_edu_logged_user)에 실시간 강제 업데이트 동기화
     try {
-      const currentActiveStr = localStorage.getItem('english_edu_current_user');
-      if (currentActiveStr) {
-        const currentActive = JSON.parse(currentActiveStr);
-        if (currentActive) {
-          const activeNameClean = removeEmoji(currentActive.name || '');
-          if (activeNameClean === cleanName || currentActive.id === studentIdToUse) {
+      const sessionStr = sessionStorage.getItem('english_edu_logged_user') || localStorage.getItem('english_edu_logged_user') || localStorage.getItem('english_edu_current_user');
+      if (sessionStr) {
+        const sessionActive = JSON.parse(sessionStr);
+        if (sessionActive) {
+          const activeNameClean = removeEmoji(sessionActive.name || '');
+          if (activeNameClean === cleanName || sessionActive.id === studentIdToUse) {
             const updatedActive = {
-              ...currentActive,
+              ...sessionActive,
               studyGradeLevel: studyGradeLevel,
               study_grade_level: studyGradeLevel,
               dailyWordCount: String(wordCountInt),
               daily_word_count: wordCountInt
             };
+            sessionStorage.setItem('english_edu_logged_user', JSON.stringify(updatedActive));
+            localStorage.setItem('english_edu_logged_user', JSON.stringify(updatedActive));
             localStorage.setItem('english_edu_current_user', JSON.stringify(updatedActive));
             window.dispatchEvent(new Event('storage'));
             window.dispatchEvent(new Event('user_profile_updated'));
