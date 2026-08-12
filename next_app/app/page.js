@@ -51,18 +51,38 @@ export default function Home() {
   const [resumeNotice, setResumeNotice] = useState(null);
   const [isProgressLoaded, setIsProgressLoaded] = useState(false);
 
-  // 💾 1. [학습 단계별 진도 저장 & 이어서 학습 Engine]
+  // 💾 1. [학습 단계별 진도 저장 & 이어서 학습 Engine & 5번 세부 상태 저장]
   const saveStudyProgress = useCallback((overrides = {}) => {
     if (!currentUser || !isLoggedIn) return;
     const dateForMission = targetStudyDate || todayStr;
     const progressKey = `study_progress_${currentUser.id}_${dateForMission}`;
 
+    const curIdx = overrides.currentIndex !== undefined ? overrides.currentIndex : currentIndex;
+    const curTab = overrides.mainTab !== undefined ? overrides.mainTab : mainTab;
+    const curQuizLevels = overrides.completedQuizLevels !== undefined ? overrides.completedQuizLevels : completedQuizLevels;
+    const curHasRec = overrides.hasRecorded !== undefined ? overrides.hasRecorded : hasRecorded;
+
+    // 🎯 [5번 미개발 요구사항] 세부 저장 단계 한국어 명칭 자동 생성
+    let detailStageText = `1단계 플래시카드 단어 #${curIdx + 1} 학습 중 🎴`;
+    if (curQuizLevels.includes(4)) {
+      detailStageText = `4단계 주관식 타이핑 퀴즈 최고 난이도 완수 ✍️`;
+    } else if (curQuizLevels.includes(3)) {
+      detailStageText = `3단계 마이크 발음 녹음 퀴즈 완수 (75점+) 🎙️`;
+    } else if (curQuizLevels.includes(2)) {
+      detailStageText = `2단계 필수 스펠링 선택 퀴즈 완료 (출석도장 💮 획득)`;
+    } else if (curQuizLevels.includes(1)) {
+      detailStageText = `1단계 소리 듣기 퀴즈 완료 🔊`;
+    } else if (curHasRec) {
+      detailStageText = `2차 녹음 미션 완수 ✅`;
+    }
+
     const currentProgress = {
-      currentIndex: overrides.currentIndex !== undefined ? overrides.currentIndex : currentIndex,
-      mainTab: overrides.mainTab !== undefined ? overrides.mainTab : mainTab,
-      completedQuizLevels: overrides.completedQuizLevels !== undefined ? overrides.completedQuizLevels : completedQuizLevels,
-      hasRecorded: overrides.hasRecorded !== undefined ? overrides.hasRecorded : hasRecorded,
+      currentIndex: curIdx,
+      mainTab: curTab,
+      completedQuizLevels: curQuizLevels,
+      hasRecorded: curHasRec,
       initialQuizLevel: overrides.initialQuizLevel !== undefined ? overrides.initialQuizLevel : initialQuizLevel,
+      detailStage: detailStageText,
       updatedAt: new Date().toISOString()
     };
 
@@ -79,7 +99,8 @@ export default function Home() {
         study_date: dateForMission,
         last_index: currentProgress.currentIndex,
         last_tab: currentProgress.mainTab,
-        quiz_levels: currentProgress.completedQuizLevels
+        quiz_levels: currentProgress.completedQuizLevels,
+        detail_stage: detailStageText
       }, { onConflict: 'student_id,study_date' }).then(() => {}).catch(() => {});
     } catch (e) {}
   }, [currentUser, isLoggedIn, targetStudyDate, todayStr, currentIndex, mainTab, completedQuizLevels, hasRecorded, initialQuizLevel]);

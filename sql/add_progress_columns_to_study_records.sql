@@ -6,3 +6,4 @@
 ALTER TABLE public.study_records ADD COLUMN IF NOT EXISTS last_index INT DEFAULT 0;
 ALTER TABLE public.study_records ADD COLUMN IF NOT EXISTS last_tab TEXT DEFAULT 'flashcard';
 ALTER TABLE public.study_records ADD COLUMN IF NOT EXISTS quiz_levels INT[] DEFAULT '{}';
+ALTER TABLE public.study_records ADD COLUMN IF NOT EXISTS detail_stage TEXT DEFAULT '1단계 플래시카드 학습 중';
