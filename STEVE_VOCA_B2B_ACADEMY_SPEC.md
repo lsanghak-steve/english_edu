@@ -155,6 +155,60 @@ graph LR
 
 ---
 
+### 📌 [모듈 8] 🌐 글로벌 다국어 영단어 학습 체계 (Multilingual Global English Learning System)
+
+영어를 모국어로 사용하는 환경 외에도 **한국어, 일본어, 중국어, 스페인어, 베트남어, 영영사전 몰입 모드** 등 글로벌 다국어 사용자가 자국의 언어로 단어 뜻, 예문 해석, UI 및 학부모 알림을 수강할 수 있도록 확장하는 글로벌 다국어 i18n 시스템 아키텍처입니다.
+
+```mermaid
+graph TD
+    A["🌐 글로벌 언어 선택 (Language Switcher)"] --> B1["🇰🇷 한국어 (Korean)"]
+    A --> B2["🇯🇵 일본어 (Japanese - 日本語)"]
+    A --> B3["🇨🇳 중국어 (Chinese - 中文)"]
+    A --> B4["🇪🇸 스페인어 (Spanish - Español)"]
+    A --> B5["🇻🇳 베트남어 (Vietnamese - Tiếng Việt)"]
+    A --> B6["🇺🇸 영영 몰입 모드 (English Only)"]
+```
+
+#### 1. 🌐 지원 다국어 6종 및 학습 매칭 예시 (Multilingual Mapping)
+
+| 언어 코드 | 언어명 | 단어(Word) | 번역 뜻(Meaning) | 예문 번역(Example Translation) |
+| :---: | :--- | :--- | :--- | :--- |
+| **`ko`** | 🇰🇷 **한국어** | `apple` | 사과 | 나는 맛있는 사과를 먹는다. |
+| **`ja`** | 🇯🇵 **일본어 (日本語)** | `apple` | りんご | 私はおいしいりんごを食べます。 |
+| **`zh`** | 🇨🇳 **중국어 (中文)** | `apple` | 苹果 | 我吃美味的苹果。 |
+| **`es`** | 🇪🇸 **스페인어 (Español)** | `apple` | manzana | Como una manzana deliciosa. |
+| **`vi`** | 🇻🇳 **베트남어 (Tiếng Việt)** | `apple` | quả táo | Tôi ăn một quả táo ngon. |
+| **`en`** | 🇺🇸 **영영 몰입 모드 (Immersion)** | `apple` | a round fruit with red/green skin | I eat a delicious apple. |
+
+---
+
+#### 2. 📋 다국어 지원을 위해 해야 할 실천 로드맵 (Action Items & Task Checklist)
+
+##### 1️⃣ [Task 1] UI 글로벌 i18n 사전 구축 & 언어 선택 스위처 UI
+- [ ] 9개 메인 내비게이션 탭, 퀴즈 레벨 안내, 버튼, 모달 창의 모든 UI 텍스트를 다국어 키 사전에 등록
+- [ ] 상단 헤더에 **`🌐 언어 선택 (Language): 🇰🇷 한국어 ▾`** 플래그 선택 드롭다운 탭 추가
+- [ ] 선택한 언어 설정을 `localStorage.setItem('steve_voca_lang', langCode)`로 영구 보존
+
+##### 2️⃣ [Task 2] 5,000개 영단어 DB 다국어 번역 컬럼 확장 (`words` 테이블)
+- [ ] Supabase DB `words` 테이블 스키마에 다국어 번역 데이터 컬럼 추가:
+  - `meaning_ko`, `meaning_ja`, `meaning_zh`, `meaning_es`, `meaning_vi`, `meaning_en_def`
+  - `example_ko`, `example_ja`, `example_zh`, `example_es`, `example_vi`, `example_en`
+- [ ] 5,000개 영단어 6개국어 번역 데이터 일괄 적재 (Bulk Batch Translation Update)
+
+##### 3️⃣ [Task 3] 1~4단계 퀴즈 & 플래시카드 다국어 동적 스위칭
+- [ ] 플래시카드 뒷면 한글 뜻 및 예문 해석을 선택된 언어(`langCode`)에 맞게 동적 교체
+- [ ] 1~4단계 퀴즈 4지선다 오답 보기 생성 시 선택된 언어의 뜻으로 4지선다 보기를 자동 생성
+- [ ] 4단계 스펠링 직접 입력 퀴즈 시 해당 국가 언어로 제시문 생성
+
+##### 4️⃣ [Task 4] 다국어 원어민 TTS 음성 합성 및 억양 지원
+- [ ] 단어 발음 듣기 시 `en-US` / `en-GB` 원어민 발음 지원
+- [ ] 각 국가 언어로 된 예문 번역 청취 시 해당 국가 원어민 TTS 음성(`ja-JP`, `zh-CN`, `es-ES`, `vi-VN`) 재생 지원
+
+##### 5️⃣ [Task 5] 글로벌 다국어 학부모 리포트 & 카카오 알림톡/문자
+- [ ] 다문화 가정 및 해외 유학 학부모를 위해 학부모 리포트 메시지를 해당 국적 언어로 자동 조율 및 발송
+
+---
+
 ## 3. 🗓️ 단계별 구현 로드맵 (Implementation Roadmap)
 
 ```mermaid
@@ -170,16 +224,19 @@ gantt
     section 3단계 (자동화 & 연동)
     학부모 카카오 알림톡/문자 자동 연동             :c1, after b2, 2d
     Day 6 주간 오답 복습 데이 파이프라인 개편        :c2, after c1, 2d
+    section 4단계 (글로벌 다국어 확장)
+    글로벌 6개국어 i18n 번역 및 언어 선택 스위처      :d1, after c2, 3d
 ```
 
 ---
 
 ## 4. 💡 다음 개발 작업 진행 방식 제안
 
-원장님/선생님 B2B 기능 개발의 첫 단추로 아래 순서대로 진행하는 것을 추천합니다:
+원장님/선생님 B2B 기능 개발 및 글로벌 확장 로드맵:
 
 1. **[1단계]**: Supabase DB에 학원(`academies`), 클래스(`classes`), 선생님(`teachers`) 테이블 스키마 생성 및 계정 권한 분리
 2. **[2단계]**: 원장님/선생님이 가장 요긴하게 사용하실 **[원클릭 PDF 시험지 및 워크시트 인쇄 기능 (6종)]** 우선 개발
+3. **[3단계]**: **[글로벌 6개국어(한국어, 일본어, 중국어, 스페인어, 베트남어, 영영 몰입) 지원 체계]** 순차 구현
 
 ---
-*본 기획서는 원장님과 선생님의 의견 및 학원 현장 요구사항에 따라 지속적으로 업데이트됩니다.*
+*본 기획서는 원장님과 선생님의 의견 및 글로벌 확장 계획에 따라 지속적으로 업데이트됩니다.*
