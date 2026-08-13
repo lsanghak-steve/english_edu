@@ -591,7 +591,7 @@ export default function Home() {
   const handleLoadNextWordSet = () => {
     if (!currentUser) return;
     const userId = currentUser.id;
-    const dailyCount = parseInt(currentUser.dailyWordCount || 10, 10);
+    const dailyCount = parseInt(currentUser.dailyWordCount || 20, 10);
     const learnedKey = `learned_words_${userId}`;
     const dateForMission = targetStudyDate || todayStr;
     const todayAllKey = `today_all_learned_${currentUser.id}_${dateForMission}`;
@@ -603,32 +603,44 @@ export default function Home() {
       learnedList = [];
     }
 
-    const currentWordsStr = dailyRandomWords.map(w => w.word);
+    const currentWordsStr = dailyRandomWords.map(w => (typeof w === 'string' ? w : w.word));
     const updatedLearned = [...new Set([...learnedList, ...currentWordsStr])];
     localStorage.setItem(learnedKey, JSON.stringify(updatedLearned));
 
-    let unlearned = wordList.filter(w => !updatedLearned.includes(w.word));
+    let unlearned = wordList.filter(w => !updatedLearned.includes(typeof w === 'string' ? w : w.word));
     if (unlearned.length < dailyCount) {
+      // 5,000개 전체 단어를 순환하였을 경우 학습 목록 리셋 후 순차 선택
       localStorage.setItem(learnedKey, JSON.stringify([]));
       unlearned = [...wordList];
     }
 
-    const nextRandomSet = [...unlearned].sort(() => Math.random() - 0.5).slice(0, dailyCount);
+    // 다음 20개 단어 순차적 선택 (미학습 단어 순서대로)
+    const nextSet = unlearned.slice(0, dailyCount);
 
-    setDailyRandomWords(nextRandomSet);
-    localStorage.setItem(`daily_random_set_${userId}_${dateForMission}`, JSON.stringify(nextRandomSet));
+    setDailyRandomWords(nextSet);
+    localStorage.setItem(`daily_random_set_${userId}_${dateForMission}`, JSON.stringify(nextSet));
 
-    const updatedTodayAll = [...todayAllLearnedWords, ...nextRandomSet];
+    const updatedTodayAll = [...todayAllLearnedWords, ...nextSet];
     setTodayAllLearnedWords(updatedTodayAll);
     localStorage.setItem(todayAllKey, JSON.stringify(updatedTodayAll));
 
-    setStudyRound(prev => prev + 1);
+    const nextRound = studyRound + 1;
+    setStudyRound(nextRound);
     setCurrentIndex(0);
     setIsFlipped(false);
     setCompletedQuizLevels([]);
     setMainTab('flashcard');
 
-    alert(`🎉 🚀 다음 단어 학습 세트(제 ${studyRound + 1}회차)를 불러왔습니다!\n오늘 학습한 총 ${updatedTodayAll.length}개 단어는 상단 [📖 오늘 누적 학습 단어] 버튼으로 언제든 다시 복습할 수 있습니다!`);
+    // 🔊 원어민 안내 TTS
+    if ('speechSynthesis' in window) {
+      window.speechSynthesis.cancel();
+      const utterance = new SpeechSynthesisUtterance(`Round ${nextRound} loaded!`);
+      utterance.lang = 'en-US';
+      utterance.rate = 1.0;
+      window.speechSynthesis.speak(utterance);
+    }
+
+    alert(`🎉 🚀 다음 단어 세트(제 ${nextRound}회차 - ${nextSet.length}개 단어)를 로딩했습니다!\n\n오늘 연속 마스터한 총 ${updatedTodayAll.length}개 단어는 상단 [📖 오늘 누적 학습 단어]에서 언제든 복습 가능합니다! 👏`);
   };
 
   const userDailyCount = currentUser ? parseInt(currentUser.dailyWordCount || 10, 10) : 10;

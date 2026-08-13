@@ -786,9 +786,21 @@ export default function QuizSection({ currentUser, activeWords, onQuizLevelCompl
             {onLoadNextWordSet && (
               <button
                 onClick={onLoadNextWordSet}
-                style={{ background: '#58CC02', color: 'white', border: 'none', borderBottom: '4px solid #46A302', padding: '14px 24px', borderRadius: '16px', fontWeight: '900', fontSize: '15px', cursor: 'pointer' }}
+                style={{
+                  background: '#2ECC71',
+                  color: 'white',
+                  border: 'none',
+                  borderBottom: '5px solid #27AE60',
+                  padding: '16px 28px',
+                  borderRadius: '18px',
+                  fontWeight: '900',
+                  fontSize: '16px',
+                  cursor: 'pointer',
+                  boxShadow: '0 6px 16px rgba(46,204,113,0.3)',
+                  animation: 'pulse 1.2s infinite'
+                }}
               >
-                🚀 다음 10단어 학습 ➔
+                🚀 다음 20단어 연속 학습 (Next Round ➔)
               </button>
             )}
 
