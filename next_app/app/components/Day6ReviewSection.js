@@ -42,70 +42,77 @@ export default function Day6ReviewSection({ currentUser, safeActiveWords, onQuiz
   const studentCode = currentUser?.student_id || currentUser?.id || 'guest';
   const studentName = (currentUser?.name || '').replace(/\(.*?\)/g, '').trim();
 
-  // 1. 최근 5일간 오답 및 학습 이력 DB에서 집계
+  // 1. 최근 5일간 오답 및 학습 이력 DB에서 집계 (1.5초 타임아웃 안심 세이프가드)
   useEffect(() => {
+    let isMounted = true;
+
     async function loadDay6Data() {
       setLoading(true);
       try {
-        const queryCond = [studentCode, studentName].filter(Boolean).map(id => `student_id.eq.${id}`).join(',');
+        const timeoutPromise = new Promise(resolve => setTimeout(() => resolve({ timeout: true }), 1500));
 
-        // Supabase DB wrong_words 및 study_records 동시 조회
-        const [wrongRes, recordsRes] = await Promise.allSettled([
-          supabase.from('wrong_words').select('*').or(queryCond),
-          supabase.from('study_records').select('*').or(queryCond)
-        ]);
+        const fetchPromise = (async () => {
+          const [wrongRes, recordsRes] = await Promise.allSettled([
+            supabase.from('wrong_words').select('*').eq('student_id', studentCode),
+            supabase.from('study_records').select('*').eq('student_id', studentCode)
+          ]);
+          return { wrongRes, recordsRes };
+        })();
 
-        let wrongMap = new Map();
-        if (wrongRes.status === 'fulfilled' && wrongRes.value.data) {
-          wrongRes.value.data.forEach(item => {
-            if (item.word) wrongMap.set(item.word.trim().toLowerCase(), item);
-          });
-        }
+        const result = await Promise.race([fetchPromise, timeoutPromise]);
 
-        let learnedSet = new Set();
-        if (recordsRes.status === 'fulfilled' && recordsRes.value.data) {
-          recordsRes.value.data.forEach(rec => {
-            if (rec.stamped_words && Array.isArray(rec.stamped_words)) {
-              rec.stamped_words.forEach(w => {
-                const wStr = typeof w === 'string' ? w : w.word;
-                if (wStr) learnedSet.add(wStr.trim().toLowerCase());
-              });
-            }
-            if (rec.detail_stage && rec.detail_stage.includes('주간 복습 완수')) {
-              setIsWeeklyMasterDone(true);
-            }
-          });
-        }
-
-        const wrongList = Array.from(wrongMap.values());
-        setWrongWordsList(wrongList);
-
-        // 안전 규격화된 현재 단어 세트
-        const safeActiveFormatted = (safeActiveWords || []).map(sanitizeWordObject);
-
-        // 오답 단어 + 현재 활성 단어 세트 병합하여 주간 단어 후보 생성
-        let combined = [...safeActiveFormatted];
-        wrongList.forEach(w => {
-          const sanitizedW = sanitizeWordObject(w);
-          if (!combined.some(c => c.word.toLowerCase() === sanitizedW.word.toLowerCase())) {
-            combined.push(sanitizedW);
+        if (isMounted) {
+          let wrongMap = new Map();
+          if (result && !result.timeout && result.wrongRes && result.wrongRes.status === 'fulfilled' && result.wrongRes.value.data) {
+            result.wrongRes.value.data.forEach(item => {
+              if (item.word) wrongMap.set(item.word.trim().toLowerCase(), item);
+            });
           }
-        });
 
-        if (combined.length === 0) {
-          combined = wordList500Fallback.slice(0, 10).map(sanitizeWordObject);
+          if (result && !result.timeout && result.recordsRes && result.recordsRes.status === 'fulfilled' && result.recordsRes.value.data) {
+            result.recordsRes.value.data.forEach(rec => {
+              if (rec.detail_stage && rec.detail_stage.includes('주간 복습 완수')) {
+                setIsWeeklyMasterDone(true);
+              }
+            });
+          }
+
+          const wrongList = Array.from(wrongMap.values());
+          setWrongWordsList(wrongList);
+
+          const safeActiveFormatted = (safeActiveWords || []).map(sanitizeWordObject);
+          let combined = [...safeActiveFormatted];
+          wrongList.forEach(w => {
+            const sanitizedW = sanitizeWordObject(w);
+            if (!combined.some(c => c.word.toLowerCase() === sanitizedW.word.toLowerCase())) {
+              combined.push(sanitizedW);
+            }
+          });
+
+          if (combined.length === 0) {
+            combined = wordList500Fallback.slice(0, 10).map(sanitizeWordObject);
+          }
+
+          setWeeklyWords(combined);
         }
-
-        setWeeklyWords(combined);
       } catch (e) {
         console.log('Day 6 data load error', e);
-        const fallbackSet = (safeActiveWords && safeActiveWords.length > 0 ? safeActiveWords : wordList500Fallback.slice(0, 10)).map(sanitizeWordObject);
-        setWeeklyWords(fallbackSet);
+        if (isMounted) {
+          const fallbackSet = (safeActiveWords && safeActiveWords.length > 0 ? safeActiveWords : wordList500Fallback.slice(0, 10)).map(sanitizeWordObject);
+          setWeeklyWords(fallbackSet);
+        }
+      } finally {
+        if (isMounted) {
+          setLoading(false);
+        }
       }
-      setLoading(false);
     }
 
     loadDay6Data();
+
+    return () => {
+      isMounted = false;
+    };
   }, [studentCode, studentName, safeActiveWords]);
 
   // 2. 퀴즈 생성 로직 (오답 1순위 배치)
