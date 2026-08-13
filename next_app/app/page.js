@@ -48,6 +48,31 @@ export default function Home() {
 
   const [hasRecorded, setHasRecorded] = useState(false);
   const [completedQuizLevels, setCompletedQuizLevels] = useState([]);
+
+  // 🎛️ TTS 음성 속도 조율 상태 (0.7x ~ 2.0x, 기본 1.0x)
+  const [ttsSpeed, setTtsSpeed] = useState(1.0);
+
+  useEffect(() => {
+    try {
+      const savedSpeed = localStorage.getItem('steve_voca_tts_speed');
+      if (savedSpeed) setTtsSpeed(parseFloat(savedSpeed));
+    } catch (e) {}
+  }, []);
+
+  const handleSpeedChange = (newSpeed) => {
+    setTtsSpeed(newSpeed);
+    try {
+      localStorage.setItem('steve_voca_tts_speed', String(newSpeed));
+    } catch (e) {}
+    if ('speechSynthesis' in window) {
+      window.speechSynthesis.cancel();
+      const testMsg = newSpeed === 0.7 ? "Slow mode" : newSpeed === 1.4 ? "Fast mode" : newSpeed === 2.0 ? "Super fast mode" : "Normal mode";
+      const utterance = new SpeechSynthesisUtterance(testMsg);
+      utterance.lang = 'en-US';
+      utterance.rate = newSpeed;
+      window.speechSynthesis.speak(utterance);
+    }
+  };
   const [pronunciationScore, setPronunciationScore] = useState(null);
   const [userAudioRecordings, setUserAudioRecordings] = useState({});
   const recognitionRef = useRef(null);
@@ -661,10 +686,10 @@ export default function Home() {
       window.speechSynthesis.cancel();
       const utterance = new SpeechSynthesisUtterance(text);
       utterance.lang = 'en-US';
-      utterance.rate = 0.85;
+      utterance.rate = ttsSpeed;
       window.speechSynthesis.speak(utterance);
     }
-  }, [cleanWordStr]);
+  }, [cleanWordStr, ttsSpeed]);
 
   const playSentenceAudio = useCallback((sentenceText) => {
     if ('speechSynthesis' in window) {
@@ -672,10 +697,10 @@ export default function Home() {
       window.speechSynthesis.cancel();
       const utterance = new SpeechSynthesisUtterance(textToSpeak);
       utterance.lang = 'en-US';
-      utterance.rate = 0.85;
+      utterance.rate = ttsSpeed;
       window.speechSynthesis.speak(utterance);
     }
-  }, [displayExampleEn]);
+  }, [displayExampleEn, ttsSpeed]);
 
   useEffect(() => {
     if (isLoggedIn && mainTab === 'flashcard' && currentWord) {
@@ -1572,6 +1597,94 @@ export default function Home() {
               Steve Voca (스티브 보카) {currentUser?.studyGradeLevel || currentUser?.study_grade_level || '중등단어'}
             </h1>
           </header>
+
+          {/* 🎛️ TTS 음성 속도 조율 컨트롤러 (0.7x ~ 2.0x) */}
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            justify: 'center',
+            gap: '6px',
+            background: '#FFFFFF',
+            padding: '10px 16px',
+            borderRadius: '20px',
+            border: '2px solid #E2E8F0',
+            boxShadow: '0 4px 12px rgba(0,0,0,0.03)',
+            margin: '14px auto 16px auto',
+            maxWidth: '500px',
+            flexWrap: 'wrap'
+          }}>
+            <span style={{ fontSize: '13px', fontWeight: 'bold', color: '#4A5568', display: 'flex', alignItems: 'center', gap: '4px' }}>
+              🎛️ 발음 속도:
+            </span>
+
+            <button
+              onClick={() => handleSpeedChange(0.7)}
+              style={{
+                padding: '5px 12px',
+                borderRadius: '12px',
+                fontSize: '12px',
+                fontWeight: 'bold',
+                border: ttsSpeed === 0.7 ? '2px solid #E67E22' : '1px solid #CBD5E0',
+                background: ttsSpeed === 0.7 ? '#FEF9E7' : '#FFFFFF',
+                color: ttsSpeed === 0.7 ? '#D35400' : '#4A5568',
+                cursor: 'pointer',
+                boxShadow: ttsSpeed === 0.7 ? '0 2px 6px rgba(230,126,34,0.2)' : 'none'
+              }}
+            >
+              🐢 0.7x (슬로우)
+            </button>
+
+            <button
+              onClick={() => handleSpeedChange(1.0)}
+              style={{
+                padding: '5px 12px',
+                borderRadius: '12px',
+                fontSize: '12px',
+                fontWeight: 'bold',
+                border: ttsSpeed === 1.0 ? '2px solid #2ECC71' : '1px solid #CBD5E0',
+                background: ttsSpeed === 1.0 ? '#E8F8F5' : '#FFFFFF',
+                color: ttsSpeed === 1.0 ? '#27AE60' : '#4A5568',
+                cursor: 'pointer',
+                boxShadow: ttsSpeed === 1.0 ? '0 2px 6px rgba(46,204,113,0.2)' : 'none'
+              }}
+            >
+              🎧 1.0x (표준)
+            </button>
+
+            <button
+              onClick={() => handleSpeedChange(1.4)}
+              style={{
+                padding: '5px 12px',
+                borderRadius: '12px',
+                fontSize: '12px',
+                fontWeight: 'bold',
+                border: ttsSpeed === 1.4 ? '2px solid #3498DB' : '1px solid #CBD5E0',
+                background: ttsSpeed === 1.4 ? '#EBF5FB' : '#FFFFFF',
+                color: ttsSpeed === 1.4 ? '#2980B9' : '#4A5568',
+                cursor: 'pointer',
+                boxShadow: ttsSpeed === 1.4 ? '0 2px 6px rgba(52,152,219,0.2)' : 'none'
+              }}
+            >
+              ⚡ 1.4x (빠르게)
+            </button>
+
+            <button
+              onClick={() => handleSpeedChange(2.0)}
+              style={{
+                padding: '5px 12px',
+                borderRadius: '12px',
+                fontSize: '12px',
+                fontWeight: 'bold',
+                border: ttsSpeed === 2.0 ? '2px solid #9B59B6' : '1px solid #CBD5E0',
+                background: ttsSpeed === 2.0 ? '#F5EEF8' : '#FFFFFF',
+                color: ttsSpeed === 2.0 ? '#8E44AD' : '#4A5568',
+                cursor: 'pointer',
+                boxShadow: ttsSpeed === 2.0 ? '0 2px 6px rgba(155,89,182,0.2)' : 'none'
+              }}
+            >
+              🚀 2.0x (초배속)
+            </button>
+          </div>
 
           <div className="flashcard-wrapper">
             <div className={`flashcard ${isFlipped ? 'flipped' : ''}`} onClick={handleCardClick}>
