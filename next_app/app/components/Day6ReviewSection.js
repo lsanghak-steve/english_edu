@@ -2,6 +2,29 @@
 
 import { useState, useEffect } from 'react';
 import supabase from '../../lib/supabaseClient.js';
+import wordList500Fallback from '../../data/wordsData.js';
+
+// 단어 객체 안전 규격화 헬퍼 (문자열 또는 미완성 객체 100% 보장)
+const sanitizeWordObject = (item) => {
+  if (!item) return { id: Date.now(), word: 'Apple', meaning: '사과', phonics: '/ˈæpəl/' };
+  if (typeof item === 'string') {
+    const found = wordList500Fallback.find(w => w.word && w.word.toLowerCase() === item.toLowerCase());
+    return {
+      id: Date.now(),
+      word: item,
+      meaning: found ? found.meaning : '의미 확인',
+      phonics: found ? found.phonics : ''
+    };
+  }
+  const wordStr = item.word || item.cleanWord || 'Apple';
+  const found = wordList500Fallback.find(w => w.word && w.word.toLowerCase() === wordStr.toLowerCase());
+  return {
+    id: item.id || Date.now(),
+    word: wordStr,
+    meaning: item.meaning || (found ? found.meaning : '의미 확인'),
+    phonics: item.phonics || (found ? found.phonics : '')
+  };
+};
 
 export default function Day6ReviewSection({ currentUser, safeActiveWords, onQuizComplete }) {
   const [weeklyWords, setWeeklyWords] = useState([]);
@@ -57,24 +80,27 @@ export default function Day6ReviewSection({ currentUser, safeActiveWords, onQuiz
         const wrongList = Array.from(wrongMap.values());
         setWrongWordsList(wrongList);
 
-        // 오답 단어 + 현재 활성 단어 세트 병합하여 주간 100단어 후보 생성
-        let combined = [...safeActiveWords];
+        // 안전 규격화된 현재 단어 세트
+        const safeActiveFormatted = (safeActiveWords || []).map(sanitizeWordObject);
+
+        // 오답 단어 + 현재 활성 단어 세트 병합하여 주간 단어 후보 생성
+        let combined = [...safeActiveFormatted];
         wrongList.forEach(w => {
-          if (!combined.some(c => c.word.toLowerCase() === w.word.toLowerCase())) {
-            combined.push({
-              id: w.id || Date.now(),
-              word: w.word,
-              meaning: w.meaning || '의미 확인 필요',
-              phonics: w.phonics || '',
-              grade_level: w.grade_level || '주간복습'
-            });
+          const sanitizedW = sanitizeWordObject(w);
+          if (!combined.some(c => c.word.toLowerCase() === sanitizedW.word.toLowerCase())) {
+            combined.push(sanitizedW);
           }
         });
+
+        if (combined.length === 0) {
+          combined = wordList500Fallback.slice(0, 10).map(sanitizeWordObject);
+        }
 
         setWeeklyWords(combined);
       } catch (e) {
         console.log('Day 6 data load error', e);
-        setWeeklyWords(safeActiveWords);
+        const fallbackSet = (safeActiveWords && safeActiveWords.length > 0 ? safeActiveWords : wordList500Fallback.slice(0, 10)).map(sanitizeWordObject);
+        setWeeklyWords(fallbackSet);
       }
       setLoading(false);
     }
@@ -84,26 +110,38 @@ export default function Day6ReviewSection({ currentUser, safeActiveWords, onQuiz
 
   // 2. 퀴즈 생성 로직 (오답 1순위 배치)
   const startDay6Quiz = () => {
-    let pool = [...weeklyWords];
+    const sanitizedWeekly = (weeklyWords && weeklyWords.length > 0 ? weeklyWords : wordList500Fallback.slice(0, 10)).map(sanitizeWordObject);
+    const sanitizedWrong = (wrongWordsList || []).map(sanitizeWordObject);
 
-    // 오답 단어를 가장 우선 순위로 셔플하여 10~20개 퀴즈 문항 구성
+    let pool = [...sanitizedWeekly];
+    if (pool.length < 10) {
+      const extraFallback = wordList500Fallback.slice(0, 10 - pool.length).map(sanitizeWordObject);
+      pool = [...pool, ...extraFallback];
+    }
+
+    // 오답 단어를 가장 우선 순위로 셔플하여 10개 퀴즈 문항 구성
     const sortedPool = pool.sort((a, b) => {
-      const aIsWrong = wrongWordsList.some(w => w.word.toLowerCase() === a.word.toLowerCase());
-      const bIsWrong = wrongWordsList.some(w => w.word.toLowerCase() === b.word.toLowerCase());
+      const aIsWrong = sanitizedWrong.some(w => w.word.toLowerCase() === a.word.toLowerCase());
+      const bIsWrong = sanitizedWrong.some(w => w.word.toLowerCase() === b.word.toLowerCase());
       return bIsWrong - aIsWrong;
     });
 
-    const targetPool = sortedPool.slice(0, 10); // 10문항 복습
+    const targetPool = sortedPool.slice(0, 10);
 
     const generated = targetPool.map((target, idx) => {
-      // 4지선다 보안 생성
-      const wrongOptions = pool
-        .filter(w => w.word !== target.word)
-        .sort(() => Math.random() - 0.5)
-        .slice(0, 3)
+      let wrongOptions = pool
+        .filter(w => w.word.toLowerCase() !== target.word.toLowerCase())
         .map(w => w.meaning);
 
-      const options = [...wrongOptions, target.meaning].sort(() => Math.random() - 0.5);
+      if (wrongOptions.length < 3) {
+        const extraOptions = wordList500Fallback
+          .filter(w => w.word.toLowerCase() !== target.word.toLowerCase())
+          .map(w => w.meaning);
+        wrongOptions = [...wrongOptions, ...extraOptions];
+      }
+
+      const shuffledWrong = wrongOptions.sort(() => Math.random() - 0.5).slice(0, 3);
+      const options = [...shuffledWrong, target.meaning].sort(() => Math.random() - 0.5);
 
       return {
         id: target.id || idx,
