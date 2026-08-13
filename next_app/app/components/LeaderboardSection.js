@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import supabase from '../lib/supabaseClient.js';
+import supabase from '../../lib/supabaseClient.js';
 
 // 이름에서 이모지 제거 헬퍼
 const removeEmoji = (str) => {
