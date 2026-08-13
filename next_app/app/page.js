@@ -12,6 +12,7 @@ import PersonalVocabSection from './components/PersonalVocabSection.js';
 import ParentDashboard from './components/ParentDashboard.js';
 import StatsSection from './components/StatsSection.js';
 import Day6ReviewSection from './components/Day6ReviewSection.js';
+import LeaderboardSection from './components/LeaderboardSection.js';
 
 export default function Home() {
   const [currentUser, setCurrentUser] = useState(null);
@@ -1682,6 +1683,13 @@ export default function Home() {
           >
             👨‍👩‍👧‍👦 학부모
           </button>
+          <button
+            className={`nav-pill-btn ${mainTab === 'leaderboard' ? 'active' : ''}`}
+            onClick={() => setMainTab('leaderboard')}
+            style={{ background: mainTab === 'leaderboard' ? '#D35400' : '#FEF5E7', color: mainTab === 'leaderboard' ? 'white' : '#D35400', borderColor: '#F5CBA7' }}
+          >
+            🏆 Voca 랭킹 👑
+          </button>
         </div>
       </nav>
 
@@ -2003,6 +2011,11 @@ export default function Home() {
           safeActiveWords={safeActiveWords}
           onQuizComplete={fetchStudyRecordsFromDB}
         />
+      )}
+
+      {/* 탭 10: 🏆 Voca Power 실시간 랭킹 시스템 */}
+      {mainTab === 'leaderboard' && (
+        <LeaderboardSection currentUser={currentUser} />
       )}
 
     </main>
