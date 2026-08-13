@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import supabase from '../../lib/supabaseClient.js';
 import wordList500Fallback from '../../data/wordsData.js';
+import ParentNotificationManager from './ParentNotificationManager.js';
 
 // 이름에서 이모지 제거 헬퍼 함수
 const removeEmoji = (str) => {
@@ -21,10 +22,11 @@ export default function ParentDashboard({ currentUser, onLogout }) {
   const [learnedWordsList, setLearnedWordsList] = useState([]);
   const [wrongAnswers, setWrongAnswers] = useState([]);
 
-  // 3대 카드 클릭 팝업 상태
+  // 3대 카드 클릭 팝업 상태 & 카카오 알림톡 모달
   const [showAttendanceModal, setShowAttendanceModal] = useState(false);
   const [showWordsModal, setShowWordsModal] = useState(false);
   const [showWrongModal, setShowWrongModal] = useState(false);
+  const [showNotificationModal, setShowNotificationModal] = useState(false);
 
   // 1. Supabase 클라우드 DB `users` 테이블에서 전체 자녀/학생 목록 라이브 로드
   useEffect(() => {
@@ -199,14 +201,23 @@ export default function ParentDashboard({ currentUser, onLogout }) {
           </span>
         </div>
 
-        {onLogout && (
+        <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
           <button
-            onClick={onLogout}
-            style={{ background: '#E74C3C', color: 'white', border: 'none', padding: '8px 16px', borderRadius: '12px', fontWeight: 'bold', fontSize: '13px', cursor: 'pointer', boxShadow: '0 2px 6px rgba(231,76,60,0.2)' }}
+            onClick={() => setShowNotificationModal(true)}
+            style={{ background: '#FEE500', color: '#3C1E1E', border: 'none', padding: '8px 16px', borderRadius: '12px', fontWeight: '900', fontSize: '13px', cursor: 'pointer', boxShadow: '0 2px 6px rgba(0,0,0,0.1)' }}
           >
-            🚪 학생 로그인 화면으로 이동 (로그아웃)
+            📲 카카오 알림톡/문자 센터 💬
           </button>
-        )}
+
+          {onLogout && (
+            <button
+              onClick={onLogout}
+              style={{ background: '#E74C3C', color: 'white', border: 'none', padding: '8px 16px', borderRadius: '12px', fontWeight: 'bold', fontSize: '13px', cursor: 'pointer', boxShadow: '0 2px 6px rgba(231,76,60,0.2)' }}
+            >
+              🚪 학생 로그인 화면으로 이동 (로그아웃)
+            </button>
+          )}
+        </div>
       </div>
 
       {loading ? (
@@ -404,6 +415,15 @@ export default function ParentDashboard({ currentUser, onLogout }) {
             </button>
           </div>
         </div>
+      )}
+
+      {/* 팝업 4: 💬 학부모 카카오 알림톡/문자 자동 발송 모달 */}
+      {showNotificationModal && (
+        <ParentNotificationManager
+          currentUser={currentUser}
+          activeChild={activeChild}
+          onClose={() => setShowNotificationModal(false)}
+        />
       )}
     </div>
   );
