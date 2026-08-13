@@ -771,6 +771,90 @@ export default function Home() {
     draw();
   }, []);
 
+  // 🤖 AI 발음 교정 가이드 팁 분석 엔진
+  const getAIPronunciationGuideTip = (targetWordStr, score) => {
+    if (!targetWordStr) return null;
+    const cleanWord = targetWordStr.toLowerCase().trim();
+
+    if (score !== null && score !== undefined) {
+      if (score >= 90) {
+        return {
+          icon: '🎉',
+          title: '🤖 AI 발음 완벽 칭찬!',
+          text: `[${targetWordStr}] 원어민 수준의 완벽한 혀 위치와 입모양입니다! 억양과 발음이 아주 부드럽고 훌륭합니다. 👏`,
+          color: '#27AE60',
+          bg: '#E8F8F5',
+          border: '#A3E4D7'
+        };
+      }
+    }
+
+    // 음소별 (R/L, TH, V/F, SH/CH) 맞춤 혀위치 & 입모양 피드백
+    if (cleanWord.includes('r')) {
+      return {
+        icon: '👅',
+        title: '🤖 AI 혀 위치 교정 팁 [R 발음]',
+        text: `R 발음 시 혀끝을 입천장에 대지 않고 입 안쪽으로 살짝 구부려 '우-' 소리를 입안에서 웅얼거리듯 굴려보세요!`,
+        color: '#D35400',
+        bg: '#FEF9E7',
+        border: '#F9E79F'
+      };
+    }
+
+    if (cleanWord.includes('l')) {
+      return {
+        icon: '👅',
+        title: '🤖 AI 혀 위치 교정 팁 [L 발음]',
+        text: `L 발음 시 혀끝을 윗니 바로 뒤 입천장에 꾹 대었다가 '얼-' 소리를 내며 상큼하게 떼어보세요!`,
+        color: '#2980B9',
+        bg: '#EBF5FB',
+        border: '#AED6F1'
+      };
+    }
+
+    if (cleanWord.includes('th')) {
+      return {
+        icon: '👄',
+        title: '🤖 AI 입모양 교정 팁 [TH 발음]',
+        text: `혀끝을 윗니와 아랫니 사이에 살짝 물었다가 바람을 뿜어내며 '쓰-' 또는 '뜨-' 소리를 내보세요!`,
+        color: '#8E44AD',
+        bg: '#F5EEF8',
+        border: '#D7BDE2'
+      };
+    }
+
+    if (cleanWord.includes('v') || cleanWord.includes('f')) {
+      return {
+        icon: '👄',
+        title: '🤖 AI 입모양 교정 팁 [V / F 발음]',
+        text: `윗니로 아랫입술을 가볍게 지그시 누르고 공기를 스치듯이 '쁘-' 또는 '프-' 바람 소리를 불어내보세요!`,
+        color: '#C0392B',
+        bg: '#FADBD8',
+        border: '#F5B7B1'
+      };
+    }
+
+    if (cleanWord.includes('sh') || cleanWord.includes('ch')) {
+      return {
+        icon: '👄',
+        title: '🤖 AI 입모양 교정 팁 [SH / CH 발음]',
+        text: `입술을 앞으로 동그랗게 모으고 공기를 밀어내며 '쉬-' 또는 '치-' 소리를 강하게 만들어보세요!`,
+        color: '#16A085',
+        bg: '#E8F8F5',
+        border: '#A3E4D7'
+      };
+    }
+
+    return {
+      icon: '💡',
+      title: '🤖 AI 원어민 억양 교정 팁',
+      text: `상단의 🐢 0.7x 슬로우 배속으로 원어민 발음을 들으면서 강세(Accent)가 들어가는 음절을 높여 읽어보세요!`,
+      color: '#2980B9',
+      bg: '#EBF5FB',
+      border: '#AED6F1'
+    };
+  };
+
   const startRecording = async () => {
     try {
       setPronunciationScore(null);
@@ -1801,6 +1885,34 @@ export default function Home() {
                   </div>
                 </div>
               )}
+
+              {/* 🤖 AI 발음 교정 가이드 팁 카드 (음소별 입모양 & 혀위치 피드백) */}
+              {(() => {
+                const aiTip = getAIPronunciationGuideTip(cleanWordStr, pronunciationScore);
+                if (!aiTip) return null;
+                return (
+                  <div
+                    style={{
+                      margin: '12px 0 10px 0',
+                      padding: '12px 14px',
+                      borderRadius: '16px',
+                      background: aiTip.bg,
+                      border: `2px solid ${aiTip.border}`,
+                      textAlign: 'left',
+                      boxShadow: '0 4px 12px rgba(0,0,0,0.03)',
+                      animation: 'fadeIn 0.4s ease'
+                    }}
+                  >
+                    <div style={{ fontSize: '13px', fontWeight: '900', color: aiTip.color, display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '4px' }}>
+                      <span>{aiTip.icon}</span>
+                      <span>{aiTip.title}</span>
+                    </div>
+                    <p style={{ margin: 0, fontSize: '12px', color: '#2C3E50', lineHeight: 1.5, fontWeight: 'bold' }}>
+                      {aiTip.text}
+                    </p>
+                  </div>
+                );
+              })()}
 
               <div style={{ display: 'flex', justifyContent: 'center', gap: '10px', marginTop: '10px' }}>
                 {!isRecording ? (
