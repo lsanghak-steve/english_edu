@@ -1,8 +1,8 @@
-'use client';
+import { useState } from 'react';
+import PdfTestSheetGenerator from './PdfTestSheetGenerator.js';
 
-// WordListSection 컴포넌트: 넘겨받은 단어 배열(words/activeWords)의 소리 재생 및 리스트 화면을 표시합니다.
-// WordListSection 컴포넌트: 넘겨받은 단어 배열(words/activeWords)의 소리 재생 및 리스트 화면을 표시하며, 학생 본인의 녹음 듣기를 지원합니다.
 export default function WordListSection({ words, activeWords, onPlayAudio, playAudio, userAudioRecordings = {} }) {
+    const [showPdfModal, setShowPdfModal] = useState(false);
     // words 또는 activeWords 중 유효한 배열을 사용 (undefined 시 빈 배열 안전 처리)
     const list = Array.isArray(words) ? words : (Array.isArray(activeWords) ? activeWords : []);
     const playAudioFn = onPlayAudio || playAudio;
@@ -29,9 +29,31 @@ export default function WordListSection({ words, activeWords, onPlayAudio, playA
 
     return (
         <div className="word-list-section">
-            <div className="word-list-header">
-                <h3>📋 학습 단어 목록 ({list.length}개)</h3>
-                <p className="word-list-subtitle">공부할 단어들의 영단어, 발음기호, 뜻, 예문과 🎙️ 내 발음 녹음을 들어보세요.</p>
+            <div className="word-list-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '10px' }}>
+                <div>
+                    <h3 style={{ margin: 0 }}>📋 학습 단어 목록 ({list.length}개)</h3>
+                    <p className="word-list-subtitle" style={{ margin: '4px 0 0 0' }}>공부할 단어들의 영단어, 발음기호, 뜻, 예문과 🎙️ 내 발음 녹음을 들어보세요.</p>
+                </div>
+                <button
+                    type="button"
+                    onClick={() => setShowPdfModal(true)}
+                    style={{
+                        background: 'linear-gradient(135deg, #3182CE 0%, #2B6CB0 100%)',
+                        color: 'white',
+                        border: 'none',
+                        padding: '10px 18px',
+                        borderRadius: '12px',
+                        fontWeight: '900',
+                        fontSize: '13px',
+                        cursor: 'pointer',
+                        boxShadow: '0 4px 10px rgba(49,130,206,0.3)',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '6px'
+                    }}
+                >
+                    🖨️ 원클릭 PDF 시험지/워크시트 인쇄 (6종)
+                </button>
             </div>
 
             <div className="word-card-grid">
@@ -107,6 +129,18 @@ export default function WordListSection({ words, activeWords, onPlayAudio, playA
                     );
                 })}
             </div>
+
+            {/* 🖨️ 원클릭 고품질 PDF 시험지 & 워크시트 생성 모달 */}
+            {showPdfModal && (
+                <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.7)', zIndex: 12000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }}>
+                    <div style={{ background: '#FFFFFF', borderRadius: '24px', padding: '24px', width: '100%', maxWidth: '900px', maxHeight: '90vh', overflowY: 'auto' }}>
+                        <PdfTestSheetGenerator
+                            customWords={list}
+                            onClose={() => setShowPdfModal(false)}
+                        />
+                    </div>
+                </div>
+            )}
         </div>
     );
 }
