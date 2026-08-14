@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>steve voca (스티브 보카) - Master English Vocabulary. Effortlessly.</title>
+  <meta name="description" content="단어 암기부터 원어민 발음 녹음, 0.75x~1.25x 음성 속도 조절, 학부모 안심 리포트, 1초 PDF 시험지 인쇄까지! 학생 100% 무료 / 학원 별도 문의">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, 'SF Pro Display', 'SF Pro Text', BlinkMacSystemFont, 'Pretendard', sans-serif;
+      color: #1D1D1F;
+      background-color: #F5F5F7;
+      line-height: 1.5;
+      letter-spacing: -0.015em;
+    }
+    a { text-decoration: none; color: inherit; }
+
+    /* Apple Floating Capsule Header */
+    .apple-nav-wrapper {
+      position: fixed;
+      top: 16px; left: 0; right: 0;
+      display: flex; justify-content: center;
+      z-index: 1000; padding: 0 16px;
+    }
+    .apple-nav-capsule {
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(20px) saturate(180%);
+      -webkit-backdrop-filter: blur(20px) saturate(180%);
+      border: 1px solid rgba(255, 255, 255, 0.6);
+      border-radius: 999px;
+      padding: 8px 12px 8px 24px;
+      display: flex; align-items: center; gap: 36px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06), 0 1px 3px rgba(0, 0, 0, 0.03);
+      max-width: 1000px; width: 100%;
+      justify-content: space-between;
+    }
+    .nav-logo { display: flex; align-items: center; gap: 6px; font-size: 19px; font-weight: 800; cursor: pointer; color: #1D1D1F; }
+    .logo-apple-icon { font-size: 20px; color: #0071E3; }
+    .nav-menu { display: flex; gap: 24px; font-size: 14px; font-weight: 600; color: #515154; }
+    .nav-menu a:hover { color: #0071E3; }
+    .nav-actions { display: flex; gap: 8px; }
+    .btn-apple-secondary { padding: 8px 16px; border-radius: 999px; background: rgba(0, 0, 0, 0.05); color: #1D1D1F; font-size: 13px; font-weight: 600; }
+    .btn-apple-primary { padding: 8px 18px; border-radius: 999px; background: #0071E3; color: #FFFFFF; font-size: 13px; font-weight: 700; border: none; cursor: pointer; box-shadow: 0 4px 12px rgba(0, 113, 227, 0.3); }
+
+    /* Hero */
+    .hero-section { padding-top: 150px; padding-bottom: 100px; }
+    .hero-container { max-width: 1200px; margin: 0 auto; padding: 0 24px; display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; }
+    .apple-pill-tag { display: inline-block; padding: 6px 14px; border-radius: 999px; background: rgba(0, 113, 227, 0.1); color: #0071E3; font-size: 13px; font-weight: 700; margin-bottom: 20px; }
+    .hero-title { font-size: 52px; font-weight: 800; line-height: 1.15; letter-spacing: -0.025em; color: #1D1D1F; margin-bottom: 20px; }
+    .highlight-text { color: #0071E3; }
+    .hero-subtitle { font-size: 18px; color: #86868B; line-height: 1.6; margin-bottom: 36px; }
+    .hero-btn-group { display: flex; gap: 16px; margin-bottom: 48px; }
+    .btn-hero-apple { padding: 16px 32px; border-radius: 999px; background: #0071E3; color: #FFFFFF; font-size: 17px; font-weight: 700; border: none; cursor: pointer; box-shadow: 0 8px 20px rgba(0, 113, 227, 0.35); transition: transform 0.2s; }
+    .btn-hero-apple:hover { transform: scale(1.02); background: #0077ED; }
+    .btn-hero-glass { padding: 16px 28px; border-radius: 999px; background: rgba(255, 255, 255, 0.85); color: #1D1D1F; border: 1px solid rgba(0, 0, 0, 0.12); font-size: 16px; font-weight: 700; cursor: pointer; }
+
+    .apple-stats-bar { display: flex; align-items: center; gap: 24px; padding-top: 24px; border-top: 1px solid rgba(0, 0, 0, 0.08); }
+    .stat-val { font-size: 22px; font-weight: 800; color: #1D1D1F; display: block; }
+    .stat-desc { font-size: 13px; color: #86868B; }
+    .stat-sep { width: 1px; height: 32px; background: rgba(0, 0, 0, 0.1); }
+
+    /* iPhone Frame Mockup */
+    .iphone-mockup-wrapper { display: flex; justify-content: center; }
+    .iphone-frame { width: 320px; height: 640px; background: #000000; border-radius: 54px; padding: 12px; box-shadow: 0 30px 60px -15px rgba(0, 0, 0, 0.3), 0 0 0 4px #2D2D2E, 0 0 0 8px #1A1A1A; position: relative; }
+    .iphone-dynamic-island { position: absolute; top: 20px; left: 50%; transform: translateX(-50%); width: 96px; height: 28px; background: #000000; border-radius: 20px; z-index: 10; display: flex; align-items: center; justify-content: flex-end; padding-right: 10px; }
+    .camera-lens { width: 10px; height: 10px; border-radius: 50%; background: #111115; border: 1px solid #222228; }
+    .iphone-screen { width: 100%; height: 100%; background: #F5F5F7; border-radius: 42px; overflow: hidden; padding: 38px 16px 16px; display: flex; flex-direction: column; position: relative; }
+    .app-status-bar { display: flex; justify-content: space-between; font-size: 11px; font-weight: 700; color: #1D1D1F; margin-bottom: 12px; }
+    .app-header-mini { display: flex; justify-content: space-between; font-size: 12px; font-weight: 800; margin-bottom: 16px; }
+    .app-badge { color: #0071E3; }
+    .free-badge { color: #34C759; background: #E8F9ED; padding: 2px 6px; border-radius: 6px; }
+
+    .iphone-card { background: #FFFFFF; border-radius: 24px; padding: 20px 16px; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05); border: 1px solid rgba(0, 0, 0, 0.04); }
+    .card-tag-mini { font-size: 10px; color: #0071E3; font-weight: 700; margin-bottom: 4px; }
+    .card-title-mini { font-size: 26px; font-weight: 800; color: #1D1D1F; margin-bottom: 2px; }
+    .card-phonics-mini { font-size: 12px; color: #86868B; margin-bottom: 6px; }
+    .card-meaning-mini { font-size: 14px; font-weight: 700; color: #1D1D1F; margin-bottom: 14px; }
+
+    .mini-speed-bar { display: flex; gap: 4px; margin-bottom: 12px; }
+    .speed-tag { font-size: 10px; padding: 2px 6px; border-radius: 6px; background: #F5F5F7; color: #86868B; }
+    .speed-tag.active { background: #0071E3; color: #FFFFFF; font-weight: 700; }
+
+    .mini-waveform-box { background: #F5F5F7; border-radius: 14px; padding: 10px; margin-bottom: 14px; }
+    .wave-lbl { font-size: 10px; font-weight: 700; color: #515154; margin-bottom: 6px; }
+    .wave-bars-mini { display: flex; gap: 4px; align-items: center; justify-content: center; height: 24px; margin-bottom: 6px; }
+    .wb { width: 4px; background: #0071E3; border-radius: 2px; height: 16px; }
+    .w1 { height: 8px; } .w2 { height: 18px; } .w3 { height: 24px; } .w4 { height: 14px; } .w5 { height: 20px; }
+    .ai-score { font-size: 10px; text-align: center; color: #34C759; font-weight: 700; }
+
+    .mini-badges-row { display: flex; justify-content: space-between; font-size: 10px; font-weight: 700; }
+    .mini-stamp { color: #D0145A; background: #FCE7F3; padding: 4px 8px; border-radius: 6px; }
+    .mini-hp { color: #34C759; background: #E8F9ED; padding: 4px 8px; border-radius: 6px; }
+    .iphone-home-bar { position: absolute; bottom: 8px; left: 50%; transform: translateX(-50%); width: 120px; height: 4px; background: #000000; border-radius: 2px; }
+
+    /* Sections */
+    .section { padding: 100px 24px; }
+    .section-container { max-width: 1100px; margin: 0 auto; }
+    .section-header { text-align: center; max-width: 680px; margin: 0 auto 60px; }
+    .apple-subheading { font-size: 14px; font-weight: 700; color: #0071E3; text-transform: uppercase; letter-spacing: 0.05em; display: block; margin-bottom: 8px; }
+    .apple-heading { font-size: 38px; font-weight: 800; color: #1D1D1F; letter-spacing: -0.02em; margin-bottom: 14px; }
+    .apple-body { font-size: 18px; color: #86868B; }
+
+    .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; }
+    .grid-6 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+
+    .apple-card { background: #FFFFFF; border-radius: 28px; padding: 32px 24px; border: 1px solid rgba(0, 0, 0, 0.04); box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04); }
+    .apple-card-icon { font-size: 38px; margin-bottom: 20px; }
+    .apple-card h3 { font-size: 20px; font-weight: 800; color: #1D1D1F; margin-bottom: 10px; }
+    .apple-card p { font-size: 14px; color: #86868B; line-height: 1.6; }
+
+    /* Pricing Cards */
+    .apple-pricing-card { background: #FFFFFF; border-radius: 28px; padding: 36px 28px; border: 1px solid rgba(0, 0, 0, 0.04); box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04); display: flex; flex-direction: column; position: relative; }
+    .apple-pricing-card.featured { border: 2px solid #34C759; box-shadow: 0 16px 40px rgba(52, 199, 89, 0.15); }
+    .apple-pricing-card.contact-card { border: 2px solid #0071E3; box-shadow: 0 16px 40px rgba(0, 113, 227, 0.12); }
+    .feat-chip { position: absolute; top: -12px; left: 50%; transform: translateX(-50%); background: #34C759; color: #FFFFFF; padding: 4px 12px; border-radius: 999px; font-size: 11px; font-weight: 800; }
+    .feat-chip.academy-chip { background: #0071E3; }
+    .plan-title { font-size: 20px; font-weight: 800; color: #1D1D1F; margin-bottom: 6px; }
+    .plan-cost { font-size: 36px; font-weight: 800; color: #1D1D1F; margin-bottom: 20px; }
+    .plan-cost.contact-text { font-size: 28px; color: #0071E3; }
+    .plan-cost span { font-size: 14px; color: #86868B; font-weight: 500; }
+    .plan-list { list-style: none; margin-bottom: 32px; display: flex; flex-direction: column; gap: 12px; font-size: 14px; color: #515154; flex-grow: 1; }
+    .btn-plan-btn { width: 100%; padding: 14px; border-radius: 999px; font-size: 15px; font-weight: 700; border: none; cursor: pointer; }
+    .btn-plan-btn.primary { background: #34C759; color: #FFFFFF; box-shadow: 0 4px 14px rgba(52, 199, 89, 0.3); }
+    .btn-plan-btn.outline-dark { background: #0071E3; color: #FFFFFF; box-shadow: 0 4px 14px rgba(0, 113, 227, 0.3); }
+
+    /* CTA */
+    .apple-cta-section { padding: 90px 24px; text-align: center; }
+    .cta-box { max-width: 760px; margin: 0 auto; background: #FFFFFF; border-radius: 36px; padding: 60px 32px; box-shadow: 0 20px 50px rgba(0, 0, 0, 0.06); }
+    .cta-box h2 { font-size: 32px; font-weight: 800; color: #1D1D1F; margin-bottom: 12px; }
+    .cta-box p { font-size: 17px; color: #86868B; margin-bottom: 32px; }
+    .cta-btn-flex { display: flex; justify-content: center; gap: 16px; }
+
+    /* Footer */
+    .apple-footer { padding: 32px 24px; text-align: center; font-size: 13px; color: #86868B; border-top: 1px solid rgba(0, 0, 0, 0.06); }
+  </style>
+</head>
+<body>
+
+  <!-- Floating Apple Capsule Header -->
+  <header class="apple-nav-wrapper">
+    <div class="apple-nav-capsule">
+      <div class="nav-logo" onclick="window.scrollTo({top:0, behavior:'smooth'})">
+        <span class="logo-apple-icon"></span>
+        <span class="logo-main">steve voca</span>
+      </div>
+
+      <nav class="nav-menu">
+        <a href="#features">기능</a>
+        <a href="#parent">학부모 리포트</a>
+        <a href="#academy">PDF 인쇄</a>
+        <a href="#demo">맛보기</a>
+        <a href="#pricing">요금 안내</a>
+      </nav>
+
+      <div class="nav-actions">
+        <a href="http://localhost:3000/" class="btn-apple-secondary">학습 앱 ➔</a>
+        <button class="btn-apple-primary" onclick="openModal('student')">🎁 100% 무료 가입</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero-section">
+    <div class="hero-container">
+      <div class="hero-content">
+        <div class="apple-pill-tag">🎁 학생 & 학부모 100% 무료 | 🏫 학원 별도 문의</div>
+        <h1 class="hero-title">
+          Master English Vocabulary.<br />
+          <span class="highlight-text">Effortlessly.</span>
+        </h1>
+        <p class="hero-subtitle">
+          직관적인 🎙️ <strong>음성 파동 녹음</strong>, 🎚️ <strong>0.75x~1.25x 맞춤 속도 조절</strong>,<br />
+          💮 <strong>학부모 출석 달력</strong>, 🖨️ <strong>원클릭 6종 PDF 인쇄</strong>까지.<br />
+          학생/학부모는 100% 무료! (학원/공부방 도입은 <strong>따로 연락해 주세요</strong>)
+        </p>
+        <div class="hero-btn-group">
+          <button class="btn-hero-apple" onclick="openModal('student')">🎁 100% 무료 회원가입하기</button>
+          <button class="btn-hero-glass" onclick="openModal('academy')">📞 학원 도입 문의하기</button>
+        </div>
+
+        <div class="apple-stats-bar">
+          <div class="stat-box">
+            <span class="stat-val">0원</span>
+            <span class="stat-desc">학생/학부모 무료</span>
+          </div>
+          <div class="stat-sep"></div>
+          <div class="stat-box">
+            <span class="stat-val">따로 연락</span>
+            <span class="stat-desc">학원/공부방 문의</span>
+          </div>
+          <div class="stat-sep"></div>
+          <div class="stat-box">
+            <span class="stat-val">6종</span>
+            <span class="stat-desc">PDF 워크시트</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- iPhone Frame Mockup -->
+      <div class="iphone-mockup-wrapper">
+        <div class="iphone-frame">
+          <div class="iphone-dynamic-island">
+            <span class="camera-lens"></span>
+          </div>
+
+          <div class="iphone-screen">
+            <div class="app-status-bar">
+              <span>9:41</span>
+              <span>📶 5G 🔋</span>
+            </div>
+
+            <div class="app-header-mini">
+              <span class="app-badge">steve voca</span>
+              <span class="free-badge">🎁 Free</span>
+            </div>
+
+            <div class="iphone-card">
+              <div class="card-tag-mini">초등 필수 • 파닉스</div>
+              <h3 class="card-title-mini">Adventure</h3>
+              <p class="card-phonics-mini">[əd'ventʃər]</p>
+              <p class="card-meaning-mini">모험, 신나고 놀라운 경험</p>
+
+              <div class="mini-speed-bar">
+                <span class="speed-tag active">🐢 0.75x</span>
+                <span class="speed-tag">⚡ 1.0x</span>
+                <span class="speed-tag">🚀 1.25x</span>
+              </div>
+
+              <div class="mini-waveform-box">
+                <div class="wave-lbl">🎙️ 내 발음 실시간 주파수</div>
+                <div class="wave-bars-mini">
+                  <span class="wb w1"></span>
+                  <span class="wb w2"></span>
+                  <span class="wb w3"></span>
+                  <span class="wb w4"></span>
+                  <span class="wb w5"></span>
+                  <span class="wb w3"></span>
+                </div>
+                <div class="ai-score">AI 점수: 94점 (합격 🎉)</div>
+              </div>
+
+              <div class="mini-badges-row">
+                <span class="mini-stamp">💮 출석 완수</span>
+                <span class="mini-hp">💚💚💚</span>
+              </div>
+            </div>
+
+            <div class="iphone-home-bar"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Pricing Cards -->
+  <section id="pricing" class="section">
+    <div class="section-container">
+      <div class="section-header">
+        <span class="apple-subheading">Pricing Policy</span>
+        <h2 class="apple-heading">요금 및 맞춤 신청 안내</h2>
+        <p class="apple-body">개인 학생과 학부모는 100% 무료이며, 학원/공부방 도입은 별도로 연락해 주세요.</p>
+      </div>
+
+      <div class="grid-2">
+        <div class="apple-pricing-card featured">
+          <div class="feat-chip">🎓 학생 & 학부모 회원</div>
+          <div class="plan-title">전 기능 100% 평생 무료</div>
+          <div class="plan-cost">0원 <span>/ 평생</span></div>
+          <ul class="plan-list">
+            <li>✓ 초·중·고 5,000개 전 단어 DB 무료 오픈</li>
+            <li>✓ 🎚️ 0.75x/1.0x/1.25x 맞춤 속도 조절</li>
+            <li>✓ 🎙️ 음성 파동 Visualizer 녹음</li>
+            <li>✓ ❓ 4단계 스마트 멀티 퀴즈</li>
+            <li>✓ 🏆 주간 랭킹전 참여 & 뱃지 수여</li>
+            <li>✓ 🔗 친구 초대 다단계 복리 추천 포인트</li>
+            <li>✓ 💮 학부모 안심 출석 달력 & ❌ 오답노트</li>
+          </ul>
+          <button class="btn-plan-btn primary" onclick="openModal('student')">🎁 100% 무료 회원가입하기</button>
+        </div>
+
+        <div class="apple-pricing-card contact-card">
+          <div class="feat-chip academy-chip">🏫 선생님 & 학원 / 공부방</div>
+          <div class="plan-title">학원 도입 맞춤 솔루션</div>
+          <div class="plan-cost contact-text">📞 따로 연락 주세요 <span>(별도 문의)</span></div>
+          <ul class="plan-list">
+            <li>✓ 수강생 인원 맞춤 관리 디렉토리</li>
+            <li>✓ 🖨️ 원클릭 6종 PDF 시험지/워크시트 인쇄 지원</li>
+            <li>✓ 📥 학원 자체 단어장 커스텀 엑셀 업로드 지원</li>
+            <li>✓ 학원 전용 프린트 헤더/로고 서식 셋팅</li>
+            <li>✓ 전담 담당자 1:1 방문/전화 온보딩 안내</li>
+          </ul>
+          <button class="btn-plan-btn outline-dark" onclick="openModal('academy')">📞 학원 도입 문의하기 (따로 연락)</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Banner -->
+  <section class="apple-cta-section">
+    <div class="cta-box">
+      <h2>Start Learning English Vocabulary Today.</h2>
+      <p>학생/학부모는 100% 무료! 학원 도입은 언제든지 따로 연락 주세요.</p>
+      <div class="cta-btn-flex">
+        <button class="btn-hero-apple" onclick="openModal('student')">🎁 100% 무료 회원가입하기</button>
+        <button class="btn-hero-glass" onclick="openModal('academy')">📞 학원 도입 문의하기</button>
+      </div>
+    </div>
+  </section>
+
+  <footer class="apple-footer">
+    <p>© 2026 steve voca. All rights reserved. Designed for Apple iOS & Web.</p>
+  </footer>
+
+  <script>
+    function openModal(role) {
+      if (role === 'academy') {
+        alert('📞 steve voca 학원/공부방 도입 상담\n\n[담당자 확인 후 학원으로 직접 따로 연락드리겠습니다]');
+      } else {
+        alert('🚀 steve voca 100% 무료 수강신청\n\n[학습 앱으로 이동하여 회원가입 및 수강을 시작합니다]');
+        window.location.href = 'http://localhost:3000/';
+      }
+    }
+  </script>
+</body>
+</html>

@@ -1,4 +1,10 @@
 node_modules/
+next_app/node_modules/
+next_app/.next/
 .next/
 .env*.local
 *.log
+scratch/
+.DS_Store
+.vscode/
+.idea/
