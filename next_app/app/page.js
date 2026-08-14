@@ -686,12 +686,14 @@ export default function Home() {
     ? wordList500Fallback.find(w => (w.word || '').toLowerCase().replace(/\.png/gi, '').trim() === cleanWordStr.toLowerCase())
     : null;
 
-  // 🌐 언어 세팅(currentLang)에 따른 한국어 / 중국어 동적 매칭
-  const cleanMeaningStr = currentLang === 'zh'
-    ? ((typeof currentWord === 'object' && (currentWord?.meaning_zh || currentWord?.meaningZh)) || matchedDictWord?.meaning_zh || matchedDictWord?.meaningZh || (typeof currentWord === 'object' && currentWord?.meaning) || '뜻')
-    : ((typeof currentWord === 'object' && currentWord?.meaning && currentWord.meaning !== '기초 단어')
-      ? currentWord.meaning
-      : (matchedDictWord?.meaning || '단어 뜻'));
+  // 🌐 언어 세팅(currentLang: 'ko', 'zh', 'fr')에 따른 한국어 / 중국어 / 프랑스어 동적 매칭
+  const cleanMeaningStr = currentLang === 'fr'
+    ? ((typeof currentWord === 'object' && (currentWord?.meaning_fr || currentWord?.meaningFr)) || matchedDictWord?.meaning_fr || matchedDictWord?.meaningFr || (typeof currentWord === 'object' && currentWord?.meaning) || '뜻')
+    : (currentLang === 'zh'
+      ? ((typeof currentWord === 'object' && (currentWord?.meaning_zh || currentWord?.meaningZh)) || matchedDictWord?.meaning_zh || matchedDictWord?.meaningZh || (typeof currentWord === 'object' && currentWord?.meaning) || '뜻')
+      : ((typeof currentWord === 'object' && currentWord?.meaning && currentWord.meaning !== '기초 단어')
+        ? currentWord.meaning
+        : (matchedDictWord?.meaning || '단어 뜻')));
 
   const cleanPhonicsStr = (typeof currentWord === 'object' && currentWord?.phonics && currentWord.phonics !== '')
     ? currentWord.phonics
@@ -700,18 +702,22 @@ export default function Home() {
   const rawExampleEn = (typeof currentWord === 'object' && (currentWord?.exampleEn || currentWord?.example_en)) ? (currentWord.exampleEn || currentWord.example_en).replace(/\.png/gi, '').trim() : '';
   const rawExampleKo = (typeof currentWord === 'object' && (currentWord?.exampleKo || currentWord?.example_ko)) ? (currentWord.exampleKo || currentWord.example_ko).replace(/\.png/gi, '').trim() : '';
   const rawExampleZh = (typeof currentWord === 'object' && (currentWord?.exampleZh || currentWord?.example_zh)) ? (currentWord.exampleZh || currentWord.example_zh).replace(/\.png/gi, '').trim() : '';
+  const rawExampleFr = (typeof currentWord === 'object' && (currentWord?.exampleFr || currentWord?.example_fr)) ? (currentWord.exampleFr || currentWord.example_fr).replace(/\.png/gi, '').trim() : '';
 
   const isRealSentenceEn = rawExampleEn && /[a-zA-Z]/.test(rawExampleEn) && !rawExampleEn.includes('제작완료') && !rawExampleEn.toLowerCase().endsWith('.png') && rawExampleEn.split(/\s+/).length >= 2;
   const isRealSentenceKo = rawExampleKo && !rawExampleKo.includes('.png') && !rawExampleKo.includes('제작완료') && rawExampleKo.trim().length >= 2;
   const isRealSentenceZh = rawExampleZh && !rawExampleZh.includes('.png') && rawExampleZh.trim().length >= 2;
+  const isRealSentenceFr = rawExampleFr && !rawExampleFr.includes('.png') && rawExampleFr.trim().length >= 2;
 
   const displayExampleEn = isRealSentenceEn
     ? rawExampleEn
     : `I see a nice ${cleanWordStr.toLowerCase()}.`;
 
-  const displayExampleKo = currentLang === 'zh'
-    ? (isRealSentenceZh ? rawExampleZh : `我看到一个很好的 ${cleanMeaningStr}。`)
-    : (isRealSentenceKo ? rawExampleKo : `나는 멋진 ${cleanMeaningStr}을(를) 본다.`);
+  const displayExampleKo = currentLang === 'fr'
+    ? (isRealSentenceFr ? rawExampleFr : `Je vois un bon ${cleanMeaningStr}.`)
+    : (currentLang === 'zh'
+      ? (isRealSentenceZh ? rawExampleZh : `我看到一个很好的 ${cleanMeaningStr}。`)
+      : (isRealSentenceKo ? rawExampleKo : `나는 멋진 ${cleanMeaningStr}을(를) 본다.`));
 
 
   const playWordAudio = useCallback((wordText) => {
@@ -1770,6 +1776,21 @@ export default function Home() {
                 }}
               >
                 🇨🇳 中文 (중국어)
+              </button>
+              <button
+                onClick={() => handleLangChange('fr')}
+                style={{
+                  padding: '5px 10px',
+                  borderRadius: '10px',
+                  fontSize: '12px',
+                  fontWeight: 'bold',
+                  border: currentLang === 'fr' ? '2px solid #3182CE' : '1px solid #CBD5E0',
+                  background: currentLang === 'fr' ? '#EBF8FF' : '#FFFFFF',
+                  color: currentLang === 'fr' ? '#2B6CB0' : '#4A5568',
+                  cursor: 'pointer'
+                }}
+              >
+                🇫🇷 Français (프랑스어)
               </button>
             </div>
 

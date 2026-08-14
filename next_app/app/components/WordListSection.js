@@ -68,7 +68,7 @@ export default function WordListSection({ words, activeWords, onPlayAudio, playA
                                     <span className="word-item-phonics">{item.phonics}</span>
                                 </div>
                                 <div className="word-item-meaning">
-                                    {currentLang === 'zh' ? (item.meaning_zh || item.meaningZh || item.meaning) : item.meaning}
+                                    {currentLang === 'fr' ? (item.meaning_fr || item.meaningFr || item.meaning) : (currentLang === 'zh' ? (item.meaning_zh || item.meaningZh || item.meaning) : item.meaning)}
                                 </div>
                                 {(item.exampleEn || item.example_en) && (
                                     <div className="word-item-example">
@@ -93,7 +93,7 @@ export default function WordListSection({ words, activeWords, onPlayAudio, playA
                                             </button>
                                         </div>
                                         <span className="example-ko-sm">
-                                            {currentLang === 'zh' ? (item.exampleZh || item.example_zh || item.exampleKo || item.example_ko) : (item.exampleKo || item.example_ko)}
+                                            {currentLang === 'fr' ? (item.exampleFr || item.example_fr || item.exampleKo || item.example_ko) : (currentLang === 'zh' ? (item.exampleZh || item.example_zh || item.exampleKo || item.example_ko) : (item.exampleKo || item.example_ko))}
                                         </span>
                                     </div>
                                 )}
