@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import PdfTestSheetGenerator from './PdfTestSheetGenerator.js';
 
-export default function WordListSection({ words, activeWords, onPlayAudio, playAudio, userAudioRecordings = {} }) {
+export default function WordListSection({ words, activeWords, onPlayAudio, playAudio, userAudioRecordings = {}, currentLang = 'ko' }) {
     const [showPdfModal, setShowPdfModal] = useState(false);
     // words 또는 activeWords 중 유효한 배열을 사용 (undefined 시 빈 배열 안전 처리)
     const list = Array.isArray(words) ? words : (Array.isArray(activeWords) ? activeWords : []);
@@ -67,7 +67,9 @@ export default function WordListSection({ words, activeWords, onPlayAudio, playA
                                     <span className="word-item-en">{item.word}</span>
                                     <span className="word-item-phonics">{item.phonics}</span>
                                 </div>
-                                <div className="word-item-meaning">{item.meaning}</div>
+                                <div className="word-item-meaning">
+                                    {currentLang === 'zh' ? (item.meaning_zh || item.meaningZh || item.meaning) : item.meaning}
+                                </div>
                                 {(item.exampleEn || item.example_en) && (
                                     <div className="word-item-example">
                                         <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
@@ -90,7 +92,9 @@ export default function WordListSection({ words, activeWords, onPlayAudio, playA
                                                 🔊 예문
                                             </button>
                                         </div>
-                                        <span className="example-ko-sm">{item.exampleKo || item.example_ko}</span>
+                                        <span className="example-ko-sm">
+                                            {currentLang === 'zh' ? (item.exampleZh || item.example_zh || item.exampleKo || item.example_ko) : (item.exampleKo || item.example_ko)}
+                                        </span>
                                     </div>
                                 )}
                             </div>

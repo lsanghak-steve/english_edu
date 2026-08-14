@@ -50,6 +50,23 @@ export default function Home() {
   const [hasRecorded, setHasRecorded] = useState(false);
   const [completedQuizLevels, setCompletedQuizLevels] = useState([]);
 
+  // 🌐 글로벌 학습 언어 선택 상태 ('ko': 한국어, 'zh': 중국어)
+  const [currentLang, setCurrentLang] = useState('ko');
+
+  useEffect(() => {
+    try {
+      const savedLang = localStorage.getItem('steve_voca_learning_lang');
+      if (savedLang) setCurrentLang(savedLang);
+    } catch (e) {}
+  }, []);
+
+  const handleLangChange = (newLang) => {
+    setCurrentLang(newLang);
+    try {
+      localStorage.setItem('steve_voca_learning_lang', newLang);
+    } catch (e) {}
+  };
+
   // 🎛️ TTS 음성 속도 조율 상태 (0.7x ~ 2.0x, 기본 1.0x)
   const [ttsSpeed, setTtsSpeed] = useState(1.0);
 
@@ -669,28 +686,32 @@ export default function Home() {
     ? wordList500Fallback.find(w => (w.word || '').toLowerCase().replace(/\.png/gi, '').trim() === cleanWordStr.toLowerCase())
     : null;
 
-  const cleanMeaningStr = (typeof currentWord === 'object' && currentWord?.meaning && currentWord.meaning !== '기초 단어')
-    ? currentWord.meaning
-    : (matchedDictWord?.meaning || '단어 뜻');
+  // 🌐 언어 세팅(currentLang)에 따른 한국어 / 중국어 동적 매칭
+  const cleanMeaningStr = currentLang === 'zh'
+    ? ((typeof currentWord === 'object' && (currentWord?.meaning_zh || currentWord?.meaningZh)) || matchedDictWord?.meaning_zh || matchedDictWord?.meaningZh || (typeof currentWord === 'object' && currentWord?.meaning) || '뜻')
+    : ((typeof currentWord === 'object' && currentWord?.meaning && currentWord.meaning !== '기초 단어')
+      ? currentWord.meaning
+      : (matchedDictWord?.meaning || '단어 뜻'));
 
   const cleanPhonicsStr = (typeof currentWord === 'object' && currentWord?.phonics && currentWord.phonics !== '')
     ? currentWord.phonics
     : (matchedDictWord?.phonics || matchedDictWord?.category || '');
 
-
-  const rawExampleEn = (typeof currentWord === 'object' && currentWord?.exampleEn) ? currentWord.exampleEn.replace(/\.png/gi, '').trim() : '';
-  const rawExampleKo = (typeof currentWord === 'object' && currentWord?.exampleKo) ? currentWord.exampleKo.replace(/\.png/gi, '').trim() : '';
+  const rawExampleEn = (typeof currentWord === 'object' && (currentWord?.exampleEn || currentWord?.example_en)) ? (currentWord.exampleEn || currentWord.example_en).replace(/\.png/gi, '').trim() : '';
+  const rawExampleKo = (typeof currentWord === 'object' && (currentWord?.exampleKo || currentWord?.example_ko)) ? (currentWord.exampleKo || currentWord.example_ko).replace(/\.png/gi, '').trim() : '';
+  const rawExampleZh = (typeof currentWord === 'object' && (currentWord?.exampleZh || currentWord?.example_zh)) ? (currentWord.exampleZh || currentWord.example_zh).replace(/\.png/gi, '').trim() : '';
 
   const isRealSentenceEn = rawExampleEn && /[a-zA-Z]/.test(rawExampleEn) && !rawExampleEn.includes('제작완료') && !rawExampleEn.toLowerCase().endsWith('.png') && rawExampleEn.split(/\s+/).length >= 2;
   const isRealSentenceKo = rawExampleKo && !rawExampleKo.includes('.png') && !rawExampleKo.includes('제작완료') && rawExampleKo.trim().length >= 2;
+  const isRealSentenceZh = rawExampleZh && !rawExampleZh.includes('.png') && rawExampleZh.trim().length >= 2;
 
   const displayExampleEn = isRealSentenceEn
     ? rawExampleEn
     : `I see a nice ${cleanWordStr.toLowerCase()}.`;
 
-  const displayExampleKo = isRealSentenceKo
-    ? rawExampleKo
-    : `나는 멋진 ${cleanMeaningStr}을(를) 본다.`;
+  const displayExampleKo = currentLang === 'zh'
+    ? (isRealSentenceZh ? rawExampleZh : `我看到一个很好的 ${cleanMeaningStr}。`)
+    : (isRealSentenceKo ? rawExampleKo : `나는 멋진 ${cleanMeaningStr}을(를) 본다.`);
 
 
   const playWordAudio = useCallback((wordText) => {
@@ -1702,23 +1723,58 @@ export default function Home() {
             </h1>
           </header>
 
-          {/* 🎛️ TTS 음성 속도 조율 컨트롤러 (0.7x ~ 2.0x) */}
+          {/* 🌐 글로벌 학습 언어 선택 (한국어 🇰🇷 vs 중국어 🇨🇳) & 🎛️ TTS 음성 속도 조율 컨트롤러 */}
           <div style={{
             display: 'flex',
             alignItems: 'center',
-            justify: 'center',
-            gap: '6px',
+            justifyContent: 'center',
+            gap: '12px',
             background: '#FFFFFF',
             padding: '10px 16px',
             borderRadius: '20px',
             border: '2px solid #E2E8F0',
             boxShadow: '0 4px 12px rgba(0,0,0,0.03)',
             margin: '14px auto 16px auto',
-            maxWidth: '500px',
+            maxWidth: '680px',
             flexWrap: 'wrap'
           }}>
+            {/* 🌐 학습 언어 스위처 */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '4px', borderRight: '2px solid #E2E8F0', paddingRight: '12px' }}>
+              <span style={{ fontSize: '13px', fontWeight: '900', color: '#2B6CB0' }}>🌐 언어:</span>
+              <button
+                onClick={() => handleLangChange('ko')}
+                style={{
+                  padding: '5px 10px',
+                  borderRadius: '10px',
+                  fontSize: '12px',
+                  fontWeight: 'bold',
+                  border: currentLang === 'ko' ? '2px solid #3182CE' : '1px solid #CBD5E0',
+                  background: currentLang === 'ko' ? '#EBF8FF' : '#FFFFFF',
+                  color: currentLang === 'ko' ? '#2B6CB0' : '#4A5568',
+                  cursor: 'pointer'
+                }}
+              >
+                🇰🇷 한국어
+              </button>
+              <button
+                onClick={() => handleLangChange('zh')}
+                style={{
+                  padding: '5px 10px',
+                  borderRadius: '10px',
+                  fontSize: '12px',
+                  fontWeight: 'bold',
+                  border: currentLang === 'zh' ? '2px solid #E53E3E' : '1px solid #CBD5E0',
+                  background: currentLang === 'zh' ? '#FFF5F5' : '#FFFFFF',
+                  color: currentLang === 'zh' ? '#C53030' : '#4A5568',
+                  cursor: 'pointer'
+                }}
+              >
+                🇨🇳 中文 (중국어)
+              </button>
+            </div>
+
             <span style={{ fontSize: '13px', fontWeight: 'bold', color: '#4A5568', display: 'flex', alignItems: 'center', gap: '4px' }}>
-              🎛️ 발음 속도:
+              🎛️ 속도:
             </span>
 
             <button
@@ -1960,7 +2016,7 @@ export default function Home() {
 
       {/* 탭 2: 전체 단어 리스트 */}
       {mainTab === 'wordlist' && (
-        <WordListSection words={safeActiveWords} onPlayAudio={playWordAudio} userAudioRecordings={userAudioRecordings} />
+        <WordListSection words={safeActiveWords} onPlayAudio={playWordAudio} userAudioRecordings={userAudioRecordings} currentLang={currentLang} />
       )}
 
 
@@ -1972,6 +2028,7 @@ export default function Home() {
           onQuizLevelComplete={handleQuizLevelComplete}
           onLoadNextWordSet={handleLoadNextWordSet}
           initialQuizLevel={initialQuizLevel}
+          currentLang={currentLang}
         />
       )}
 

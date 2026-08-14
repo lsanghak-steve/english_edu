@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import supabase from '../../lib/supabaseClient.js';
 
-export default function QuizSection({ currentUser, activeWords, onQuizLevelComplete, onLoadNextWordSet, initialQuizLevel = 1 }) {
+export default function QuizSection({ currentUser, activeWords, onQuizLevelComplete, onLoadNextWordSet, initialQuizLevel = 1, currentLang = 'ko' }) {
   const [quizLevel, setQuizLevel] = useState(initialQuizLevel || 1); // 1: 소리, 2: 선택, 3: 발음 녹음(75점+), 4: 직접 입력
   const [currentIndex, setCurrentIndex] = useState(0);
   const [options, setOptions] = useState([]);
@@ -527,7 +527,7 @@ export default function QuizSection({ currentUser, activeWords, onQuizLevelCompl
             <div style={{ textAlign: 'center', padding: '20px 10px', background: '#F7F7F7', borderRadius: '20px', marginBottom: '20px', border: '2px solid #E5E5E5' }}>
               <span style={{ fontSize: '12px', color: '#58CC02', fontWeight: '900', background: '#E5F8D0', padding: '2px 10px', borderRadius: '8px' }}>스펠링 퀴즈 (필수)</span>
               <h2 style={{ margin: '8px 0', fontSize: '28px', color: '#FF4B4B', fontWeight: '900' }}>
-                {currentQuiz.meaning}
+                {currentLang === 'zh' ? (currentQuiz.meaning_zh || currentQuiz.meaningZh || currentQuiz.meaning) : currentQuiz.meaning}
               </h2>
               <p style={{ margin: 0, fontSize: '13px', color: '#777777', fontWeight: 'bold' }}>
                 💡 아래 보기에서 올바른 영어 단어를 선택하세요!
@@ -542,7 +542,7 @@ export default function QuizSection({ currentUser, activeWords, onQuizLevelCompl
                 🎙️ 3단계 신규 마이크 발음 녹음 퀴즈 (75점 이상 합격)
               </span>
               <h2 style={{ margin: '10px 0 4px 0', fontSize: '28px', color: '#2C3E50', fontWeight: '900' }}>
-                {currentQuiz.meaning}
+                {currentLang === 'zh' ? (currentQuiz.meaning_zh || currentQuiz.meaningZh || currentQuiz.meaning) : currentQuiz.meaning}
               </h2>
               <p style={{ margin: '0 0 16px 0', fontSize: '13px', color: '#E67E22', fontWeight: 'bold' }}>
                 💡 아래 마이크 버튼을 누르고 영단어 [<strong style={{ color: '#2980B9' }}>{cleanWordStr}</strong>] 발음을 크게 말해보세요!
@@ -732,7 +732,7 @@ export default function QuizSection({ currentUser, activeWords, onQuizLevelCompl
                       boxShadow: '0 4px 8px rgba(0,0,0,0.02)'
                     }}
                   >
-                    {quizLevel === 1 ? (optionItem.meaning || optStr) : optStr}
+                    {quizLevel === 1 ? (currentLang === 'zh' ? (optionItem.meaning_zh || optionItem.meaningZh || optionItem.meaning || optStr) : (optionItem.meaning || optStr)) : optStr}
                   </button>
                 );
               })}
