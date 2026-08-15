@@ -517,7 +517,7 @@ export default function QuizSection({ currentUser, activeWords, onQuizLevelCompl
               <h3 style={{ margin: '6px 0 0 0', fontSize: '24px', color: '#3C3C3C' }}>{cleanWordStr}</h3>
               <p style={{ margin: '2px 0 0 0', color: '#777777', fontSize: '14px', fontWeight: 'bold' }}>{currentQuiz.phonics}</p>
               <p style={{ margin: '10px 0 0 0', fontSize: '13px', color: '#FF9600', fontWeight: '900' }}>
-                💡 소리를 듣고 올바른 한글 뜻을 선택하세요!
+                💡 {currentLang === 'zh' ? '请听发音并选择正确的中文释义！' : (currentLang === 'fr' ? 'Écoutez la prononciation et choisissez la bonne signification !' : '소리를 듣고 올바른 한글 뜻을 선택하세요!')}
               </p>
             </div>
           )}
@@ -530,7 +530,7 @@ export default function QuizSection({ currentUser, activeWords, onQuizLevelCompl
                 {currentLang === 'fr' ? (currentQuiz.meaning_fr || currentQuiz.meaningFr || currentQuiz.meaning) : (currentLang === 'zh' ? (currentQuiz.meaning_zh || currentQuiz.meaningZh || currentQuiz.meaning) : currentQuiz.meaning)}
               </h2>
               <p style={{ margin: 0, fontSize: '13px', color: '#777777', fontWeight: 'bold' }}>
-                💡 아래 보기에서 올바른 영어 단어를 선택하세요!
+                💡 {currentLang === 'zh' ? '请在下列选项中选择正确的英语单词！' : (currentLang === 'fr' ? 'Choisissez le bon mot anglais ci-dessous !' : '아래 보기에서 올바른 영어 단어를 선택하세요!')}
               </p>
             </div>
           )}
@@ -545,7 +545,7 @@ export default function QuizSection({ currentUser, activeWords, onQuizLevelCompl
                 {currentLang === 'fr' ? (currentQuiz.meaning_fr || currentQuiz.meaningFr || currentQuiz.meaning) : (currentLang === 'zh' ? (currentQuiz.meaning_zh || currentQuiz.meaningZh || currentQuiz.meaning) : currentQuiz.meaning)}
               </h2>
               <p style={{ margin: '0 0 16px 0', fontSize: '13px', color: '#E67E22', fontWeight: 'bold' }}>
-                💡 아래 마이크 버튼을 누르고 영단어 [<strong style={{ color: '#2980B9' }}>{cleanWordStr}</strong>] 발음을 크게 말해보세요!
+                💡 {currentLang === 'zh' ? `请点击下方麦克风并大声读出单词 [${cleanWordStr}]！` : (currentLang === 'fr' ? `Appuyez sur le micro et prononcez à voix haute [${cleanWordStr}] !` : `아래 마이크 버튼을 누르고 영단어 [${cleanWordStr}] 발음을 크게 말해보세요!`)}
               </p>
 
               {/* 녹음 조작 버튼 */}
@@ -661,16 +661,16 @@ export default function QuizSection({ currentUser, activeWords, onQuizLevelCompl
             <div style={{ textAlign: 'center', padding: '20px 10px', background: '#F5EEF8', borderRadius: '20px', marginBottom: '20px', border: '2px solid #E8DAEF' }}>
               <span style={{ fontSize: '12px', color: '#8E44AD', fontWeight: '900', background: '#E8DAEF', padding: '2px 10px', borderRadius: '8px' }}>✍️ 4단계 주관식 스펠링 직접 쓰기</span>
               <h2 style={{ margin: '8px 0', fontSize: '28px', color: '#2C3E50', fontWeight: '900' }}>
-                {currentQuiz.meaning}
+                {currentLang === 'fr' ? (currentQuiz.meaning_fr || currentQuiz.meaningFr || currentQuiz.meaning) : (currentLang === 'zh' ? (currentQuiz.meaning_zh || currentQuiz.meaningZh || currentQuiz.meaning) : currentQuiz.meaning)}
               </h2>
               <p style={{ margin: '0 0 14px 0', fontSize: '13px', color: '#8E44AD', fontWeight: 'bold' }}>
-                💡 영어 단어 스펠링을 아래 입력란에 직접 입력하세요!
+                💡 {currentLang === 'zh' ? '请在下方输入框直接输入英语单词拼写！' : (currentLang === 'fr' ? 'Saisissez l\'orthographe du mot anglais dans le champ ci-dessous !' : '영어 단어 스펠링을 아래 입력란에 직접 입력하세요!')}
               </p>
 
               <form onSubmit={handleTypedSubmit} style={{ display: 'flex', gap: '8px', maxWidth: '320px', margin: '0 auto' }}>
                 <input
                   type="text"
-                  placeholder="예: flashlight"
+                  placeholder={currentLang === 'zh' ? '例: flashlight' : (currentLang === 'fr' ? 'Ex: flashlight' : '예: flashlight')}
                   value={typedInput}
                   onChange={(e) => setTypedInput(e.target.value)}
                   disabled={selectedAnswer !== null}
@@ -682,7 +682,7 @@ export default function QuizSection({ currentUser, activeWords, onQuizLevelCompl
                   disabled={selectedAnswer !== null || !typedInput.trim()}
                   style={{ background: '#CE82FF', color: 'white', border: 'none', borderBottom: '4px solid #8E44AD', padding: '12px 18px', borderRadius: '14px', fontWeight: '900', cursor: 'pointer' }}
                 >
-                  제출
+                  {currentLang === 'zh' ? '提交' : (currentLang === 'fr' ? 'Soumettre' : '제출')}
                 </button>
               </form>
             </div>
