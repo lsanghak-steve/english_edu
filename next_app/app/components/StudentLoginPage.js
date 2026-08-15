@@ -342,14 +342,14 @@ export default function StudentLoginPage({ onLoginSuccess, onParentLoginSuccess,
                 onChange={(e) => setPinInput(e.target.value)}
                 style={{
                   width: '100%',
-                  padding: '14px',
+                  padding: '14px 16px',
                   borderRadius: '14px',
                   border: '2px solid #9B59B6',
-                  fontSize: '20px',
-                  textAlign: 'center',
+                  fontSize: '18px',
+                  textAlign: 'left',
                   fontWeight: 'bold',
                   outline: 'none',
-                  letterSpacing: '6px'
+                  letterSpacing: '4px'
                 }}
               />
             </div>
@@ -422,7 +422,7 @@ export default function StudentLoginPage({ onLoginSuccess, onParentLoginSuccess,
                   placeholder={t('input_parent_pin_ph', currentLang)}
                   value={parentPinInput}
                   onChange={(e) => setParentPinInput(e.target.value)}
-                  style={{ width: '100%', padding: '12px', borderRadius: '10px', border: '2px solid #8E44AD', fontSize: '18px', textAlign: 'center', fontWeight: 'bold' }}
+                  style={{ width: '100%', padding: '12px 16px', borderRadius: '10px', border: '2px solid #8E44AD', fontSize: '18px', textAlign: 'left', fontWeight: 'bold', letterSpacing: '4px' }}
                 />
               </div>
 
