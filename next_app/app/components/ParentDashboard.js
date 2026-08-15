@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import supabase from '../../lib/supabaseClient.js';
 import wordList500Fallback from '../../data/wordsData.js';
 import ParentNotificationManager from './ParentNotificationManager.js';
-import { t } from '../../lib/i18n.js';
+import { t, translateStudentGrade } from '../../lib/i18n.js';
 
 // 이름에서 이모지 제거 헬퍼 함수
 const removeEmoji = (str) => {
@@ -258,7 +258,7 @@ export default function ParentDashboard({ currentUser, onLogout, currentLang = '
                   boxShadow: selectedChildIndex === idx ? '0 4px 10px rgba(142,68,173,0.2)' : 'none'
                 }}
               >
-                {removeEmoji(child.name)} ({child.grade || '초등단어'})
+                {removeEmoji(child.name)} ({translateStudentGrade(child.grade || '초등 3학년', currentLang)})
               </button>
             ))}
           </div>

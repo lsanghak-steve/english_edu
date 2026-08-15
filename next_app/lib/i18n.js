@@ -487,7 +487,133 @@ export function t(key, lang = 'ko', defaultVal = '') {
 }
 
 /**
- * 학년 / 단계 번역 헬퍼
+ * 학생 학년 (초등 3학년, 중학생 1학년 등) 6개 국어 번역 헬퍼
+ */
+export function translateStudentGrade(gradeStr, lang = 'ko') {
+  if (!gradeStr) return '초등 3학년';
+  const clean = String(gradeStr).trim();
+
+  // 초등 1~6학년
+  if (clean.includes('초등 1학년') || clean.includes('초등1학년') || clean.includes('1st Grade')) {
+    if (lang === 'zh') return '小学 1年级';
+    if (lang === 'fr') return 'Primaire 1re année (CP)';
+    if (lang === 'ja') return '小学1年生';
+    if (lang === 'vi') return 'Tiểu học Lớp 1';
+    if (lang === 'hi') return 'प्राथमिक कक्षा 1';
+    return '초등 1학년';
+  }
+  if (clean.includes('초등 2학년') || clean.includes('초등2학년') || clean.includes('2nd Grade')) {
+    if (lang === 'zh') return '小学 2年级';
+    if (lang === 'fr') return 'Primaire 2e année (CE1)';
+    if (lang === 'ja') return '小学2年生';
+    if (lang === 'vi') return 'Tiểu học Lớp 2';
+    if (lang === 'hi') return 'प्राथमिक कक्षा 2';
+    return '초등 2학년';
+  }
+  if (clean.includes('초등 3학년') || clean.includes('초등3학년') || clean.includes('3rd Grade')) {
+    if (lang === 'zh') return '小学 3年级';
+    if (lang === 'fr') return 'Primaire 3e année (CE2)';
+    if (lang === 'ja') return '小学3年生';
+    if (lang === 'vi') return 'Tiểu học Lớp 3';
+    if (lang === 'hi') return 'प्राथमिक कक्षा 3';
+    return '초등 3학년';
+  }
+  if (clean.includes('초등 4학년') || clean.includes('초등4학년') || clean.includes('4th Grade')) {
+    if (lang === 'zh') return '小学 4年级';
+    if (lang === 'fr') return 'Primaire 4e année (CM1)';
+    if (lang === 'ja') return '小学4年生';
+    if (lang === 'vi') return 'Tiểu học Lớp 4';
+    if (lang === 'hi') return 'प्राथमिक कक्षा 4';
+    return '초등 4학년';
+  }
+  if (clean.includes('초등 5학년') || clean.includes('초등5학년') || clean.includes('5th Grade')) {
+    if (lang === 'zh') return '小学 5年级';
+    if (lang === 'fr') return 'Primaire 5e année (CM2)';
+    if (lang === 'ja') return '小学5年生';
+    if (lang === 'vi') return 'Tiểu học Lớp 5';
+    if (lang === 'hi') return 'प्राथमिक कक्षा 5';
+    return '초등 5학년';
+  }
+  if (clean.includes('초등 6학년') || clean.includes('초등6학년') || clean.includes('6th Grade')) {
+    if (lang === 'zh') return '小学 6年级';
+    if (lang === 'fr') return 'Primaire 6e année (6e)';
+    if (lang === 'ja') return '小学6年生';
+    if (lang === 'vi') return 'Tiểu học Lớp 6';
+    if (lang === 'hi') return 'प्राथमिक कक्षा 6';
+    return '초등 6학년';
+  }
+
+  // 중등 1~3학년
+  if (clean.includes('중학') || clean.includes('중등') || clean.includes('Middle') || clean.includes('初中') || clean.includes('Collège') || clean.includes('THCS')) {
+    if (clean.includes('1') || clean.includes('1학년')) {
+      if (lang === 'zh') return '初中 1年级';
+      if (lang === 'fr') return 'Collège 1re année (5e)';
+      if (lang === 'ja') return '中学1年生';
+      if (lang === 'vi') return 'THCS Lớp 7';
+      if (lang === 'hi') return 'माध्यमिक कक्षा 7';
+      return '중학생 1학년';
+    }
+    if (clean.includes('2') || clean.includes('2학년')) {
+      if (lang === 'zh') return '初中 2年级';
+      if (lang === 'fr') return 'Collège 2e année (4e)';
+      if (lang === 'ja') return '中学2年生';
+      if (lang === 'vi') return 'THCS Lớp 8';
+      if (lang === 'hi') return 'माध्यमिक कक्षा 8';
+      return '중학생 2학년';
+    }
+    if (clean.includes('3') || clean.includes('3학년')) {
+      if (lang === 'zh') return '初中 3年级';
+      if (lang === 'fr') return 'Collège 3e année (3e)';
+      if (lang === 'ja') return '中学3年生';
+      if (lang === 'vi') return 'THCS Lớp 9';
+      if (lang === 'hi') return 'प्राथमिक कक्षा 9';
+      return '중학생 3학년';
+    }
+  }
+
+  // 고등 1~3학년
+  if (clean.includes('고등') || clean.includes('High') || clean.includes('高中') || clean.includes('Lycée') || clean.includes('THPT')) {
+    if (clean.includes('1') || clean.includes('1학년')) {
+      if (lang === 'zh') return '高中 1年级';
+      if (lang === 'fr') return 'Lycée 1re année (2de)';
+      if (lang === 'ja') return '高校1年生';
+      if (lang === 'vi') return 'THPT Lớp 10';
+      if (lang === 'hi') return 'उच्चतर माध्यमिक कक्षा 10';
+      return '고등학생 1학년';
+    }
+    if (clean.includes('2') || clean.includes('2학년')) {
+      if (lang === 'zh') return '高中 2年级';
+      if (lang === 'fr') return 'Lycée 2e année (1re)';
+      if (lang === 'ja') return '高校2年生';
+      if (lang === 'vi') return 'THPT Lớp 11';
+      if (lang === 'hi') return 'उच्चतर माध्यमिक कक्षा 11';
+      return '고등학생 2학년';
+    }
+    if (clean.includes('3') || clean.includes('3학년')) {
+      if (lang === 'zh') return '高中 3年级';
+      if (lang === 'fr') return 'Lycée Terminale (Tle)';
+      if (lang === 'ja') return '高校3年生';
+      if (lang === 'vi') return 'THPT Lớp 12';
+      if (lang === 'hi') return 'उच्चतर माध्यमिक कक्षा 12';
+      return '고등학생 3학년';
+    }
+  }
+
+  // 대학생 및 성인
+  if (clean.includes('대학') || clean.includes('성인') || clean.includes('Adult') || clean.includes('成人') || clean.includes('Adulte')) {
+    if (lang === 'zh') return '大学生及成人';
+    if (lang === 'fr') return 'Étudiant & Adulte';
+    if (lang === 'ja') return '大学生・一般';
+    if (lang === 'vi') return 'Sinh viên & Người lớn';
+    if (lang === 'hi') return 'कॉलेज और वयस्क';
+    return '대학생 및 성인';
+  }
+
+  return clean;
+}
+
+/**
+ * 학습 레벨 (초등단어, 중등단어, 고등단어) 6개 국어 번역 헬퍼
  */
 export function translateGradeLevel(gradeStr, lang = 'ko') {
   if (!gradeStr) return t('grade_mid', lang);
@@ -503,3 +629,4 @@ export function translateGradeLevel(gradeStr, lang = 'ko') {
   }
   return gradeStr;
 }
+

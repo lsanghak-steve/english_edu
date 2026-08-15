@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import supabase from '../../lib/supabaseClient.js';
-import { t } from '../../lib/i18n.js';
+import { t, translateStudentGrade } from '../../lib/i18n.js';
 
 // 이름에서 이모지 제거 헬퍼
 const removeEmoji = (str) => {
@@ -298,7 +298,7 @@ export default function LeaderboardSection({ currentUser, currentLang = 'ko' }) 
                 <span style={{ fontSize: '32px' }}>🥈</span>
                 <span style={{ display: 'block', fontSize: '12px', fontWeight: '900', color: '#7F8C8D', marginTop: '4px' }}>RANK 2</span>
                 <h3 style={{ margin: '4px 0', fontSize: '20px', color: '#2C3E50', fontWeight: '900' }}>{top2.name}</h3>
-                <span style={{ fontSize: '12px', color: '#7F8C8D', fontWeight: 'bold' }}>{top2.grade}</span>
+                <span style={{ fontSize: '12px', color: '#7F8C8D', fontWeight: 'bold' }}>{translateStudentGrade(top2.grade, currentLang)}</span>
                 <div style={{ margin: '10px 0 0 0', fontSize: '22px', fontWeight: '900', color: '#3498DB' }}>
                   {top2.vocaScore.toLocaleString()} P
                 </div>
@@ -314,7 +314,7 @@ export default function LeaderboardSection({ currentUser, currentLang = 'ko' }) 
                 <span style={{ fontSize: '42px', animation: 'bounce 1.5s infinite' }}>👑</span>
                 <span style={{ display: 'block', fontSize: '13px', fontWeight: '900', color: '#D4AC0D', marginTop: '4px' }}>🥇 1ST PLACE CHAMPION</span>
                 <h2 style={{ margin: '4px 0', fontSize: '24px', color: '#7D6608', fontWeight: '900' }}>{top1.name}</h2>
-                <span style={{ fontSize: '13px', color: '#B7950B', fontWeight: 'bold' }}>{top1.grade}</span>
+                <span style={{ fontSize: '13px', color: '#B7950B', fontWeight: 'bold' }}>{translateStudentGrade(top1.grade, currentLang)}</span>
                 <div style={{ margin: '12px 0 0 0', fontSize: '26px', fontWeight: '900', color: '#D35400' }}>
                   {top1.vocaScore.toLocaleString()} P
                 </div>
@@ -330,7 +330,7 @@ export default function LeaderboardSection({ currentUser, currentLang = 'ko' }) 
                 <span style={{ fontSize: '32px' }}>🥉</span>
                 <span style={{ display: 'block', fontSize: '12px', fontWeight: '900', color: '#A04000', marginTop: '4px' }}>RANK 3</span>
                 <h3 style={{ margin: '4px 0', fontSize: '20px', color: '#2C3E50', fontWeight: '900' }}>{top3.name}</h3>
-                <span style={{ fontSize: '12px', color: '#7F8C8D', fontWeight: 'bold' }}>{top3.grade}</span>
+                <span style={{ fontSize: '12px', color: '#7F8C8D', fontWeight: 'bold' }}>{translateStudentGrade(top3.grade, currentLang)}</span>
                 <div style={{ margin: '10px 0 0 0', fontSize: '22px', fontWeight: '900', color: '#A04000' }}>
                   {top3.vocaScore.toLocaleString()} P
                 </div>
@@ -392,7 +392,7 @@ export default function LeaderboardSection({ currentUser, currentLang = 'ko' }) 
                       </td>
 
                       <td style={{ padding: '14px', color: '#7F8C8D', fontSize: '13px' }}>
-                        {item.grade}
+                        {translateStudentGrade(item.grade, currentLang)}
                       </td>
 
                       <td style={{ padding: '14px', textAlign: 'center', fontWeight: 'bold', color: '#16A085' }}>

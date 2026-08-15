@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import supabase from '../../lib/supabaseClient.js';
+import { translateStudentGrade, translateGradeLevel } from '../../lib/i18n.js';
 
 // 학생 이름 이모지 자동 제거 헬퍼 함수
 const removeEmoji = (str) => {
@@ -175,7 +176,7 @@ export default function UserManager({ currentUser, setCurrentUser, onLogout, cur
       <div className="user-info-group">
         <span className="user-info-label">{userLabelText}</span>
         <span className="user-info-badge">
-          {currentUser ? `${displayName} (${currentUser.grade || '초등 3학년'}) • ${levelLabelText} ${currentStudyLevel} • ${targetLabelText} ${currentDailyCount}${wordsUnitText}` : (currentLang === 'zh' ? '请先登录' : (currentLang === 'fr' ? 'Connexion requise' : '로그인 필요'))}
+          {currentUser ? `${displayName} (${translateStudentGrade(currentUser.grade || '초등 3학년', currentLang)}) • ${levelLabelText} ${translateGradeLevel(currentStudyLevel, currentLang)} • ${targetLabelText} ${currentDailyCount}${wordsUnitText}` : (currentLang === 'zh' ? '请先登录' : (currentLang === 'fr' ? 'Connexion requise' : '로그인 필요'))}
         </span>
       </div>
 
@@ -245,19 +246,19 @@ export default function UserManager({ currentUser, setCurrentUser, onLogout, cur
                     onChange={(e) => setGradeInput(e.target.value)}
                     style={{ width: '100%', padding: '10px 12px', borderRadius: '10px', border: '1px solid #BDC3C7', fontSize: '14px' }}
                   >
-                    <option value="초등 1학년">초등 1학년 / 1st Grade</option>
-                    <option value="초등 2학년">초등 2학년 / 2nd Grade</option>
-                    <option value="초등 3학년">초등 3학년 / 3rd Grade</option>
-                    <option value="초등 4학년">초등 4학년 / 4th Grade</option>
-                    <option value="초등 5학년">초등 5학년 / 5th Grade</option>
-                    <option value="초등 6학년">초등 6학년 / 6th Grade</option>
-                    <option value="중학생 1학년">중학생 1학년 / Middle 1</option>
-                    <option value="중학생 2학년">중학생 2학년 / Middle 2</option>
-                    <option value="중학생 3학년">중학생 3학년 / Middle 3</option>
-                    <option value="고등학생 1학년">고등학생 1학년 / High 1</option>
-                    <option value="고등학생 2학년">고등학생 2학년 / High 2</option>
-                    <option value="고등학생 3학년">고등학생 3학년 / High 3</option>
-                    <option value="대학생 및 성인">대학생 및 성인 / Adult</option>
+                    <option value="초등 1학년">{translateStudentGrade('초등 1학년', currentLang)}</option>
+                    <option value="초등 2학년">{translateStudentGrade('초등 2학년', currentLang)}</option>
+                    <option value="초등 3학년">{translateStudentGrade('초등 3학년', currentLang)}</option>
+                    <option value="초등 4학년">{translateStudentGrade('초등 4학년', currentLang)}</option>
+                    <option value="초등 5학년">{translateStudentGrade('초등 5학년', currentLang)}</option>
+                    <option value="초등 6학년">{translateStudentGrade('초등 6학년', currentLang)}</option>
+                    <option value="중학생 1학년">{translateStudentGrade('중학생 1학년', currentLang)}</option>
+                    <option value="중학생 2학년">{translateStudentGrade('중학생 2학년', currentLang)}</option>
+                    <option value="중학생 3학년">{translateStudentGrade('중학생 3학년', currentLang)}</option>
+                    <option value="고등학생 1학년">{translateStudentGrade('고등학생 1학년', currentLang)}</option>
+                    <option value="고등학생 2학년">{translateStudentGrade('고등학생 2학년', currentLang)}</option>
+                    <option value="고등학생 3학년">{translateStudentGrade('고등학생 3학년', currentLang)}</option>
+                    <option value="대학생 및 성인">{translateStudentGrade('대학생 및 성인', currentLang)}</option>
                   </select>
                 </div>
 
