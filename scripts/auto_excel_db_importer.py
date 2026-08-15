@@ -177,7 +177,14 @@ def process_excel_files():
             # 🔄 기존 DB 단어 ➔ 프랑스어 / 중국어 뜻 & 예문 업데이트
             upd_item = {
                 'id': db_match['id'],
-                'word': db_match['word']
+                'word': db_match.get('word') or item['word'],
+                'meaning': db_match.get('meaning') or item['meaning_ko'] or '단어',
+                'phonics': db_match.get('phonics') or item['phonics'] or '',
+                'category': db_match.get('category') or item['category'] or '일반',
+                'grade_level': db_match.get('grade_level') or item['grade_level'] or '초등단어',
+                'example_en': db_match.get('example_en') or item['example_en'] or '',
+                'example_ko': db_match.get('example_ko') or item['example_ko'] or '',
+                'image_url': db_match.get('image_url') or f"https://sqonhhqosyszncjfoxfd.supabase.co/storage/v1/object/public/word_images/{item['word'].capitalize()}.png"
             }
             has_update = False
             if item['meaning_zh']:
