@@ -56,7 +56,7 @@ export default function StatsSection({ currentUser, totalWordCount = 500, onNavi
 
       try {
         const [attRes, wrongRes, learnedRes] = await Promise.allSettled([
-          supabase.from('study_records').select('study_date, stamped_words, student_id'),
+          supabase.from('study_records').select('study_date, is_stamped, student_id'),
           supabase.from('wrong_words').select('id, student_id'),
           supabase.from('student_learned_words').select('word, meaning, student_id')
         ]);

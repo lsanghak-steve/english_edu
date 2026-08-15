@@ -329,11 +329,15 @@ export default function Home() {
     try {
       let liveUserData = null;
       if (studentCode || userId) {
-        const { data: dbByCode } = await supabase
-          .from('users')
-          .select('study_grade_level, daily_word_count')
-          .or(`student_id.eq.${studentCode},id.eq.${userId},student_id.eq.${userId}`)
-          .limit(1);
+        let userQuery = supabase.from('users').select('study_grade_level, daily_word_count');
+        const validCodes = [studentCode, userId].filter(id => id && /^[a-zA-Z0-9_-]+$/.test(id));
+        const uniqueCodes = Array.from(new Set(validCodes));
+        if (uniqueCodes.length > 1) {
+          userQuery = userQuery.or(uniqueCodes.map(id => `student_id.eq.${id}`).join(','));
+        } else if (uniqueCodes.length === 1) {
+          userQuery = userQuery.eq('student_id', uniqueCodes[0]);
+        }
+        const { data: dbByCode } = await userQuery.limit(1);
         if (dbByCode && dbByCode[0]) liveUserData = dbByCode[0];
       }
 
@@ -353,29 +357,26 @@ export default function Home() {
       }
     } catch (e) {}
 
-    const queryCond = [studentCode, userId, userName].filter(Boolean).map(id => `student_id.eq.${id}`).join(',');
+    const validStudentIds = [studentCode, userId].filter(id => id && /^[a-zA-Z0-9_-]+$/.test(id));
+    const uniqueStudentIds = Array.from(new Set(validStudentIds));
 
     try {
       // 1. Supabase DB에서 해당 학생이 이미 공부한 모든 단어 목록 가져오기 (3중 안전 쿼리)
-      const [learnedRes, studyRes] = await Promise.allSettled([
-        supabase.from('student_learned_words').select('word').or(queryCond),
-        supabase.from('study_records').select('stamped_words').or(queryCond)
-      ]);
+      let learnedQuery = supabase.from('student_learned_words').select('word');
+
+      if (uniqueStudentIds.length > 1) {
+        const orCond = uniqueStudentIds.map(id => `student_id.eq.${id}`).join(',');
+        learnedQuery = learnedQuery.or(orCond);
+      } else if (uniqueStudentIds.length === 1) {
+        learnedQuery = learnedQuery.eq('student_id', uniqueStudentIds[0]);
+      }
+
+      const learnedRes = await learnedQuery;
 
       let learnedWordSet = new Set();
-      if (learnedRes.status === 'fulfilled' && learnedRes.value.data) {
-        learnedRes.value.data.forEach(item => {
+      if (learnedRes && learnedRes.data) {
+        learnedRes.data.forEach(item => {
           if (item.word) learnedWordSet.add(item.word.trim().toLowerCase());
-        });
-      }
-      if (studyRes.status === 'fulfilled' && studyRes.value.data) {
-        studyRes.value.data.forEach(item => {
-          if (Array.isArray(item.stamped_words)) {
-            item.stamped_words.forEach(w => {
-              const wStr = typeof w === 'string' ? w : w.word;
-              if (wStr) learnedWordSet.add(wStr.trim().toLowerCase());
-            });
-          }
         });
       }
 
@@ -486,7 +487,7 @@ export default function Home() {
           const { data } = await supabase
             .from('users')
             .select('*')
-            .or(`student_id.eq.${studentIdToSearch},id.eq.${studentIdToSearch},name.ilike.%${studentNameClean}%`)
+            .eq('student_id', studentIdToSearch)
             .limit(1);
           if (data && data[0]) dbUser = data[0];
         }

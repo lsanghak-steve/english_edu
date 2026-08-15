@@ -36,10 +36,18 @@ export default function CalendarSection({ currentUser, onSelectDateToStudy, curr
 
       // Supabase 클라우드 DB study_records 보관함에서 출석 도장 데이터 통합 로드
       try {
-        const { data, error } = await supabase
-          .from('study_records')
-          .select('study_date')
-          .or(`student_id.eq.${userId},student_id.eq.${studentName}`);
+        let query = supabase.from('study_records').select('study_date');
+        const validIds = [userId, studentCode].filter(id => id && /^[a-zA-Z0-9_-]+$/.test(id));
+        const uniqueIds = Array.from(new Set(validIds));
+        if (uniqueIds.length > 1) {
+          query = query.or(uniqueIds.map(id => `student_id.eq.${id}`).join(','));
+        } else if (uniqueIds.length === 1) {
+          query = query.eq('student_id', uniqueIds[0]);
+        } else {
+          query = query.eq('student_id', studentName || userId);
+        }
+
+        const { data, error } = await query;
 
         if (!error && data && data.length > 0) {
           const dbDates = data.map(item => item.study_date).filter(Boolean);
