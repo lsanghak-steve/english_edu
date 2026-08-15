@@ -1,0 +1,721 @@
+/* ===================================================
+   🦉 Duolingo Style Design System (듀오링고 감성 디자인)
+   초등·중등·고등 영단어 통합 학습 플랫폼 (Next.js)
+   =================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800;900&family=Pretendard:wght@600;700;800;900&display=swap');
+
+:root {
+  /* Duolingo Brand Colors */
+  --duo-green: #58CC02;
+  --duo-green-dark: #46A302;
+  --duo-green-light: #89E219;
+  --duo-green-bg: #E5F8D0;
+
+  --duo-blue: #1CB0F6;
+  --duo-blue-dark: #1899D6;
+  --duo-blue-bg: #DDF4FF;
+
+  --duo-orange: #FF9600;
+  --duo-orange-dark: #E58400;
+
+  --duo-yellow: #FFC800;
+  --duo-yellow-dark: #E5B200;
+
+  --duo-purple: #CE82FF;
+  --duo-purple-dark: #B75DFF;
+
+  --duo-rose: #FF4B4B;
+  --duo-rose-dark: #EA2B2B;
+
+  --duo-card-bg: #FFFFFF;
+  --duo-border: #E5E5E5;
+  --duo-border-dark: #CECECE;
+  --duo-text-dark: #3C3C3C;
+  --duo-text-muted: #777777;
+
+  --bg-gradient: #F7F7F7;
+  --radius-large: 24px;
+  --radius-medium: 16px;
+  --radius-small: 12px;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: 'Nunito', 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  min-height: 100vh;
+  background-color: var(--bg-gradient);
+  color: var(--duo-text-dark);
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 24px 16px;
+}
+
+.app-container {
+  width: 100%;
+  max-width: 860px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  margin: 0 auto;
+}
+
+/* ===================================================
+   듀오링고 스타일 3D 탭 내비게이션
+   =================================================== */
+.main-tab-nav {
+  display: flex;
+  width: 100%;
+  background: #FFFFFF;
+  border-radius: var(--radius-large);
+  padding: 8px;
+  border: 2px solid var(--duo-border);
+  border-bottom: 5px solid var(--duo-border-dark);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+  gap: 8px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.main-tab-nav::-webkit-scrollbar {
+  display: none;
+}
+
+.main-tab-btn {
+  flex: 1;
+  padding: 12px 18px;
+  border: 2px solid transparent;
+  border-bottom: 4px solid transparent;
+  background: transparent;
+  border-radius: var(--radius-medium);
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--duo-text-muted);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.15s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.main-tab-btn:hover {
+  background: #F1F1F1;
+  color: var(--duo-text-dark);
+}
+
+.main-tab-btn.active {
+  background: var(--duo-green);
+  color: #FFFFFF;
+  border-color: var(--duo-green-dark);
+  border-bottom: 4px solid var(--duo-green-dark);
+  box-shadow: 0 4px 0 var(--duo-green-dark);
+}
+
+.main-tab-btn.active:active {
+  transform: translateY(2px);
+  box-shadow: 0 2px 0 var(--duo-green-dark);
+}
+
+/* ===================================================
+   📂 카테고리 그룹형 스마트 내비게이션 바
+   =================================================== */
+.category-nav-wrapper {
+  background: #FFFFFF;
+  border-radius: 24px;
+  padding: 16px 20px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
+  border: 2px solid #E9ECEF;
+  border-bottom: 5px solid #DEE2E6;
+  margin-bottom: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.category-nav-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.category-label {
+  font-size: 12px;
+  font-weight: 900;
+  padding: 6px 12px;
+  border-radius: 12px;
+  white-space: nowrap;
+  letter-spacing: -0.3px;
+}
+
+.nav-pill-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 9px 15px;
+  border-radius: 14px;
+  font-size: 14px;
+  font-weight: 800;
+  border: 2px solid #E9ECEF;
+  background: #F8F9FA;
+  color: #4A5568;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.15s ease;
+  box-shadow: 0 3px 0 #E2E8F0;
+}
+
+.nav-pill-btn:hover {
+  transform: translateY(-1px);
+  background: #EDF2F7;
+  color: #2D3748;
+}
+
+.nav-pill-btn:active {
+  transform: translateY(2px);
+  box-shadow: 0 1px 0 #E2E8F0;
+}
+
+.nav-pill-btn.active {
+  background: #58CC02;
+  color: #FFFFFF;
+  border-color: #46A302;
+  box-shadow: 0 4px 0 #46A302;
+}
+
+/* ===================================================
+   상단 헤더
+   =================================================== */
+.app-header {
+  width: 100%;
+  text-align: center;
+  background: #FFFFFF;
+  padding: 20px 24px;
+  border-radius: var(--radius-large);
+  border: 2px solid var(--duo-border);
+  border-bottom: 5px solid var(--duo-border-dark);
+}
+
+.app-title {
+  font-size: 26px;
+  font-weight: 900;
+  color: var(--duo-green-dark);
+  letter-spacing: -0.5px;
+}
+
+/* ===================================================
+   학습자 프로필 헤더 바 (듀오링고 유저 바)
+   =================================================== */
+.user-manager-header-bar {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #FFFFFF;
+  padding: 14px 20px;
+  border-radius: var(--radius-large);
+  border: 2px solid var(--duo-border);
+  border-bottom: 5px solid var(--duo-border-dark);
+  margin-bottom: 4px;
+  gap: 12px;
+}
+
+.user-info-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.user-info-label {
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--duo-text-muted);
+}
+
+.user-info-badge {
+  font-size: 15px;
+  font-weight: 900;
+  color: var(--duo-blue-dark);
+  background: var(--duo-blue-bg);
+  padding: 8px 18px;
+  border-radius: var(--radius-medium);
+  border: 2px solid var(--duo-blue);
+  border-bottom: 4px solid var(--duo-blue-dark);
+  white-space: nowrap;
+}
+
+.user-actions-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.btn-user-edit {
+  background: var(--duo-green);
+  border: 2px solid var(--duo-green-dark);
+  border-bottom: 4px solid var(--duo-green-dark);
+  color: white;
+  padding: 9px 18px;
+  border-radius: var(--radius-medium);
+  font-weight: 900;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.btn-user-edit:hover {
+  background: var(--duo-green-light);
+}
+.btn-user-edit:active {
+  transform: translateY(2px);
+  border-bottom-width: 2px;
+}
+
+.btn-user-logout {
+  background: #FFFFFF;
+  border: 2px solid var(--duo-rose);
+  border-bottom: 4px solid var(--duo-rose-dark);
+  color: var(--duo-rose);
+  padding: 9px 18px;
+  border-radius: var(--radius-medium);
+  font-weight: 900;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.btn-user-logout:hover {
+  background: var(--duo-rose);
+  color: white;
+}
+.btn-user-logout:active {
+  transform: translateY(2px);
+  border-bottom-width: 2px;
+}
+
+/* ===================================================
+   듀오링고 스타일 3D 플래시카드
+   =================================================== */
+.flashcard-wrapper {
+  width: 100%;
+  margin-top: 4px;
+  perspective: 1200px;
+}
+
+.flashcard {
+  width: 100%;
+  min-height: 360px;
+  position: relative;
+  transform-style: preserve-3d;
+  transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+  border-radius: 28px;
+  cursor: pointer;
+}
+
+.flashcard.flipped {
+  transform: rotateY(180deg);
+}
+
+.card-face {
+  width: 100%;
+  min-height: 360px;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  border-radius: 28px;
+  background: #FFFFFF;
+  padding: 32px 24px;
+  box-shadow: 0 10px 0 #E5E5E5;
+  border: 3px solid var(--duo-border);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  box-sizing: border-box;
+}
+
+.card-back {
+  position: absolute;
+  top: 0;
+  left: 0;
+  transform: rotateY(180deg);
+  border-color: var(--duo-blue);
+  box-shadow: 0 10px 0 var(--duo-blue-dark);
+}
+
+.card-category-badge {
+  position: absolute;
+  top: 18px;
+  left: 20px;
+  background: var(--duo-green-bg);
+  color: var(--duo-green-dark);
+  border: 2px solid var(--duo-green);
+  padding: 6px 16px;
+  border-radius: var(--radius-medium);
+  font-size: 13px;
+  font-weight: 900;
+}
+
+.word-en {
+  font-size: 46px;
+  font-weight: 900;
+  color: var(--duo-text-dark);
+  letter-spacing: -0.5px;
+  margin-top: 10px;
+}
+
+.word-phonics {
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--duo-blue-dark);
+  margin-top: 6px;
+}
+
+.word-ko {
+  font-size: 46px;
+  font-weight: 900;
+  color: var(--duo-rose-dark);
+  margin-top: 10px;
+}
+
+.word-meaning-title {
+  font-size: 15px;
+  color: var(--duo-text-muted);
+  font-weight: 800;
+}
+
+.flip-hint {
+  position: absolute;
+  bottom: 16px;
+  font-size: 13px;
+  color: var(--duo-text-muted);
+  font-weight: 800;
+}
+
+.audio-btn {
+  background: var(--duo-blue);
+  border: 2px solid var(--duo-blue-dark);
+  border-bottom: 4px solid var(--duo-blue-dark);
+  color: #FFFFFF;
+  padding: 12px 24px;
+  border-radius: var(--radius-medium);
+  font-weight: 900;
+  font-size: 15px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.audio-btn:hover {
+  background: #2CBDFF;
+}
+.audio-btn:active {
+  transform: translateY(2px);
+  border-bottom-width: 2px;
+}
+
+/* ===================================================
+   카드 내비게이션 컨트롤 바
+   =================================================== */
+.card-nav-buttons {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  margin-top: 18px;
+  background: #FFFFFF;
+  padding: 16px 22px;
+  border-radius: var(--radius-large);
+  border: 2px solid var(--duo-border);
+  border-bottom: 5px solid var(--duo-border-dark);
+}
+
+.btn-nav {
+  background: #FFFFFF;
+  border: 2px solid var(--duo-border);
+  border-bottom: 4px solid var(--duo-border-dark);
+  padding: 12px 22px;
+  border-radius: var(--radius-medium);
+  font-weight: 900;
+  font-size: 14px;
+  color: var(--duo-text-dark);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.15s ease;
+}
+
+.btn-nav:hover {
+  background: var(--duo-green);
+  color: white;
+  border-color: var(--duo-green-dark);
+  border-bottom-color: var(--duo-green-dark);
+}
+.btn-nav:active {
+  transform: translateY(2px);
+  border-bottom-width: 2px;
+}
+
+.card-counter {
+  font-size: 20px;
+  font-weight: 900;
+  color: var(--duo-green-dark);
+  margin: 0 12px;
+}
+
+/* ===================================================
+   단어 리스트 디자인
+   =================================================== */
+.word-list-section {
+  width: 100%;
+  background: #FFFFFF;
+  border-radius: var(--radius-large);
+  padding: 24px;
+  border: 2px solid var(--duo-border);
+  border-bottom: 5px solid var(--duo-border-dark);
+}
+
+.word-list-header {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.word-list-subtitle {
+  font-size: 14px;
+  color: var(--duo-text-muted);
+  font-weight: 700;
+  margin-top: 6px;
+}
+
+.word-card-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.word-list-item-card {
+  display: flex;
+  align-items: center;
+  background: #FFFFFF;
+  border: 2px solid var(--duo-border);
+  border-bottom: 4px solid var(--duo-border-dark);
+  border-radius: var(--radius-medium);
+  padding: 16px 20px;
+  gap: 16px;
+  transition: all 0.15s ease;
+}
+
+.word-list-item-card:hover {
+  border-color: var(--duo-green);
+  border-bottom-color: var(--duo-green-dark);
+  transform: translateY(-2px);
+}
+
+.word-item-index {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--duo-green);
+  color: white;
+  font-weight: 900;
+  font-size: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow: 0 3px 0 var(--duo-green-dark);
+}
+
+.word-item-main {
+  flex: 1;
+}
+
+.word-item-header {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+
+.word-item-en {
+  font-size: 22px;
+  font-weight: 900;
+  color: var(--duo-text-dark);
+}
+
+.word-item-phonics {
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--duo-blue-dark);
+}
+
+.word-item-meaning {
+  font-size: 17px;
+  font-weight: 900;
+  color: var(--duo-rose-dark);
+  margin-top: 3px;
+}
+
+.word-item-example {
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 2px stroke var(--duo-border);
+}
+
+.example-en-sm {
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--duo-text-dark);
+}
+
+.example-ko-sm {
+  font-size: 12px;
+  color: var(--duo-text-muted);
+}
+
+.audio-btn-sm {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 2px solid var(--duo-blue);
+  border-bottom: 4px solid var(--duo-blue-dark);
+  background: var(--duo-blue-bg);
+  color: var(--duo-blue-dark);
+  font-size: 18px;
+  cursor: pointer;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+}
+
+.audio-btn-sm:hover {
+  background: var(--duo-blue);
+  color: white;
+}
+.audio-btn-sm:active {
+  transform: translateY(2px);
+  border-bottom-width: 2px;
+}
+
+/* ===================================================
+   퀴즈 섹션 디자인 (듀오링고 게임 퀴즈)
+   =================================================== */
+.quiz-container {
+  width: 100%;
+}
+
+.quiz-tab-buttons {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.tab-btn {
+  flex: 1;
+  padding: 14px;
+  border: 2px solid var(--duo-border);
+  border-bottom: 4px solid var(--duo-border-dark);
+  background: #FFFFFF;
+  border-radius: var(--radius-medium);
+  font-size: 15px;
+  font-weight: 900;
+  color: var(--duo-text-muted);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.tab-btn.active {
+  background: var(--duo-purple);
+  color: white;
+  border-color: var(--duo-purple-dark);
+  border-bottom-color: var(--duo-purple-dark);
+}
+
+.quiz-card {
+  background: #FFFFFF;
+  border-radius: var(--radius-large);
+  padding: 28px;
+  border: 2px solid var(--duo-border);
+  border-bottom: 5px solid var(--duo-border-dark);
+}
+
+.quiz-level-btn {
+  border: 2px solid var(--duo-border);
+  border-bottom: 4px solid var(--duo-border-dark);
+  background: #FFFFFF;
+  border-radius: var(--radius-small);
+  padding: 10px 14px;
+  font-weight: 900;
+  color: var(--duo-text-muted);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.quiz-level-btn.active {
+  background: var(--duo-green);
+  color: white;
+  border-color: var(--duo-green-dark);
+  border-bottom-color: var(--duo-green-dark);
+}
+
+.options-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.option-btn {
+  padding: 18px;
+  border: 2px solid var(--duo-border);
+  border-bottom: 4px solid var(--duo-border-dark);
+  border-radius: var(--radius-medium);
+  background: #FFFFFF;
+  font-weight: 900;
+  font-size: 17px;
+  color: var(--duo-text-dark);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.option-btn:hover {
+  background: var(--duo-blue-bg);
+  border-color: var(--duo-blue);
+  border-bottom-color: var(--duo-blue-dark);
+  color: var(--duo-blue-dark);
+}
+
+.option-btn:active {
+  transform: translateY(2px);
+  border-bottom-width: 2px;
+}
+
+.spelling-input {
+  width: 100%;
+  padding: 18px;
+  border: 3px solid var(--duo-blue);
+  border-bottom: 5px solid var(--duo-blue-dark);
+  border-radius: var(--radius-medium);
+  background: #FFFFFF;
+  font-size: 22px;
+  text-align: center;
+  font-weight: 900;
+  color: var(--duo-text-dark);
+}
+
+/* 모바일 대응 */
+@media (max-width: 768px) {
+  body {
+    padding: 14px 10px;
+  }
+  .user-manager-header-bar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+  .options-grid {
+    grid-template-columns: 1fr;
+  }
+}

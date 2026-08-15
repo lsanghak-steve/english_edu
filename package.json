@@ -3,12 +3,21 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "dev": "cd next_app && npm run dev",
-    "build": "cd next_app && npm install && npm run build",
-    "start": "cd next_app && npm run start",
-    "postinstall": "cd next_app && npm install"
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint"
   },
   "dependencies": {
-    "@supabase/supabase-js": "^2.111.0"
+    "@supabase/supabase-js": "^2.111.0",
+    "next": "16.2.12",
+    "react": "19.2.4",
+    "react-dom": "19.2.4"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4",
+    "eslint": "^9",
+    "eslint-config-next": "16.2.12",
+    "tailwindcss": "^4"
   }
 }

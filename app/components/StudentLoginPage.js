@@ -1,0 +1,441 @@
+'use client';
+
+import { useState, useEffect } from 'react';
+import supabase from '../../lib/supabaseClient.js';
+import { t } from '../../lib/i18n.js';
+
+// 학생/학부모 이름 이모지 자동 제거 헬퍼 함수
+const removeEmoji = (str) => {
+  if (!str) return '';
+  return str
+    .replace(/[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{1F1E0}-\u{1F1FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{1F900}-\u{1F9FF}\u{1F300}-\u{1F5FF}\u{1F004}\u{1F0CF}\u{1F170}-\u{1F251}]/gu, '')
+    .trim();
+};
+
+export default function StudentLoginPage({ onLoginSuccess, onParentLoginSuccess, currentLang = 'ko', onLangChange }) {
+  const [users, setUsers] = useState([]);
+  const [studentNameInput, setStudentNameInput] = useState('');
+  const [pinInput, setPinInput] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+
+  // 학부모 로그인 모달 상태
+  const [showParentModal, setShowParentModal] = useState(false);
+  const [parentNameInput, setParentNameInput] = useState('');
+  const [parentPinInput, setParentPinInput] = useState('');
+
+  // 기본 학생 세팅 배열 (고유 학생 코드 lsh_20260807_000001 체계 적용)
+  const defaultStudents = [
+    { id: 'lsh_20260807_000001', student_id: 'lsh_20260807_000001', name: '이상학', grade: '대학생 및 성인', studyGradeLevel: '중등단어', dailyWordCount: '20', studentPin: '0815', parentName: '이상학학부모', parentPhone: '010-0000-0000', parentPin: '5678' },
+    { id: 'lsh_20260807_000002', student_id: 'lsh_20260807_000002', name: '이승현', grade: '초등 3학년', studyGradeLevel: '초등단어', dailyWordCount: '10', studentPin: '0418', parentName: '이승현학부모', parentPhone: '010-1234-5678', parentPin: '5678' },
+    { id: 'lsm_20260807_000003', student_id: 'lsm_20260807_000003', name: '이수민', grade: '초등 4학년', studyGradeLevel: '초등단어', dailyWordCount: '10', studentPin: '0809', parentName: '이수민학부모', parentPhone: '010-9876-5432', parentPin: '5678' }
+  ];
+
+  // 수파베이스 클라우드 DB에서 학생 전체 목록 로드 (빠른 비동기 백그라운드 연동)
+  useEffect(() => {
+    // 1. LocalStorage 로컬 캐시 즉시 로드 (0.01초 반응)
+    try {
+      const savedUsers = JSON.parse(localStorage.getItem('english_edu_users') || '[]');
+      if (savedUsers.length > 0) {
+        const formatted = savedUsers.map(u => ({ ...u, name: removeEmoji(u.name), parentName: removeEmoji(u.parentName) }));
+        setUsers(formatted);
+      } else {
+        setUsers(defaultStudents);
+      }
+    } catch (e) {
+      setUsers(defaultStudents);
+    }
+
+    // 2. Supabase DB 배경 백그라운드 최신 동기화
+    async function loadCloudUsersAsync() {
+      try {
+        const { data: dbData } = await supabase.from('users').select('*').order('created_at', { ascending: true });
+        if (dbData && dbData.length > 0) {
+          const cloudUsers = dbData.map(item => ({
+            id: item.student_id || item.id,
+            db_id: item.id,
+            student_id: item.student_id || item.id,
+            name: removeEmoji(item.name),
+            grade: item.grade || item.avatar || '초등 3학년',
+            studyGradeLevel: item.study_grade_level || '초등단어',
+            study_grade_level: item.study_grade_level || '초등단어',
+            dailyWordCount: String(item.daily_word_count || 10),
+            daily_word_count: item.daily_word_count || 10,
+            studentPin: item.pin || '1111',
+            parentName: removeEmoji(item.name) + '학부모',
+            parentPhone: '',
+            parentPin: '5678'
+          }));
+
+          const userMap = new Map();
+          cloudUsers.forEach(u => { if (u.name) userMap.set(u.name, u); });
+          defaultStudents.forEach(d => { if (!userMap.has(d.name)) userMap.set(d.name, d); });
+
+          const mergedList = Array.from(userMap.values());
+          setUsers(mergedList);
+          localStorage.setItem('english_edu_users', JSON.stringify(mergedList));
+        }
+      } catch (e) {}
+    }
+
+    loadCloudUsersAsync();
+  }, []);
+
+  // 학생 로그인 제출
+  const handleStudentLoginSubmit = (e) => {
+    e.preventDefault();
+    const trimmedName = removeEmoji(studentNameInput).replace(/\(.*?\)/g, '').trim();
+    if (!trimmedName) {
+      alert(currentLang === 'zh' ? '请输入学生姓名。' : currentLang === 'fr' ? "Veuillez saisir le nom de l'élève." : '학생 이름을 입력해 주세요.');
+      return;
+    }
+
+    const student = users.find(u => {
+      const dbNameClean = removeEmoji(u.name || '').replace(/\(.*?\)/g, '').trim();
+      return dbNameClean === trimmedName || dbNameClean.includes(trimmedName) || trimmedName.includes(dbNameClean);
+    });
+
+    if (!student) {
+      alert(currentLang === 'zh'
+        ? `未找到名为 '${trimmedName}' 的学生，请重新确认姓名。`
+        : currentLang === 'fr'
+        ? `Aucun élève trouvé avec le nom '${trimmedName}'. Veuillez vérifier.`
+        : `'${trimmedName}' 이름으로 등록된 학생을 찾을 수 없습니다.\n이름을 다시 확인해 주세요.`);
+      return;
+    }
+
+    const correctPin = student.studentPin || '1234';
+    if (pinInput.trim() === correctPin) {
+      onLoginSuccess(student);
+    } else {
+      alert(currentLang === 'zh'
+        ? '🔒 学生 PIN 密码不正确，请重新确认。(默认: 1234)'
+        : currentLang === 'fr'
+        ? '🔒 Code PIN incorrect. Veuillez vérifier. (Par défaut: 1234)'
+        : '🔒 학생 비밀번호(PIN)가 올바르지 않습니다. 다시 확인해 주세요. (기본 PIN: 1234)');
+    }
+  };
+
+  // 학부모 이름으로 로그인 제출 (모든 자녀 매칭)
+  const handleParentLoginSubmit = (e) => {
+    e.preventDefault();
+    const trimmedParentName = removeEmoji(parentNameInput);
+    if (!trimmedParentName) {
+      alert(currentLang === 'zh' ? '请输入家长姓名。' : currentLang === 'fr' ? 'Veuillez saisir le nom du parent.' : '학부모님 이름을 입력해 주세요.');
+      return;
+    }
+
+    const matchedChildren = users.filter(u => removeEmoji(u.parentName) === trimmedParentName || removeEmoji(u.name).includes(trimmedParentName));
+    if (matchedChildren.length === 0) {
+      alert(currentLang === 'zh'
+        ? `未找到与 '${trimmedParentName}' 家长关联的子女信息，请重新确认。`
+        : currentLang === 'fr'
+        ? `Aucun enfant associé au nom de parent '${trimmedParentName}'.`
+        : `'${trimmedParentName}' 학부모님 이름으로 등록된 자녀(학생) 정보를 찾을 수 없습니다.\n성함을 다시 확인해 주세요.`);
+      return;
+    }
+
+    const correctParentPin = matchedChildren[0].parentPin || '5678';
+    if (parentPinInput.trim() === correctParentPin) {
+      setShowParentModal(false);
+      if (onParentLoginSuccess) {
+        onParentLoginSuccess(trimmedParentName, matchedChildren);
+      }
+    } else {
+      alert(currentLang === 'zh'
+        ? '🔑 家长 PIN 密码不正确，请重新确认。(默认: 5678)'
+        : currentLang === 'fr'
+        ? '🔑 Code PIN parent incorrect. Veuillez vérifier. (Par défaut: 5678)'
+        : '🔑 학부모 비밀번호(PIN)가 올바르지 않습니다. 다시 확인해 주세요. (기본 PIN: 5678)');
+    }
+  };
+
+  return (
+    <div style={{
+      position: 'fixed',
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      width: '100vw',
+      height: '100vh',
+      background: 'linear-gradient(135deg, #EBF5FB 0%, #E8F8F5 100%)',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      padding: '20px',
+      zIndex: 9999
+    }}>
+      <div style={{
+        background: '#FFFFFF',
+        borderRadius: '28px',
+        padding: '36px 28px',
+        width: '100%',
+        maxWidth: '440px',
+        boxShadow: '0 12px 36px rgba(0,0,0,0.1)',
+        textAlign: 'center',
+        border: '2px solid #E9ECEF',
+        maxHeight: '92vh',
+        overflowY: 'auto',
+        margin: 'auto'
+      }}>
+        {/* 🌐 글로벌 6개 국어 언어 스위처 바 */}
+        {onLangChange && (
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '4px',
+            marginBottom: '16px',
+            background: '#F8FAFC',
+            padding: '6px 8px',
+            borderRadius: '16px',
+            border: '1px solid #E2E8F0',
+            flexWrap: 'wrap'
+          }}>
+            <span style={{ fontSize: '12px', fontWeight: 'bold', color: '#64748B' }}>🌐</span>
+            <button
+              type="button"
+              onClick={() => onLangChange('ko')}
+              style={{
+                padding: '4px 6px',
+                borderRadius: '8px',
+                fontSize: '11px',
+                fontWeight: 'bold',
+                border: currentLang === 'ko' ? '2px solid #3182CE' : '1px solid #CBD5E0',
+                background: currentLang === 'ko' ? '#EBF8FF' : '#FFFFFF',
+                color: currentLang === 'ko' ? '#2B6CB0' : '#64748B',
+                cursor: 'pointer'
+              }}
+            >
+              🇰🇷 한국어
+            </button>
+            <button
+              type="button"
+              onClick={() => onLangChange('zh')}
+              style={{
+                padding: '4px 6px',
+                borderRadius: '8px',
+                fontSize: '11px',
+                fontWeight: 'bold',
+                border: currentLang === 'zh' ? '2px solid #E53E3E' : '1px solid #CBD5E0',
+                background: currentLang === 'zh' ? '#FFF5F5' : '#FFFFFF',
+                color: currentLang === 'zh' ? '#C53030' : '#64748B',
+                cursor: 'pointer'
+              }}
+            >
+              🇨🇳 中文
+            </button>
+            <button
+              type="button"
+              onClick={() => onLangChange('fr')}
+              style={{
+                padding: '4px 6px',
+                borderRadius: '8px',
+                fontSize: '11px',
+                fontWeight: 'bold',
+                border: currentLang === 'fr' ? '2px solid #3182CE' : '1px solid #CBD5E0',
+                background: currentLang === 'fr' ? '#EBF8FF' : '#FFFFFF',
+                color: currentLang === 'fr' ? '#2B6CB0' : '#64748B',
+                cursor: 'pointer'
+              }}
+            >
+              🇫🇷 Français
+            </button>
+            <button
+              type="button"
+              onClick={() => onLangChange('ja')}
+              style={{
+                padding: '4px 6px',
+                borderRadius: '8px',
+                fontSize: '11px',
+                fontWeight: 'bold',
+                border: currentLang === 'ja' ? '2px solid #E53E3E' : '1px solid #CBD5E0',
+                background: currentLang === 'ja' ? '#FFF5F5' : '#FFFFFF',
+                color: currentLang === 'ja' ? '#C53030' : '#64748B',
+                cursor: 'pointer'
+              }}
+            >
+              🇯🇵 日本語
+            </button>
+            <button
+              type="button"
+              onClick={() => onLangChange('vi')}
+              style={{
+                padding: '4px 6px',
+                borderRadius: '8px',
+                fontSize: '11px',
+                fontWeight: 'bold',
+                border: currentLang === 'vi' ? '2px solid #D69E2E' : '1px solid #CBD5E0',
+                background: currentLang === 'vi' ? '#FEFCBF' : '#FFFFFF',
+                color: currentLang === 'vi' ? '#B7791F' : '#64748B',
+                cursor: 'pointer'
+              }}
+            >
+              🇻🇳 Tiếng Việt
+            </button>
+            <button
+              type="button"
+              onClick={() => onLangChange('hi')}
+              style={{
+                padding: '4px 6px',
+                borderRadius: '8px',
+                fontSize: '11px',
+                fontWeight: 'bold',
+                border: currentLang === 'hi' ? '2px solid #DD6B20' : '1px solid #CBD5E0',
+                background: currentLang === 'hi' ? '#FEEBC8' : '#FFFFFF',
+                color: currentLang === 'hi' ? '#C05621' : '#64748B',
+                cursor: 'pointer'
+              }}
+            >
+              🇮🇳 हिन्दी
+            </button>
+          </div>
+        )}
+
+        <div style={{ fontSize: '44px', marginBottom: '6px' }}>🎓</div>
+        <h1 style={{ margin: '0 0 6px 0', fontSize: '22px', color: '#2C3E50', fontWeight: '900' }}>
+          {t('login_title', currentLang)}
+        </h1>
+        <p style={{ margin: '0 0 20px 0', fontSize: '13px', color: '#7F8C8D', fontWeight: 'bold' }}>
+          {t('login_subtitle', currentLang)}
+        </p>
+
+        {isLoading ? (
+          <div style={{ padding: '30px', color: '#3498DB', fontWeight: 'bold', fontSize: '15px' }}>
+            ☁️ 클라우드 DB 연동 중...
+          </div>
+        ) : (
+          <form onSubmit={handleStudentLoginSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+            <div style={{ textAlign: 'left' }}>
+              <label style={{ display: 'block', fontSize: '13px', fontWeight: 'bold', color: '#34495E', marginBottom: '6px' }}>
+                👤 {t('input_student_name_ph', currentLang)}
+              </label>
+              <input
+                type="text"
+                placeholder={t('input_student_name_ph', currentLang)}
+                value={studentNameInput}
+                onChange={(e) => setStudentNameInput(e.target.value)}
+                style={{
+                  width: '100%',
+                  padding: '14px 16px',
+                  borderRadius: '14px',
+                  border: '2px solid #3498DB',
+                  background: '#F4F6F7',
+                  color: '#2C3E50',
+                  fontSize: '16px',
+                  fontWeight: 'bold',
+                  outline: 'none'
+                }}
+                autoFocus
+              />
+            </div>
+
+            <div style={{ textAlign: 'left' }}>
+              <label style={{ display: 'block', fontSize: '13px', fontWeight: 'bold', color: '#34495E', marginBottom: '6px' }}>
+                🔒 {t('input_pin_ph', currentLang)}
+              </label>
+              <input
+                type="password"
+                maxLength={4}
+                placeholder={t('input_pin_ph', currentLang)}
+                value={pinInput}
+                onChange={(e) => setPinInput(e.target.value)}
+                style={{
+                  width: '100%',
+                  padding: '14px',
+                  borderRadius: '14px',
+                  border: '2px solid #9B59B6',
+                  fontSize: '20px',
+                  textAlign: 'center',
+                  fontWeight: 'bold',
+                  outline: 'none',
+                  letterSpacing: '6px'
+                }}
+              />
+            </div>
+
+            <button
+              type="submit"
+              style={{
+                width: '100%',
+                background: 'linear-gradient(135deg, #3498DB 0%, #2980B9 100%)',
+                color: 'white',
+                border: 'none',
+                padding: '16px',
+                borderRadius: '16px',
+                fontWeight: 'bold',
+                fontSize: '16px',
+                cursor: 'pointer',
+                boxShadow: '0 6px 16px rgba(52,152,219,0.3)',
+                marginTop: '6px'
+              }}
+            >
+              {t('btn_student_login', currentLang)} ➔
+            </button>
+          </form>
+        )}
+
+        <div style={{ marginTop: '24px', paddingTop: '16px', borderTop: '1px dashed #BDC3C7', display: 'flex', justifyContent: 'center' }}>
+          <button
+            onClick={() => setShowParentModal(true)}
+            style={{ background: '#F5EEF8', border: '1px solid #9B59B6', color: '#8E44AD', padding: '10px 18px', borderRadius: '12px', fontWeight: 'bold', fontSize: '13px', cursor: 'pointer' }}
+          >
+            {t('btn_parent_login', currentLang)} ➔
+          </button>
+        </div>
+      </div>
+
+      {showParentModal && (
+        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 10000 }}>
+          <div style={{ background: 'white', borderRadius: '24px', padding: '28px', width: '90%', maxWidth: '380px', boxShadow: '0 10px 30px rgba(0,0,0,0.2)', textAlign: 'center' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', paddingBottom: '10px', borderBottom: '2px dashed #E9ECEF' }}>
+              <h3 style={{ margin: 0, color: '#8E44AD', fontSize: '18px' }}>
+                {t('parent_modal_title', currentLang)}
+              </h3>
+              <button onClick={() => setShowParentModal(false)} style={{ background: '#F8F9FA', border: '1px solid #BDC3C7', padding: '4px 10px', borderRadius: '8px', fontWeight: 'bold', cursor: 'pointer' }}>
+                ✖
+              </button>
+            </div>
+
+            <form onSubmit={handleParentLoginSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+              <div style={{ textAlign: 'left' }}>
+                <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', color: '#34495E', marginBottom: '4px' }}>
+                  {t('input_parent_name_ph', currentLang)}
+                </label>
+                <input
+                  type="text"
+                  placeholder={t('input_parent_name_ph', currentLang)}
+                  value={parentNameInput}
+                  onChange={(e) => setParentNameInput(e.target.value)}
+                  style={{ width: '100%', padding: '12px', borderRadius: '10px', border: '1px solid #BDC3C7', fontSize: '15px', fontWeight: 'bold' }}
+                  autoFocus
+                />
+              </div>
+
+              <div style={{ textAlign: 'left' }}>
+                <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', color: '#34495E', marginBottom: '4px' }}>
+                  {t('input_parent_pin_ph', currentLang)}
+                </label>
+                <input
+                  type="password"
+                  maxLength={4}
+                  placeholder={t('input_parent_pin_ph', currentLang)}
+                  value={parentPinInput}
+                  onChange={(e) => setParentPinInput(e.target.value)}
+                  style={{ width: '100%', padding: '12px', borderRadius: '10px', border: '2px solid #8E44AD', fontSize: '18px', textAlign: 'center', fontWeight: 'bold' }}
+                />
+              </div>
+
+              <button
+                type="submit"
+                style={{ width: '100%', background: '#8E44AD', color: 'white', border: 'none', padding: '14px', borderRadius: '12px', fontWeight: 'bold', fontSize: '16px', cursor: 'pointer', marginTop: '6px' }}
+              >
+                {t('btn_parent_submit', currentLang)} ➔
+              </button>
+            </form>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}

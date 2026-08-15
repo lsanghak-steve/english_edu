@@ -8,3 +8,4 @@ scratch/
 .DS_Store
 .vscode/
 .idea/
+/public/word_img/
