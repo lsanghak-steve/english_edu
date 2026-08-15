@@ -1636,7 +1636,17 @@ export default function Home() {
                 color: progressPct > 50 ? '#FFFFFF' : '#4B4B4B',
                 textShadow: progressPct > 50 ? '0 1px 2px rgba(0,0,0,0.5)' : 'none'
               }}>
-                🔥 {currentLang === 'zh' ? `已完成今日目标的 ${progressPct}%！` : (currentLang === 'fr' ? `${progressPct}% de l'objectif atteint !` : `오늘 목표의 ${progressPct}% 완수!`)}
+                🔥 {currentLang === 'zh'
+                  ? `已完成今日目标的 ${progressPct}%！`
+                  : (currentLang === 'fr'
+                  ? `${progressPct}% de l'objectif atteint !`
+                  : (currentLang === 'ja'
+                  ? `今日の目標の ${progressPct}% 達成！`
+                  : (currentLang === 'vi'
+                  ? `Đã hoàn thành ${progressPct}% mục tiêu hôm nay!`
+                  : (currentLang === 'hi'
+                  ? `आज के लक्ष्य का ${progressPct}% पूरा हुआ!`
+                  : `오늘 목표의 ${progressPct}% 완수!`))))}
               </span>
             </div>
 
