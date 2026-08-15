@@ -3,11 +3,12 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "dev": "npm --prefix next_app run dev",
-    "build": "npm --prefix next_app run build",
-    "start": "npm --prefix next_app run start"
+    "dev": "cd next_app && npm run dev",
+    "build": "cd next_app && npm install && npm run build",
+    "start": "cd next_app && npm run start",
+    "postinstall": "cd next_app && npm install"
   },
   "dependencies": {
-    "@supabase/supabase-js": "^2.49.1"
+    "@supabase/supabase-js": "^2.111.0"
   }
 }
