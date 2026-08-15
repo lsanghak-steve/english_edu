@@ -19581,8 +19581,12 @@
     "image_url": "/word_img/none.png",
     "meaning_zh": "任何",
     "meaningZh": "任何",
-    "example_zh": "우리 중 아무도 그 사람의 의견에 반대하지 않는다.",
-    "exampleZh": "우리 중 아무도 그 사람의 의견에 반대하지 않는다."
+    "example_zh": "我们没有人不同意他的观点。",
+    "exampleZh": "我们没有人不同意他的观点。",
+    "meaning_fr": "N'importe lequel",
+    "meaningFr": "N'importe lequel",
+    "example_fr": "Aucun de nous n’est en désaccord avec lui.",
+    "exampleFr": "Aucun de nous n’est en désaccord avec lui."
   },
   {
     "excel_no": 1032,
@@ -32421,8 +32425,12 @@
     "image_url": "/word_img/word.png",
     "meaning_zh": "单词，单词，简短的对话",
     "meaningZh": "单词，单词，简短的对话",
-    "example_zh": "이 단어는 프랑스어가 아니야.",
-    "exampleZh": "이 단어는 프랑스어가 아니야."
+    "example_zh": "这个词不是法语。",
+    "exampleZh": "这个词不是法语。",
+    "meaning_fr": "mot, mot, courte conversation",
+    "meaningFr": "mot, mot, courte conversation",
+    "example_fr": "Ce mot n'est pas français.",
+    "exampleFr": "Ce mot n'est pas français."
   },
   {
     "excel_no": 1708,

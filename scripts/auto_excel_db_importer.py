@@ -110,10 +110,8 @@ def process_excel_files():
 
                 for r in range(2, ws.max_row+1):
                     w_val = ws.cell(r, col_word).value if col_word else None
-                    if not w_val:
-                        continue
                     w_str = str(w_val).strip()
-                    if not w_str or w_str.lower() in ('none', 'word', '영어 단어'):
+                    if not w_str or w_str.lower() in ('영어 단어', 'word (영어)'):
                         continue
 
                     phonics = str(ws.cell(r, col_phonics).value or '').strip() if col_phonics else ''
