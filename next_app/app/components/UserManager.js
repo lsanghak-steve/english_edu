@@ -150,7 +150,11 @@ export default function UserManager({ currentUser, setCurrentUser, onLogout, cur
       window.dispatchEvent(new Event('user_profile_updated'));
     }
 
-    alert(`🎉 학생 정보 및 학습 레벨(${studyGradeLevelInput})이 클라우드 DB에 성공적으로 저장되었습니다!`);
+    alert(currentLang === 'zh'
+      ? `🎉 学生信息和学习级别(${studyGradeLevelInput})已成功保存到云端数据库！`
+      : (currentLang === 'fr'
+      ? `🎉 Profil et niveau (${studyGradeLevelInput}) enregistrés sur la base cloud !`
+      : `🎉 학생 정보 및 학습 레벨(${studyGradeLevelInput})이 클라우드 DB에 성공적으로 저장되었습니다!`));
     setShowAddEditModal(false);
   };
 
@@ -191,7 +195,7 @@ export default function UserManager({ currentUser, setCurrentUser, onLogout, cur
           <div style={{ background: 'white', borderRadius: '24px', padding: '24px', width: '90%', maxWidth: '440px', boxShadow: '0 10px 30px rgba(0,0,0,0.2)', maxHeight: '90vh', overflowY: 'auto' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', paddingBottom: '10px', borderBottom: '2px dashed #E9ECEF' }}>
               <h3 style={{ margin: 0, color: '#2C3E50', fontSize: '18px' }}>
-                ✏️ 학생 정보 수정 (클라우드 DB 동기화)
+                ✏️ {currentLang === 'zh' ? '修改学生信息 (云端同步)' : (currentLang === 'fr' ? 'Modifier mon profil' : '학생 정보 수정 (클라우드 DB 동기화)')}
               </h3>
               <button onClick={() => setShowAddEditModal(false)} style={{ background: '#F8F9FA', border: '1px solid #BDC3C7', padding: '4px 10px', borderRadius: '8px', fontWeight: 'bold', cursor: 'pointer' }}>
                 ✖
@@ -201,10 +205,12 @@ export default function UserManager({ currentUser, setCurrentUser, onLogout, cur
             <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
               {/* 1. 학생 이름 */}
               <div>
-                <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', color: '#34495E', marginBottom: '4px' }}>👤 학생 이름</label>
+                <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', color: '#34495E', marginBottom: '4px' }}>
+                  👤 {currentLang === 'zh' ? '学生姓名' : (currentLang === 'fr' ? 'Nom de l\'élève' : '학생 이름')}
+                </label>
                 <input
                   type="text"
-                  placeholder="예: 김민수"
+                  placeholder={currentLang === 'zh' ? '例: 李明' : (currentLang === 'fr' ? 'Ex: Paul' : '예: 김민수')}
                   value={nameInput}
                   onChange={(e) => setNameInput(e.target.value)}
                   style={{ width: '100%', padding: '10px 12px', borderRadius: '10px', border: '1px solid #BDC3C7', fontSize: '14px' }}
@@ -214,68 +220,74 @@ export default function UserManager({ currentUser, setCurrentUser, onLogout, cur
               {/* 📖 학습할 단어 레벨 선택 (신규) */}
               <div style={{ background: '#F8F9FA', padding: '10px 12px', borderRadius: '12px', border: '1px solid #D4E6F1' }}>
                 <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', color: '#2980B9', marginBottom: '4px' }}>
-                  📖 학습할 단어 레벨 (난이도 선택)
+                  📖 {currentLang === 'zh' ? '学习级别 (难度选择)' : (currentLang === 'fr' ? 'Niveau de vocabulaire' : '학습할 단어 레벨 (난이도 선택)')}
                 </label>
                 <select
                   value={studyGradeLevelInput}
                   onChange={(e) => setStudyGradeLevelInput(e.target.value)}
                   style={{ width: '100%', padding: '10px 12px', borderRadius: '10px', border: '2px solid #3498DB', fontSize: '14px', fontWeight: 'bold', background: '#EBF5FB', color: '#2980B9' }}
                 >
-                  <option value="초등단어">🎒 초등 영단어 (기초 파닉스 ~ 필수 800단어)</option>
-                  <option value="중등단어">🏫 중등 영단어 (중학 내신 ~ 필수 1,200단어)</option>
-                  <option value="고등단어">🎓 고등 영단어 (수능/모의고사 대비)</option>
-                  <option value="전체">🎒🏫🎓 전체 단어 통합 학습</option>
+                  <option value="초등단어">{currentLang === 'zh' ? '🎒 小学英语 (基础自然拼读 ~ 800词)' : (currentLang === 'fr' ? '🎒 Primaire (Phonics ~ 800 mots)' : '🎒 초등 영단어 (기초 파닉스 ~ 필수 800단어)')}</option>
+                  <option value="중등단어">{currentLang === 'zh' ? '🏫 初中英语 (中考必背 ~ 1,200词)' : (currentLang === 'fr' ? '🏫 Collège (1 200 mots)' : '🏫 중등 영단어 (중학 내신 ~ 필수 1,200단어)')}</option>
+                  <option value="고등단어">{currentLang === 'zh' ? '🎓 高中英语 (高考冲刺 ~ 3,000词)' : (currentLang === 'fr' ? '🎓 Lycée (3 000 mots)' : '🎓 고등 영단어 (수능/모의고사 대비)')}</option>
+                  <option value="전체">{currentLang === 'zh' ? '🎒🏫🎓 全部词汇综合学习' : (currentLang === 'fr' ? '🎒🏫🎓 Tous les niveaux combinés' : '🎒🏫🎓 전체 단어 통합 학습')}</option>
                 </select>
               </div>
 
               {/* 2. 학년 & 학습 수량 (2열 배치) */}
               <div style={{ display: 'flex', gap: '10px' }}>
                 <div style={{ flex: 1 }}>
-                  <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', color: '#34495E', marginBottom: '4px' }}>🏫 학년</label>
+                  <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', color: '#34495E', marginBottom: '4px' }}>
+                    🏫 {currentLang === 'zh' ? '年级' : (currentLang === 'fr' ? 'Classe' : '학년')}
+                  </label>
                   <select
                     value={gradeInput}
                     onChange={(e) => setGradeInput(e.target.value)}
                     style={{ width: '100%', padding: '10px 12px', borderRadius: '10px', border: '1px solid #BDC3C7', fontSize: '14px' }}
                   >
-                    <option value="초등 1학년">초등 1학년</option>
-                    <option value="초등 2학년">초등 2학년</option>
-                    <option value="초등 3학년">초등 3학년</option>
-                    <option value="초등 4학년">초등 4학년</option>
-                    <option value="초등 5학년">초등 5학년</option>
-                    <option value="초등 6학년">초등 6학년</option>
-                    <option value="중학생 1학년">중학생 1학년</option>
-                    <option value="중학생 2학년">중학생 2학년</option>
-                    <option value="중학생 3학년">중학생 3학년</option>
-                    <option value="고등학생 1학년">고등학생 1학년</option>
-                    <option value="고등학생 2학년">고등학생 2학년</option>
-                    <option value="고등학생 3학년">고등학생 3학년</option>
-                    <option value="대학생 및 성인">대학생 및 성인</option>
+                    <option value="초등 1학년">초등 1학년 / 1st Grade</option>
+                    <option value="초등 2학년">초등 2학년 / 2nd Grade</option>
+                    <option value="초등 3학년">초등 3학년 / 3rd Grade</option>
+                    <option value="초등 4학년">초등 4학년 / 4th Grade</option>
+                    <option value="초등 5학년">초등 5학년 / 5th Grade</option>
+                    <option value="초등 6학년">초등 6학년 / 6th Grade</option>
+                    <option value="중학생 1학년">중학생 1학년 / Middle 1</option>
+                    <option value="중학생 2학년">중학생 2학년 / Middle 2</option>
+                    <option value="중학생 3학년">중학생 3학년 / Middle 3</option>
+                    <option value="고등학생 1학년">고등학생 1학년 / High 1</option>
+                    <option value="고등학생 2학년">고등학생 2학년 / High 2</option>
+                    <option value="고등학생 3학년">고등학생 3학년 / High 3</option>
+                    <option value="대학생 및 성인">대학생 및 성인 / Adult</option>
                   </select>
                 </div>
 
                 <div style={{ flex: 1 }}>
-                  <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', color: '#34495E', marginBottom: '4px' }}>🎯 하루 학습 수량</label>
+                  <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', color: '#34495E', marginBottom: '4px' }}>
+                    🎯 {currentLang === 'zh' ? '每日目标词数' : (currentLang === 'fr' ? 'Objectif par jour' : '하루 학습 수량')}
+                  </label>
                   <select
                     value={dailyCountInput}
                     onChange={(e) => setDailyCountInput(e.target.value)}
                     style={{ width: '100%', padding: '10px 12px', borderRadius: '10px', border: '1px solid #BDC3C7', fontSize: '14px' }}
                   >
-                    <option value="5">하루 5단어</option>
-                    <option value="10">하루 10단어</option>
-                    <option value="15">하루 15단어</option>
-                    <option value="20">하루 20단어</option>
-                    <option value="30">하루 30단어</option>
+                    <option value="5">{currentLang === 'zh' ? '每日 5 词' : (currentLang === 'fr' ? '5 mots/jour' : '하루 5단어')}</option>
+                    <option value="10">{currentLang === 'zh' ? '每日 10 词' : (currentLang === 'fr' ? '10 mots/jour' : '하루 10단어')}</option>
+                    <option value="15">{currentLang === 'zh' ? '每日 15 词' : (currentLang === 'fr' ? '15 mots/jour' : '하루 15단어')}</option>
+                    <option value="20">{currentLang === 'zh' ? '每日 20 词' : (currentLang === 'fr' ? '20 mots/jour' : '하루 20단어')}</option>
+                    <option value="30">{currentLang === 'zh' ? '每日 30 词' : (currentLang === 'fr' ? '30 mots/jour' : '하루 30단어')}</option>
                   </select>
                 </div>
               </div>
 
               {/* 3. 학생 비밀번호 */}
               <div>
-                <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', color: '#34495E', marginBottom: '4px' }}>🔒 학생 비밀번호 (4자리 PIN)</label>
+                <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', color: '#34495E', marginBottom: '4px' }}>
+                  🔒 {currentLang === 'zh' ? '学生 PIN 密码 (4位)' : (currentLang === 'fr' ? 'Code PIN élève (4 chiffres)' : '학생 비밀번호 (4자리 PIN)')}
+                </label>
                 <input
                   type="password"
                   maxLength={4}
-                  placeholder="예: 1234"
+                  placeholder="1234"
                   value={studentPinInput}
                   onChange={(e) => setStudentPinInput(e.target.value)}
                   style={{ width: '100%', padding: '10px 12px', borderRadius: '10px', border: '1px solid #BDC3C7', fontSize: '14px' }}
@@ -284,11 +296,15 @@ export default function UserManager({ currentUser, setCurrentUser, onLogout, cur
 
               {/* 4. 학부모 정보 (구분선) */}
               <div style={{ borderTop: '1px dashed #BDC3C7', paddingTop: '10px', marginTop: '6px' }}>
-                <span style={{ fontSize: '12px', color: '#8E44AD', fontWeight: 'bold' }}>👨‍👩‍👧‍👦 학부모 정보</span>
+                <span style={{ fontSize: '12px', color: '#8E44AD', fontWeight: 'bold' }}>
+                  👨‍👩‍👧‍👦 {currentLang === 'zh' ? '家长信息' : (currentLang === 'fr' ? 'Informations parents' : '학부모 정보')}
+                </span>
               </div>
 
               <div>
-                <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', color: '#34495E', marginBottom: '4px' }}>학부모 이름</label>
+                <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', color: '#34495E', marginBottom: '4px' }}>
+                  {currentLang === 'zh' ? '家长姓名' : (currentLang === 'fr' ? 'Nom du parent' : '학부모 이름')}
+                </label>
                 <input
                   type="text"
                   placeholder="예: 김철수"
@@ -300,7 +316,9 @@ export default function UserManager({ currentUser, setCurrentUser, onLogout, cur
 
               <div style={{ display: 'flex', gap: '10px' }}>
                 <div style={{ flex: 1 }}>
-                  <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', color: '#34495E', marginBottom: '4px' }}>연락처</label>
+                  <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', color: '#34495E', marginBottom: '4px' }}>
+                    {currentLang === 'zh' ? '联系电话' : (currentLang === 'fr' ? 'Téléphone' : '연락처')}
+                  </label>
                   <input
                     type="text"
                     placeholder="010-0000-0000"
@@ -311,11 +329,13 @@ export default function UserManager({ currentUser, setCurrentUser, onLogout, cur
                 </div>
 
                 <div style={{ flex: 1 }}>
-                  <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', color: '#34495E', marginBottom: '4px' }}>🔑 학부모 비밀번호(PIN)</label>
+                  <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', color: '#34495E', marginBottom: '4px' }}>
+                    🔑 {currentLang === 'zh' ? '家长 PIN 密码' : (currentLang === 'fr' ? 'Code PIN parent' : '학부모 비밀번호(PIN)')}
+                  </label>
                   <input
                     type="password"
                     maxLength={4}
-                    placeholder="예: 5678"
+                    placeholder="5678"
                     value={parentPinInput}
                     onChange={(e) => setParentPinInput(e.target.value)}
                     style={{ width: '100%', padding: '10px 12px', borderRadius: '10px', border: '1px solid #BDC3C7', fontSize: '14px' }}
@@ -327,7 +347,7 @@ export default function UserManager({ currentUser, setCurrentUser, onLogout, cur
                 type="submit"
                 style={{ width: '100%', background: '#2ECC71', color: 'white', border: 'none', padding: '12px', borderRadius: '12px', fontWeight: 'bold', fontSize: '15px', cursor: 'pointer', marginTop: '10px' }}
               >
-                ☁️ 클라우드 DB 수정 저장
+                ☁️ {currentLang === 'zh' ? '保存修改到云端' : (currentLang === 'fr' ? 'Enregistrer les modifications' : '클라우드 DB 수정 저장')}
               </button>
             </form>
           </div>
