@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import supabase from '../../lib/supabaseClient.js';
 import wordList500Fallback from '../../data/wordsData.js';
+import { t } from '../../lib/i18n.js';
 
 const removeEmoji = (str) => {
   if (!str) return '';
@@ -11,14 +12,14 @@ const removeEmoji = (str) => {
     .trim();
 };
 
-export default function CalendarSection({ currentUser, onSelectDateToStudy }) {
+export default function CalendarSection({ currentUser, onSelectDateToStudy, currentLang = 'ko' }) {
   const [currentYear, setCurrentYear] = useState(2026);
   const [currentMonth, setCurrentMonth] = useState(7); // 0-based: 7 = 8월
   const [stamps, setStamps] = useState([]);
   const [selectedStampWords, setSelectedStampWords] = useState(null);
   const [selectedDateStr, setSelectedDateStr] = useState('');
 
-  const studentName = currentUser ? removeEmoji(currentUser.name) : '학생';
+  const studentName = currentUser ? removeEmoji(currentUser.name) : (currentLang === 'zh' ? '学生' : (currentLang === 'fr' ? 'Élève' : '학생'));
   const userId = currentUser ? currentUser.id : 'guest';
 
   // 💮 이상학(8/3, 8/5), 이승현(8/3, 8/4, 8/5), 이수민(8/4, 8/5) 클라우드 DB 완벽 통합 로드
@@ -53,8 +54,6 @@ export default function CalendarSection({ currentUser, onSelectDateToStudy }) {
         console.log('Cloud attendance fetch fallback', e);
       }
 
-
-
       // localStorage 및 기본 통일 도장 적용
       try {
         const localStamps = JSON.parse(localStorage.getItem(`english_stamps_${userId}`) || '[]');
@@ -80,7 +79,7 @@ export default function CalendarSection({ currentUser, onSelectDateToStudy }) {
     calendarDays.push(d);
   }
 
-  // 💮 날짜 클릭 처리 (미완료 시 학습할지 물어보기 / 완료 시 복습 팝업)
+  // 💮 날짜 클릭 처리
   const handleDayClick = (day) => {
     if (!day) return;
     const monthStr = String(currentMonth + 1).padStart(2, '0');
@@ -88,7 +87,13 @@ export default function CalendarSection({ currentUser, onSelectDateToStudy }) {
     const fullDateStr = `${currentYear}-${monthStr}-${dayStr}`;
 
     if (!stamps.includes(fullDateStr)) {
-      const confirmStudy = window.confirm(`📅 [${currentYear}년 ${currentMonth + 1}월 ${day}일] 단어 학습을 시작하시겠습니까?\n\n학습 후 퀴즈를 완료하면 이 날짜에 출석 도장(💮)이 찍힙니다!`);
+      const confirmMsg = currentLang === 'zh'
+        ? `📅 [${currentYear}年 ${currentMonth + 1}月 ${day}日] 是否开始这天的单词学习？\n\n完成测验后，该日期将被盖上出勤印章(💮)！`
+        : (currentLang === 'fr'
+        ? `📅 [${day}/${currentMonth + 1}/${currentYear}] Voulez-vous commencer l'apprentissage de cette date ?\n\nAprès validation du quiz, un tampon (💮) sera apposé !`
+        : `📅 [${currentYear}년 ${currentMonth + 1}월 ${day}일] 단어 학습을 시작하시겠습니까?\n\n학습 후 퀴즈를 완료하면 이 날짜에 출석 도장(💮)이 찍힙니다!`);
+
+      const confirmStudy = window.confirm(confirmMsg);
       if (confirmStudy) {
         if (onSelectDateToStudy) {
           onSelectDateToStudy(fullDateStr);
@@ -124,30 +129,52 @@ export default function CalendarSection({ currentUser, onSelectDateToStudy }) {
     }
   };
 
+  const weekdays = currentLang === 'zh'
+    ? ['日', '一', '二', '三', '四', '五', '六']
+    : (currentLang === 'fr' ? ['Dim', 'Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam'] : ['일', '월', '화', '수', '목', '금', '토']);
+
+  const calendarTitle = currentLang === 'zh'
+    ? `📅 ${currentYear}年 ${currentMonth + 1}月 出勤日历 ☁️`
+    : (currentLang === 'fr'
+    ? `📅 Calendrier ${currentMonth + 1}/${currentYear} ☁️`
+    : `📅 ${currentYear}년 ${currentMonth + 1}월 출석 달력 ☁️`);
+
+  const attendanceBadgeText = currentLang === 'zh'
+    ? `👤 [${studentName}] 累计出勤: ${stamps.length}天完成`
+    : (currentLang === 'fr'
+    ? `👤 [${studentName}] Présence: ${stamps.length} jours`
+    : `👤 [${studentName}] 누적 출석: ${stamps.length}일 완료`);
+
+  const guideText = currentLang === 'zh'
+    ? '💡 点击日期可直接进行学习，完成后该日期将盖上印章(💮)！'
+    : (currentLang === 'fr'
+    ? '💡 Cliquez sur une date pour étudier, un tampon(💮) sera validé après le quiz !'
+    : '💡 날짜를 누르면 바로 학습을 진행할 수 있으며, 완수 시 해당 날짜에 도장(💮)이 찍힙니다!');
+
   return (
     <div style={{ background: '#FFFFFF', borderRadius: '24px', padding: '24px', border: '1px solid #E9ECEF', boxShadow: '0 8px 20px rgba(0,0,0,0.04)', width: '100%', textAlign: 'center' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', flexWrap: 'wrap', gap: '8px' }}>
         <h2 style={{ margin: 0, color: '#2C3E50', fontSize: '20px', fontWeight: '900' }}>
-          📅 {currentYear}년 {currentMonth + 1}월 출석 달력 ☁️
+          {calendarTitle}
         </h2>
         <span style={{ fontSize: '13px', background: '#E8F8F5', color: '#16A085', padding: '6px 12px', borderRadius: '12px', fontWeight: 'bold' }}>
-          👤 [{studentName}] 누적 출석: {stamps.length}일 완료
+          {attendanceBadgeText}
         </span>
       </div>
 
       <p style={{ fontSize: '13px', color: '#7F8C8D', marginBottom: '18px' }}>
-        💡 날짜를 누르면 <strong>바로 학습을 진행</strong>할 수 있으며, 완수 시 해당 날짜에 <strong>도장(💮)</strong>이 찍힙니다!
+        {guideText}
       </p>
 
       {/* 요일 헤더 */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: '6px', marginBottom: '8px', fontWeight: 'bold', fontSize: '14px', color: '#7F8C8D' }}>
-        <div style={{ color: '#E74C3C' }}>일</div>
-        <div>월</div>
-        <div>화</div>
-        <div>수</div>
-        <div>목</div>
-        <div>금</div>
-        <div style={{ color: '#3498DB' }}>토</div>
+        <div style={{ color: '#E74C3C' }}>{weekdays[0]}</div>
+        <div>{weekdays[1]}</div>
+        <div>{weekdays[2]}</div>
+        <div>{weekdays[3]}</div>
+        <div>{weekdays[4]}</div>
+        <div>{weekdays[5]}</div>
+        <div style={{ color: '#3498DB' }}>{weekdays[6]}</div>
       </div>
 
       {/* 달력 날짜 그리드 */}
@@ -176,7 +203,7 @@ export default function CalendarSection({ currentUser, onSelectDateToStudy }) {
                 display: 'flex',
                 flexDirection: 'column',
                 alignItems: 'center',
-                justify: 'space-between',
+                justifyContent: 'space-between',
                 transition: 'all 0.2s ease',
                 position: 'relative'
               }}
@@ -189,11 +216,13 @@ export default function CalendarSection({ currentUser, onSelectDateToStudy }) {
               {isStamped ? (
                 <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                   <span style={{ fontSize: '24px', lineHeight: 1 }}>💮</span>
-                  <span style={{ fontSize: '10px', color: '#27AE60', fontWeight: 'bold', marginTop: '2px' }}>출석완료</span>
+                  <span style={{ fontSize: '10px', color: '#27AE60', fontWeight: 'bold', marginTop: '2px' }}>
+                    {currentLang === 'zh' ? '已签到' : (currentLang === 'fr' ? 'Validé' : '출석완료')}
+                  </span>
                 </div>
               ) : (
                 <span style={{ fontSize: '11px', color: '#3498DB', fontWeight: 'bold', background: '#EBF5FB', padding: '2px 6px', borderRadius: '6px' }}>
-                  ✏️ 학습하기
+                  ✏️ {currentLang === 'zh' ? '去学习' : (currentLang === 'fr' ? 'Étudier' : '학습하기')}
                 </span>
               )}
             </div>
@@ -208,10 +237,10 @@ export default function CalendarSection({ currentUser, onSelectDateToStudy }) {
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', paddingBottom: '10px', borderBottom: '2px dashed #E9ECEF' }}>
               <div>
                 <h3 style={{ margin: 0, color: '#16A085', fontSize: '18px' }}>
-                  💮 [{selectedDateStr}] 출석 복습 단어장
+                  💮 [{selectedDateStr}] {currentLang === 'zh' ? '出勤复习单词本' : (currentLang === 'fr' ? 'Mots révisés du jour' : '출석 복습 단어장')}
                 </h3>
                 <span style={{ fontSize: '12px', color: '#27AE60', fontWeight: 'bold' }}>
-                  [{studentName}] 학생이 이 날 공부한 총 {selectedStampWords.length}개 단어
+                  {currentLang === 'zh' ? `[${studentName}] 学生在此日期学习的共 ${selectedStampWords.length} 个单词` : (currentLang === 'fr' ? `Total ${selectedStampWords.length} mots appris par [${studentName}]` : `[${studentName}] 학생이 이 날 공부한 총 ${selectedStampWords.length}개 단어`)}
                 </span>
               </div>
               <button onClick={() => setSelectedStampWords(null)} style={{ background: '#F8F9FA', border: '1px solid #BDC3C7', padding: '4px 10px', borderRadius: '8px', fontWeight: 'bold', cursor: 'pointer' }}>
@@ -222,12 +251,15 @@ export default function CalendarSection({ currentUser, onSelectDateToStudy }) {
             <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginBottom: '20px' }}>
               {selectedStampWords.map((item, i) => {
                 const wordStr = (item.word || item).replace(/\.png/gi, '').trim();
+                const meaningDisplay = currentLang === 'fr'
+                  ? (item.meaning_fr || item.meaningFr || item.meaning)
+                  : (currentLang === 'zh' ? (item.meaning_zh || item.meaningZh || item.meaning) : item.meaning);
                 return (
                   <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 14px', background: '#E8F8F5', borderRadius: '12px', border: '1px solid #A3E4D7' }}>
                     <div>
                       <span style={{ fontWeight: 'bold', color: '#117864', fontSize: '15px' }}>#{i + 1} {wordStr}</span>
                       {item.phonics && <span style={{ fontSize: '12px', color: '#7F8C8D', marginLeft: '6px' }}>{item.phonics}</span>}
-                      {item.meaning && <div style={{ color: '#E74C3C', fontSize: '13px', fontWeight: 'bold', marginTop: '2px' }}>{item.meaning}</div>}
+                      {meaningDisplay && <div style={{ color: '#E74C3C', fontSize: '13px', fontWeight: 'bold', marginTop: '2px' }}>{meaningDisplay}</div>}
                     </div>
                     <button onClick={() => playAudio(wordStr)} style={{ background: '#16A085', color: 'white', border: 'none', borderRadius: '50%', width: '32px', height: '32px', cursor: 'pointer' }}>
                       🔊
@@ -238,7 +270,7 @@ export default function CalendarSection({ currentUser, onSelectDateToStudy }) {
             </div>
 
             <button onClick={() => setSelectedStampWords(null)} style={{ width: '100%', background: '#16A085', color: 'white', border: 'none', padding: '12px', borderRadius: '12px', fontWeight: 'bold', cursor: 'pointer' }}>
-              닫기
+              {t('btn_close', currentLang)}
             </button>
           </div>
         </div>

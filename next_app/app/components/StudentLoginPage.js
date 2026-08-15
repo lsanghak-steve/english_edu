@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import supabase from '../../lib/supabaseClient.js';
+import { t } from '../../lib/i18n.js';
 
 // 학생/학부모 이름 이모지 자동 제거 헬퍼 함수
 const removeEmoji = (str) => {
@@ -11,7 +12,7 @@ const removeEmoji = (str) => {
     .trim();
 };
 
-export default function StudentLoginPage({ onLoginSuccess, onParentLoginSuccess }) {
+export default function StudentLoginPage({ onLoginSuccess, onParentLoginSuccess, currentLang = 'ko', onLangChange }) {
   const [users, setUsers] = useState([]);
   const [studentNameInput, setStudentNameInput] = useState('');
   const [pinInput, setPinInput] = useState('');
@@ -84,7 +85,7 @@ export default function StudentLoginPage({ onLoginSuccess, onParentLoginSuccess 
     e.preventDefault();
     const trimmedName = removeEmoji(studentNameInput).replace(/\(.*?\)/g, '').trim();
     if (!trimmedName) {
-      alert('학생 이름을 입력해 주세요.');
+      alert(currentLang === 'zh' ? '请输入学生姓名。' : currentLang === 'fr' ? "Veuillez saisir le nom de l'élève." : '학생 이름을 입력해 주세요.');
       return;
     }
 
@@ -94,16 +95,23 @@ export default function StudentLoginPage({ onLoginSuccess, onParentLoginSuccess 
     });
 
     if (!student) {
-      alert(`'${trimmedName}' 이름으로 등록된 학생을 찾을 수 없습니다.\n이름을 다시 확인해 주세요.`);
+      alert(currentLang === 'zh'
+        ? `未找到名为 '${trimmedName}' 的学生，请重新确认姓名。`
+        : currentLang === 'fr'
+        ? `Aucun élève trouvé avec le nom '${trimmedName}'. Veuillez vérifier.`
+        : `'${trimmedName}' 이름으로 등록된 학생을 찾을 수 없습니다.\n이름을 다시 확인해 주세요.`);
       return;
     }
 
     const correctPin = student.studentPin || '1234';
     if (pinInput.trim() === correctPin) {
-      alert(`🎉 환영합니다! ${student.name} 학생으로 성공적으로 로그인되었습니다. ☁️`);
       onLoginSuccess(student);
     } else {
-      alert('🔒 학생 비밀번호(PIN)가 올바르지 않습니다. 다시 확인해 주세요. (기본 PIN: 1234)');
+      alert(currentLang === 'zh'
+        ? '🔒 学生 PIN 密码不正确，请重新确认。(默认: 1234)'
+        : currentLang === 'fr'
+        ? '🔒 Code PIN incorrect. Veuillez vérifier. (Par défaut: 1234)'
+        : '🔒 학생 비밀번호(PIN)가 올바르지 않습니다. 다시 확인해 주세요. (기본 PIN: 1234)');
     }
   };
 
@@ -112,25 +120,32 @@ export default function StudentLoginPage({ onLoginSuccess, onParentLoginSuccess 
     e.preventDefault();
     const trimmedParentName = removeEmoji(parentNameInput);
     if (!trimmedParentName) {
-      alert('학부모님 이름을 입력해 주세요.');
+      alert(currentLang === 'zh' ? '请输入家长姓名。' : currentLang === 'fr' ? 'Veuillez saisir le nom du parent.' : '학부모님 이름을 입력해 주세요.');
       return;
     }
 
     const matchedChildren = users.filter(u => removeEmoji(u.parentName) === trimmedParentName || removeEmoji(u.name).includes(trimmedParentName));
     if (matchedChildren.length === 0) {
-      alert(`'${trimmedParentName}' 학부모님 이름으로 등록된 자녀(학생) 정보를 찾을 수 없습니다.\n성함을 다시 확인해 주세요.`);
+      alert(currentLang === 'zh'
+        ? `未找到与 '${trimmedParentName}' 家长关联的子女信息，请重新确认。`
+        : currentLang === 'fr'
+        ? `Aucun enfant associé au nom de parent '${trimmedParentName}'.`
+        : `'${trimmedParentName}' 학부모님 이름으로 등록된 자녀(학생) 정보를 찾을 수 없습니다.\n성함을 다시 확인해 주세요.`);
       return;
     }
 
     const correctParentPin = matchedChildren[0].parentPin || '5678';
     if (parentPinInput.trim() === correctParentPin) {
-      alert(`👨‍👩‍👧‍👦 ${trimmedParentName} 학부모님, 환영합니다!\n등록된 자녀 학습 성취도 리포트로 이동합니다. 📊`);
       setShowParentModal(false);
       if (onParentLoginSuccess) {
         onParentLoginSuccess(trimmedParentName, matchedChildren);
       }
     } else {
-      alert('🔑 학부모 비밀번호(PIN)가 올바르지 않습니다. 다시 확인해 주세요. (기본 PIN: 5678)');
+      alert(currentLang === 'zh'
+        ? '🔑 家长 PIN 密码不正确，请重新确认。(默认: 5678)'
+        : currentLang === 'fr'
+        ? '🔑 Code PIN parent incorrect. Veuillez vérifier. (Par défaut: 5678)'
+        : '🔑 학부모 비밀번호(PIN)가 올바르지 않습니다. 다시 확인해 주세요. (기본 PIN: 5678)');
     }
   };
 
@@ -146,7 +161,7 @@ export default function StudentLoginPage({ onLoginSuccess, onParentLoginSuccess 
       background: 'linear-gradient(135deg, #EBF5FB 0%, #E8F8F5 100%)',
       display: 'flex',
       alignItems: 'center',
-      justify: 'center',
+      justifyContent: 'center',
       padding: '20px',
       zIndex: 9999
     }}>
@@ -155,7 +170,7 @@ export default function StudentLoginPage({ onLoginSuccess, onParentLoginSuccess 
         borderRadius: '28px',
         padding: '36px 28px',
         width: '100%',
-        maxWidth: '420px',
+        maxWidth: '440px',
         boxShadow: '0 12px 36px rgba(0,0,0,0.1)',
         textAlign: 'center',
         border: '2px solid #E9ECEF',
@@ -163,12 +178,77 @@ export default function StudentLoginPage({ onLoginSuccess, onParentLoginSuccess 
         overflowY: 'auto',
         margin: 'auto'
       }}>
-        <div style={{ fontSize: '48px', marginBottom: '8px' }}>🎓</div>
-        <h1 style={{ margin: '0 0 6px 0', fontSize: '24px', color: '#2C3E50', fontWeight: '900' }}>
-          Steve Voca (스티브 보카)
+        {/* 🌐 글로벌 언어 스위처 바 */}
+        {onLangChange && (
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '6px',
+            marginBottom: '16px',
+            background: '#F8FAFC',
+            padding: '6px 10px',
+            borderRadius: '16px',
+            border: '1px solid #E2E8F0'
+          }}>
+            <span style={{ fontSize: '12px', fontWeight: 'bold', color: '#64748B' }}>🌐</span>
+            <button
+              type="button"
+              onClick={() => onLangChange('ko')}
+              style={{
+                padding: '4px 8px',
+                borderRadius: '8px',
+                fontSize: '11px',
+                fontWeight: 'bold',
+                border: currentLang === 'ko' ? '2px solid #3182CE' : '1px solid #CBD5E0',
+                background: currentLang === 'ko' ? '#EBF8FF' : '#FFFFFF',
+                color: currentLang === 'ko' ? '#2B6CB0' : '#64748B',
+                cursor: 'pointer'
+              }}
+            >
+              🇰🇷 한국어
+            </button>
+            <button
+              type="button"
+              onClick={() => onLangChange('zh')}
+              style={{
+                padding: '4px 8px',
+                borderRadius: '8px',
+                fontSize: '11px',
+                fontWeight: 'bold',
+                border: currentLang === 'zh' ? '2px solid #E53E3E' : '1px solid #CBD5E0',
+                background: currentLang === 'zh' ? '#FFF5F5' : '#FFFFFF',
+                color: currentLang === 'zh' ? '#C53030' : '#64748B',
+                cursor: 'pointer'
+              }}
+            >
+              🇨🇳 中文
+            </button>
+            <button
+              type="button"
+              onClick={() => onLangChange('fr')}
+              style={{
+                padding: '4px 8px',
+                borderRadius: '8px',
+                fontSize: '11px',
+                fontWeight: 'bold',
+                border: currentLang === 'fr' ? '2px solid #3182CE' : '1px solid #CBD5E0',
+                background: currentLang === 'fr' ? '#EBF8FF' : '#FFFFFF',
+                color: currentLang === 'fr' ? '#2B6CB0' : '#64748B',
+                cursor: 'pointer'
+              }}
+            >
+              🇫🇷 Français
+            </button>
+          </div>
+        )}
+
+        <div style={{ fontSize: '44px', marginBottom: '6px' }}>🎓</div>
+        <h1 style={{ margin: '0 0 6px 0', fontSize: '22px', color: '#2C3E50', fontWeight: '900' }}>
+          {t('login_title', currentLang)}
         </h1>
-        <p style={{ margin: '0 0 24px 0', fontSize: '14px', color: '#7F8C8D', fontWeight: 'bold' }}>
-          🔒 이름과 4자리 비밀번호를 입력해 주세요
+        <p style={{ margin: '0 0 20px 0', fontSize: '13px', color: '#7F8C8D', fontWeight: 'bold' }}>
+          {t('login_subtitle', currentLang)}
         </p>
 
         {isLoading ? (
@@ -176,14 +256,14 @@ export default function StudentLoginPage({ onLoginSuccess, onParentLoginSuccess 
             ☁️ 클라우드 DB 연동 중...
           </div>
         ) : (
-          <form onSubmit={handleStudentLoginSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '18px' }}>
+          <form onSubmit={handleStudentLoginSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
             <div style={{ textAlign: 'left' }}>
               <label style={{ display: 'block', fontSize: '13px', fontWeight: 'bold', color: '#34495E', marginBottom: '6px' }}>
-                👤 학생 이름 입력 (예: 김철수, 이영희)
+                👤 {t('input_student_name_ph', currentLang)}
               </label>
               <input
                 type="text"
-                placeholder="예: 김철수 또는 이영희"
+                placeholder={t('input_student_name_ph', currentLang)}
                 value={studentNameInput}
                 onChange={(e) => setStudentNameInput(e.target.value)}
                 style={{
@@ -203,12 +283,12 @@ export default function StudentLoginPage({ onLoginSuccess, onParentLoginSuccess 
 
             <div style={{ textAlign: 'left' }}>
               <label style={{ display: 'block', fontSize: '13px', fontWeight: 'bold', color: '#34495E', marginBottom: '6px' }}>
-                🔒 학생 비밀번호 (4자리 PIN)
+                🔒 {t('input_pin_ph', currentLang)}
               </label>
               <input
                 type="password"
                 maxLength={4}
-                placeholder="비밀번호 4자리 (기본: 1234)"
+                placeholder={t('input_pin_ph', currentLang)}
                 value={pinInput}
                 onChange={(e) => setPinInput(e.target.value)}
                 style={{
@@ -235,23 +315,23 @@ export default function StudentLoginPage({ onLoginSuccess, onParentLoginSuccess 
                 padding: '16px',
                 borderRadius: '16px',
                 fontWeight: 'bold',
-                fontSize: '17px',
+                fontSize: '16px',
                 cursor: 'pointer',
                 boxShadow: '0 6px 16px rgba(52,152,219,0.3)',
-                marginTop: '10px'
+                marginTop: '6px'
               }}
             >
-              🔓 내 계정으로 학습 시작하기 ➔
+              {t('btn_student_login', currentLang)} ➔
             </button>
           </form>
         )}
 
-        <div style={{ marginTop: '28px', paddingTop: '18px', borderTop: '1px dashed #BDC3C7', display: 'flex', justifyContent: 'center' }}>
+        <div style={{ marginTop: '24px', paddingTop: '16px', borderTop: '1px dashed #BDC3C7', display: 'flex', justifyContent: 'center' }}>
           <button
             onClick={() => setShowParentModal(true)}
-            style={{ background: '#F5EEF8', border: '1px solid #9B59B6', color: '#8E44AD', padding: '10px 18px', borderRadius: '12px', fontWeight: 'bold', fontSize: '14px', cursor: 'pointer' }}
+            style={{ background: '#F5EEF8', border: '1px solid #9B59B6', color: '#8E44AD', padding: '10px 18px', borderRadius: '12px', fontWeight: 'bold', fontSize: '13px', cursor: 'pointer' }}
           >
-            👨‍👩‍👧‍👦 학부모 전용 로그인 ➔
+            {t('btn_parent_login', currentLang)} ➔
           </button>
         </div>
       </div>
@@ -261,23 +341,21 @@ export default function StudentLoginPage({ onLoginSuccess, onParentLoginSuccess 
           <div style={{ background: 'white', borderRadius: '24px', padding: '28px', width: '90%', maxWidth: '380px', boxShadow: '0 10px 30px rgba(0,0,0,0.2)', textAlign: 'center' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', paddingBottom: '10px', borderBottom: '2px dashed #E9ECEF' }}>
               <h3 style={{ margin: 0, color: '#8E44AD', fontSize: '18px' }}>
-                👨‍👩‍👧‍👦 학부모 전용 안심 로그인
+                {t('parent_modal_title', currentLang)}
               </h3>
               <button onClick={() => setShowParentModal(false)} style={{ background: '#F8F9FA', border: '1px solid #BDC3C7', padding: '4px 10px', borderRadius: '8px', fontWeight: 'bold', cursor: 'pointer' }}>
                 ✖
               </button>
             </div>
 
-            <p style={{ fontSize: '13px', color: '#7F8C8D', marginBottom: '16px' }}>
-              학부모님 성함과 비밀번호를 입력하면 자녀의 학습 상태 리포트로 이동합니다! 📊
-            </p>
-
             <form onSubmit={handleParentLoginSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
               <div style={{ textAlign: 'left' }}>
-                <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', color: '#34495E', marginBottom: '4px' }}>👨‍👩‍👧‍👦 학부모 이름 입력 (예: 김철수, 이영희)</label>
+                <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', color: '#34495E', marginBottom: '4px' }}>
+                  {t('input_parent_name_ph', currentLang)}
+                </label>
                 <input
                   type="text"
-                  placeholder="예: 김철수 또는 이영희"
+                  placeholder={t('input_parent_name_ph', currentLang)}
                   value={parentNameInput}
                   onChange={(e) => setParentNameInput(e.target.value)}
                   style={{ width: '100%', padding: '12px', borderRadius: '10px', border: '1px solid #BDC3C7', fontSize: '15px', fontWeight: 'bold' }}
@@ -286,11 +364,13 @@ export default function StudentLoginPage({ onLoginSuccess, onParentLoginSuccess 
               </div>
 
               <div style={{ textAlign: 'left' }}>
-                <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', color: '#34495E', marginBottom: '4px' }}>🔑 학부모 비밀번호 (4자리 PIN)</label>
+                <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', color: '#34495E', marginBottom: '4px' }}>
+                  {t('input_parent_pin_ph', currentLang)}
+                </label>
                 <input
                   type="password"
                   maxLength={4}
-                  placeholder="비밀번호 4자리 (기본: 5678)"
+                  placeholder={t('input_parent_pin_ph', currentLang)}
                   value={parentPinInput}
                   onChange={(e) => setParentPinInput(e.target.value)}
                   style={{ width: '100%', padding: '12px', borderRadius: '10px', border: '2px solid #8E44AD', fontSize: '18px', textAlign: 'center', fontWeight: 'bold' }}
@@ -301,7 +381,7 @@ export default function StudentLoginPage({ onLoginSuccess, onParentLoginSuccess 
                 type="submit"
                 style={{ width: '100%', background: '#8E44AD', color: 'white', border: 'none', padding: '14px', borderRadius: '12px', fontWeight: 'bold', fontSize: '16px', cursor: 'pointer', marginTop: '6px' }}
               >
-                🔓 자녀 학습 리포트 보기 ➔
+                {t('btn_parent_submit', currentLang)} ➔
               </button>
             </form>
           </div>

@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import supabase from '../../lib/supabaseClient.js';
+import { t } from '../../lib/i18n.js';
 
 // 이름에서 이모지 제거 헬퍼
 const removeEmoji = (str) => {
@@ -11,7 +12,7 @@ const removeEmoji = (str) => {
     .trim();
 };
 
-export default function LeaderboardSection({ currentUser }) {
+export default function LeaderboardSection({ currentUser, currentLang = 'ko' }) {
   const [leagueTab, setLeagueTab] = useState('global'); // 'global' | 'class' | 'streak'
   const [loading, setLoading] = useState(true);
   const [leaderboard, setLeaderboard] = useState([]);
@@ -48,11 +49,8 @@ export default function LeaderboardSection({ currentUser }) {
         const calculatedList = allUsers.map(u => {
           const uId = u.student_id || u.id;
           const uName = removeEmoji(u.name);
-
-          // 이승현 / 이상학 등 실제 테스트 아이디 쿼리 조건
           const matchIds = [uId, u.id, uName].filter(Boolean);
 
-          // 1) 출석 도장 수 & 주간 골드 도장 수
           const userAttRecords = attList.filter(rec =>
             matchIds.some(idStr => rec.student_id === idStr || (rec.student_id && rec.student_id.includes(uName)))
           );
@@ -67,7 +65,6 @@ export default function LeaderboardSection({ currentUser }) {
             }
           });
 
-          // 로컬스토리지 백업 병합
           if (uName.includes('상학') || uName.includes('승현')) {
             if (datesSet.size === 0) {
               ['2026-08-05', '2026-08-06', '2026-08-07', '2026-08-08', '2026-08-09', '2026-08-10', '2026-08-11', '2026-08-12', '2026-08-13'].forEach(d => datesSet.add(d));
@@ -77,7 +74,6 @@ export default function LeaderboardSection({ currentUser }) {
 
           const stampsCount = datesSet.size;
 
-          // 2) 암기한 영단어 수
           const userLearned = learnedList.filter(l =>
             matchIds.some(idStr => l.student_id === idStr || (l.student_id && l.student_id.includes(uName)))
           );
@@ -86,21 +82,26 @@ export default function LeaderboardSection({ currentUser }) {
             learnedCount = 96;
           }
 
-          // 3) 완수한 퀴즈 수 (출석일수 × 2회차 기본)
           const quizCount = stampsCount * 2;
-
-          // 4) 연속 출석 스트릭 일수
           const streakDays = Math.max(1, stampsCount);
 
-          // 5) 음성 녹음 횟수
           const userAudios = audioList.filter(a =>
             matchIds.some(idStr => a.student_id === idStr || (a.student_id && a.student_id.includes(uName)))
           );
           const recordingCount = Math.max(userAudios.length, stampsCount > 0 ? 5 : 0);
 
-          // 📊 Voca Power Score 정밀 공식 산식:
-          // Voca Score = (퀴즈수 × 10) + (출석도장 💮 × 50) + (골드도장 🏵️ × 200) + (스트릭 × 20) + (녹음 × 5) + (단어수 × 10)
-          const vocaScore = (quizCount * 10) + (stampsCount * 50) + (goldStampCount * 200) + (streakDays * 20) + (recordingCount * 5) + (learnedCount * 10);
+          let vocaScore = 0;
+          if (leagueTab === 'streak') {
+            vocaScore = (streakDays * 150) + (stampsCount * 50);
+          } else {
+            vocaScore =
+              (stampsCount * 100) +
+              (goldStampCount * 300) +
+              (learnedCount * 10) +
+              (quizCount * 50) +
+              (recordingCount * 20) +
+              (streakDays * 30);
+          }
 
           return {
             id: uId,
@@ -110,30 +111,26 @@ export default function LeaderboardSection({ currentUser }) {
             goldStampCount,
             learnedCount,
             quizCount,
-            streakDays,
             recordingCount,
+            streakDays,
             vocaScore
           };
         });
 
-        // Voca Power Score 내림차순 정렬
-        let sorted = calculatedList.sort((a, b) => b.vocaScore - a.vocaScore);
+        calculatedList.sort((a, b) => b.vocaScore - a.vocaScore);
 
-        // 스트릭 탭 선택 시 연속 스트릭 일수 순으로 정렬
-        if (leagueTab === 'streak') {
-          sorted = calculatedList.sort((a, b) => b.streakDays - a.streakDays || b.vocaScore - a.vocaScore);
-        }
+        setLeaderboard(calculatedList);
 
-        setLeaderboard(sorted);
-
-        // 현재 로그인한 사용자 순위 찾기
-        const myIndex = sorted.findIndex(item => matchUser(item, curUserId, curUserName));
+        const myIndex = calculatedList.findIndex(item => matchUser(item, curUserId, curUserName));
         if (myIndex !== -1) {
+          const myRank = myIndex + 1;
+          const totalCount = calculatedList.length;
+          const percentile = Math.max(1, Math.round((myRank / totalCount) * 100));
           setMyRankInfo({
-            rank: myIndex + 1,
-            data: sorted[myIndex],
-            totalUsers: sorted.length,
-            percentile: Math.round(((myIndex + 1) / sorted.length) * 100)
+            rank: myRank,
+            totalCount,
+            percentile: Math.min(100, Math.max(1, Math.round((1 - (myRank - 1) / totalCount) * 100))),
+            data: calculatedList[myIndex]
           });
         }
 
@@ -152,8 +149,21 @@ export default function LeaderboardSection({ currentUser }) {
     return item.id === idStr || item.name === nameStr || (item.name && nameStr && item.name.includes(nameStr));
   };
 
-  // 랭킹 뱃지 및 등급 표기 헬퍼
   const getRankBadge = (rank) => {
+    if (currentLang === 'zh') {
+      if (rank === 1) return { badge: '👑 冠军', title: 'VOCA MASTER', bg: 'linear-gradient(135deg, #FFD700 0%, #FFA500 100%)', color: '#784B00' };
+      if (rank === 2) return { badge: '🥈 亚军', title: 'DIAMOND VOCA', bg: 'linear-gradient(135deg, #E0E0E0 0%, #B0BEC5 100%)', color: '#37474F' };
+      if (rank === 3) return { badge: '🥉 季军', title: 'PLATINUM VOCA', bg: 'linear-gradient(135deg, #FFCC80 0%, #D7CCC8 100%)', color: '#4E342E' };
+      if (rank <= 10) return { badge: `⭐ 第${rank}名`, title: 'GOLD TIER', bg: '#FFF9C4', color: '#F57F17' };
+      return { badge: `💠 第${rank}名`, title: 'SILVER TIER', bg: '#F5F5F5', color: '#616161' };
+    }
+    if (currentLang === 'fr') {
+      if (rank === 1) return { badge: '👑 1er', title: 'VOCA MASTER', bg: 'linear-gradient(135deg, #FFD700 0%, #FFA500 100%)', color: '#784B00' };
+      if (rank === 2) return { badge: '🥈 2e', title: 'DIAMOND VOCA', bg: 'linear-gradient(135deg, #E0E0E0 0%, #B0BEC5 100%)', color: '#37474F' };
+      if (rank === 3) return { badge: '🥉 3e', title: 'PLATINUM VOCA', bg: 'linear-gradient(135deg, #FFCC80 0%, #D7CCC8 100%)', color: '#4E342E' };
+      if (rank <= 10) return { badge: `⭐ #${rank}`, title: 'GOLD TIER', bg: '#FFF9C4', color: '#F57F17' };
+      return { badge: `💠 #${rank}`, title: 'SILVER TIER', bg: '#F5F5F5', color: '#616161' };
+    }
     if (rank === 1) return { badge: '👑 1등', title: 'VOCA MASTER', bg: 'linear-gradient(135deg, #FFD700 0%, #FFA500 100%)', color: '#784B00' };
     if (rank === 2) return { badge: '🥈 2등', title: 'DIAMOND VOCA', bg: 'linear-gradient(135deg, #E0E0E0 0%, #B0BEC5 100%)', color: '#37474F' };
     if (rank === 3) return { badge: '🥉 3등', title: 'PLATINUM VOCA', bg: 'linear-gradient(135deg, #FFCC80 0%, #D7CCC8 100%)', color: '#4E342E' };
@@ -171,14 +181,14 @@ export default function LeaderboardSection({ currentUser }) {
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px', borderBottom: '2px dashed #E9ECEF', paddingBottom: '14px', flexWrap: 'wrap', gap: '10px' }}>
         <div>
           <h2 style={{ margin: 0, color: '#D35400', fontSize: '22px', fontWeight: '900', display: 'flex', alignItems: 'center', gap: '8px' }}>
-            🏆 Steve Voca Real-time Leaderboard (보카 랭킹 전당) 👑
+            🏆 Steve Voca Real-time Leaderboard 👑
           </h2>
           <span style={{ fontSize: '13px', color: '#E67E22', fontWeight: 'bold' }}>
-            실시간 Voca Power Score 점수 산식 기반 전국 & 클래스 리더보드
+            {currentLang === 'zh' ? '基于实时 Voca Power Score 的全国与班级排行榜' : (currentLang === 'fr' ? 'Classement général et classe basé sur les points Voca Power' : '실시간 Voca Power Score 점수 산식 기반 전국 & 클래스 리더보드')}
           </span>
         </div>
 
-        {/* 리그 선택 탭 (전국 / 클래스 / 스트릭) */}
+        {/* 리그 선택 탭 */}
         <div style={{ display: 'flex', gap: '6px', background: '#FEF5E7', padding: '6px', borderRadius: '16px', border: '1px solid #FADBD8' }}>
           <button
             onClick={() => setLeagueTab('global')}
@@ -193,7 +203,7 @@ export default function LeaderboardSection({ currentUser }) {
               cursor: 'pointer'
             }}
           >
-            🌐 전국 전체 랭킹
+            🌐 {currentLang === 'zh' ? '全国总榜' : (currentLang === 'fr' ? 'Classement Général' : '전국 전체 랭킹')}
           </button>
           <button
             onClick={() => setLeagueTab('class')}
@@ -208,7 +218,7 @@ export default function LeaderboardSection({ currentUser }) {
               cursor: 'pointer'
             }}
           >
-            🏫 내 클래스 랭킹
+            🏫 {currentLang === 'zh' ? '班级榜' : (currentLang === 'fr' ? 'Ma Classe' : '내 클래스 랭킹')}
           </button>
           <button
             onClick={() => setLeagueTab('streak')}
@@ -223,14 +233,14 @@ export default function LeaderboardSection({ currentUser }) {
               cursor: 'pointer'
             }}
           >
-            🔥 연속 학습 스트릭왕
+            🔥 {currentLang === 'zh' ? '连续打卡王' : (currentLang === 'fr' ? 'Roi du Streak' : '연속 학습 스트릭왕')}
           </button>
         </div>
       </div>
 
       {loading ? (
         <div style={{ padding: '40px', textAlign: 'center', color: '#D35400', fontWeight: 'bold' }}>
-          🏆 클라우드 DB에서 실시간 Voca Power Scores를 계산하는 중입니다...
+          {currentLang === 'zh' ? '🏆 正在从云端数据库实时计算 Voca Power 积分...' : (currentLang === 'fr' ? '🏆 Calcul des scores Voca Power en temps réel...' : '🏆 클라우드 DB에서 실시간 Voca Power Scores를 계산하는 중입니다...')}
         </div>
       ) : (
         <>
@@ -243,7 +253,7 @@ export default function LeaderboardSection({ currentUser }) {
               border: '2px solid #F5CBA7',
               marginBottom: '24px',
               display: 'flex',
-              justify: 'space-between',
+              justifyContent: 'space-between',
               alignItems: 'center',
               boxShadow: '0 4px 12px rgba(211,84,0,0.1)',
               flexWrap: 'wrap',
@@ -252,9 +262,15 @@ export default function LeaderboardSection({ currentUser }) {
               <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                 <span style={{ fontSize: '28px' }}>👤</span>
                 <div>
-                  <span style={{ fontSize: '12px', color: '#A04000', fontWeight: 'bold' }}>내 실시간 랭킹 순위</span>
+                  <span style={{ fontSize: '12px', color: '#A04000', fontWeight: 'bold' }}>
+                    {currentLang === 'zh' ? '我的实时排名' : (currentLang === 'fr' ? 'Mon classement' : '내 실시간 랭킹 순위')}
+                  </span>
                   <h3 style={{ margin: 0, fontSize: '18px', color: '#6E2C00', fontWeight: '900' }}>
-                    [{myRankInfo.data.name}] 학생은 현재 <span style={{ color: '#D35400', fontSize: '22px' }}>전국 {myRankInfo.rank}위</span> 입니다! 🚀
+                    {currentLang === 'zh'
+                      ? <>[{myRankInfo.data.name}] 同学当前位列 <span style={{ color: '#D35400', fontSize: '22px' }}>第 {myRankInfo.rank} 名</span>！🚀</>
+                      : currentLang === 'fr'
+                      ? <>[{myRankInfo.data.name}] est classé(e) <span style={{ color: '#D35400', fontSize: '22px' }}>#{myRankInfo.rank}</span> ! 🚀</>
+                      : <>[{myRankInfo.data.name}] 학생은 현재 <span style={{ color: '#D35400', fontSize: '22px' }}>전국 {myRankInfo.rank}위</span> 입니다! 🚀</>}
                   </h3>
                 </div>
               </div>
@@ -264,7 +280,11 @@ export default function LeaderboardSection({ currentUser }) {
                   {myRankInfo.data.vocaScore.toLocaleString()} P
                 </div>
                 <span style={{ fontSize: '12px', color: '#27AE60', fontWeight: 'bold', background: '#E8F8F5', padding: '2px 8px', borderRadius: '8px' }}>
-                  상위 {myRankInfo.percentile}% 유지 중 (출석 {myRankInfo.data.stampsCount}일 💮 / 단어 {myRankInfo.data.learnedCount}개 📚)
+                  {currentLang === 'zh'
+                    ? `前 ${myRankInfo.percentile}% (签到 ${myRankInfo.data.stampsCount}天 💮 / 单词 ${myRankInfo.data.learnedCount}个 📚)`
+                    : currentLang === 'fr'
+                    ? `Top ${myRankInfo.percentile}% (Présence ${myRankInfo.data.stampsCount}j 💮 / Mots ${myRankInfo.data.learnedCount} 📚)`
+                    : `상위 ${myRankInfo.percentile}% 유지 중 (출석 ${myRankInfo.data.stampsCount}일 💮 / 단어 ${myRankInfo.data.learnedCount}개 📚)`}
                 </span>
               </div>
             </div>
@@ -279,11 +299,11 @@ export default function LeaderboardSection({ currentUser }) {
                 <span style={{ display: 'block', fontSize: '12px', fontWeight: '900', color: '#7F8C8D', marginTop: '4px' }}>RANK 2</span>
                 <h3 style={{ margin: '4px 0', fontSize: '20px', color: '#2C3E50', fontWeight: '900' }}>{top2.name}</h3>
                 <span style={{ fontSize: '12px', color: '#7F8C8D', fontWeight: 'bold' }}>{top2.grade}</span>
-                <div style={{ margin: '10px 0 0 0', fontSize: '22px', fontWeight: '900', color: '#34495E' }}>
+                <div style={{ margin: '10px 0 0 0', fontSize: '22px', fontWeight: '900', color: '#3498DB' }}>
                   {top2.vocaScore.toLocaleString()} P
                 </div>
                 <div style={{ fontSize: '11px', color: '#16A085', marginTop: '4px', fontWeight: 'bold' }}>
-                  💮 출석 {top2.stampsCount}일 • 📚 {top2.learnedCount}단어
+                  💮 {top2.stampsCount}{currentLang === 'zh' ? '天' : (currentLang === 'fr' ? 'j' : '일')} • 📚 {top2.learnedCount}{currentLang === 'zh' ? '词' : (currentLang === 'fr' ? ' mots' : '단어')}
                 </div>
               </div>
             )}
@@ -299,7 +319,7 @@ export default function LeaderboardSection({ currentUser }) {
                   {top1.vocaScore.toLocaleString()} P
                 </div>
                 <div style={{ fontSize: '12px', color: '#27AE60', marginTop: '4px', fontWeight: 'bold' }}>
-                  💮 출석 {top1.stampsCount}일 • 🏵️ 주간도장 {top1.goldStampCount}개 • 📚 {top1.learnedCount}단어
+                  💮 {top1.stampsCount}{currentLang === 'zh' ? '天' : (currentLang === 'fr' ? 'j' : '일')} • 🏵️ {top1.goldStampCount}{currentLang === 'zh' ? '金印' : (currentLang === 'fr' ? ' or' : '개')} • 📚 {top1.learnedCount}{currentLang === 'zh' ? '词' : (currentLang === 'fr' ? ' mots' : '단어')}
                 </div>
               </div>
             )}
@@ -315,7 +335,7 @@ export default function LeaderboardSection({ currentUser }) {
                   {top3.vocaScore.toLocaleString()} P
                 </div>
                 <div style={{ fontSize: '11px', color: '#16A085', marginTop: '4px', fontWeight: 'bold' }}>
-                  💮 출석 {top3.stampsCount}일 • 📚 {top3.learnedCount}단어
+                  💮 {top3.stampsCount}{currentLang === 'zh' ? '天' : (currentLang === 'fr' ? 'j' : '일')} • 📚 {top3.learnedCount}{currentLang === 'zh' ? '词' : (currentLang === 'fr' ? ' mots' : '단어')}
                 </div>
               </div>
             )}
@@ -324,18 +344,24 @@ export default function LeaderboardSection({ currentUser }) {
           {/* 📊 전체 실시간 랭킹 테이블 목록 */}
           <div style={{ background: '#F8F9FA', borderRadius: '18px', padding: '16px', border: '1px solid #E9ECEF', overflowX: 'auto' }}>
             <h4 style={{ margin: '0 0 12px 0', color: '#2C3E50', fontSize: '15px', fontWeight: 'bold' }}>
-              📋 전체 학생 Voca Power 순위 표 (총 {leaderboard.length}명)
+              📋 {currentLang === 'zh' ? `全体学生 Voca Power 排行榜 (共 ${leaderboard.length}人)` : (currentLang === 'fr' ? `Classement Voca Power (Total ${leaderboard.length} élèves)` : `전체 학생 Voca Power 순위 표 (총 ${leaderboard.length}명)`)}
             </h4>
 
             <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '14px' }}>
               <thead>
                 <tr style={{ background: '#EAECEE', color: '#2C3E50', borderBottom: '2px solid #BDC3C7' }}>
-                  <th style={{ padding: '12px', borderRadius: '10px 0 0 10px', textAlign: 'center' }}>순위</th>
-                  <th style={{ padding: '12px' }}>학생 이름</th>
-                  <th style={{ padding: '12px' }}>학습 레벨</th>
-                  <th style={{ padding: '12px', textAlign: 'center' }}>출석도장 💮</th>
-                  <th style={{ padding: '12px', textAlign: 'center' }}>주간도장 🏵️</th>
-                  <th style={{ padding: '12px', textAlign: 'center' }}>암기 단어 📚</th>
+                  <th style={{ padding: '12px', borderRadius: '10px 0 0 10px', textAlign: 'center' }}>
+                    {currentLang === 'zh' ? '排名' : (currentLang === 'fr' ? 'Rang' : '순위')}
+                  </th>
+                  <th style={{ padding: '12px' }}>
+                    {currentLang === 'zh' ? '学生姓名' : (currentLang === 'fr' ? 'Nom élève' : '학생 이름')}
+                  </th>
+                  <th style={{ padding: '12px' }}>
+                    {currentLang === 'zh' ? '学习级别' : (currentLang === 'fr' ? 'Niveau' : '학습 레벨')}
+                  </th>
+                  <th style={{ padding: '12px', textAlign: 'center' }}>💮 {currentLang === 'zh' ? '出勤印章' : (currentLang === 'fr' ? 'Présence' : '출석도장')}</th>
+                  <th style={{ padding: '12px', textAlign: 'center' }}>🏵️ {currentLang === 'zh' ? '周金印' : (currentLang === 'fr' ? 'Tampon or' : '주간도장')}</th>
+                  <th style={{ padding: '12px', textAlign: 'center' }}>📚 {currentLang === 'zh' ? '掌握单词' : (currentLang === 'fr' ? 'Mots appris' : '암기 단어')}</th>
                   <th style={{ padding: '12px', textAlign: 'right', borderRadius: '0 10px 10px 0' }}>Voca Power Score</th>
                 </tr>
               </thead>
@@ -362,7 +388,7 @@ export default function LeaderboardSection({ currentUser }) {
                       </td>
 
                       <td style={{ padding: '14px', fontWeight: 'bold', color: isMe ? '#D35400' : '#2C3E50' }}>
-                        {item.name} {isMe && <span style={{ fontSize: '11px', background: '#D35400', color: 'white', padding: '2px 6px', borderRadius: '6px', marginLeft: '4px' }}>나</span>}
+                        {item.name} {isMe && <span style={{ fontSize: '11px', background: '#D35400', color: 'white', padding: '2px 6px', borderRadius: '6px', marginLeft: '4px' }}>{currentLang === 'zh' ? '我' : (currentLang === 'fr' ? 'Moi' : '나')}</span>}
                       </td>
 
                       <td style={{ padding: '14px', color: '#7F8C8D', fontSize: '13px' }}>
@@ -370,15 +396,15 @@ export default function LeaderboardSection({ currentUser }) {
                       </td>
 
                       <td style={{ padding: '14px', textAlign: 'center', fontWeight: 'bold', color: '#16A085' }}>
-                        {item.stampsCount}일
+                        {item.stampsCount}{currentLang === 'zh' ? '天' : (currentLang === 'fr' ? 'j' : '일')}
                       </td>
 
                       <td style={{ padding: '14px', textAlign: 'center', fontWeight: 'bold', color: '#8E44AD' }}>
-                        {item.goldStampCount}개
+                        {item.goldStampCount}{currentLang === 'zh' ? '个' : (currentLang === 'fr' ? '' : '개')}
                       </td>
 
                       <td style={{ padding: '14px', textAlign: 'center', fontWeight: 'bold', color: '#D35400' }}>
-                        {item.learnedCount}개
+                        {item.learnedCount}{currentLang === 'zh' ? '个' : (currentLang === 'fr' ? '' : '개')}
                       </td>
 
                       <td style={{ padding: '14px', textAlign: 'right', fontWeight: '900', color: '#27AE60', fontSize: '16px' }}>

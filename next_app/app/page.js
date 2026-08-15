@@ -13,6 +13,7 @@ import ParentDashboard from './components/ParentDashboard.js';
 import StatsSection from './components/StatsSection.js';
 import Day6ReviewSection from './components/Day6ReviewSection.js';
 import LeaderboardSection from './components/LeaderboardSection.js';
+import { t, translateGradeLevel } from '../lib/i18n.js';
 
 export default function Home() {
   const [currentUser, setCurrentUser] = useState(null);
@@ -20,10 +21,18 @@ export default function Home() {
   const [mainTab, setMainTab] = useState('flashcard');
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isFlipped, setIsFlipped] = useState(false);
+  const [currentLang, setCurrentLang] = useState('ko');
 
   useEffect(() => {
-    document.title = "Steve Voca - 초/중/고 5,000개 영단어 스마트 학습관";
+    try {
+      const savedLang = localStorage.getItem('steve_voca_learning_lang');
+      if (savedLang) setCurrentLang(savedLang);
+    } catch (e) {}
   }, []);
+
+  useEffect(() => {
+    document.title = `${t('app_title', currentLang)} - ${t('app_subtitle', currentLang)}`;
+  }, [currentLang]);
 
   // 달력에서 선택한 학습 날짜 (기본: 오늘 날짜 YYYY-MM-DD)
   const todayStr = new Date().toISOString().split('T')[0];
@@ -49,16 +58,6 @@ export default function Home() {
 
   const [hasRecorded, setHasRecorded] = useState(false);
   const [completedQuizLevels, setCompletedQuizLevels] = useState([]);
-
-  // 🌐 글로벌 학습 언어 선택 상태 ('ko': 한국어, 'zh': 중국어)
-  const [currentLang, setCurrentLang] = useState('ko');
-
-  useEffect(() => {
-    try {
-      const savedLang = localStorage.getItem('steve_voca_learning_lang');
-      if (savedLang) setCurrentLang(savedLang);
-    } catch (e) {}
-  }, []);
 
   const handleLangChange = (newLang) => {
     setCurrentLang(newLang);
@@ -1123,8 +1122,6 @@ export default function Home() {
     localStorage.setItem(stampedWordsKey, JSON.stringify(wordsToSave));
   }, [currentUser, targetStudyDate, todayStr, todayAllLearnedWords, safeActiveWords, dailyRandomWords]);
 
-
-
   // 💡 2단계 퀴즈 완수 시 출석 도장 찍기 수행!
   const handleQuizLevelComplete = (level) => {
     if (!currentUser) return;
@@ -1138,7 +1135,11 @@ export default function Home() {
       handleStampAttendance();
       saveStudyProgress({ completedQuizLevels: updated, mainTab: 'calendar' });
       setTimeout(() => {
-        alert(`🎉 축하합니다! 2단계 퀴즈까지 완수하여 [${dateForMission}] 출석 도장이 성공적으로 찍혔습니다! 💮\n(오늘 총 ${todayAllLearnedWords.length || safeActiveWords.length}개 단어 학습 완료!)\n\n출석 달력 탭에서 도장을 확인해보세요!`);
+        alert(currentLang === 'zh'
+          ? `🎉 恭喜！您已完成第2关测验，[${dateForMission}] 签到印章已成功盖上！💮\n(今日共完成 ${todayAllLearnedWords.length || safeActiveWords.length} 个单词学习！)\n\n请在出勤日历中查看印章！`
+          : currentLang === 'fr'
+          ? `🎉 Félicitations ! Vous avez validé le quiz niveau 2. Tampon validé pour le [${dateForMission}] ! 💮\n(Total ${todayAllLearnedWords.length || safeActiveWords.length} mots appris aujourd'hui !)\n\nConsultez votre calendrier de présence !`
+          : `🎉 축하합니다! 2단계 퀴즈까지 완수하여 [${dateForMission}] 출석 도장이 성공적으로 찍혔습니다! 💮\n(오늘 총 ${todayAllLearnedWords.length || safeActiveWords.length}개 단어 학습 완료!)\n\n출석 달력 탭에서 도장을 확인해보세요!`);
         setMainTab('calendar');
       }, 300);
     }
@@ -1169,19 +1170,19 @@ export default function Home() {
     } else if (currentSrc && !currentSrc.includes(`/${wordCap}.png`)) {
       target.src = `/word_img/${wordCap}.png`;
     } else {
-      // 이미지가 없는 단어일 경우 잘못된 사과(Apple) 대신 깔끔한 단어 알파벳 플레이스홀더 렌더링
       const firstLetter = wordCap ? wordCap.charAt(0).toUpperCase() : '📖';
       target.src = `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="120" height="120" viewBox="0 0 120 120"><rect width="100%" height="100%" fill="%23F8F9FA" rx="16"/><text x="50%" y="45%" dominant-baseline="middle" text-anchor="middle" font-family="sans-serif" font-size="36" font-weight="bold" fill="%233498DB">${encodeURIComponent(firstLetter)}</text><text x="50%" y="75%" dominant-baseline="middle" text-anchor="middle" font-family="sans-serif" font-size="12" font-weight="bold" fill="%237F8C8D">${encodeURIComponent(wordClean || 'Word')}</text></svg>`;
       target.onerror = null;
     }
   };
 
-
   if (!isLoggedIn || !currentUser) {
     return (
       <StudentLoginPage
         onLoginSuccess={handleLoginSuccess}
         onParentLoginSuccess={handleParentLoginSuccess}
+        currentLang={currentLang}
+        onLangChange={handleLangChange}
       />
     );
   }
@@ -1189,7 +1190,7 @@ export default function Home() {
   return (
     <main className="app-container">
       {mainTab !== 'parent' && (
-        <UserManager currentUser={currentUser} setCurrentUser={setCurrentUser} onLogout={handleLogout} />
+        <UserManager currentUser={currentUser} setCurrentUser={setCurrentUser} onLogout={handleLogout} currentLang={currentLang} />
       )}
 
       {mainTab !== 'parent' && (
@@ -1208,7 +1209,7 @@ export default function Home() {
         }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
             <span style={{ fontSize: '12px', fontWeight: 'bold', color: '#E67E22', background: '#FEF5E7', padding: '4px 10px', borderRadius: '10px', border: '1px solid #FADBD8' }}>
-              📅 [{targetStudyDate}] 학습 진행 중
+              📅 [{targetStudyDate}] {currentLang === 'zh' ? '学习进行中' : (currentLang === 'fr' ? 'Étude en cours' : '학습 진행 중')}
             </span>
 
             <button
@@ -1216,7 +1217,7 @@ export default function Home() {
               style={{ background: '#27AE60', color: 'white', border: 'none', padding: '4px 10px', borderRadius: '10px', fontWeight: 'bold', fontSize: '12px', cursor: 'pointer', boxShadow: '0 2px 4px rgba(39,174,96,0.2)' }}
               title="오늘 1회차+2회차 등 지금까지 공부한 모든 단어 리스트 한눈에 보기"
             >
-              📖 학습 단어 {todayAllLearnedWords.length || safeActiveWords.length}개 보기
+              📖 {t('today_all_learned_btn', currentLang)} ({todayAllLearnedWords.length || safeActiveWords.length}{t('words_count_unit', currentLang)})
             </button>
           </div>
 
@@ -1241,11 +1242,11 @@ export default function Home() {
               cursor: 'pointer',
               display: 'flex',
               alignItems: 'center',
-              justify: 'center',
+              justifyContent: 'center',
               gap: '6px'
             }}
           >
-            {hasRecorded ? '✅ 1차 녹음 완료 🎙️' : '🎙️ 1차 녹음 미션 ➔'}
+            {hasRecorded ? (currentLang === 'zh' ? '✅ 录音任务完成 🎙️' : (currentLang === 'fr' ? '✅ Enregistrement fait 🎙️' : '✅ 1차 녹음 완료 🎙️')) : (currentLang === 'zh' ? '🎙️ 发音录音任务 ➔' : (currentLang === 'fr' ? '🎙️ Mission Enreg. ➔' : '🎙️ 1차 녹음 미션 ➔'))}
           </button>
 
           <button
@@ -1263,11 +1264,11 @@ export default function Home() {
               cursor: 'pointer',
               display: 'flex',
               alignItems: 'center',
-              justify: 'center',
+              justifyContent: 'center',
               gap: '6px'
             }}
           >
-            {isQuizL2Done ? '✅ 퀴즈 완수 (출석도장💮)' : '🧩 2단계 스펠링 퀴즈 ➔'}
+            {isQuizL2Done ? (currentLang === 'zh' ? '✅ 测验过关 (签到印章💮)' : (currentLang === 'fr' ? '✅ Quiz validé (Tampon💮)' : '✅ 퀴즈 완수 (출석도장💮)')) : (currentLang === 'zh' ? '🧩 2关拼写测验 ➔' : (currentLang === 'fr' ? '🧩 Niveau 2 Quiz ➔' : '🧩 2단계 스펠링 퀴즈 ➔'))}
           </button>
 
           <button
@@ -1285,12 +1286,12 @@ export default function Home() {
               cursor: 'pointer',
               display: 'flex',
               alignItems: 'center',
-              justify: 'center',
+              justifyContent: 'center',
               gap: '6px',
               boxShadow: '0 2px 6px rgba(230,126,34,0.2)'
             }}
           >
-            🚀 다음 단어 학습 ➔
+            🚀 {currentLang === 'zh' ? '加载下一组单词 ➔' : (currentLang === 'fr' ? 'Charger mots suivants ➔' : '다음 단어 학습 ➔')}
           </button>
         </div>
       )}
@@ -1302,10 +1303,10 @@ export default function Home() {
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', paddingBottom: '10px', borderBottom: '2px dashed #E9ECEF' }}>
               <div>
                 <h3 style={{ margin: 0, color: '#2C3E50', fontSize: '18px' }}>
-                  📖 [{targetStudyDate}] 학습 단어 리스트
+                  📖 [{targetStudyDate}] {t('today_all_modal_title', currentLang)}
                 </h3>
                 <span style={{ fontSize: '12px', color: '#27AE60', fontWeight: 'bold' }}>
-                  🔥 총 {todayAllLearnedWords.length || safeActiveWords.length}개 단어 수강 중!
+                  🔥 {currentLang === 'zh' ? `共 ${todayAllLearnedWords.length || safeActiveWords.length} 个单词在学中！` : (currentLang === 'fr' ? `Total ${todayAllLearnedWords.length || safeActiveWords.length} mots en cours !` : `총 ${todayAllLearnedWords.length || safeActiveWords.length}개 단어 수강 중!`)}
                 </span>
               </div>
               <button onClick={() => setShowTodayAllModal(false)} style={{ background: '#F8F9FA', border: '1px solid #BDC3C7', padding: '4px 10px', borderRadius: '8px', fontWeight: 'bold', cursor: 'pointer' }}>
@@ -1316,6 +1317,9 @@ export default function Home() {
             <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginBottom: '20px' }}>
               {(todayAllLearnedWords.length > 0 ? todayAllLearnedWords : safeActiveWords).map((item, i) => {
                 const wordStr = (item.word || item).replace(/\.png/gi, '').trim();
+                const meaningDisplay = currentLang === 'fr'
+                  ? (item.meaning_fr || item.meaningFr || item.meaning)
+                  : (currentLang === 'zh' ? (item.meaning_zh || item.meaningZh || item.meaning) : item.meaning);
                 return (
                   <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 14px', background: '#F8F9FA', borderRadius: '12px', border: '1px solid #E9ECEF' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -1323,7 +1327,7 @@ export default function Home() {
                       <div>
                         <span style={{ fontWeight: 'bold', color: '#2C3E50', fontSize: '16px' }}>{wordStr}</span>
                         {item.phonics && <span style={{ fontSize: '12px', color: '#7F8C8D', marginLeft: '6px' }}>{item.phonics}</span>}
-                        {item.meaning && <div style={{ color: '#E74C3C', fontSize: '14px', fontWeight: 'bold', marginTop: '2px' }}>{item.meaning}</div>}
+                        {meaningDisplay && <div style={{ color: '#E74C3C', fontSize: '14px', fontWeight: 'bold', marginTop: '2px' }}>{meaningDisplay}</div>}
                       </div>
                     </div>
                     <button onClick={() => playWordAudio(wordStr)} style={{ background: '#3498DB', color: 'white', border: 'none', borderRadius: '50%', width: '32px', height: '32px', cursor: 'pointer', fontSize: '14px' }}>
@@ -1338,7 +1342,7 @@ export default function Home() {
               onClick={() => setShowTodayAllModal(false)}
               style={{ width: '100%', background: '#2C3E50', color: 'white', border: 'none', padding: '12px', borderRadius: '12px', fontWeight: 'bold', fontSize: '14px', cursor: 'pointer' }}
             >
-              닫기
+              {t('btn_close', currentLang)}
             </button>
           </div>
         </div>
@@ -1381,10 +1385,10 @@ export default function Home() {
                   borderRadius: '12px',
                   whiteSpace: 'nowrap'
                 }}>
-                  ⚡ 5단계 진도 저장 중
+                  ⚡ {t('progress_status_text', currentLang)}
                 </span>
                 <span style={{ fontSize: '14px', fontWeight: '800', color: '#3C3C3C' }}>
-                  {resumeNotice || `▶ 현재 학습 위치: 단어 #${currentIndex + 1} / ${safeActiveWords.length}`}
+                  {resumeNotice || `▶ ${currentLang === 'zh' ? `当前位置: 单词 #${currentIndex + 1} / ${safeActiveWords.length}` : (currentLang === 'fr' ? `Position: Mot #${currentIndex + 1} / ${safeActiveWords.length}` : `현재 학습 위치: 단어 #${currentIndex + 1} / ${safeActiveWords.length}`)}`}
                 </span>
               </div>
 
@@ -1405,7 +1409,7 @@ export default function Home() {
                 }}
                 title="현재 세트 단어를 1번 카드부터 다시 공부합니다"
               >
-                🔄 처음부터 다시 학습
+                🔄 {currentLang === 'zh' ? '从头重新学习' : (currentLang === 'fr' ? 'Recommencer du début' : '처음부터 다시 학습')}
               </button>
             </div>
 
@@ -1433,11 +1437,11 @@ export default function Home() {
                 color: progressPct > 50 ? '#FFFFFF' : '#4B4B4B',
                 textShadow: progressPct > 50 ? '0 1px 2px rgba(0,0,0,0.5)' : 'none'
               }}>
-                🔥 오늘 목표의 {progressPct}% 완수!
+                🔥 {currentLang === 'zh' ? `已完成今日目标的 ${progressPct}%！` : (currentLang === 'fr' ? `${progressPct}% de l'objectif atteint !` : `오늘 목표의 ${progressPct}% 완수!`)}
               </span>
             </div>
 
-            {/* 6단계 원클릭 3D 클릭가능 스테퍼 (Clickable Interactive Stepper - 퀴즈 4단계 확장 연동) */}
+            {/* 7단계 원클릭 3D 클릭가능 스테퍼 */}
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '4px', paddingTop: '4px', flexWrap: 'wrap' }}>
               {/* 1단계: 플래시카드 */}
               <button
@@ -1461,7 +1465,7 @@ export default function Home() {
                   cursor: 'pointer'
                 }}
               >
-                1️⃣ 🎴 카드 ({currentIndex + 1}/{safeActiveWords.length})
+                {t('step_1_flashcard', currentLang)} ({currentIndex + 1}/{safeActiveWords.length})
               </button>
 
               <span style={{ color: '#CECECE', fontSize: '9px', fontWeight: 'bold' }}>➔</span>
@@ -1492,7 +1496,7 @@ export default function Home() {
                   cursor: 'pointer'
                 }}
               >
-                2️⃣ 🎙️ 녹음 {hasRecorded ? '✅' : '⏳'}
+                {t('step_2_recording', currentLang)} {hasRecorded ? '✅' : '⏳'}
               </button>
 
               <span style={{ color: '#CECECE', fontSize: '9px', fontWeight: 'bold' }}>➔</span>
@@ -1520,7 +1524,7 @@ export default function Home() {
                   cursor: 'pointer'
                 }}
               >
-                3️⃣ 🔊 소리퀴즈 {completedQuizLevels.includes(1) ? '✅' : '⏳'}
+                {t('step_3_quiz1', currentLang)} {completedQuizLevels.includes(1) ? '✅' : '⏳'}
               </button>
 
               <span style={{ color: '#CECECE', fontSize: '9px', fontWeight: 'bold' }}>➔</span>
@@ -1548,7 +1552,7 @@ export default function Home() {
                   cursor: 'pointer'
                 }}
               >
-                4️⃣ 🧩 선택퀴즈 {completedQuizLevels.includes(2) ? '✅' : '⏳'}
+                {t('step_4_quiz2', currentLang)} {completedQuizLevels.includes(2) ? '✅' : '⏳'}
               </button>
 
               <span style={{ color: '#CECECE', fontSize: '9px', fontWeight: 'bold' }}>➔</span>
@@ -1576,7 +1580,7 @@ export default function Home() {
                   cursor: 'pointer'
                 }}
               >
-                5️⃣ 🎙️ 녹음퀴즈 {completedQuizLevels.includes(3) ? '✅' : '⏳'}
+                {t('step_5_quiz3', currentLang)} {completedQuizLevels.includes(3) ? '✅' : '⏳'}
               </button>
 
               <span style={{ color: '#CECECE', fontSize: '9px', fontWeight: 'bold' }}>➔</span>
@@ -1604,7 +1608,7 @@ export default function Home() {
                   cursor: 'pointer'
                 }}
               >
-                6️⃣ ✍️ 직접쓰기 {completedQuizLevels.includes(4) ? '✅' : '⏳'}
+                {t('step_6_quiz4', currentLang)} {completedQuizLevels.includes(4) ? '✅' : '⏳'}
               </button>
 
               <span style={{ color: '#CECECE', fontSize: '9px', fontWeight: 'bold' }}>➔</span>
@@ -1631,7 +1635,7 @@ export default function Home() {
                   cursor: 'pointer'
                 }}
               >
-                7️⃣ 💮 출석도장 {completedQuizLevels.includes(2) ? '완료' : '대기'}
+                {t('step_7_stamp', currentLang)} {completedQuizLevels.includes(2) ? t('done', currentLang) : t('waiting', currentLang)}
               </button>
             </div>
           </div>
@@ -1643,79 +1647,79 @@ export default function Home() {
         {/* 그룹 1: 📖 핵심 단어 학습 코스 */}
         <div className="category-nav-group">
           <span className="category-label" style={{ background: '#E8F8F5', color: '#27AE60', border: '1px solid #A3E4D7' }}>
-            📖 핵심 학습 코스
+            {t('nav_core_course', currentLang)}
           </span>
           <button
             className={`nav-pill-btn ${mainTab === 'flashcard' ? 'active' : ''}`}
             onClick={() => setMainTab('flashcard')}
           >
-            🎴 플래시카드
+            {t('nav_flashcard', currentLang)}
           </button>
           <button
             className={`nav-pill-btn ${mainTab === 'wordlist' ? 'active' : ''}`}
             onClick={() => setMainTab('wordlist')}
           >
-            📋 단어 리스트
+            {t('nav_wordlist', currentLang)}
           </button>
           <button
             className={`nav-pill-btn ${mainTab === 'quiz' ? 'active' : ''}`}
             onClick={() => setMainTab('quiz')}
           >
-            ❓ 1~4단계 퀴즈
+            {t('nav_quiz', currentLang)}
           </button>
           <button
             className={`nav-pill-btn ${mainTab === 'myvocab' ? 'active' : ''}`}
             onClick={() => setMainTab('myvocab')}
           >
-            ⭐ 나만의 단어장
+            {t('nav_myvocab', currentLang)}
           </button>
         </div>
 
         {/* 그룹 2: 💥 오답 & 주간복습 & 학습통계 리포터 */}
         <div className="category-nav-group">
           <span className="category-label" style={{ background: '#F5EEF8', color: '#8E44AD', border: '1px solid #D7BDE2' }}>
-            💥 오답·복습·리포트
+            {t('nav_review_report', currentLang)}
           </span>
           <button
             className={`nav-pill-btn ${mainTab === 'wrongvocab' ? 'active' : ''}`}
             onClick={() => setMainTab('wrongvocab')}
             style={{ background: mainTab === 'wrongvocab' ? '#E74C3C' : '#FDEDEC', color: mainTab === 'wrongvocab' ? 'white' : '#C0392B', borderColor: '#F5B7B1' }}
           >
-            ❌ 퀴즈 오답노트 ☁️
+            {t('nav_wrongvocab', currentLang)}
           </button>
           <button
             className={`nav-pill-btn ${mainTab === 'day6' ? 'active' : ''}`}
             onClick={() => setMainTab('day6')}
             style={{ background: mainTab === 'day6' ? '#6C5CE7' : '#F5EEF8', color: mainTab === 'day6' ? 'white' : '#8E44AD', borderColor: '#D7BDE2' }}
           >
-            🗓️ Day 6 주간복습 💮
+            {t('nav_day6', currentLang)}
           </button>
           <button
             className={`nav-pill-btn ${mainTab === 'calendar' ? 'active' : ''}`}
             onClick={() => setMainTab('calendar')}
           >
-            📅 출석 달력
+            {t('nav_calendar', currentLang)}
           </button>
           <button
             className={`nav-pill-btn ${mainTab === 'stats' ? 'active' : ''}`}
             onClick={() => setMainTab('stats')}
             style={{ background: mainTab === 'stats' ? '#4ECDC4' : '#E8F8F5', color: mainTab === 'stats' ? 'white' : '#16A085', borderColor: '#A3E4D7' }}
           >
-            📊 학습통계
+            {t('nav_stats', currentLang)}
           </button>
           <button
             className={`nav-pill-btn ${mainTab === 'parent' ? 'active' : ''}`}
             onClick={() => setMainTab('parent')}
             style={{ background: mainTab === 'parent' ? '#9B59B6' : '#F5EEF8', color: mainTab === 'parent' ? 'white' : '#8E44AD', borderColor: '#D7BDE2' }}
           >
-            👨‍👩‍👧‍👦 학부모
+            {t('nav_parent', currentLang)}
           </button>
           <button
             className={`nav-pill-btn ${mainTab === 'leaderboard' ? 'active' : ''}`}
             onClick={() => setMainTab('leaderboard')}
             style={{ background: mainTab === 'leaderboard' ? '#D35400' : '#FEF5E7', color: mainTab === 'leaderboard' ? 'white' : '#D35400', borderColor: '#F5CBA7' }}
           >
-            🏆 Voca 랭킹 👑
+            {t('nav_leaderboard', currentLang)}
           </button>
         </div>
       </nav>
@@ -1725,7 +1729,7 @@ export default function Home() {
         <>
           <header className="app-header">
             <h1 className="app-title" style={{ margin: 0 }}>
-              Steve Voca (스티브 보카) {currentUser?.studyGradeLevel || currentUser?.study_grade_level || '중등단어'}
+              {t('app_title', currentLang)} {translateGradeLevel(currentUser?.studyGradeLevel || currentUser?.study_grade_level || '중등단어', currentLang)}
             </h1>
           </header>
 
@@ -1795,7 +1799,7 @@ export default function Home() {
             </div>
 
             <span style={{ fontSize: '13px', fontWeight: 'bold', color: '#4A5568', display: 'flex', alignItems: 'center', gap: '4px' }}>
-              🎛️ 속도:
+              {t('speed_label', currentLang)}
             </span>
 
             <button
@@ -1812,7 +1816,7 @@ export default function Home() {
                 boxShadow: ttsSpeed === 0.7 ? '0 2px 6px rgba(230,126,34,0.2)' : 'none'
               }}
             >
-              🐢 0.7x (슬로우)
+              {t('speed_slow', currentLang)}
             </button>
 
             <button
@@ -1829,7 +1833,7 @@ export default function Home() {
                 boxShadow: ttsSpeed === 1.0 ? '0 2px 6px rgba(46,204,113,0.2)' : 'none'
               }}
             >
-              🎧 1.0x (표준)
+              {t('speed_normal', currentLang)}
             </button>
 
             <button
@@ -1846,7 +1850,7 @@ export default function Home() {
                 boxShadow: ttsSpeed === 1.4 ? '0 2px 6px rgba(52,152,219,0.2)' : 'none'
               }}
             >
-              ⚡ 1.4x (빠르게)
+              {t('speed_fast', currentLang)}
             </button>
 
             <button
@@ -1863,16 +1867,16 @@ export default function Home() {
                 boxShadow: ttsSpeed === 2.0 ? '0 2px 6px rgba(155,89,182,0.2)' : 'none'
               }}
             >
-              🚀 2.0x (초배속)
+              {t('speed_super_fast', currentLang)}
             </button>
           </div>
 
           <div className="flashcard-wrapper">
             <div className={`flashcard ${isFlipped ? 'flipped' : ''}`} onClick={handleCardClick}>
-              {/* 앞면: 그림 + 영단어 + 발음기호 + 한글 뜻 */}
+              {/* 앞면: 그림 + 영단어 + 발음기호 + 번역 뜻 */}
               <div className="card-face card-front">
                 <span className="card-category-badge">
-                  {(typeof currentWord === 'object' && (currentWord?.grade_level || currentWord?.gradeLevel)) || currentUser?.studyGradeLevel || currentUser?.study_grade_level || '중등단어'} • {(typeof currentWord === 'object' && currentWord?.category) || '기초'}
+                  {translateGradeLevel((typeof currentWord === 'object' && (currentWord?.grade_level || currentWord?.gradeLevel)) || currentUser?.studyGradeLevel || currentUser?.study_grade_level || '중등단어', currentLang)} • {(typeof currentWord === 'object' && currentWord?.category) || t('category_basic', currentLang)}
                 </span>
 
                 <div style={{ width: '130px', height: '130px', margin: '6px 0', borderRadius: '18px', overflow: 'hidden', boxShadow: '0 6px 16px rgba(0,0,0,0.1)', background: '#FAFAFA', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -1888,20 +1892,19 @@ export default function Home() {
                 {cleanPhonicsStr && <p className="word-phonics" style={{ margin: '2px 0 0 0', color: '#3498DB' }}>{cleanPhonicsStr}</p>}
                 <h3 className="word-ko" style={{ margin: '4px 0 0 0', fontSize: '24px', color: '#FF6B6B' }}>{cleanMeaningStr}</h3>
 
-
                 <div style={{ marginTop: '8px' }}>
                   <button className="audio-btn" onClick={(e) => { e.stopPropagation(); playWordAudio(cleanWordStr); }}>
-                    🔊 단어 발음 듣기
+                    {t('listen_word_audio', currentLang)}
                   </button>
                 </div>
 
-                <div className="flip-hint">👆 터치하여 예문 및 예문 발음 보기</div>
+                <div className="flip-hint">{t('flip_to_example_hint', currentLang)}</div>
               </div>
 
               {/* 뒷면: 예문 문장 & 예문 음성 전용 재생기 */}
               <div className="card-face card-back">
                 <span className="card-category-badge">
-                  {currentWord?.gradeLevel || '초등단어'} • {currentWord?.category}
+                  {translateGradeLevel(currentWord?.gradeLevel || currentWord?.grade_level || '초등단어', currentLang)} • {currentWord?.category || t('category_basic', currentLang)}
                 </span>
 
                 <div style={{ width: '110px', height: '110px', margin: '4px 0', borderRadius: '18px', overflow: 'hidden', boxShadow: '0 6px 16px rgba(0,0,0,0.1)', background: '#FAFAFA', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -1913,7 +1916,7 @@ export default function Home() {
                   />
                 </div>
 
-                <span style={{ fontSize: '12px', color: '#7F8C8D', marginTop: '6px', fontWeight: 'bold' }}>📖 추천 학습 예문</span>
+                <span style={{ fontSize: '12px', color: '#7F8C8D', marginTop: '6px', fontWeight: 'bold' }}>{t('recommended_example', currentLang)}</span>
                 <h3 style={{ fontSize: '18px', fontWeight: '900', color: '#2C3E50', margin: '4px 0 0 0', padding: '0 10px', textAlign: 'center' }}>
                   {displayExampleEn}
                 </h3>
@@ -1930,27 +1933,27 @@ export default function Home() {
                     }}
                     style={{ background: '#E8F8F5', border: '1px solid #2ECC71', color: '#27AE60' }}
                   >
-                    🔊 예문 문장 발음 듣기
+                    {t('listen_example_audio', currentLang)}
                   </button>
                 </div>
 
-                <div className="flip-hint">👆 터치하여 영단어 보기</div>
+                <div className="flip-hint">{t('flip_to_word_hint', currentLang)}</div>
               </div>
             </div>
 
             <div className="card-nav-buttons">
-              <button className="btn-nav" onClick={handlePrev}>◀ 이전</button>
+              <button className="btn-nav" onClick={handlePrev}>{t('btn_prev', currentLang)}</button>
               <span className="card-counter">
                 {currentIndex + 1} / {safeActiveWords.length}
               </span>
               <button className="btn-nav" onClick={handleNext}>
-                {currentIndex + 1 === safeActiveWords.length ? '1단계 퀴즈로 ➔' : '다음 ▶'}
+                {currentIndex + 1 === safeActiveWords.length ? (currentLang === 'zh' ? '进入第1关测验 ➔' : (currentLang === 'fr' ? 'Quiz Niveau 1 ➔' : '1단계 퀴즈로 ➔')) : t('btn_next', currentLang)}
               </button>
             </div>
 
             <div id="record-mission-section" className="voice-recorder-card" style={{ marginTop: '16px', background: '#FFFFFF', borderRadius: '20px', padding: '16px', border: '1px solid #E9ECEF', textAlign: 'center' }}>
               <h4 style={{ margin: '0 0 8px 0', fontSize: '14px', color: '#2C3E50' }}>
-                🎙️ 내 발음 녹음 & 음성 높낮이 그래프 ({cleanWordStr})
+                🎙️ {currentLang === 'zh' ? `发音录音与波形图 (${cleanWordStr})` : (currentLang === 'fr' ? `Enregistrement vocal (${cleanWordStr})` : `내 발음 녹음 & 음성 높낮이 그래프 (${cleanWordStr})`)}
               </h4>
 
               <div style={{ margin: '8px 0', background: '#2C3E50', borderRadius: '14px', padding: '6px', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
@@ -1975,15 +1978,16 @@ export default function Home() {
                   }}
                 >
                   <div style={{ fontSize: '15px', fontWeight: '900', color: pronunciationScore >= 90 ? '#27AE60' : (pronunciationScore >= 75 ? '#D4AC0D' : '#C0392B') }}>
-                    {pronunciationScore >= 90 ? '🎯 발음 일치율 100% 완벽해요! ⭐⭐⭐' : (pronunciationScore >= 75 ? `👍 발음 일치율 ${pronunciationScore}% 훌륭해요! ⭐⭐` : `🌱 발음 일치율 ${pronunciationScore}% 힘내세요! ⭐`)}
+                    {pronunciationScore >= 90 ? (currentLang === 'zh' ? '🎯 发音匹配率 100% 完美！⭐⭐⭐' : (currentLang === 'fr' ? '🎯 Précision 100% Parfait ! ⭐⭐⭐' : '🎯 발음 일치율 100% 완벽해요! ⭐⭐⭐')) : (pronunciationScore >= 75 ? (currentLang === 'zh' ? `👍 发音匹配率 ${pronunciationScore}% 很棒！⭐⭐` : (currentLang === 'fr' ? `👍 Précision ${pronunciationScore}% Excellent ! ⭐⭐` : `👍 발음 일치율 ${pronunciationScore}% 훌륭해요! ⭐⭐`)) : (currentLang === 'zh' ? `🌱 发音匹配率 ${pronunciationScore}% 加油！⭐` : (currentLang === 'fr' ? `🌱 Précision ${pronunciationScore}% Continuez ! ⭐` : `🌱 발음 일치율 ${pronunciationScore}% 힘내세요! ⭐`)))}
                   </div>
                   <div style={{ fontSize: '12px', color: '#555', marginTop: '4px', fontWeight: 'bold' }}>
-                    {cleanWordStr} 발음 측정 점수: <span style={{ fontSize: '14px', color: '#2980B9' }}>{pronunciationScore}점</span>
+                    {cleanWordStr} {currentLang === 'zh' ? '发音测评分数:' : (currentLang === 'fr' ? 'Score de prononciation:' : '발음 측정 점수:')}{' '}
+                    <span style={{ fontSize: '14px', color: '#2980B9' }}>{pronunciationScore}{currentLang === 'zh' ? '分' : (currentLang === 'fr' ? ' pts' : '점')}</span>
                   </div>
                 </div>
               )}
 
-              {/* 🤖 AI 발음 교정 가이드 팁 카드 (음소별 입모양 & 혀위치 피드백) */}
+              {/* 🤖 AI 발음 교정 가이드 팁 카드 */}
               {(() => {
                 const aiTip = getAIPronunciationGuideTip(cleanWordStr, pronunciationScore);
                 if (!aiTip) return null;
@@ -2014,22 +2018,20 @@ export default function Home() {
               <div style={{ display: 'flex', justifyContent: 'center', gap: '10px', marginTop: '10px' }}>
                 {!isRecording ? (
                   <button className="record-btn" onClick={startRecording} style={{ background: '#E74C3C', color: 'white', border: 'none', padding: '10px 18px', borderRadius: '14px', fontWeight: 'bold', cursor: 'pointer' }}>
-                    🎙️ 녹음 시작 (발음 측정)
+                    {t('btn_record_start', currentLang)}
                   </button>
                 ) : (
                   <button className="record-btn recording" onClick={stopRecording} style={{ background: '#27AE60', color: 'white', border: 'none', padding: '10px 18px', borderRadius: '14px', fontWeight: 'bold', cursor: 'pointer', animation: 'pulse 1s infinite' }}>
-                    ⏹️ 녹음 완료 및 일치율 확인
+                    {t('btn_record_stop', currentLang)}
                   </button>
                 )}
 
                 {recordedAudioUrl && (
                   <button onClick={playRecordedAudio} style={{ background: '#3498DB', color: 'white', border: 'none', padding: '10px 18px', borderRadius: '14px', fontWeight: 'bold', cursor: 'pointer' }}>
-                    ▶️ 내 발음 듣기
+                    {t('btn_play_my_record', currentLang)}
                   </button>
                 )}
-
               </div>
-
             </div>
           </div>
         </>
@@ -2039,7 +2041,6 @@ export default function Home() {
       {mainTab === 'wordlist' && (
         <WordListSection words={safeActiveWords} onPlayAudio={playWordAudio} userAudioRecordings={userAudioRecordings} currentLang={currentLang} />
       )}
-
 
       {/* 탭 3: 영단어 퀴즈 */}
       {mainTab === 'quiz' && (
@@ -2055,22 +2056,22 @@ export default function Home() {
 
       {/* 탭 4: 나만의 개인 단어장 */}
       {mainTab === 'myvocab' && (
-        <PersonalVocabSection currentUser={currentUser} onPlayAudio={playWordAudio} initialTab="custom" />
+        <PersonalVocabSection currentUser={currentUser} onPlayAudio={playWordAudio} initialTab="custom" currentLang={currentLang} />
       )}
 
       {/* 탭 5: ❌ 퀴즈 오답노트 전용 독립 메인 탭 */}
       {mainTab === 'wrongvocab' && (
-        <PersonalVocabSection currentUser={currentUser} onPlayAudio={playWordAudio} initialTab="wrong" />
+        <PersonalVocabSection currentUser={currentUser} onPlayAudio={playWordAudio} initialTab="wrong" currentLang={currentLang} />
       )}
 
-      {/* 탭 6: 출석 달력 (날짜 선택 핸들러 연결!) */}
+      {/* 탭 6: 출석 달력 */}
       {mainTab === 'calendar' && (
-        <CalendarSection currentUser={currentUser} onSelectDateToStudy={handleSelectDateToStudy} />
+        <CalendarSection currentUser={currentUser} onSelectDateToStudy={handleSelectDateToStudy} currentLang={currentLang} />
       )}
 
       {/* 탭 7: 학부모 리포트 */}
       {mainTab === 'parent' && (
-        <ParentDashboard currentUser={currentUser} onLogout={handleLogout} />
+        <ParentDashboard currentUser={currentUser} onLogout={handleLogout} currentLang={currentLang} />
       )}
 
       {/* 탭 8: 📊 학생 학습 성취도 통계 리포트 */}
@@ -2079,6 +2080,7 @@ export default function Home() {
           currentUser={currentUser}
           totalWordCount={wordList.length || 500}
           onNavigateTab={(tabName) => setMainTab(tabName)}
+          currentLang={currentLang}
         />
       )}
 
@@ -2088,12 +2090,13 @@ export default function Home() {
           currentUser={currentUser}
           safeActiveWords={safeActiveWords}
           onQuizComplete={fetchStudyRecordsFromDB}
+          currentLang={currentLang}
         />
       )}
 
       {/* 탭 10: 🏆 Voca Power 실시간 랭킹 시스템 */}
       {mainTab === 'leaderboard' && (
-        <LeaderboardSection currentUser={currentUser} />
+        <LeaderboardSection currentUser={currentUser} currentLang={currentLang} />
       )}
 
     </main>

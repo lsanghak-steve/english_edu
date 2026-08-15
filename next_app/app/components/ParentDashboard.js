@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import supabase from '../../lib/supabaseClient.js';
 import wordList500Fallback from '../../data/wordsData.js';
 import ParentNotificationManager from './ParentNotificationManager.js';
+import { t } from '../../lib/i18n.js';
 
 // 이름에서 이모지 제거 헬퍼 함수
 const removeEmoji = (str) => {
@@ -13,7 +14,7 @@ const removeEmoji = (str) => {
     .trim();
 };
 
-export default function ParentDashboard({ currentUser, onLogout }) {
+export default function ParentDashboard({ currentUser, onLogout, currentLang = 'ko' }) {
   const [childrenList, setChildrenList] = useState([]);
   const [selectedChildIndex, setSelectedChildIndex] = useState(0);
   const [loading, setLoading] = useState(true);
@@ -72,11 +73,11 @@ export default function ParentDashboard({ currentUser, onLogout }) {
 
   const activeChild = childrenList[selectedChildIndex] || currentUser || { name: '이승현', dailyWordCount: '10' };
   const studentName = removeEmoji(activeChild.name || '');
-  const parentName = removeEmoji(activeChild.parentName) || '학부모';
+  const parentName = removeEmoji(activeChild.parentName) || (currentLang === 'zh' ? '家长' : (currentLang === 'fr' ? 'Parent' : '학부모'));
   const childId = activeChild.student_id || activeChild.id || 'guest';
   const childDbId = activeChild.db_id || activeChild.id || childId;
 
-  // 2. 활성화된 자녀의 출석도장, 학습단어, 오답노트 100% 라이브 동기화 (StatsSection과 동일)
+  // 2. 활성화된 자녀의 출석도장, 학습단어, 오답노트 라이브 동기화
   useEffect(() => {
     if (!studentName) return;
 
@@ -99,14 +100,13 @@ export default function ParentDashboard({ currentUser, onLogout }) {
           const matchedAtt = attRes.value.data.filter(item =>
             cleanIds.some(idStr => item.student_id === idStr || (item.student_id && item.student_id.includes(studentName)))
           );
-
-          matchedAtt.forEach(rec => {
-            if (rec.study_date) datesSet.add(rec.study_date);
-            if (Array.isArray(rec.stamped_words)) {
-              rec.stamped_words.forEach(w => {
+          matchedAtt.forEach(item => {
+            if (item.study_date) datesSet.add(item.study_date);
+            if (Array.isArray(item.stamped_words)) {
+              item.stamped_words.forEach(w => {
                 const wStr = typeof w === 'string' ? w : w.word;
                 if (wStr && !learnedItemsMap.has(wStr)) {
-                  learnedItemsMap.set(wStr, { word: wStr, meaning: w.meaning || '의미 확인', phonics: w.phonics || '' });
+                  learnedItemsMap.set(wStr, { word: wStr, meaning: w.meaning || '', phonics: w.phonics || '' });
                 }
               });
             }
@@ -156,7 +156,6 @@ export default function ParentDashboard({ currentUser, onLogout }) {
         const finalDates = Array.from(datesSet);
         const finalLearnedList = Array.from(learnedItemsMap.values());
 
-        // 신규 학생이거나 학습 이력이 전혀 없는 경우(김민채 등) 0개/0일로 정확히 표출
         if (studentName.includes('승현') || studentName.includes('상학')) {
           if (finalLearnedList.length === 0) setLearnedWordsList(wordList500Fallback.slice(0, 96));
           else setLearnedWordsList(finalLearnedList);
@@ -188,16 +187,28 @@ export default function ParentDashboard({ currentUser, onLogout }) {
     }
   };
 
+  const headerTitle = currentLang === 'zh'
+    ? `👨‍👩‍👧‍👦 ${parentName} 家长的子女学习安心报告 ☁️`
+    : (currentLang === 'fr'
+    ? `👨‍👩‍👧‍👦 Rapport de suivi parental - ${parentName} ☁️`
+    : `👨‍👩‍👧‍👦 ${parentName} 님의 자녀 안심 학습 리포트 ☁️`);
+
+  const linkedChildrenText = currentLang === 'zh'
+    ? `实时关联子女: 共 ${childrenList.length}人`
+    : (currentLang === 'fr'
+    ? `Enfants associés en temps réel : ${childrenList.length}`
+    : `실시간 연동 자녀: 총 ${childrenList.length}명`);
+
   return (
     <div style={{ background: '#FFFFFF', borderRadius: '24px', padding: '24px', border: '1px solid #E9ECEF', boxShadow: '0 8px 20px rgba(0,0,0,0.04)', width: '100%' }}>
       {/* 👨‍👩‍👧‍👦 학부모 전용 깔끔한 상단 헤더 바 */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '18px', borderBottom: '2px dashed #E9ECEF', paddingBottom: '14px', flexWrap: 'wrap', gap: '10px' }}>
         <div>
           <h2 style={{ margin: 0, color: '#8E44AD', fontSize: '22px', fontWeight: '900' }}>
-            👨‍👩‍👧‍👦 {parentName} 님의 자녀 안심 학습 리포트 ☁️
+            {headerTitle}
           </h2>
           <span style={{ fontSize: '13px', color: '#27AE60', fontWeight: 'bold' }}>
-            실시간 연동 자녀: 총 {childrenList.length}명
+            {linkedChildrenText}
           </span>
         </div>
 
@@ -206,7 +217,7 @@ export default function ParentDashboard({ currentUser, onLogout }) {
             onClick={() => setShowNotificationModal(true)}
             style={{ background: '#FEE500', color: '#3C1E1E', border: 'none', padding: '8px 16px', borderRadius: '12px', fontWeight: '900', fontSize: '13px', cursor: 'pointer', boxShadow: '0 2px 6px rgba(0,0,0,0.1)' }}
           >
-            📲 카카오 알림톡/문자 센터 💬
+            📲 {currentLang === 'zh' ? '通知与短信中心 💬' : (currentLang === 'fr' ? 'Centre de notifications 💬' : '카카오 알림톡/문자 센터 💬')}
           </button>
 
           {onLogout && (
@@ -214,7 +225,7 @@ export default function ParentDashboard({ currentUser, onLogout }) {
               onClick={onLogout}
               style={{ background: '#E74C3C', color: 'white', border: 'none', padding: '8px 16px', borderRadius: '12px', fontWeight: 'bold', fontSize: '13px', cursor: 'pointer', boxShadow: '0 2px 6px rgba(231,76,60,0.2)' }}
             >
-              🚪 학생 로그인 화면으로 이동 (로그아웃)
+              🚪 {currentLang === 'zh' ? '前往学生登录页 (退出)' : (currentLang === 'fr' ? 'Connexion élève (Déconnexion)' : '학생 로그인 화면으로 이동 (로그아웃)')}
             </button>
           )}
         </div>
@@ -222,13 +233,15 @@ export default function ParentDashboard({ currentUser, onLogout }) {
 
       {loading ? (
         <div style={{ padding: '30px', textAlign: 'center', color: '#8E44AD', fontWeight: 'bold' }}>
-          ☁️ 클라우드 DB에서 자녀 학습 데이터를 로드하는 중...
+          {currentLang === 'zh' ? '☁️ 正在从云端数据库加载子女学习数据...' : (currentLang === 'fr' ? "Chargement des données de l'enfant..." : '☁️ 클라우드 DB에서 자녀 학습 데이터를 로드하는 중...')}
         </div>
       ) : (
         <>
           {/* 👤 자녀 선택 탭 */}
           <div style={{ display: 'flex', gap: '8px', marginBottom: '20px', flexWrap: 'wrap', alignItems: 'center', background: '#F5EEF8', padding: '12px', borderRadius: '16px' }}>
-            <span style={{ fontSize: '13px', fontWeight: 'bold', color: '#8E44AD' }}>👤 조회할 자녀 선택:</span>
+            <span style={{ fontSize: '13px', fontWeight: 'bold', color: '#8E44AD' }}>
+              👤 {currentLang === 'zh' ? '选择查看的子女:' : (currentLang === 'fr' ? 'Sélectionner l\'enfant :' : '조회할 자녀 선택:')}
+            </span>
             {childrenList.map((child, idx) => (
               <button
                 key={child.id || idx}
@@ -250,7 +263,7 @@ export default function ParentDashboard({ currentUser, onLogout }) {
             ))}
           </div>
 
-          {/* 👆 클릭 가능한 3대 요약 카드 세트 (학생 통계와 100% 동기화!) */}
+          {/* 👆 클릭 가능한 3대 요약 카드 세트 */}
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '14px', marginBottom: '24px' }}>
             {/* 카드 1: 출석도장 */}
             <div
@@ -258,11 +271,15 @@ export default function ParentDashboard({ currentUser, onLogout }) {
               style={{ background: '#E8F8F5', padding: '18px', borderRadius: '20px', border: '2px solid #A3E4D7', textAlign: 'center', cursor: 'pointer', transition: 'all 0.2s ease', boxShadow: '0 4px 12px rgba(0,0,0,0.03)' }}
               className="hover-card"
             >
-              <span style={{ fontSize: '13px', color: '#16A085', fontWeight: 'bold' }}>💮 누적 출석도장 (클릭)</span>
+              <span style={{ fontSize: '13px', color: '#16A085', fontWeight: 'bold' }}>
+                💮 {currentLang === 'zh' ? '累计签到 (点击)' : (currentLang === 'fr' ? 'Présence cumulée' : '누적 출석도장 (클릭)')}
+              </span>
               <h2 style={{ margin: '8px 0 2px 0', color: '#117864', fontSize: '28px', fontWeight: '900' }}>
-                {stampedDates.length || 9}일
+                {stampedDates.length || 9}{currentLang === 'zh' ? '天' : (currentLang === 'fr' ? ' j' : '일')}
               </h2>
-              <span style={{ fontSize: '11px', color: '#27AE60', fontWeight: 'bold' }}>👆 출석표 보기 ➔</span>
+              <span style={{ fontSize: '11px', color: '#27AE60', fontWeight: 'bold' }}>
+                👆 {currentLang === 'zh' ? '查看出勤表 ➔' : (currentLang === 'fr' ? 'Voir calendrier ➔' : '출석표 보기 ➔')}
+              </span>
             </div>
 
             {/* 카드 2: 학습 완수 단어수 */}
@@ -271,11 +288,15 @@ export default function ParentDashboard({ currentUser, onLogout }) {
               style={{ background: '#FEF9E7', padding: '18px', borderRadius: '20px', border: '2px solid #F9E79F', textAlign: 'center', cursor: 'pointer', transition: 'all 0.2s ease', boxShadow: '0 4px 12px rgba(0,0,0,0.03)' }}
               className="hover-card"
             >
-              <span style={{ fontSize: '13px', color: '#D4AC0D', fontWeight: 'bold' }}>📚 마스터한 영단어 (클릭)</span>
+              <span style={{ fontSize: '13px', color: '#D4AC0D', fontWeight: 'bold' }}>
+                📚 {currentLang === 'zh' ? '掌握英语单词 (点击)' : (currentLang === 'fr' ? 'Mots maîtrisés' : '마스터한 영단어 (클릭)')}
+              </span>
               <h2 style={{ margin: '8px 0 2px 0', color: '#7D6608', fontSize: '24px', fontWeight: '900' }}>
-                총 {learnedWordsList.length || 96}개 단어
+                {currentLang === 'zh' ? `共 ${learnedWordsList.length || 96} 个` : (currentLang === 'fr' ? `Total ${learnedWordsList.length || 96} mots` : `총 ${learnedWordsList.length || 96}개 단어`)}
               </h2>
-              <span style={{ fontSize: '11px', color: '#D35400', fontWeight: 'bold' }}>👆 전체 단어 목록 ➔</span>
+              <span style={{ fontSize: '11px', color: '#D35400', fontWeight: 'bold' }}>
+                👆 {currentLang === 'zh' ? '查看所有单词 ➔' : (currentLang === 'fr' ? 'Voir liste ➔' : '전체 단어 목록 ➔')}
+              </span>
             </div>
 
             {/* 카드 3: 오답노트 */}
@@ -284,21 +305,29 @@ export default function ParentDashboard({ currentUser, onLogout }) {
               style={{ background: '#FADBD8', padding: '18px', borderRadius: '20px', border: '2px solid #F5B7B1', textAlign: 'center', cursor: 'pointer', transition: 'all 0.2s ease', boxShadow: '0 4px 12px rgba(0,0,0,0.03)' }}
               className="hover-card"
             >
-              <span style={{ fontSize: '13px', color: '#C0392B', fontWeight: 'bold' }}>❌ 오답노트 잔여 (클릭)</span>
+              <span style={{ fontSize: '13px', color: '#C0392B', fontWeight: 'bold' }}>
+                ❌ {currentLang === 'zh' ? '待攻克错题 (点击)' : (currentLang === 'fr' ? 'Mots en erreur' : '오답노트 잔여 (클릭)')}
+              </span>
               <h2 style={{ margin: '8px 0 2px 0', color: '#78281F', fontSize: '28px', fontWeight: '900' }}>
-                {wrongAnswers.length}개
+                {wrongAnswers.length}{currentLang === 'zh' ? '个' : (currentLang === 'fr' ? ' mots' : '개')}
               </h2>
-              <span style={{ fontSize: '11px', color: '#C0392B', fontWeight: 'bold' }}>👆 오답노트 단어장 ➔</span>
+              <span style={{ fontSize: '11px', color: '#C0392B', fontWeight: 'bold' }}>
+                👆 {currentLang === 'zh' ? '查看错题本 ➔' : (currentLang === 'fr' ? 'Voir carnet d\'erreurs ➔' : '오답노트 단어장 ➔')}
+              </span>
             </div>
           </div>
 
           {/* 따뜻한 피드백 코멘트 */}
           <div style={{ background: '#F8F9FA', padding: '16px', borderRadius: '16px', border: '1px solid #E9ECEF' }}>
             <h4 style={{ margin: '0 0 8px 0', color: '#2C3E50', fontSize: '15px', fontWeight: 'bold' }}>
-              💌 [{studentName}] 자녀를 위한 따뜻한 피드백 코멘트
+              💌 {currentLang === 'zh' ? `给 [${studentName}] 同学的鼓励与寄语` : (currentLang === 'fr' ? `Message d'encouragement pour [${studentName}]` : `[${studentName}] 자녀를 위한 따뜻한 피드백 코멘트`)}
             </h4>
             <p style={{ margin: 0, fontSize: '13px', color: '#7F8C8D', lineHeight: 1.6 }}>
-              🔥 대단해요! {studentName} 학생은 출석도장 총 {stampedDates.length || 9}일을 달성하고, 누적 {learnedWordsList.length || 96}개 영단어를 완벽하게 암기 마스터하였습니다! 👏
+              {currentLang === 'zh'
+                ? `🔥 太棒了！${studentName} 同学已累计打卡 ${stampedDates.length || 9} 天，并成功背诵掌握了 ${learnedWordsList.length || 96} 个英语单词！👏`
+                : currentLang === 'fr'
+                ? `🔥 Bravo ! ${studentName} a complété ${stampedDates.length || 9} jours de présence et a maîtrisé ${learnedWordsList.length || 96} mots d'anglais ! 👏`
+                : `🔥 대단해요! ${studentName} 학생은 출석도장 총 ${stampedDates.length || 9}일을 달성하고, 누적 ${learnedWordsList.length || 96}개 영단어를 완벽하게 암기 마스터하였습니다! 👏`}
             </p>
           </div>
         </>
@@ -310,7 +339,7 @@ export default function ParentDashboard({ currentUser, onLogout }) {
           <div style={{ background: 'white', borderRadius: '24px', padding: '24px', width: '90%', maxWidth: '420px', boxShadow: '0 10px 30px rgba(0,0,0,0.2)' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', paddingBottom: '10px', borderBottom: '2px dashed #E9ECEF' }}>
               <h3 style={{ margin: 0, color: '#16A085', fontSize: '18px' }}>
-                💮 [{studentName}] 자녀 출석도장 내역
+                💮 [{studentName}] {currentLang === 'zh' ? '出勤记录' : (currentLang === 'fr' ? 'Historique de présence' : '자녀 출석도장 내역')}
               </h3>
               <button onClick={() => setShowAttendanceModal(false)} style={{ background: '#F8F9FA', border: '1px solid #BDC3C7', padding: '4px 10px', borderRadius: '8px', fontWeight: 'bold', cursor: 'pointer' }}>
                 ✖
@@ -318,20 +347,22 @@ export default function ParentDashboard({ currentUser, onLogout }) {
             </div>
 
             <p style={{ fontSize: '13px', color: '#7F8C8D', marginBottom: '14px' }}>
-              💮 총 누적 출석 도장: <strong>{stampedDates.length}회</strong> 완료
+              💮 {currentLang === 'zh' ? '累计签到天数:' : (currentLang === 'fr' ? 'Présences cumulées :' : '총 누적 출석 도장:')} <strong>{stampedDates.length}{currentLang === 'zh' ? '天' : (currentLang === 'fr' ? ' fois' : '회')}</strong>
             </p>
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginBottom: '20px', maxHeight: '50vh', overflowY: 'auto' }}>
               {stampedDates.map((d, idx) => (
                 <div key={idx} style={{ padding: '10px 14px', background: '#E8F8F5', borderRadius: '12px', border: '1px solid #A3E4D7', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <span style={{ fontWeight: 'bold', color: '#117864' }}>💮 {d}</span>
-                  <span style={{ fontSize: '12px', background: '#2ECC71', color: 'white', padding: '2px 8px', borderRadius: '6px', fontWeight: 'bold' }}>출석도장 완수</span>
+                  <span style={{ fontSize: '12px', background: '#2ECC71', color: 'white', padding: '2px 8px', borderRadius: '6px', fontWeight: 'bold' }}>
+                    {currentLang === 'zh' ? '已出勤' : (currentLang === 'fr' ? 'Présent' : '출석도장 완수')}
+                  </span>
                 </div>
               ))}
             </div>
 
             <button onClick={() => setShowAttendanceModal(false)} style={{ width: '100%', background: '#16A085', color: 'white', border: 'none', padding: '12px', borderRadius: '12px', fontWeight: 'bold', cursor: 'pointer' }}>
-              닫기
+              {t('btn_close', currentLang)}
             </button>
           </div>
         </div>
@@ -344,10 +375,10 @@ export default function ParentDashboard({ currentUser, onLogout }) {
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', paddingBottom: '10px', borderBottom: '2px dashed #E9ECEF' }}>
               <div>
                 <h3 style={{ margin: 0, color: '#D35400', fontSize: '18px' }}>
-                  📖 [{studentName}] 자녀 학습 영단어 목록
+                  📖 [{studentName}] {currentLang === 'zh' ? '学习单词列表' : (currentLang === 'fr' ? 'Mots appris' : '자녀 학습 영단어 목록')}
                 </h3>
                 <span style={{ fontSize: '12px', color: '#E67E22', fontWeight: 'bold' }}>
-                  총 {learnedWordsList.length}개 단어 암기 수강 완료
+                  {currentLang === 'zh' ? `共掌握 ${learnedWordsList.length} 个单词` : (currentLang === 'fr' ? `Total ${learnedWordsList.length} mots maîtrisés` : `총 ${learnedWordsList.length}개 단어 암기 수강 완료`)}
                 </span>
               </div>
               <button onClick={() => setShowWordsModal(false)} style={{ background: '#F8F9FA', border: '1px solid #BDC3C7', padding: '4px 10px', borderRadius: '8px', fontWeight: 'bold', cursor: 'pointer' }}>
@@ -356,22 +387,27 @@ export default function ParentDashboard({ currentUser, onLogout }) {
             </div>
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginBottom: '20px' }}>
-              {learnedWordsList.map((item, i) => (
-                <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 14px', background: '#FEF9E7', borderRadius: '12px', border: '1px solid #F9E79F' }}>
-                  <div>
-                    <span style={{ fontWeight: 'bold', color: '#2C3E50', fontSize: '15px' }}>#{i + 1} {item.word}</span>
-                    {item.phonics && <span style={{ fontSize: '12px', color: '#7F8C8D', marginLeft: '6px' }}>{item.phonics}</span>}
-                    <div style={{ color: '#E74C3C', fontSize: '13px', fontWeight: 'bold' }}>{item.meaning}</div>
+              {learnedWordsList.map((item, i) => {
+                const meaningDisplay = currentLang === 'fr'
+                  ? (item.meaning_fr || item.meaningFr || item.meaning)
+                  : (currentLang === 'zh' ? (item.meaning_zh || item.meaningZh || item.meaning) : item.meaning);
+                return (
+                  <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 14px', background: '#FEF9E7', borderRadius: '12px', border: '1px solid #F9E79F' }}>
+                    <div>
+                      <span style={{ fontWeight: 'bold', color: '#2C3E50', fontSize: '15px' }}>#{i + 1} {item.word}</span>
+                      {item.phonics && <span style={{ fontSize: '12px', color: '#7F8C8D', marginLeft: '6px' }}>{item.phonics}</span>}
+                      <div style={{ color: '#E74C3C', fontSize: '13px', fontWeight: 'bold' }}>{meaningDisplay}</div>
+                    </div>
+                    <button onClick={() => playAudio(item.word)} style={{ background: '#F39C12', color: 'white', border: 'none', borderRadius: '50%', width: '32px', height: '32px', cursor: 'pointer' }}>
+                      🔊
+                    </button>
                   </div>
-                  <button onClick={() => playAudio(item.word)} style={{ background: '#F39C12', color: 'white', border: 'none', borderRadius: '50%', width: '32px', height: '32px', cursor: 'pointer' }}>
-                    🔊
-                  </button>
-                </div>
-              ))}
+                );
+              })}
             </div>
 
             <button onClick={() => setShowWordsModal(false)} style={{ width: '100%', background: '#D35400', color: 'white', border: 'none', padding: '12px', borderRadius: '12px', fontWeight: 'bold', cursor: 'pointer' }}>
-              닫기
+              {t('btn_close', currentLang)}
             </button>
           </div>
         </div>
@@ -383,7 +419,7 @@ export default function ParentDashboard({ currentUser, onLogout }) {
           <div style={{ background: 'white', borderRadius: '24px', padding: '24px', width: '90%', maxWidth: '420px', boxShadow: '0 10px 30px rgba(0,0,0,0.2)', textAlign: 'center' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', paddingBottom: '10px', borderBottom: '2px dashed #E9ECEF' }}>
               <h3 style={{ margin: 0, color: '#C0392B', fontSize: '18px' }}>
-                ❌ [{studentName}] 자녀 오답노트 단어장
+                ❌ [{studentName}] {currentLang === 'zh' ? '错题本单词' : (currentLang === 'fr' ? 'Carnet d\'erreurs' : '자녀 오답노트 단어장')}
               </h3>
               <button onClick={() => setShowWrongModal(false)} style={{ background: '#F8F9FA', border: '1px solid #BDC3C7', padding: '4px 10px', borderRadius: '8px', fontWeight: 'bold', cursor: 'pointer' }}>
                 ✖
@@ -392,7 +428,7 @@ export default function ParentDashboard({ currentUser, onLogout }) {
 
             {wrongAnswers.length === 0 ? (
               <div style={{ padding: '30px', color: '#27AE60', fontWeight: 'bold' }}>
-                🎉 훌륭합니다! 틀린 오답 단어가 하나도 없습니다! 👏
+                {currentLang === 'zh' ? '🎉 太棒了！没有任何待攻克的错题！👏' : (currentLang === 'fr' ? '🎉 Félicitations ! Aucune erreur enregistrée ! 👏' : '🎉 훌륭합니다! 틀린 오답 단어가 하나도 없습니다! 👏')}
               </div>
             ) : (
               <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginBottom: '20px', maxHeight: '50vh', overflowY: 'auto' }}>
@@ -411,13 +447,13 @@ export default function ParentDashboard({ currentUser, onLogout }) {
             )}
 
             <button onClick={() => setShowWrongModal(false)} style={{ width: '100%', background: '#C0392B', color: 'white', border: 'none', padding: '12px', borderRadius: '12px', fontWeight: 'bold', cursor: 'pointer' }}>
-              닫기
+              {t('btn_close', currentLang)}
             </button>
           </div>
         </div>
       )}
 
-      {/* 팝업 4: 💬 학부모 카카오 알림톡/문자 자동 발송 모달 */}
+      {/* 팝업 4: 💬 학부모 알림 발송 모달 */}
       {showNotificationModal && (
         <ParentNotificationManager
           currentUser={currentUser}

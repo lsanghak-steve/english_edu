@@ -11,7 +11,7 @@ const removeEmoji = (str) => {
     .trim();
 };
 
-export default function UserManager({ currentUser, setCurrentUser, onLogout }) {
+export default function UserManager({ currentUser, setCurrentUser, onLogout, currentLang = 'ko' }) {
   const [users, setUsers] = useState([]);
   const [showAddEditModal, setShowAddEditModal] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
@@ -158,23 +158,30 @@ export default function UserManager({ currentUser, setCurrentUser, onLogout }) {
   const currentStudyLevel = currentUser ? (currentUser.studyGradeLevel || currentUser.study_grade_level || '초등단어') : '초등단어';
   const currentDailyCount = currentUser ? (currentUser.dailyWordCount || currentUser.daily_word_count || '10') : '10';
 
+  const userLabelText = currentLang === 'zh' ? '👤 当前学生:' : (currentLang === 'fr' ? '👤 Élève connecté:' : '👤 현재 학습자:');
+  const levelLabelText = currentLang === 'zh' ? '级别:' : (currentLang === 'fr' ? 'Niveau:' : '레벨:');
+  const targetLabelText = currentLang === 'zh' ? '目标' : (currentLang === 'fr' ? 'Objectif' : '목표');
+  const wordsUnitText = currentLang === 'zh' ? '词' : (currentLang === 'fr' ? 'mots' : '단어');
+  const editBtnText = currentLang === 'zh' ? '✏️ 修改信息' : (currentLang === 'fr' ? '✏️ Modifier mon profil' : '✏️ 내 정보 수정');
+  const logoutBtnText = currentLang === 'zh' ? '🚪 退出登录 (更换学生)' : (currentLang === 'fr' ? '🚪 Déconnexion (Changer)' : '🚪 로그아웃 (학생 변경)');
+
   return (
     <div className="user-manager-header-bar">
       {/* 현재 로그인된 학생 정보 */}
       <div className="user-info-group">
-        <span className="user-info-label">👤 현재 학습자:</span>
+        <span className="user-info-label">{userLabelText}</span>
         <span className="user-info-badge">
-          {currentUser ? `${displayName} (${currentUser.grade || '초등 3학년'}) • 레벨: ${currentStudyLevel} • 목표 ${currentDailyCount}단어` : '로그인 필요'}
+          {currentUser ? `${displayName} (${currentUser.grade || '초등 3학년'}) • ${levelLabelText} ${currentStudyLevel} • ${targetLabelText} ${currentDailyCount}${wordsUnitText}` : (currentLang === 'zh' ? '请先登录' : (currentLang === 'fr' ? 'Connexion requise' : '로그인 필요'))}
         </span>
       </div>
 
       {/* 버튼 액션 그룹 (수정 및 로그아웃) */}
       <div className="user-actions-group">
         <button className="btn-user-edit" onClick={handleOpenEditModal}>
-          ✏️ 내 정보 수정
+          {editBtnText}
         </button>
         <button className="btn-user-logout" onClick={onLogout}>
-          🚪 로그아웃 (학생 변경)
+          {logoutBtnText}
         </button>
       </div>
 
