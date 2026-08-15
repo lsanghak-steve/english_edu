@@ -573,13 +573,13 @@ export default function QuizSection({ currentUser, activeWords, onQuizLevelCompl
           {quizLevel === 3 && (
             <div style={{ textAlign: 'center', padding: '20px 14px', background: '#FFF8F0', borderRadius: '20px', marginBottom: '20px', border: '2px solid #FFE4C4' }}>
               <span style={{ fontSize: '12px', color: '#D35400', fontWeight: '900', background: '#FEF5E7', padding: '4px 10px', borderRadius: '10px', border: '1px solid #FADBD8' }}>
-                🎙️ 3단계 신규 마이크 발음 녹음 퀴즈 (75점 이상 합격)
+                🎙️ {currentLang === 'zh' ? '第3关 发音录音评测 (75分以上通过)' : (currentLang === 'fr' ? 'Niveau 3 Test Prononciation Micro (75+ pts)' : (currentLang === 'ja' ? '第3段階 マイク発音録音テスト (75点以上で合格)' : (currentLang === 'vi' ? 'Cấp 3 Kiểm tra phát âm ghi âm (75+ điểm)' : (currentLang === 'hi' ? 'स्तर 3 उच्चारण रिकॉर्डिंग (75+ अंक)' : '3단계 마이크 발음 녹음 퀴즈 (75점 이상 합격)'))))}
               </span>
               <h2 style={{ margin: '10px 0 4px 0', fontSize: '28px', color: '#2C3E50', fontWeight: '900' }}>
-                {currentLang === 'fr' ? (currentQuiz.meaning_fr || currentQuiz.meaningFr || currentQuiz.meaning) : (currentLang === 'zh' ? (currentQuiz.meaning_zh || currentQuiz.meaningZh || currentQuiz.meaning) : currentQuiz.meaning)}
+                {getOptionMeaning(currentQuiz, currentLang)}
               </h2>
               <p style={{ margin: '0 0 16px 0', fontSize: '13px', color: '#E67E22', fontWeight: 'bold' }}>
-                💡 {currentLang === 'zh' ? `请点击下方麦克风并大声读出单词 [${cleanWordStr}]！` : (currentLang === 'fr' ? `Appuyez sur le micro et prononcez à voix haute [${cleanWordStr}] !` : `아래 마이크 버튼을 누르고 영단어 [${cleanWordStr}] 발음을 크게 말해보세요!`)}
+                💡 {currentLang === 'zh' ? `请点击下方麦克风并大声读出单词 [${cleanWordStr}]！` : (currentLang === 'fr' ? `Appuyez sur le micro et prononcez à voix haute [${cleanWordStr}] !` : (currentLang === 'ja' ? `下のマイクボタンを押して英単語 [${cleanWordStr}] の発音を声に出してください！` : (currentLang === 'vi' ? `Nhấn nút micro bên dưới và đọc to từ tiếng Anh [${cleanWordStr}]!` : (currentLang === 'hi' ? `नीचे माइक्रोफ़ोन बटन दबाएं और अंग्रेजी शब्द [${cleanWordStr}] ज़ोर से बोलें!` : `아래 마이크 버튼을 누르고 영단어 [${cleanWordStr}] 발음을 크게 말해보세요!`))))}
               </p>
 
               {/* 녹음 조작 버튼 */}
@@ -603,7 +603,7 @@ export default function QuizSection({ currentUser, activeWords, onQuizLevelCompl
                       gap: '8px'
                     }}
                   >
-                    🎙️ 녹음 시작
+                    🎙️ {currentLang === 'zh' ? '开始录音' : (currentLang === 'fr' ? 'Démarrer l\'enregistrement' : (currentLang === 'ja' ? '録音開始' : (currentLang === 'vi' ? 'Bắt đầu ghi âm' : (currentLang === 'hi' ? 'रिकॉर्डिंग शुरू' : '녹음 시작'))))}
                   </button>
                 ) : (
                   <button
@@ -624,7 +624,7 @@ export default function QuizSection({ currentUser, activeWords, onQuizLevelCompl
                       animation: 'pulse 1s infinite'
                     }}
                   >
-                    ⏹️ 녹음 완료 및 평가
+                    ⏹️ {currentLang === 'zh' ? '结束录音并评分' : (currentLang === 'fr' ? 'Arrêter et évaluer' : (currentLang === 'ja' ? '録音完了・採点' : (currentLang === 'vi' ? 'Dừng và chấm điểm' : (currentLang === 'hi' ? 'समाप्त और स्कोर' : '녹음 완료 및 평가'))))}
                   </button>
                 )}
 
@@ -633,7 +633,7 @@ export default function QuizSection({ currentUser, activeWords, onQuizLevelCompl
                   style={{ background: '#1CB0F6', color: 'white', border: 'none', borderBottom: '4px solid #1899D6', padding: '12px 18px', borderRadius: '16px', fontWeight: '900', fontSize: '14px', cursor: 'pointer' }}
                   title="정답 발음 들어보기"
                 >
-                  🔊 정답 발음 듣기
+                  🔊 {currentLang === 'zh' ? '听标准发音' : (currentLang === 'fr' ? 'Écouter' : (currentLang === 'ja' ? '正解発音を聞く' : (currentLang === 'vi' ? 'Nghe phát âm chuẩn' : (currentLang === 'hi' ? 'सही उच्चारण' : '정답 발음 듣기'))))}
                 </button>
               </div>
 
@@ -650,11 +650,11 @@ export default function QuizSection({ currentUser, activeWords, onQuizLevelCompl
                   alignItems: 'center'
                 }}>
                   <div style={{ fontSize: '16px', fontWeight: '900', color: pronunciationScore >= 75 ? '#46A302' : '#EA2B2B' }}>
-                    {pronunciationScore >= 75 ? `🎉 [${pronunciationScore}점] 75점 이상 합격! 🌟` : `❌ [${pronunciationScore}점] 75점 미만 (재도전 필요) 💡`}
+                    {pronunciationScore >= 75 ? (currentLang === 'zh' ? `🎉 [${pronunciationScore}分] 75分以上通过! 🌟` : (currentLang === 'fr' ? `🎉 [${pronunciationScore} pts] Validé ! 🌟` : (currentLang === 'ja' ? `🎉 [${pronunciationScore}点] 75点以上合格！🌟` : (currentLang === 'vi' ? `🎉 [${pronunciationScore} điểm] Đạt! 🌟` : (currentLang === 'hi' ? `🎉 [${pronunciationScore} अंक] सफल! 🌟` : `🎉 [${pronunciationScore}점] 75점 이상 합격! 🌟`))))) : (currentLang === 'zh' ? `❌ [${pronunciationScore}分] 低于75分 (需重试) 💡` : (currentLang === 'fr' ? `❌ [${pronunciationScore} pts] Moins de 75 (Rejouer) 💡` : (currentLang === 'ja' ? `❌ [${pronunciationScore}点] 75点未満 (再挑戦必要) 💡` : (currentLang === 'vi' ? `❌ [${pronunciationScore} điểm] Dưới 75 (Thử lại) 💡` : (currentLang === 'hi' ? `❌ [${pronunciationScore} अंक] 75 से कम (पुनः प्रयास करें) 💡` : `❌ [${pronunciationScore}점] 75점 미만 (재도전 필요) 💡`)))))}
                   </div>
                   {spokenText && (
                     <span style={{ fontSize: '12px', color: '#555555' }}>
-                      인식된 발음: "{spokenText}" (목표 단어: {cleanWordStr})
+                      {currentLang === 'zh' ? `识别发音: "${spokenText}" (目标: ${cleanWordStr})` : (currentLang === 'fr' ? `Prononciation: "${spokenText}" (Cible: ${cleanWordStr})` : (currentLang === 'ja' ? `認識発音: "${spokenText}" (目標: ${cleanWordStr})` : (currentLang === 'vi' ? `Phát âm nhận diện: "${spokenText}" (Mục tiêu: ${cleanWordStr})` : (currentLang === 'hi' ? `पहचाना गया: "${spokenText}" (लक्ष्य: ${cleanWordStr})` : `인식된 발음: "${spokenText}" (목표 단어: ${cleanWordStr})`))))}
                     </span>
                   )}
                 </div>
@@ -794,7 +794,7 @@ export default function QuizSection({ currentUser, activeWords, onQuizLevelCompl
                 onClick={handleNextQuestion}
                 style={{ marginTop: '14px', background: '#3C3C3C', color: 'white', border: 'none', borderBottom: '4px solid #1A1A1A', padding: '12px 28px', borderRadius: '16px', fontWeight: '900', fontSize: '15px', cursor: 'pointer' }}
               >
-                {currentIndex + 1 === safeWords.length ? '다음 단계로 ➔' : '다음 문제 ➔'}
+                {currentIndex + 1 === safeWords.length ? (currentLang === 'zh' ? '进入下一阶段 ➔' : (currentLang === 'fr' ? 'Étape suivante ➔' : (currentLang === 'ja' ? '次の段階へ ➔' : (currentLang === 'vi' ? 'Giai đoạn tiếp theo ➔' : (currentLang === 'hi' ? 'अगला चरण ➔' : '다음 단계로 ➔'))))) : (currentLang === 'zh' ? '下一题 ➔' : (currentLang === 'fr' ? 'Question suivante ➔' : (currentLang === 'ja' ? '次の問題 ➔' : (currentLang === 'vi' ? 'Câu tiếp theo ➔' : (currentLang === 'hi' ? 'अगला प्रश्न ➔' : '다음 문제 ➔')))))}
               </button>
             </div>
           )}
@@ -803,16 +803,15 @@ export default function QuizSection({ currentUser, activeWords, onQuizLevelCompl
         /* 퀴즈 결과 화면 */
         <div style={{ textAlign: 'center', padding: '30px 10px' }}>
           <h2 style={{ color: '#3C3C3C', margin: '0 0 10px 0', fontSize: '24px', fontWeight: '900' }}>
-            {quizLevel === 2 ? '🎉 필수 학습 완수! 출석 도장(💮) 획득! 🏆' : `🎉 ${quizLevel}단계 퀴즈 완수 축하합니다! 🏆`}
+            {quizLevel === 2 ? (currentLang === 'zh' ? '🎉 必修任务达成！获得签到印章(💮)！🏆' : (currentLang === 'fr' ? '🎉 Mission validée ! Tampon (💮) obtenu ! 🏆' : (currentLang === 'ja' ? '🎉 必須学習達成！出席スタンプ(💮)獲得！🏆' : (currentLang === 'vi' ? '🎉 Đã đạt bài học! Nhận con dấu (💮)! 🏆' : (currentLang === 'hi' ? '🎉 अनिवार्य अध्ययन पूर्ण! मोहर (💮) प्राप्त! 🏆' : '🎉 필수 학습 완수! 출석 도장(💮) 획득! 🏆'))))) : (currentLang === 'zh' ? `🎉 恭喜完成第${quizLevel}关测验！🏆` : (currentLang === 'fr' ? `🎉 Félicitations pour le Niveau ${quizLevel} ! 🏆` : (currentLang === 'ja' ? `🎉 第${quizLevel}段階クイズ達成おめでとうございます！🏆` : (currentLang === 'vi' ? `🎉 Chúc mừng hoàn thành Cấp ${quizLevel}! 🏆` : (currentLang === 'hi' ? `🎉 स्तर ${quizLevel} पूरा करने पर बधाई! 🏆` : `🎉 ${quizLevel}단계 퀴즈 완수 축하합니다! 🏆`)))))}
           </h2>
           <p style={{ fontSize: '20px', fontWeight: '900', color: '#58CC02', margin: '0 0 14px 0' }}>
-            최종 점수: {score} / {safeWords.length}점
+            {currentLang === 'zh' ? `最终得分: ${score} / ${safeWords.length}分` : (currentLang === 'fr' ? `Score final: ${score} / ${safeWords.length} pts` : (currentLang === 'ja' ? `最終スコア: ${score} / ${safeWords.length}点` : (currentLang === 'vi' ? `Điểm cuối cùng: ${score} / ${safeWords.length}` : (currentLang === 'hi' ? `अंतिम अंक: ${score} / ${safeWords.length}` : `최종 점수: ${score} / ${safeWords.length}점`))))}
           </p>
 
           {quizLevel === 2 && (
             <p style={{ fontSize: '13px', color: '#D35400', background: '#FEF5E7', padding: '8px 14px', borderRadius: '12px', display: 'inline-block', border: '1px solid #FADBD8', marginBottom: '20px', fontWeight: 'bold' }}>
-              🌟 2단계 퀴즈까지 완료하여 오늘 필수 학습 도장이 찍혔습니다!<br />
-              더 공부하고 싶다면 아래 선택 심화 퀴즈(3단계 녹음 / 4단계 직접쓰기)에 도전해보세요!
+              {currentLang === 'zh' ? '🌟 已完成第2关测验并成功盖上今日签到印章！如需强化学习，可继续挑战第3关录音或第4关默写！' : (currentLang === 'fr' ? '🌟 Niveau 2 validé et tampon de présence validé ! Entraînez-vous davantage avec le Niveau 3 ou 4 !' : (currentLang === 'ja' ? '🌟 第2段階まで完了し本日の出席スタンプが押されました！さらに学習する場合は第3段階録音または第4段階記述に挑戦してください！' : (currentLang === 'vi' ? '🌟 Đã hoàn thành Cấp 2 và nhận dấu điểm danh! Hãy thử thêm Cấp 3 hoặc Cấp 4!' : (currentLang === 'hi' ? '🌟 स्तर 2 पूर्ण और उपस्थिति मोहर प्राप्त! आगे अभ्यास के लिए स्तर 3 या 4 आज़माएं!' : '🌟 2단계 퀴즈까지 완료하여 오늘 필수 학습 도장이 찍혔습니다! 더 공부하고 싶다면 아래 선택 심화 퀴즈(3단계 녹음 / 4단계 직접쓰기)에 도전해보세요!'))))}
             </p>
           )}
 
@@ -834,7 +833,7 @@ export default function QuizSection({ currentUser, activeWords, onQuizLevelCompl
                   animation: 'pulse 1.2s infinite'
                 }}
               >
-                🚀 다음 20단어 연속 학습 (Next Round ➔)
+                🚀 {currentLang === 'zh' ? '连续学习下组20词 (Next Round ➔)' : (currentLang === 'fr' ? 'Continuer 20 mots suivants (Next Round ➔)' : (currentLang === 'ja' ? '次の20単語を連続学習 (Next Round ➔)' : (currentLang === 'vi' ? 'Học tiếp 20 từ tiếp theo (Next Round ➔)' : (currentLang === 'hi' ? 'अगले 20 शब्द सीखें (Next Round ➔)' : '🚀 다음 20단어 연속 학습 (Next Round ➔)'))))}
               </button>
             )}
 
@@ -843,7 +842,7 @@ export default function QuizSection({ currentUser, activeWords, onQuizLevelCompl
                 onClick={() => handleRestart(3)}
                 style={{ background: '#FF9600', color: 'white', border: 'none', borderBottom: '4px solid #D35400', padding: '14px 24px', borderRadius: '16px', fontWeight: '900', fontSize: '15px', cursor: 'pointer' }}
               >
-                🎙️ 3단계 마이크 녹음 도전 (선택⭐) ➔
+                🎙️ {currentLang === 'zh' ? '挑战第3关发音录音 (选修⭐) ➔' : (currentLang === 'fr' ? 'Niveau 3 Micro Prononciation (Option⭐) ➔' : (currentLang === 'ja' ? '第3段階 マイク録音に挑戦 (選択⭐) ➔' : (currentLang === 'vi' ? 'Thử sức Cấp 3 Ghi âm (Tự chọn⭐) ➔' : (currentLang === 'hi' ? 'स्तर 3 उच्चारण रिकॉर्डिंग (वैकल्पिक⭐) ➔' : '3단계 마이크 녹음 도전 (선택⭐) ➔'))))}
               </button>
             )}
 
@@ -852,7 +851,7 @@ export default function QuizSection({ currentUser, activeWords, onQuizLevelCompl
                 onClick={() => handleRestart(4)}
                 style={{ background: '#CE82FF', color: 'white', border: 'none', borderBottom: '4px solid #8E44AD', padding: '14px 24px', borderRadius: '16px', fontWeight: '900', fontSize: '15px', cursor: 'pointer' }}
               >
-                ✍️ 4단계 주관식 쓰기 도전 (선택⭐) ➔
+                ✍️ {currentLang === 'zh' ? '挑战第4关单词默写 (进阶⭐) ➔' : (currentLang === 'fr' ? 'Niveau 4 Dictée Écriture (Option⭐) ➔' : (currentLang === 'ja' ? '第4段階 スペル記述に挑戦 (選択⭐) ➔' : (currentLang === 'vi' ? 'Thử sức Cấp 4 Viết chính tả (Nâng cao⭐) ➔' : (currentLang === 'hi' ? 'स्तर 4 वर्तनी लेखन (उन्नत⭐) ➔' : '4단계 주관식 쓰기 도전 (선택⭐) ➔'))))}
               </button>
             )}
 
@@ -860,7 +859,7 @@ export default function QuizSection({ currentUser, activeWords, onQuizLevelCompl
               onClick={() => handleRestart(quizLevel)}
               style={{ background: '#1CB0F6', color: 'white', border: 'none', borderBottom: '4px solid #1899D6', padding: '14px 24px', borderRadius: '16px', fontWeight: '900', fontSize: '15px', cursor: 'pointer' }}
             >
-              🔄 다시 풀기
+              🔄 {currentLang === 'zh' ? '重新作答' : (currentLang === 'fr' ? 'Recommencer' : (currentLang === 'ja' ? 'もう一度解く' : (currentLang === 'vi' ? 'Làm lại' : (currentLang === 'hi' ? 'पुनः प्रयास करें' : '다시 풀기'))))}
             </button>
           </div>
         </div>
