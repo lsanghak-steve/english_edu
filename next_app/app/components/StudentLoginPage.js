@@ -178,25 +178,26 @@ export default function StudentLoginPage({ onLoginSuccess, onParentLoginSuccess,
         overflowY: 'auto',
         margin: 'auto'
       }}>
-        {/* 🌐 글로벌 언어 스위처 바 */}
+        {/* 🌐 글로벌 6개 국어 언어 스위처 바 */}
         {onLangChange && (
           <div style={{
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            gap: '6px',
+            gap: '4px',
             marginBottom: '16px',
             background: '#F8FAFC',
-            padding: '6px 10px',
+            padding: '6px 8px',
             borderRadius: '16px',
-            border: '1px solid #E2E8F0'
+            border: '1px solid #E2E8F0',
+            flexWrap: 'wrap'
           }}>
             <span style={{ fontSize: '12px', fontWeight: 'bold', color: '#64748B' }}>🌐</span>
             <button
               type="button"
               onClick={() => onLangChange('ko')}
               style={{
-                padding: '4px 8px',
+                padding: '4px 6px',
                 borderRadius: '8px',
                 fontSize: '11px',
                 fontWeight: 'bold',
@@ -212,7 +213,7 @@ export default function StudentLoginPage({ onLoginSuccess, onParentLoginSuccess,
               type="button"
               onClick={() => onLangChange('zh')}
               style={{
-                padding: '4px 8px',
+                padding: '4px 6px',
                 borderRadius: '8px',
                 fontSize: '11px',
                 fontWeight: 'bold',
@@ -228,7 +229,7 @@ export default function StudentLoginPage({ onLoginSuccess, onParentLoginSuccess,
               type="button"
               onClick={() => onLangChange('fr')}
               style={{
-                padding: '4px 8px',
+                padding: '4px 6px',
                 borderRadius: '8px',
                 fontSize: '11px',
                 fontWeight: 'bold',
@@ -239,6 +240,54 @@ export default function StudentLoginPage({ onLoginSuccess, onParentLoginSuccess,
               }}
             >
               🇫🇷 Français
+            </button>
+            <button
+              type="button"
+              onClick={() => onLangChange('ja')}
+              style={{
+                padding: '4px 6px',
+                borderRadius: '8px',
+                fontSize: '11px',
+                fontWeight: 'bold',
+                border: currentLang === 'ja' ? '2px solid #E53E3E' : '1px solid #CBD5E0',
+                background: currentLang === 'ja' ? '#FFF5F5' : '#FFFFFF',
+                color: currentLang === 'ja' ? '#C53030' : '#64748B',
+                cursor: 'pointer'
+              }}
+            >
+              🇯🇵 日本語
+            </button>
+            <button
+              type="button"
+              onClick={() => onLangChange('vi')}
+              style={{
+                padding: '4px 6px',
+                borderRadius: '8px',
+                fontSize: '11px',
+                fontWeight: 'bold',
+                border: currentLang === 'vi' ? '2px solid #D69E2E' : '1px solid #CBD5E0',
+                background: currentLang === 'vi' ? '#FEFCBF' : '#FFFFFF',
+                color: currentLang === 'vi' ? '#B7791F' : '#64748B',
+                cursor: 'pointer'
+              }}
+            >
+              🇻🇳 Tiếng Việt
+            </button>
+            <button
+              type="button"
+              onClick={() => onLangChange('hi')}
+              style={{
+                padding: '4px 6px',
+                borderRadius: '8px',
+                fontSize: '11px',
+                fontWeight: 'bold',
+                border: currentLang === 'hi' ? '2px solid #DD6B20' : '1px solid #CBD5E0',
+                background: currentLang === 'hi' ? '#FEEBC8' : '#FFFFFF',
+                color: currentLang === 'hi' ? '#C05621' : '#64748B',
+                cursor: 'pointer'
+              }}
+            >
+              🇮🇳 हिन्दी
             </button>
           </div>
         )}

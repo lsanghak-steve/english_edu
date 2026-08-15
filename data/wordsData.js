@@ -1,4 +1,4 @@
-// 초등 필수 영단어 534/800선 다국어 데이터
+// 초등 필수 영단어 534/800선 6개 국어 다국어 데이터
 const wordList500 = [
   {
     "id": 1,
@@ -17,7 +17,13 @@ const wordList500 = [
     "meaning_fr": "pomme",
     "meaningFr": "pomme",
     "example_fr": "Je mange des pommes.",
-    "exampleFr": "Je mange des pommes."
+    "exampleFr": "Je mange des pommes.",
+    "meaning_ja": "りんご",
+    "example_ja": "私は朝食に新鮮なリンゴを食べます。",
+    "meaning_vi": "Quả táo",
+    "example_vi": "Tôi ăn một quả táo tươi cho bữa sáng.",
+    "meaning_hi": "सेब",
+    "example_hi": "मैं नाश्ते में एक ताजा सेब खाता हूं।"
   },
   {
     "id": 2,
@@ -36,7 +42,13 @@ const wordList500 = [
     "meaning_fr": "banane",
     "meaningFr": "banane",
     "example_fr": "Les singes aiment les bananes.",
-    "exampleFr": "Les singes aiment les bananes."
+    "exampleFr": "Les singes aiment les bananes.",
+    "meaning_ja": "バナナ",
+    "example_ja": "私は朝食に新鮮なバナナを食べます。",
+    "meaning_vi": "Chuối",
+    "example_vi": "Tôi ăn một quả chuối tươi cho bữa sáng.",
+    "meaning_hi": "केला",
+    "example_hi": "मैं नाश्ते में ताज़ा केला खाता हूँ।"
   },
   {
     "id": 3,
@@ -55,7 +67,13 @@ const wordList500 = [
     "meaning_fr": "orange",
     "meaningFr": "orange",
     "example_fr": "Les oranges sont sucrées.",
-    "exampleFr": "Les oranges sont sucrées."
+    "exampleFr": "Les oranges sont sucrées.",
+    "meaning_ja": "オレンジ",
+    "example_ja": "私は朝食に新鮮なオレンジを食べます。",
+    "meaning_vi": "Quả cam",
+    "example_vi": "Tôi ăn một quả cam tươi cho bữa sáng.",
+    "meaning_hi": "नारंगी",
+    "example_hi": "मैं नाश्ते में ताज़ा संतरा खाता हूँ।"
   },
   {
     "id": 4,
@@ -74,7 +92,13 @@ const wordList500 = [
     "meaning_fr": "raisins",
     "meaningFr": "raisins",
     "example_fr": "Les raisins sont violets.",
-    "exampleFr": "Les raisins sont violets."
+    "exampleFr": "Les raisins sont violets.",
+    "meaning_ja": "グレープ",
+    "example_ja": "私は朝食に新鮮なブドウを食べます。",
+    "meaning_vi": "Quả nho",
+    "example_vi": "Tôi ăn một quả nho tươi cho bữa sáng.",
+    "meaning_hi": "अंगूर",
+    "example_hi": "मैं नाश्ते में ताज़ा अंगूर खाता हूँ।"
   },
   {
     "id": 5,
@@ -93,7 +117,13 @@ const wordList500 = [
     "meaning_fr": "fraise",
     "meaningFr": "fraise",
     "example_fr": "J'aime le lait à la fraise.",
-    "exampleFr": "J'aime le lait à la fraise."
+    "exampleFr": "J'aime le lait à la fraise.",
+    "meaning_ja": "いちご",
+    "example_ja": "私は朝食に新鮮なイチゴを食べます。",
+    "meaning_vi": "Quả dâu",
+    "example_vi": "Tôi ăn một quả dâu tây tươi cho bữa sáng.",
+    "meaning_hi": "स्ट्रॉबेरी",
+    "example_hi": "मैं नाश्ते में ताज़ी स्ट्रॉबेरी खाता हूँ।"
   },
   {
     "id": 6,
@@ -112,7 +142,13 @@ const wordList500 = [
     "meaning_fr": "pêche",
     "meaningFr": "pêche",
     "example_fr": "Les pêches sont molles.",
-    "exampleFr": "Les pêches sont molles."
+    "exampleFr": "Les pêches sont molles.",
+    "meaning_ja": "桃",
+    "example_ja": "私は朝食に新鮮な桃を食べます。",
+    "meaning_vi": "Quả đào",
+    "example_vi": "Tôi ăn một quả đào tươi cho bữa sáng.",
+    "meaning_hi": "आड़ू",
+    "example_hi": "मैं नाश्ते में ताज़ा आड़ू खाता हूँ।"
   },
   {
     "id": 7,
@@ -131,7 +167,13 @@ const wordList500 = [
     "meaning_fr": "pastèque",
     "meaningFr": "pastèque",
     "example_fr": "La pastèque est un fruit d'été.",
-    "exampleFr": "La pastèque est un fruit d'été."
+    "exampleFr": "La pastèque est un fruit d'été.",
+    "meaning_ja": "スイカ",
+    "example_ja": "私は朝食に新鮮なスイカを食べます。",
+    "meaning_vi": "dưa hấu",
+    "example_vi": "Tôi ăn dưa hấu tươi cho bữa sáng.",
+    "meaning_hi": "तरबूज",
+    "example_hi": "मैं नाश्ते में ताज़ा तरबूज़ खाता हूँ।"
   },
   {
     "id": 8,
@@ -150,7 +192,13 @@ const wordList500 = [
     "meaning_fr": "citron",
     "meaningFr": "citron",
     "example_fr": "Les citrons sont acides.",
-    "exampleFr": "Les citrons sont acides."
+    "exampleFr": "Les citrons sont acides.",
+    "meaning_ja": "レモン",
+    "example_ja": "私は朝食に新鮮なレモンを食べます。",
+    "meaning_vi": "Chanh vàng",
+    "example_vi": "Tôi ăn một quả chanh tươi cho bữa sáng.",
+    "meaning_hi": "नींबू",
+    "example_hi": "मैं नाश्ते में एक ताजा नींबू खाता हूं।"
   },
   {
     "id": 9,
@@ -169,7 +217,13 @@ const wordList500 = [
     "meaning_fr": "melon",
     "meaningFr": "melon",
     "example_fr": "Je veux manger du melon.",
-    "exampleFr": "Je veux manger du melon."
+    "exampleFr": "Je veux manger du melon.",
+    "meaning_ja": "メロン",
+    "example_ja": "私は朝食に新鮮なメロンを食べます。",
+    "meaning_vi": "Dưa gang",
+    "example_vi": "Tôi ăn một quả dưa tươi cho bữa sáng.",
+    "meaning_hi": "तरबूज",
+    "example_hi": "मैं नाश्ते में ताज़ा खरबूजा खाता हूं।"
   },
   {
     "id": 10,
@@ -188,7 +242,13 @@ const wordList500 = [
     "meaning_fr": "tomates",
     "meaningFr": "tomates",
     "example_fr": "Les tomates sont rouges.",
-    "exampleFr": "Les tomates sont rouges."
+    "exampleFr": "Les tomates sont rouges.",
+    "meaning_ja": "トマト",
+    "example_ja": "私は朝食にフレッシュトマトを食べます。",
+    "meaning_vi": "Cà chua",
+    "example_vi": "Tôi ăn một quả cà chua tươi cho bữa sáng.",
+    "meaning_hi": "टमाटर",
+    "example_hi": "मैं नाश्ते में ताज़ा टमाटर खाता हूँ।"
   },
   {
     "id": 11,
@@ -207,7 +267,13 @@ const wordList500 = [
     "meaning_fr": "lait",
     "meaningFr": "lait",
     "example_fr": "Buvez du lait chaud.",
-    "exampleFr": "Buvez du lait chaud."
+    "exampleFr": "Buvez du lait chaud.",
+    "meaning_ja": "牛乳",
+    "example_ja": "牛乳を一杯ください。",
+    "meaning_vi": "Sữa",
+    "example_vi": "Xin vui lòng cho tôi một ly sữa.",
+    "meaning_hi": "दूध",
+    "example_hi": "कृपया मुझे एक गिलास दूध दीजिए."
   },
   {
     "id": 12,
@@ -226,7 +292,13 @@ const wordList500 = [
     "meaning_fr": "eau",
     "meaningFr": "eau",
     "example_fr": "Je bois de l'eau.",
-    "exampleFr": "Je bois de l'eau."
+    "exampleFr": "Je bois de l'eau.",
+    "meaning_ja": "水",
+    "example_ja": "水を一杯ください。",
+    "meaning_vi": "Nước",
+    "example_vi": "Xin vui lòng cho tôi một ly nước.",
+    "meaning_hi": "पानी",
+    "example_hi": "कृपया मुझे एक गिलास पानी दीजिए."
   },
   {
     "id": 13,
@@ -245,7 +317,13 @@ const wordList500 = [
     "meaning_fr": "jus",
     "meaningFr": "jus",
     "example_fr": "Le jus d'orange est sucré.",
-    "exampleFr": "Le jus d'orange est sucré."
+    "exampleFr": "Le jus d'orange est sucré.",
+    "meaning_ja": "ジュース",
+    "example_ja": "ジュースを一杯ください。",
+    "meaning_vi": "Nước ép",
+    "example_vi": "Xin vui lòng cho tôi một ly nước trái cây.",
+    "meaning_hi": "रस",
+    "example_hi": "कृपया मुझे एक गिलास जूस दीजिए."
   },
   {
     "id": 14,
@@ -264,7 +342,13 @@ const wordList500 = [
     "meaning_fr": "pain",
     "meaningFr": "pain",
     "example_fr": "I eat bread for breakfast.",
-    "exampleFr": "I eat bread for breakfast."
+    "exampleFr": "I eat bread for breakfast.",
+    "meaning_ja": "パン",
+    "example_ja": "パンを一杯ください。",
+    "meaning_vi": "Bánh mỳ",
+    "example_vi": "Xin vui lòng cho tôi một ly bánh mì.",
+    "meaning_hi": "रोटी",
+    "example_hi": "कृपया मुझे एक गिलास रोटी दीजिए."
   },
   {
     "id": 15,
@@ -283,7 +367,13 @@ const wordList500 = [
     "meaning_fr": "riz/riz",
     "meaningFr": "riz/riz",
     "example_fr": "Nous mangeons du riz tous les jours.",
-    "exampleFr": "Nous mangeons du riz tous les jours."
+    "exampleFr": "Nous mangeons du riz tous les jours.",
+    "meaning_ja": "米",
+    "example_ja": "ここで素晴らしいお米を見ました。",
+    "meaning_vi": "Cơm",
+    "example_vi": "Tôi thấy một loại gạo tuyệt vời ở đây.",
+    "meaning_hi": "चावल",
+    "example_hi": "मुझे यहाँ एक अद्भुत चावल दिखाई देता है।"
   },
   {
     "id": 16,
@@ -302,7 +392,13 @@ const wordList500 = [
     "meaning_fr": "Oeufs/Oeufs",
     "meaningFr": "Oeufs/Oeufs",
     "example_fr": "Les œufs sont chauds.",
-    "exampleFr": "Les œufs sont chauds."
+    "exampleFr": "Les œufs sont chauds.",
+    "meaning_ja": "卵",
+    "example_ja": "ここで素晴らしい卵を見ました。",
+    "meaning_vi": "Trứng",
+    "example_vi": "Tôi thấy một quả trứng tuyệt vời ở đây.",
+    "meaning_hi": "अंडा",
+    "example_hi": "मुझे यहां एक अद्भुत अंडा दिखाई दे रहा है।"
   },
   {
     "id": 17,
@@ -321,7 +417,13 @@ const wordList500 = [
     "meaning_fr": "gâteau",
     "meaningFr": "gâteau",
     "example_fr": "Le gâteau d'anniversaire est gros.",
-    "exampleFr": "Le gâteau d'anniversaire est gros."
+    "exampleFr": "Le gâteau d'anniversaire est gros.",
+    "meaning_ja": "ケーキ",
+    "example_ja": "ここで素晴らしいケーキを見ました。",
+    "meaning_vi": "Bánh ngọt",
+    "example_vi": "Tôi thấy một chiếc bánh tuyệt vời ở đây.",
+    "meaning_hi": "केक",
+    "example_hi": "मुझे यहाँ एक अद्भुत केक दिख रहा है।"
   },
   {
     "id": 18,
@@ -340,7 +442,13 @@ const wordList500 = [
     "meaning_fr": "bonbons",
     "meaningFr": "bonbons",
     "example_fr": "Candy est douce.",
-    "exampleFr": "Candy est douce."
+    "exampleFr": "Candy est douce.",
+    "meaning_ja": "あめ",
+    "example_ja": "ここで素晴らしいキャンディを見ました。",
+    "meaning_vi": "Kẹo",
+    "example_vi": "Tôi thấy một viên kẹo tuyệt vời ở đây.",
+    "meaning_hi": "कैंडी",
+    "example_hi": "मुझे यहां एक अद्भुत कैंडी दिखाई देती है।"
   },
   {
     "id": 19,
@@ -359,7 +467,13 @@ const wordList500 = [
     "meaning_fr": "Biscuits/collations",
     "meaningFr": "Biscuits/collations",
     "example_fr": "Je fais des biscuits.",
-    "exampleFr": "Je fais des biscuits."
+    "exampleFr": "Je fais des biscuits.",
+    "meaning_ja": "クッキー",
+    "example_ja": "ここで素晴らしいクッキーを見ました。",
+    "meaning_vi": "bánh quy",
+    "example_vi": "Tôi thấy một chiếc bánh quy tuyệt vời ở đây.",
+    "meaning_hi": "कुकी",
+    "example_hi": "मुझे यहां एक अद्भुत कुकी दिखाई दे रही है।"
   },
   {
     "id": 20,
@@ -378,7 +492,13 @@ const wordList500 = [
     "meaning_fr": "chocolat",
     "meaningFr": "chocolat",
     "example_fr": "J'aime beaucoup le chocolat.",
-    "exampleFr": "J'aime beaucoup le chocolat."
+    "exampleFr": "J'aime beaucoup le chocolat.",
+    "meaning_ja": "チョコレート",
+    "example_ja": "ここで素晴らしいチョコレートを見ました。",
+    "meaning_vi": "Sôcôla",
+    "example_vi": "Tôi thấy một loại sôcôla tuyệt vời ở đây.",
+    "meaning_hi": "चॉकलेट",
+    "example_hi": "मुझे यहाँ एक अद्भुत चॉकलेट दिख रही है।"
   },
   {
     "id": 21,
@@ -397,7 +517,13 @@ const wordList500 = [
     "meaning_fr": "glace",
     "meaningFr": "glace",
     "example_fr": "La glace est froide.",
-    "exampleFr": "La glace est froide."
+    "exampleFr": "La glace est froide.",
+    "meaning_ja": "アイスクリーム",
+    "example_ja": "ここで素晴らしいアイスクリームを見ました。",
+    "meaning_vi": "Kem",
+    "example_vi": "Tôi thấy ở đây có một loại kem tuyệt vời.",
+    "meaning_hi": "आइसक्रीम",
+    "example_hi": "मुझे यहां एक अद्भुत आइसक्रीम दिखाई दे रही है।"
   },
   {
     "id": 22,
@@ -416,7 +542,13 @@ const wordList500 = [
     "meaning_fr": "pizza",
     "meaningFr": "pizza",
     "example_fr": "Mangeons de la pizza.",
-    "exampleFr": "Mangeons de la pizza."
+    "exampleFr": "Mangeons de la pizza.",
+    "meaning_ja": "ピザ",
+    "example_ja": "ここで素晴らしいピザを見ました。",
+    "meaning_vi": "pizza",
+    "example_vi": "Tôi thấy một chiếc bánh pizza tuyệt vời ở đây.",
+    "meaning_hi": "पिज़्ज़ा",
+    "example_hi": "मुझे यहाँ एक अद्भुत पिज़्ज़ा दिखाई दे रहा है।"
   },
   {
     "id": 23,
@@ -435,7 +567,13 @@ const wordList500 = [
     "meaning_fr": "hamburger",
     "meaningFr": "hamburger",
     "example_fr": "Le hamburger est gros.",
-    "exampleFr": "Le hamburger est gros."
+    "exampleFr": "Le hamburger est gros.",
+    "meaning_ja": "ハンバーガー",
+    "example_ja": "ここで素晴らしいハンバーガーを見ました。",
+    "meaning_vi": "bánh mì kẹp thịt",
+    "example_vi": "Tôi thấy một chiếc bánh hamburger tuyệt vời ở đây.",
+    "meaning_hi": "हैमबर्गर",
+    "example_hi": "मुझे यहां एक अद्भुत हैमबर्गर दिखाई दे रहा है।"
   },
   {
     "id": 24,
@@ -454,7 +592,13 @@ const wordList500 = [
     "meaning_fr": "nouilles/nouilles",
     "meaningFr": "nouilles/nouilles",
     "example_fr": "J'aime les nouilles chaudes.",
-    "exampleFr": "J'aime les nouilles chaudes."
+    "exampleFr": "J'aime les nouilles chaudes.",
+    "meaning_ja": "麺",
+    "example_ja": "ここで素晴らしい麺を見つけました。",
+    "meaning_vi": "mì",
+    "example_vi": "Tôi thấy ở đây có món mì tuyệt vời.",
+    "meaning_hi": "सिर",
+    "example_hi": "मुझे यहां एक अद्भुत नूडल दिखाई दे रहा है।"
   },
   {
     "id": 25,
@@ -473,7 +617,13 @@ const wordList500 = [
     "meaning_fr": "Soupe/Soupe",
     "meaningFr": "Soupe/Soupe",
     "example_fr": "La soupe est tiède.",
-    "exampleFr": "La soupe est tiède."
+    "exampleFr": "La soupe est tiède.",
+    "meaning_ja": "スープ",
+    "example_ja": "ここで素晴らしいスープを見ました。",
+    "meaning_vi": "Canh",
+    "example_vi": "Tôi thấy món súp tuyệt vời ở đây.",
+    "meaning_hi": "शोरबा",
+    "example_hi": "मुझे यहां एक अद्भुत सूप दिख रहा है।"
   },
   {
     "id": 26,
@@ -492,7 +642,13 @@ const wordList500 = [
     "meaning_fr": "salade",
     "meaningFr": "salade",
     "example_fr": "Je fais de la salade.",
-    "exampleFr": "Je fais de la salade."
+    "exampleFr": "Je fais de la salade.",
+    "meaning_ja": "サラダ",
+    "example_ja": "ここで素晴らしいサラダを見ました。",
+    "meaning_vi": "Xa lát",
+    "example_vi": "Tôi thấy món salad tuyệt vời ở đây.",
+    "meaning_hi": "सलाद",
+    "example_hi": "मुझे यहां एक अद्भुत सलाद दिख रहा है।"
   },
   {
     "id": 27,
@@ -511,7 +667,13 @@ const wordList500 = [
     "meaning_fr": "viande",
     "meaningFr": "viande",
     "example_fr": "Les chiens aiment la viande.",
-    "exampleFr": "Les chiens aiment la viande."
+    "exampleFr": "Les chiens aiment la viande.",
+    "meaning_ja": "肉",
+    "example_ja": "ここで素晴らしい肉を見ました。",
+    "meaning_vi": "Thịt",
+    "example_vi": "Tôi thấy ở đây có món thịt tuyệt vời.",
+    "meaning_hi": "मांस",
+    "example_hi": "मुझे यहाँ एक अद्भुत मांस दिखाई देता है।"
   },
   {
     "id": 28,
@@ -530,7 +692,13 @@ const wordList500 = [
     "meaning_fr": "poisson/poisson",
     "meaningFr": "poisson/poisson",
     "example_fr": "Les poissons vivent dans l'eau.",
-    "exampleFr": "Les poissons vivent dans l'eau."
+    "exampleFr": "Les poissons vivent dans l'eau.",
+    "meaning_ja": "魚",
+    "example_ja": "ここで素晴らしい魚を見ました。",
+    "meaning_vi": "Cá",
+    "example_vi": "Tôi thấy một con cá tuyệt vời ở đây.",
+    "meaning_hi": "मछली",
+    "example_hi": "मुझे यहाँ एक अद्भुत मछली दिखाई देती है।"
   },
   {
     "id": 29,
@@ -549,7 +717,13 @@ const wordList500 = [
     "meaning_fr": "fromage",
     "meaningFr": "fromage",
     "example_fr": "Le fromage est jaune.",
-    "exampleFr": "Le fromage est jaune."
+    "exampleFr": "Le fromage est jaune.",
+    "meaning_ja": "チーズ",
+    "example_ja": "ここで素晴らしいチーズを見ました。",
+    "meaning_vi": "Phô mai",
+    "example_vi": "Tôi thấy một loại pho mát tuyệt vời ở đây.",
+    "meaning_hi": "पनीर",
+    "example_hi": "मुझे यहां एक अद्भुत पनीर दिख रहा है।"
   },
   {
     "id": 30,
@@ -568,7 +742,13 @@ const wordList500 = [
     "meaning_fr": "beurre",
     "meaningFr": "beurre",
     "example_fr": "Mettez du beurre sur le pain.",
-    "exampleFr": "Mettez du beurre sur le pain."
+    "exampleFr": "Mettez du beurre sur le pain.",
+    "meaning_ja": "バター",
+    "example_ja": "ここで素晴らしいバターを見ました。",
+    "meaning_vi": "Bơ",
+    "example_vi": "Tôi thấy một loại bơ tuyệt vời ở đây.",
+    "meaning_hi": "मक्खन",
+    "example_hi": "मुझे यहाँ एक अद्भुत मक्खन दिखाई देता है।"
   },
   {
     "id": 31,
@@ -587,7 +767,13 @@ const wordList500 = [
     "meaning_fr": "cerise",
     "meaningFr": "cerise",
     "example_fr": "Les cerises rouges sont très petites.",
-    "exampleFr": "Les cerises rouges sont très petites."
+    "exampleFr": "Les cerises rouges sont très petites.",
+    "meaning_ja": "チェリー",
+    "example_ja": "ここで素晴らしい桜を見ます。",
+    "meaning_vi": "anh đào",
+    "example_vi": "Tôi thấy một quả anh đào tuyệt vời ở đây.",
+    "meaning_hi": "चेरी",
+    "example_hi": "मुझे यहां एक अद्भुत चेरी दिखाई दे रही है।"
   },
   {
     "id": 32,
@@ -606,7 +792,13 @@ const wordList500 = [
     "meaning_fr": "pomme de terre",
     "meaningFr": "pomme de terre",
     "example_fr": "Les frites sont croustillantes et délicieuses.",
-    "exampleFr": "Les frites sont croustillantes et délicieuses."
+    "exampleFr": "Les frites sont croustillantes et délicieuses.",
+    "meaning_ja": "じゃがいも",
+    "example_ja": "ここで素晴らしいジャガイモを見ました。",
+    "meaning_vi": "Khoai tây",
+    "example_vi": "Tôi thấy một củ khoai tây tuyệt vời ở đây.",
+    "meaning_hi": "आलू",
+    "example_hi": "मुझे यहां एक अद्भुत आलू दिख रहा है।"
   },
   {
     "id": 33,
@@ -625,7 +817,13 @@ const wordList500 = [
     "meaning_fr": "carottes",
     "meaningFr": "carottes",
     "example_fr": "Les lapins aiment les carottes croquantes.",
-    "exampleFr": "Les lapins aiment les carottes croquantes."
+    "exampleFr": "Les lapins aiment les carottes croquantes.",
+    "meaning_ja": "ニンジン",
+    "example_ja": "ここに素晴らしいニンジンがあります。",
+    "meaning_vi": "cà rốt",
+    "example_vi": "Tôi thấy một củ cà rốt tuyệt vời ở đây.",
+    "meaning_hi": "गाजर",
+    "example_hi": "मुझे यहां एक अद्भुत गाजर दिख रही है।"
   },
   {
     "id": 34,
@@ -644,7 +842,13 @@ const wordList500 = [
     "meaning_fr": "oignon",
     "meaningFr": "oignon",
     "example_fr": "Je vois de merveilleux oignons.",
-    "exampleFr": "Je vois de merveilleux oignons."
+    "exampleFr": "Je vois de merveilleux oignons.",
+    "meaning_ja": "タマネギ",
+    "example_ja": "ここで素晴らしい玉ねぎを見ました。",
+    "meaning_vi": "Củ hành",
+    "example_vi": "Tôi thấy một củ hành tuyệt vời ở đây.",
+    "meaning_hi": "प्याज",
+    "example_hi": "मुझे यहां एक अद्भुत प्याज दिखाई दे रहा है।"
   },
   {
     "id": 35,
@@ -663,7 +867,13 @@ const wordList500 = [
     "meaning_fr": "maïs",
     "meaningFr": "maïs",
     "example_fr": "Je vois du maïs merveilleux.",
-    "exampleFr": "Je vois du maïs merveilleux."
+    "exampleFr": "Je vois du maïs merveilleux.",
+    "meaning_ja": "トウモロコシ",
+    "example_ja": "ここで素晴らしいトウモロコシを見ました。",
+    "meaning_vi": "ngô",
+    "example_vi": "Tôi thấy một loại ngô tuyệt vời ở đây.",
+    "meaning_hi": "भुट्टा",
+    "example_hi": "मुझे यहाँ एक अद्भुत मक्का दिखाई देता है।"
   },
   {
     "id": 36,
@@ -682,7 +892,13 @@ const wordList500 = [
     "meaning_fr": "sel",
     "meaningFr": "sel",
     "example_fr": "Je vois du sel merveilleux.",
-    "exampleFr": "Je vois du sel merveilleux."
+    "exampleFr": "Je vois du sel merveilleux.",
+    "meaning_ja": "塩",
+    "example_ja": "ここで素晴らしい塩を見ました。",
+    "meaning_vi": "Muối",
+    "example_vi": "Tôi thấy ở đây có một loại muối tuyệt vời.",
+    "meaning_hi": "नमक",
+    "example_hi": "मुझे यहाँ एक अद्भुत नमक दिखाई देता है।"
   },
   {
     "id": 37,
@@ -701,7 +917,13 @@ const wordList500 = [
     "meaning_fr": "sucre",
     "meaningFr": "sucre",
     "example_fr": "Je vois du sucre merveilleux.",
-    "exampleFr": "Je vois du sucre merveilleux."
+    "exampleFr": "Je vois du sucre merveilleux.",
+    "meaning_ja": "砂糖",
+    "example_ja": "ここで素晴らしい砂糖を見ました。",
+    "meaning_vi": "Đường",
+    "example_vi": "Tôi thấy một loại đường tuyệt vời ở đây.",
+    "meaning_hi": "चीनी",
+    "example_hi": "मुझे यहाँ एक अद्भुत चीनी दिखाई देती है।"
   },
   {
     "id": 38,
@@ -720,7 +942,13 @@ const wordList500 = [
     "meaning_fr": "thé",
     "meaningFr": "thé",
     "example_fr": "Je vois une belle voiture.",
-    "exampleFr": "Je vois une belle voiture."
+    "exampleFr": "Je vois une belle voiture.",
+    "meaning_ja": "お茶",
+    "example_ja": "ここで素晴らしいお茶を見ました。",
+    "meaning_vi": "Trà",
+    "example_vi": "Tôi thấy một loại trà tuyệt vời ở đây.",
+    "meaning_hi": "चाय",
+    "example_hi": "मुझे यहाँ एक अद्भुत चाय दिख रही है।"
   },
   {
     "id": 39,
@@ -739,7 +967,13 @@ const wordList500 = [
     "meaning_fr": "café",
     "meaningFr": "café",
     "example_fr": "Je vois du bon café.",
-    "exampleFr": "Je vois du bon café."
+    "exampleFr": "Je vois du bon café.",
+    "meaning_ja": "コーヒー",
+    "example_ja": "ここで素晴らしいコーヒーを見ました。",
+    "meaning_vi": "Cà phê",
+    "example_vi": "Tôi thấy cà phê ở đây tuyệt vời.",
+    "meaning_hi": "कॉफी",
+    "example_hi": "मुझे यहाँ एक अद्भुत कॉफ़ी दिख रही है।"
   },
   {
     "id": 40,
@@ -758,7 +992,13 @@ const wordList500 = [
     "meaning_fr": "crème",
     "meaningFr": "crème",
     "example_fr": "Je vois une crème merveilleuse.",
-    "exampleFr": "Je vois une crème merveilleuse."
+    "exampleFr": "Je vois une crème merveilleuse.",
+    "meaning_ja": "クリーム",
+    "example_ja": "ここで素晴らしいクリームを見ました。",
+    "meaning_vi": "Kem",
+    "example_vi": "Tôi thấy một loại kem tuyệt vời ở đây.",
+    "meaning_hi": "क्रीम",
+    "example_hi": "मुझे यहाँ एक अद्भुत क्रीम दिख रही है।"
   },
   {
     "id": 41,
@@ -777,7 +1017,13 @@ const wordList500 = [
     "meaning_fr": "chérie",
     "meaningFr": "chérie",
     "example_fr": "Je vois du miel merveilleux.",
-    "exampleFr": "Je vois du miel merveilleux."
+    "exampleFr": "Je vois du miel merveilleux.",
+    "meaning_ja": "ハニー",
+    "example_ja": "ここで素晴らしい蜂蜜を見ました。",
+    "meaning_vi": "Em yêu",
+    "example_vi": "Tôi thấy mật ong tuyệt vời ở đây.",
+    "meaning_hi": "शहद",
+    "example_hi": "मुझे यहाँ एक अद्भुत शहद दिखाई देता है।"
   },
   {
     "id": 42,
@@ -796,7 +1042,13 @@ const wordList500 = [
     "meaning_fr": "tarte",
     "meaningFr": "tarte",
     "example_fr": "Je regarde Wonderful Pie.",
-    "exampleFr": "Je regarde Wonderful Pie."
+    "exampleFr": "Je regarde Wonderful Pie.",
+    "meaning_ja": "パイ",
+    "example_ja": "ここで素晴らしいパイを見ました。",
+    "meaning_vi": "Bánh",
+    "example_vi": "Tôi thấy một chiếc bánh tuyệt vời ở đây.",
+    "meaning_hi": "पाई",
+    "example_hi": "मुझे यहां एक अद्भुत पाई दिख रही है।"
   },
   {
     "id": 43,
@@ -815,7 +1067,13 @@ const wordList500 = [
     "meaning_fr": "beignet",
     "meaningFr": "beignet",
     "example_fr": "Je vois de superbes beignets.",
-    "exampleFr": "Je vois de superbes beignets."
+    "exampleFr": "Je vois de superbes beignets.",
+    "meaning_ja": "ドーナツ",
+    "example_ja": "ここで素晴らしいドーナツを見つけました。",
+    "meaning_vi": "bánh rán",
+    "example_vi": "Tôi thấy một chiếc bánh rán tuyệt vời ở đây.",
+    "meaning_hi": "डोनट",
+    "example_hi": "मुझे यहां एक अद्भुत डोनट दिखाई दे रहा है।"
   },
   {
     "id": 44,
@@ -834,7 +1092,13 @@ const wordList500 = [
     "meaning_fr": "sandwich",
     "meaningFr": "sandwich",
     "example_fr": "Je vois un bon sandwich.",
-    "exampleFr": "Je vois un bon sandwich."
+    "exampleFr": "Je vois un bon sandwich.",
+    "meaning_ja": "サンドイッチ",
+    "example_ja": "ここで素晴らしいサンドイッチを見ました。",
+    "meaning_vi": "Sandwich",
+    "example_vi": "Tôi thấy một chiếc bánh sandwich tuyệt vời ở đây.",
+    "meaning_hi": "सैंडविच",
+    "example_hi": "मुझे यहां एक अद्भुत सैंडविच दिख रहा है।"
   },
   {
     "id": 45,
@@ -853,7 +1117,13 @@ const wordList500 = [
     "meaning_fr": "saucisse",
     "meaningFr": "saucisse",
     "example_fr": "Je vois d'excellentes saucisses.",
-    "exampleFr": "Je vois d'excellentes saucisses."
+    "exampleFr": "Je vois d'excellentes saucisses.",
+    "meaning_ja": "ソーセージ",
+    "example_ja": "ここで素晴らしいソーセージを見ました。",
+    "meaning_vi": "xúc xích",
+    "example_vi": "Tôi thấy một chiếc xúc xích tuyệt vời ở đây.",
+    "meaning_hi": "सॉसेज",
+    "example_hi": "मुझे यहां एक अद्भुत सॉसेज दिखाई दे रहा है।"
   },
   {
     "id": 46,
@@ -872,7 +1142,13 @@ const wordList500 = [
     "meaning_fr": "porc",
     "meaningFr": "porc",
     "example_fr": "Je vois du bon porc.",
-    "exampleFr": "Je vois du bon porc."
+    "exampleFr": "Je vois du bon porc.",
+    "meaning_ja": "豚肉",
+    "example_ja": "ここで素晴らしい豚肉を見ました。",
+    "meaning_vi": "Thịt lợn",
+    "example_vi": "Tôi thấy món thịt lợn tuyệt vời ở đây.",
+    "meaning_hi": "सुअर का माँस",
+    "example_hi": "मुझे यहां एक अद्भुत सूअर का मांस दिखाई देता है।"
   },
   {
     "id": 47,
@@ -891,7 +1167,13 @@ const wordList500 = [
     "meaning_fr": "boeuf",
     "meaningFr": "boeuf",
     "example_fr": "Je vois du bon bœuf.",
-    "exampleFr": "Je vois du bon bœuf."
+    "exampleFr": "Je vois du bon bœuf.",
+    "meaning_ja": "牛肉",
+    "example_ja": "ここで素晴らしい牛肉を見ました。",
+    "meaning_vi": "Thịt bò",
+    "example_vi": "Tôi thấy món thịt bò tuyệt vời ở đây.",
+    "meaning_hi": "गाय का मांस",
+    "example_hi": "मुझे यहाँ एक अद्भुत गोमांस दिखाई देता है।"
   },
   {
     "id": 48,
@@ -910,7 +1192,13 @@ const wordList500 = [
     "meaning_fr": "confiture",
     "meaningFr": "confiture",
     "example_fr": "Je regarde de la bonne confiture.",
-    "exampleFr": "Je regarde de la bonne confiture."
+    "exampleFr": "Je regarde de la bonne confiture.",
+    "meaning_ja": "ジャム",
+    "example_ja": "ここで素晴らしいジャムを見ました。",
+    "meaning_vi": "Mứt",
+    "example_vi": "Tôi thấy một loại mứt tuyệt vời ở đây.",
+    "meaning_hi": "जाम",
+    "example_hi": "मुझे यहाँ एक अद्भुत जाम दिखाई देता है।"
   },
   {
     "id": 49,
@@ -929,7 +1217,13 @@ const wordList500 = [
     "meaning_fr": "huile",
     "meaningFr": "huile",
     "example_fr": "Je vois une huile merveilleuse.",
-    "exampleFr": "Je vois une huile merveilleuse."
+    "exampleFr": "Je vois une huile merveilleuse.",
+    "meaning_ja": "油",
+    "example_ja": "ここで素晴らしいオイルを見ました。",
+    "meaning_vi": "Dầu",
+    "example_vi": "Tôi thấy ở đây có một loại dầu tuyệt vời.",
+    "meaning_hi": "तेल",
+    "example_hi": "मुझे यहाँ एक अद्भुत तेल दिखाई देता है।"
   },
   {
     "id": 50,
@@ -948,7 +1242,13 @@ const wordList500 = [
     "meaning_fr": "bacon",
     "meaningFr": "bacon",
     "example_fr": "Je vois du bon bacon.",
-    "exampleFr": "Je vois du bon bacon."
+    "exampleFr": "Je vois du bon bacon.",
+    "meaning_ja": "ベーコン",
+    "example_ja": "ここに素晴らしいベーコンがあります。",
+    "meaning_vi": "Thịt xông khói",
+    "example_vi": "Tôi thấy món thịt xông khói tuyệt vời ở đây.",
+    "meaning_hi": "बेकन",
+    "example_hi": "मुझे यहां एक अद्भुत बेकन दिखाई दे रहा है।"
   },
   {
     "id": 51,
@@ -967,7 +1267,13 @@ const wordList500 = [
     "meaning_fr": "bagel",
     "meaningFr": "bagel",
     "example_fr": "Je vois d'excellents bagels.",
-    "exampleFr": "Je vois d'excellents bagels."
+    "exampleFr": "Je vois d'excellents bagels.",
+    "meaning_ja": "ベーグル",
+    "example_ja": "ここで素晴らしいベーグルを見つけました。",
+    "meaning_vi": "bánh mì tròn",
+    "example_vi": "Tôi thấy một chiếc bánh mì tròn tuyệt vời ở đây.",
+    "meaning_hi": "बैगल",
+    "example_hi": "मुझे यहां एक अद्भुत बैगेल दिखाई दे रहा है।"
   },
   {
     "id": 52,
@@ -986,7 +1292,13 @@ const wordList500 = [
     "meaning_fr": "haricots",
     "meaningFr": "haricots",
     "example_fr": "Je vois des haricots merveilleux.",
-    "exampleFr": "Je vois des haricots merveilleux."
+    "exampleFr": "Je vois des haricots merveilleux.",
+    "meaning_ja": "豆",
+    "example_ja": "ここで素晴らしい豆を見ました。",
+    "meaning_vi": "đậu",
+    "example_vi": "Tôi thấy một hạt đậu tuyệt vời ở đây.",
+    "meaning_hi": "बीन",
+    "example_hi": "मुझे यहां एक अद्भुत बीन दिखाई दे रही है।"
   },
   {
     "id": 53,
@@ -1005,7 +1317,13 @@ const wordList500 = [
     "meaning_fr": "fruits",
     "meaningFr": "fruits",
     "example_fr": "Je vois des fruits merveilleux.",
-    "exampleFr": "Je vois des fruits merveilleux."
+    "exampleFr": "Je vois des fruits merveilleux.",
+    "meaning_ja": "ベリー",
+    "example_ja": "ここで素晴らしいベリーを見ました。",
+    "meaning_vi": "quả mọng",
+    "example_vi": "Tôi thấy một quả mọng tuyệt vời ở đây.",
+    "meaning_hi": "बेर",
+    "example_hi": "मुझे यहां एक अद्भुत बेरी दिखाई दे रही है।"
   },
   {
     "id": 54,
@@ -1024,7 +1342,13 @@ const wordList500 = [
     "meaning_fr": "biscuit",
     "meaningFr": "biscuit",
     "example_fr": "Je vois de merveilleux biscuits.",
-    "exampleFr": "Je vois de merveilleux biscuits."
+    "exampleFr": "Je vois de merveilleux biscuits.",
+    "meaning_ja": "ビスケット",
+    "example_ja": "ここで素晴らしいビスケットを見ました。",
+    "meaning_vi": "bánh quy",
+    "example_vi": "Tôi thấy một chiếc bánh quy tuyệt vời ở đây.",
+    "meaning_hi": "बिस्कुट",
+    "example_hi": "मुझे यहाँ एक अद्भुत बिस्कुट दिखाई देता है।"
   },
   {
     "id": 55,
@@ -1043,7 +1367,13 @@ const wordList500 = [
     "meaning_fr": "noix de coco",
     "meaningFr": "noix de coco",
     "example_fr": "Je vois une merveilleuse noix de coco.",
-    "exampleFr": "Je vois une merveilleuse noix de coco."
+    "exampleFr": "Je vois une merveilleuse noix de coco.",
+    "meaning_ja": "ココナッツ",
+    "example_ja": "ここで素晴らしいココナッツを見ます。",
+    "meaning_vi": "dừa",
+    "example_vi": "Tôi thấy một quả dừa tuyệt vời ở đây.",
+    "meaning_hi": "नारियल",
+    "example_hi": "मुझे यहाँ एक अद्भुत नारियल दिखाई देता है।"
   },
   {
     "id": 56,
@@ -1062,7 +1392,13 @@ const wordList500 = [
     "meaning_fr": "gelée",
     "meaningFr": "gelée",
     "example_fr": "Je regarde Wonderful Jelly.",
-    "exampleFr": "Je regarde Wonderful Jelly."
+    "exampleFr": "Je regarde Wonderful Jelly.",
+    "meaning_ja": "ゼリー",
+    "example_ja": "ここで素晴らしいゼリーを見ました。",
+    "meaning_vi": "thạch",
+    "example_vi": "Tôi thấy một loại thạch tuyệt vời ở đây.",
+    "meaning_hi": "जेली",
+    "example_hi": "मुझे यहाँ एक अद्भुत जेली दिखाई देती है।"
   },
   {
     "id": 57,
@@ -1081,7 +1417,13 @@ const wordList500 = [
     "meaning_fr": "mangue",
     "meaningFr": "mangue",
     "example_fr": "La mangue est douce.",
-    "exampleFr": "La mangue est douce."
+    "exampleFr": "La mangue est douce.",
+    "meaning_ja": "マンゴー",
+    "example_ja": "ここに素晴らしいマンゴーがあります。",
+    "meaning_vi": "Quả xoài",
+    "example_vi": "Tôi thấy một quả xoài tuyệt vời ở đây.",
+    "meaning_hi": "आम",
+    "example_hi": "मुझे यहाँ एक अद्भुत आम दिख रहा है।"
   },
   {
     "id": 58,
@@ -1100,7 +1442,13 @@ const wordList500 = [
     "meaning_fr": "kiwi",
     "meaningFr": "kiwi",
     "example_fr": "Je mange du kiwi tous les matins.",
-    "exampleFr": "Je mange du kiwi tous les matins."
+    "exampleFr": "Je mange du kiwi tous les matins.",
+    "meaning_ja": "キウイ",
+    "example_ja": "ここで素晴らしいキウイを見ました。",
+    "meaning_vi": "Kiwi",
+    "example_vi": "Tôi thấy một quả kiwi tuyệt vời ở đây.",
+    "meaning_hi": "कीवी",
+    "example_hi": "मुझे यहां एक अद्भुत कीवी दिखाई दे रही है।"
   },
   {
     "id": 59,
@@ -1119,7 +1467,13 @@ const wordList500 = [
     "meaning_fr": "prunes",
     "meaningFr": "prunes",
     "example_fr": "Les prunes sont violettes.",
-    "exampleFr": "Les prunes sont violettes."
+    "exampleFr": "Les prunes sont violettes.",
+    "meaning_ja": "梅",
+    "example_ja": "ここで素晴らしい梅を見ます。",
+    "meaning_vi": "mận",
+    "example_vi": "Tôi thấy một quả mận tuyệt vời ở đây.",
+    "meaning_hi": "आलूबुखारा",
+    "example_hi": "मुझे यहाँ एक अद्भुत बेर दिखाई देता है।"
   },
   {
     "id": 60,
@@ -1138,7 +1492,13 @@ const wordList500 = [
     "meaning_fr": "myrtille",
     "meaningFr": "myrtille",
     "example_fr": "Les myrtilles sont très petites.",
-    "exampleFr": "Les myrtilles sont très petites."
+    "exampleFr": "Les myrtilles sont très petites.",
+    "meaning_ja": "ブルーベリー",
+    "example_ja": "ここで素晴らしいブルーベリーを見ました。",
+    "meaning_vi": "việt quất",
+    "example_vi": "Tôi thấy một quả việt quất tuyệt vời ở đây.",
+    "meaning_hi": "ब्लूबेरी",
+    "example_hi": "मुझे यहां एक अद्भुत ब्लूबेरी दिखाई दे रही है।"
   },
   {
     "id": 61,
@@ -1157,7 +1517,13 @@ const wordList500 = [
     "meaning_fr": "nuit",
     "meaningFr": "nuit",
     "example_fr": "Nous rôtissons des châtaignes en hiver.",
-    "exampleFr": "Nous rôtissons des châtaignes en hiver."
+    "exampleFr": "Nous rôtissons des châtaignes en hiver.",
+    "meaning_ja": "栗",
+    "example_ja": "ここで素晴らしい栗を見ました。",
+    "meaning_vi": "hạt dẻ",
+    "example_vi": "Tôi thấy một hạt dẻ tuyệt vời ở đây.",
+    "meaning_hi": "शाहबलूत",
+    "example_hi": "मुझे यहां एक अद्भुत चेस्टनट दिखाई दे रहा है।"
   },
   {
     "id": 62,
@@ -1176,7 +1542,13 @@ const wordList500 = [
     "meaning_fr": "noix",
     "meaningFr": "noix",
     "example_fr": "Les noix ont une coque dure.",
-    "exampleFr": "Les noix ont une coque dure."
+    "exampleFr": "Les noix ont une coque dure.",
+    "meaning_ja": "ウォールナット",
+    "example_ja": "ここに素晴らしいクルミがあります。",
+    "meaning_vi": "quả óc chó",
+    "example_vi": "Tôi thấy một quả óc chó tuyệt vời ở đây.",
+    "meaning_hi": "अखरोट",
+    "example_hi": "मुझे यहां एक अद्भुत अखरोट दिख रहा है।"
   },
   {
     "id": 63,
@@ -1195,7 +1567,13 @@ const wordList500 = [
     "meaning_fr": "cacahuète",
     "meaningFr": "cacahuète",
     "example_fr": "J'aime le beurre de cacahuète.",
-    "exampleFr": "J'aime le beurre de cacahuète."
+    "exampleFr": "J'aime le beurre de cacahuète.",
+    "meaning_ja": "落花生",
+    "example_ja": "ここで素晴らしい落花生を見ました。",
+    "meaning_vi": "Đậu phộng",
+    "example_vi": "Tôi thấy một hạt đậu phộng tuyệt vời ở đây.",
+    "meaning_hi": "मूंगफली",
+    "example_hi": "मुझे यहां एक अद्भुत मूंगफली दिख रही है।"
   },
   {
     "id": 64,
@@ -1214,7 +1592,13 @@ const wordList500 = [
     "meaning_fr": "amande",
     "meaningFr": "amande",
     "example_fr": "Les amandes sont bonnes pour votre corps.",
-    "exampleFr": "Les amandes sont bonnes pour votre corps."
+    "exampleFr": "Les amandes sont bonnes pour votre corps.",
+    "meaning_ja": "アーモンド",
+    "example_ja": "ここに素晴らしいアーモンドが見えます。",
+    "meaning_vi": "hạnh nhân",
+    "example_vi": "Tôi thấy một quả hạnh nhân tuyệt vời ở đây.",
+    "meaning_hi": "बादाम",
+    "example_hi": "मुझे यहां एक अद्भुत बादाम दिखाई दे रहा है।"
   },
   {
     "id": 65,
@@ -1233,7 +1617,13 @@ const wordList500 = [
     "meaning_fr": "chou",
     "meaningFr": "chou",
     "example_fr": "Le chou est gros et rond.",
-    "exampleFr": "Le chou est gros et rond."
+    "exampleFr": "Le chou est gros et rond.",
+    "meaning_ja": "キャベツ",
+    "example_ja": "ここに素晴らしいキャベツがあります。",
+    "meaning_vi": "Bắp cải",
+    "example_vi": "Tôi thấy một bắp cải tuyệt vời ở đây.",
+    "meaning_hi": "पत्ता गोभी",
+    "example_hi": "मुझे यहां एक अद्भुत पत्तागोभी दिख रही है।"
   },
   {
     "id": 66,
@@ -1252,7 +1642,13 @@ const wordList500 = [
     "meaning_fr": "laitue",
     "meaningFr": "laitue",
     "example_fr": "Lavez d'abord la laitue.",
-    "exampleFr": "Lavez d'abord la laitue."
+    "exampleFr": "Lavez d'abord la laitue.",
+    "meaning_ja": "レタス",
+    "example_ja": "ここに素晴らしいレタスがあります。",
+    "meaning_vi": "Rau xà lách",
+    "example_vi": "Tôi thấy một loại rau diếp tuyệt vời ở đây.",
+    "meaning_hi": "सलाद",
+    "example_hi": "मुझे यहां एक अद्भुत सलाद दिख रहा है।"
   },
   {
     "id": 67,
@@ -1271,7 +1667,13 @@ const wordList500 = [
     "meaning_fr": "épinards",
     "meaningFr": "épinards",
     "example_fr": "Manger des épinards rend plus fort.",
-    "exampleFr": "Manger des épinards rend plus fort."
+    "exampleFr": "Manger des épinards rend plus fort.",
+    "meaning_ja": "ほうれん草",
+    "example_ja": "ここで素晴らしいほうれん草を見ました。",
+    "meaning_vi": "Rau chân vịt",
+    "example_vi": "Tôi thấy một loại rau bina tuyệt vời ở đây.",
+    "meaning_hi": "पालक",
+    "example_hi": "मुझे यहां एक अद्भुत पालक दिख रहा है।"
   },
   {
     "id": 68,
@@ -1290,7 +1692,13 @@ const wordList500 = [
     "meaning_fr": "citrouille",
     "meaningFr": "citrouille",
     "example_fr": "Les citrouilles sont orange.",
-    "exampleFr": "Les citrouilles sont orange."
+    "exampleFr": "Les citrouilles sont orange.",
+    "meaning_ja": "パンプキン",
+    "example_ja": "ここで素晴らしいカボチャを見ました。",
+    "meaning_vi": "bí ngô",
+    "example_vi": "Tôi thấy một quả bí ngô tuyệt vời ở đây.",
+    "meaning_hi": "कद्दू",
+    "example_hi": "मुझे यहां एक अद्भुत कद्दू दिखाई दे रहा है।"
   },
   {
     "id": 69,
@@ -1309,7 +1717,13 @@ const wordList500 = [
     "meaning_fr": "ail",
     "meaningFr": "ail",
     "example_fr": "L'ail a une forte odeur.",
-    "exampleFr": "L'ail a une forte odeur."
+    "exampleFr": "L'ail a une forte odeur.",
+    "meaning_ja": "ニンニク",
+    "example_ja": "ここで素晴らしいニンニクを見つけました。",
+    "meaning_vi": "Tỏi",
+    "example_vi": "Tôi thấy một củ tỏi tuyệt vời ở đây.",
+    "meaning_hi": "लहसुन",
+    "example_hi": "मुझे यहाँ एक अद्भुत लहसुन दिखाई देता है।"
   },
   {
     "id": 70,
@@ -1328,7 +1742,13 @@ const wordList500 = [
     "meaning_fr": "champignon",
     "meaningFr": "champignon",
     "example_fr": "Les champignons poussent dans la forêt.",
-    "exampleFr": "Les champignons poussent dans la forêt."
+    "exampleFr": "Les champignons poussent dans la forêt.",
+    "meaning_ja": "キノコ",
+    "example_ja": "ここで素晴らしいキノコを見ました。",
+    "meaning_vi": "nấm",
+    "example_vi": "Tôi thấy một loại nấm tuyệt vời ở đây.",
+    "meaning_hi": "मशरूम",
+    "example_hi": "मुझे यहाँ एक अद्भुत मशरूम दिखाई देता है।"
   },
   {
     "id": 71,
@@ -1347,7 +1767,13 @@ const wordList500 = [
     "meaning_fr": "concombre",
     "meaningFr": "concombre",
     "example_fr": "Les concombres sont longs et verts.",
-    "exampleFr": "Les concombres sont longs et verts."
+    "exampleFr": "Les concombres sont longs et verts.",
+    "meaning_ja": "キュウリ",
+    "example_ja": "ここで素晴らしいキュウリを見ました。",
+    "meaning_vi": "Quả dưa chuột",
+    "example_vi": "Tôi thấy một quả dưa chuột tuyệt vời ở đây.",
+    "meaning_hi": "खीरा",
+    "example_hi": "मुझे यहां एक अद्भुत खीरा दिख रहा है।"
   },
   {
     "id": 72,
@@ -1366,7 +1792,13 @@ const wordList500 = [
     "meaning_fr": "jambon",
     "meaningFr": "jambon",
     "example_fr": "J'ai mis du jambon sur mon sandwich.",
-    "exampleFr": "J'ai mis du jambon sur mon sandwich."
+    "exampleFr": "J'ai mis du jambon sur mon sandwich.",
+    "meaning_ja": "ハム",
+    "example_ja": "ここで素晴らしいハムを見ました。",
+    "meaning_vi": "Giăm bông",
+    "example_vi": "Tôi thấy một con giăm bông tuyệt vời ở đây.",
+    "meaning_hi": "जांघ",
+    "example_hi": "मुझे यहां एक अद्भुत हैम दिखाई दे रहा है।"
   },
   {
     "id": 73,
@@ -1385,7 +1817,13 @@ const wordList500 = [
     "meaning_fr": "crevette",
     "meaningFr": "crevette",
     "example_fr": "Les crevettes deviennent roses à la cuisson.",
-    "exampleFr": "Les crevettes deviennent roses à la cuisson."
+    "exampleFr": "Les crevettes deviennent roses à la cuisson.",
+    "meaning_ja": "エビ",
+    "example_ja": "ここで素晴らしいエビを見ました。",
+    "meaning_vi": "Con tôm",
+    "example_vi": "Tôi thấy một con tôm tuyệt vời ở đây.",
+    "meaning_hi": "झींगा",
+    "example_hi": "मुझे यहां एक अद्भुत झींगा दिख रहा है।"
   },
   {
     "id": 74,
@@ -1404,7 +1842,13 @@ const wordList500 = [
     "meaning_fr": "thon",
     "meaningFr": "thon",
     "example_fr": "Nous avons mangé du thon pour le déjeuner.",
-    "exampleFr": "Nous avons mangé du thon pour le déjeuner."
+    "exampleFr": "Nous avons mangé du thon pour le déjeuner.",
+    "meaning_ja": "マグロ",
+    "example_ja": "ここで素晴らしいマグロを見ました。",
+    "meaning_vi": "Cá ngừ",
+    "example_vi": "Tôi thấy một con cá ngừ tuyệt vời ở đây.",
+    "meaning_hi": "ट्यूना",
+    "example_hi": "मुझे यहां एक अद्भुत ट्यूना दिखाई देती है।"
   },
   {
     "id": 75,
@@ -1423,7 +1867,13 @@ const wordList500 = [
     "meaning_fr": "algue, algue",
     "meaningFr": "algue, algue",
     "example_fr": "Nous mangeons de la soupe aux algues le jour de nos anniversaires.",
-    "exampleFr": "Nous mangeons de la soupe aux algues le jour de nos anniversaires."
+    "exampleFr": "Nous mangeons de la soupe aux algues le jour de nos anniversaires.",
+    "meaning_ja": "海藻",
+    "example_ja": "ここで素晴らしい海藻を見ました。",
+    "meaning_vi": "rong biển",
+    "example_vi": "Tôi thấy một loại rong biển tuyệt vời ở đây.",
+    "meaning_hi": "समुद्री सिवार",
+    "example_hi": "मुझे यहां एक अद्भुत समुद्री शैवाल दिखाई देती है।"
   },
   {
     "id": 76,
@@ -1442,7 +1892,13 @@ const wordList500 = [
     "meaning_fr": "tofu",
     "meaningFr": "tofu",
     "example_fr": "Le tofu est doux et blanc.",
-    "exampleFr": "Le tofu est doux et blanc."
+    "exampleFr": "Le tofu est doux et blanc.",
+    "meaning_ja": "豆腐",
+    "example_ja": "ここで素晴らしい豆腐を見ました。",
+    "meaning_vi": "Đậu phụ",
+    "example_vi": "Tôi thấy món đậu phụ tuyệt vời ở đây.",
+    "meaning_hi": "टोफू",
+    "example_hi": "मुझे यहाँ एक अद्भुत टोफू दिखाई देता है।"
   },
   {
     "id": 77,
@@ -1461,7 +1917,13 @@ const wordList500 = [
     "meaning_fr": "boulettes",
     "meaningFr": "boulettes",
     "example_fr": "Grand-mère fait des raviolis.",
-    "exampleFr": "Grand-mère fait des raviolis."
+    "exampleFr": "Grand-mère fait des raviolis.",
+    "meaning_ja": "団子",
+    "example_ja": "ここで素晴らしい餃子を見ました。",
+    "meaning_vi": "bánh bao",
+    "example_vi": "Tôi thấy một chiếc bánh bao tuyệt vời ở đây.",
+    "meaning_hi": "उबाली हुई पकौड़ी",
+    "example_hi": "मुझे यहाँ एक अद्भुत पकौड़ी दिख रही है।"
   },
   {
     "id": 78,
@@ -1480,7 +1942,13 @@ const wordList500 = [
     "meaning_fr": "crêpes",
     "meaningFr": "crêpes",
     "example_fr": "Je mange des crêpes au miel.",
-    "exampleFr": "Je mange des crêpes au miel."
+    "exampleFr": "Je mange des crêpes au miel.",
+    "meaning_ja": "パンケーキ",
+    "example_ja": "ここで素晴らしいパンケーキを見ました。",
+    "meaning_vi": "bánh xèo",
+    "example_vi": "Tôi thấy một chiếc bánh tuyệt vời ở đây.",
+    "meaning_hi": "पैनकेक",
+    "example_hi": "मुझे यहां एक अद्भुत पैनकेक दिखाई दे रहा है।"
   },
   {
     "id": 79,
@@ -1499,7 +1967,13 @@ const wordList500 = [
     "meaning_fr": "yaourt",
     "meaningFr": "yaourt",
     "example_fr": "J'aime le yaourt aux fruits.",
-    "exampleFr": "J'aime le yaourt aux fruits."
+    "exampleFr": "J'aime le yaourt aux fruits.",
+    "meaning_ja": "ヨーグルト",
+    "example_ja": "ここで素晴らしいヨーグルトを見ました。",
+    "meaning_vi": "Da ua",
+    "example_vi": "Tôi thấy một loại sữa chua tuyệt vời ở đây.",
+    "meaning_hi": "दही",
+    "example_hi": "मुझे यहाँ एक अद्भुत दही दिखाई देता है।"
   },
   {
     "id": 80,
@@ -1518,7 +1992,13 @@ const wordList500 = [
     "meaning_fr": "farine",
     "meaningFr": "farine",
     "example_fr": "Le pain est fabriqué à partir de farine de blé.",
-    "exampleFr": "Le pain est fabriqué à partir de farine de blé."
+    "exampleFr": "Le pain est fabriqué à partir de farine de blé.",
+    "meaning_ja": "小麦粉",
+    "example_ja": "ここで素晴らしい小麦粉を見ました。",
+    "meaning_vi": "Bột mì",
+    "example_vi": "Tôi thấy một loại bột tuyệt vời ở đây.",
+    "meaning_hi": "आटा",
+    "example_hi": "मुझे यहाँ एक अद्भुत आटा दिखाई देता है।"
   },
   {
     "id": 81,
@@ -1537,7 +2017,13 @@ const wordList500 = [
     "meaning_fr": "poivre",
     "meaningFr": "poivre",
     "example_fr": "Ajoutez du poivre.",
-    "exampleFr": "Ajoutez du poivre."
+    "exampleFr": "Ajoutez du poivre.",
+    "meaning_ja": "ペッパー",
+    "example_ja": "ここで素晴らしいピーマンを見ました。",
+    "meaning_vi": "Hạt tiêu",
+    "example_vi": "Tôi thấy một hạt tiêu tuyệt vời ở đây.",
+    "meaning_hi": "काली मिर्च",
+    "example_hi": "मुझे यहाँ एक अद्भुत काली मिर्च दिखाई देती है।"
   },
   {
     "id": 82,
@@ -1556,7 +2042,13 @@ const wordList500 = [
     "meaning_fr": "source",
     "meaningFr": "source",
     "example_fr": "Cette sauce est épicée.",
-    "exampleFr": "Cette sauce est épicée."
+    "exampleFr": "Cette sauce est épicée.",
+    "meaning_ja": "ソース",
+    "example_ja": "ここで素晴らしいソースを見ました。",
+    "meaning_vi": "Nước xốt",
+    "example_vi": "Tôi thấy nước sốt tuyệt vời ở đây.",
+    "meaning_hi": "सॉस",
+    "example_hi": "मुझे यहाँ एक अद्भुत चटनी दिख रही है।"
   },
   {
     "id": 83,
@@ -1575,7 +2067,13 @@ const wordList500 = [
     "meaning_fr": "ragoût, ragoût",
     "meaningFr": "ragoût, ragoût",
     "example_fr": "Le ragoût est très chaud.",
-    "exampleFr": "Le ragoût est très chaud."
+    "exampleFr": "Le ragoût est très chaud.",
+    "meaning_ja": "シチュー",
+    "example_ja": "ここで素晴らしいシチューを見ました。",
+    "meaning_vi": "Món hầm",
+    "example_vi": "Tôi thấy món hầm tuyệt vời ở đây.",
+    "meaning_hi": "मछली पालने का जहाज़",
+    "example_hi": "मुझे यहां एक अद्भुत स्टू दिखाई दे रहा है।"
   },
   {
     "id": 84,
@@ -1594,7 +2092,13 @@ const wordList500 = [
     "meaning_fr": "céréales",
     "meaningFr": "céréales",
     "example_fr": "Je mange des céréales au petit-déjeuner.",
-    "exampleFr": "Je mange des céréales au petit-déjeuner."
+    "exampleFr": "Je mange des céréales au petit-déjeuner.",
+    "meaning_ja": "穀物",
+    "example_ja": "ここで素晴らしいシリアルを見ました。",
+    "meaning_vi": "Ngũ cốc",
+    "example_vi": "Tôi thấy một loại ngũ cốc tuyệt vời ở đây.",
+    "meaning_hi": "अनाज",
+    "example_hi": "मुझे यहां एक अद्भुत अनाज दिखाई देता है।"
   },
   {
     "id": 85,
@@ -1613,7 +2117,13 @@ const wordList500 = [
     "meaning_fr": "chien/chiot",
     "meaningFr": "chien/chiot",
     "example_fr": "Mon chien est petit.",
-    "exampleFr": "Mon chien est petit."
+    "exampleFr": "Mon chien est petit.",
+    "meaning_ja": "犬",
+    "example_ja": "かわいい犬が公園で遊んでいます。",
+    "meaning_vi": "Chó",
+    "example_vi": "Chú chó dễ thương đang chơi trong công viên.",
+    "meaning_hi": "कुत्ता",
+    "example_hi": "प्यारा कुत्ता पार्क में खेल रहा है."
   },
   {
     "id": 86,
@@ -1632,7 +2142,13 @@ const wordList500 = [
     "meaning_fr": "chat",
     "meaningFr": "chat",
     "example_fr": "Le chat dort.",
-    "exampleFr": "Le chat dort."
+    "exampleFr": "Le chat dort.",
+    "meaning_ja": "猫",
+    "example_ja": "かわいい猫が公園で遊んでいます。",
+    "meaning_vi": "Con mèo",
+    "example_vi": "Con mèo dễ thương đang chơi trong công viên.",
+    "meaning_hi": "बिल्ली",
+    "example_hi": "प्यारी सी बिल्ली पार्क में खेल रही है।"
   },
   {
     "id": 87,
@@ -1651,7 +2167,13 @@ const wordList500 = [
     "meaning_fr": "oiseau",
     "meaningFr": "oiseau",
     "example_fr": "Les oiseaux peuvent voler.",
-    "exampleFr": "Les oiseaux peuvent voler."
+    "exampleFr": "Les oiseaux peuvent voler.",
+    "meaning_ja": "鳥",
+    "example_ja": "ここで素晴らしい鳥を見ました。",
+    "meaning_vi": "Chim",
+    "example_vi": "Tôi thấy một con chim tuyệt vời ở đây.",
+    "meaning_hi": "चिड़िया",
+    "example_hi": "मुझे यहाँ एक अद्भुत पक्षी दिखाई देता है।"
   },
   {
     "id": 88,
@@ -1670,7 +2192,13 @@ const wordList500 = [
     "meaning_fr": "canard",
     "meaningFr": "canard",
     "example_fr": "Les canards savent bien nager.",
-    "exampleFr": "Les canards savent bien nager."
+    "exampleFr": "Les canards savent bien nager.",
+    "meaning_ja": "アヒル",
+    "example_ja": "ここで素晴らしいアヒルを見ました。",
+    "meaning_vi": "Con vịt",
+    "example_vi": "Tôi thấy một con vịt tuyệt vời ở đây.",
+    "meaning_hi": "बत्तख",
+    "example_hi": "मुझे यहां एक अद्भुत बत्तख दिखाई दे रही है।"
   },
   {
     "id": 89,
@@ -1689,7 +2217,13 @@ const wordList500 = [
     "meaning_fr": "poulet",
     "meaningFr": "poulet",
     "example_fr": "Le poulet est blanc.",
-    "exampleFr": "Le poulet est blanc."
+    "exampleFr": "Le poulet est blanc.",
+    "meaning_ja": "チキン",
+    "example_ja": "ここで素晴らしい鶏を見ました。",
+    "meaning_vi": "Thịt gà",
+    "example_vi": "Tôi thấy một con gà tuyệt vời ở đây.",
+    "meaning_hi": "मुर्गा",
+    "example_hi": "मुझे यहाँ एक अद्भुत मुर्गी दिखाई देती है।"
   },
   {
     "id": 90,
@@ -1708,7 +2242,13 @@ const wordList500 = [
     "meaning_fr": "cochon",
     "meaningFr": "cochon",
     "example_fr": "Les cochons sont roses.",
-    "exampleFr": "Les cochons sont roses."
+    "exampleFr": "Les cochons sont roses.",
+    "meaning_ja": "豚",
+    "example_ja": "ここで素晴らしい豚を見ました。",
+    "meaning_vi": "Con lợn",
+    "example_vi": "Tôi thấy một con lợn tuyệt vời ở đây.",
+    "meaning_hi": "सुअर",
+    "example_hi": "मुझे यहां एक अद्भुत सुअर दिखाई दे रहा है।"
   },
   {
     "id": 91,
@@ -1727,7 +2267,13 @@ const wordList500 = [
     "meaning_fr": "vache",
     "meaningFr": "vache",
     "example_fr": "Les vaches nous donnent du lait.",
-    "exampleFr": "Les vaches nous donnent du lait."
+    "exampleFr": "Les vaches nous donnent du lait.",
+    "meaning_ja": "牛",
+    "example_ja": "ここで素晴らしい牛を見かけます。",
+    "meaning_vi": "bò",
+    "example_vi": "Tôi thấy một con bò tuyệt vời ở đây.",
+    "meaning_hi": "गाय",
+    "example_hi": "मुझे यहाँ एक अद्भुत गाय दिखाई देती है।"
   },
   {
     "id": 92,
@@ -1746,7 +2292,13 @@ const wordList500 = [
     "meaning_fr": "cheval",
     "meaningFr": "cheval",
     "example_fr": "Les chevaux courent vite.",
-    "exampleFr": "Les chevaux courent vite."
+    "exampleFr": "Les chevaux courent vite.",
+    "meaning_ja": "馬",
+    "example_ja": "ここで素晴らしい馬を見ました。",
+    "meaning_vi": "Ngựa",
+    "example_vi": "Tôi thấy một con ngựa tuyệt vời ở đây.",
+    "meaning_hi": "घोड़ा",
+    "example_hi": "मुझे यहाँ एक अद्भुत घोड़ा दिखाई देता है।"
   },
   {
     "id": 93,
@@ -1765,7 +2317,13 @@ const wordList500 = [
     "meaning_fr": "mouton",
     "meaningFr": "mouton",
     "example_fr": "L'agneau est moelleux.",
-    "exampleFr": "L'agneau est moelleux."
+    "exampleFr": "L'agneau est moelleux.",
+    "meaning_ja": "羊",
+    "example_ja": "ここで素晴らしい羊を見かけます。",
+    "meaning_vi": "Con cừu",
+    "example_vi": "Tôi thấy một con cừu tuyệt vời ở đây.",
+    "meaning_hi": "भेड़",
+    "example_hi": "मुझे यहाँ एक अद्भुत भेड़ दिखाई देती है।"
   },
   {
     "id": 94,
@@ -1784,7 +2342,13 @@ const wordList500 = [
     "meaning_fr": "lapin",
     "meaningFr": "lapin",
     "example_fr": "Le lapin saute.",
-    "exampleFr": "Le lapin saute."
+    "exampleFr": "Le lapin saute.",
+    "meaning_ja": "うさぎ",
+    "example_ja": "かわいいウサギが公園で遊んでいます。",
+    "meaning_vi": "Con thỏ",
+    "example_vi": "Chú thỏ dễ thương đang chơi trong công viên.",
+    "meaning_hi": "खरगोश",
+    "example_hi": "प्यारा खरगोश पार्क में खेल रहा है।"
   },
   {
     "id": 95,
@@ -1803,7 +2367,13 @@ const wordList500 = [
     "meaning_fr": "ours",
     "meaningFr": "ours",
     "example_fr": "Les ours sont gros.",
-    "exampleFr": "Les ours sont gros."
+    "exampleFr": "Les ours sont gros.",
+    "meaning_ja": "クマ",
+    "example_ja": "かわいいクマが公園で遊んでいます。",
+    "meaning_vi": "Con gấu",
+    "example_vi": "Chú gấu dễ thương đang chơi trong công viên.",
+    "meaning_hi": "भालू",
+    "example_hi": "प्यारा भालू पार्क में खेल रहा है."
   },
   {
     "id": 96,
@@ -1822,7 +2392,13 @@ const wordList500 = [
     "meaning_fr": "lion",
     "meaningFr": "lion",
     "example_fr": "Le lion est fort.",
-    "exampleFr": "Le lion est fort."
+    "exampleFr": "Le lion est fort.",
+    "meaning_ja": "ライオン",
+    "example_ja": "かわいいライオンが公園で遊んでいます。",
+    "meaning_vi": "Con sư tử",
+    "example_vi": "Chú sư tử dễ thương đang chơi trong công viên.",
+    "meaning_hi": "शेर",
+    "example_hi": "प्यारा शेर पार्क में खेल रहा है."
   },
   {
     "id": 97,
@@ -1841,7 +2417,13 @@ const wordList500 = [
     "meaning_fr": "tigre",
     "meaningFr": "tigre",
     "example_fr": "Les tigres ont des rayures.",
-    "exampleFr": "Les tigres ont des rayures."
+    "exampleFr": "Les tigres ont des rayures.",
+    "meaning_ja": "虎",
+    "example_ja": "かわいいトラが公園で遊んでいます。",
+    "meaning_vi": "Con hổ",
+    "example_vi": "Con hổ dễ thương đang chơi trong công viên.",
+    "meaning_hi": "चीता",
+    "example_hi": "प्यारा बाघ पार्क में खेल रहा है।"
   },
   {
     "id": 98,
@@ -1860,7 +2442,13 @@ const wordList500 = [
     "meaning_fr": "éléphant",
     "meaningFr": "éléphant",
     "example_fr": "Les éléphants ont de longues trompes.",
-    "exampleFr": "Les éléphants ont de longues trompes."
+    "exampleFr": "Les éléphants ont de longues trompes.",
+    "meaning_ja": "象",
+    "example_ja": "かわいい象が公園で遊んでいます。",
+    "meaning_vi": "Con voi",
+    "example_vi": "Chú voi dễ thương đang chơi trong công viên.",
+    "meaning_hi": "हाथी",
+    "example_hi": "प्यारा हाथी पार्क में खेल रहा है।"
   },
   {
     "id": 99,
@@ -1879,7 +2467,13 @@ const wordList500 = [
     "meaning_fr": "girafe",
     "meaningFr": "girafe",
     "example_fr": "Les girafes ont un long cou.",
-    "exampleFr": "Les girafes ont un long cou."
+    "exampleFr": "Les girafes ont un long cou.",
+    "meaning_ja": "キリン",
+    "example_ja": "ここで素晴らしいキリンを見ます。",
+    "meaning_vi": "Hươu cao cổ",
+    "example_vi": "Tôi thấy một con hươu cao cổ tuyệt vời ở đây.",
+    "meaning_hi": "जिराफ",
+    "example_hi": "मुझे यहां एक अद्भुत जिराफ़ दिखाई दे रहा है।"
   },
   {
     "id": 100,
@@ -1898,7 +2492,13 @@ const wordList500 = [
     "meaning_fr": "singe",
     "meaningFr": "singe",
     "example_fr": "Le singe grimpe à l'arbre.",
-    "exampleFr": "Le singe grimpe à l'arbre."
+    "exampleFr": "Le singe grimpe à l'arbre.",
+    "meaning_ja": "猿",
+    "example_ja": "かわいい猿が公園で遊んでいます。",
+    "meaning_vi": "Con khỉ",
+    "example_vi": "Chú khỉ dễ thương đang chơi trong công viên.",
+    "meaning_hi": "बंदर",
+    "example_hi": "प्यारा बंदर पार्क में खेल रहा है."
   },
   {
     "id": 101,
@@ -1917,7 +2517,13 @@ const wordList500 = [
     "meaning_fr": "renard",
     "meaningFr": "renard",
     "example_fr": "Les renards sont intelligents.",
-    "exampleFr": "Les renards sont intelligents."
+    "exampleFr": "Les renards sont intelligents.",
+    "meaning_ja": "キツネ",
+    "example_ja": "ここで素晴らしいキツネを見ました。",
+    "meaning_vi": "cáo",
+    "example_vi": "Tôi thấy một con cáo tuyệt vời ở đây.",
+    "meaning_hi": "लोमड़ी",
+    "example_hi": "मुझे यहाँ एक अद्भुत लोमड़ी दिखाई देती है।"
   },
   {
     "id": 102,
@@ -1936,7 +2542,13 @@ const wordList500 = [
     "meaning_fr": "grenouille",
     "meaningFr": "grenouille",
     "example_fr": "La grenouille saute.",
-    "exampleFr": "La grenouille saute."
+    "exampleFr": "La grenouille saute.",
+    "meaning_ja": "蛙",
+    "example_ja": "ここで素晴らしいカエルを見ました。",
+    "meaning_vi": "Con ếch",
+    "example_vi": "Tôi thấy một con ếch tuyệt vời ở đây.",
+    "meaning_hi": "मेंढक",
+    "example_hi": "मुझे यहाँ एक अद्भुत मेढक दिखाई दे रहा है।"
   },
   {
     "id": 103,
@@ -1955,7 +2567,13 @@ const wordList500 = [
     "meaning_fr": "serpent",
     "meaningFr": "serpent",
     "example_fr": "Les serpents sont longs.",
-    "exampleFr": "Les serpents sont longs."
+    "exampleFr": "Les serpents sont longs.",
+    "meaning_ja": "蛇",
+    "example_ja": "ここで素晴らしいヘビを見ました。",
+    "meaning_vi": "Rắn",
+    "example_vi": "Tôi thấy một con rắn tuyệt vời ở đây.",
+    "meaning_hi": "साँप",
+    "example_hi": "मुझे यहाँ एक अद्भुत साँप दिखाई देता है।"
   },
   {
     "id": 104,
@@ -1974,7 +2592,13 @@ const wordList500 = [
     "meaning_fr": "tortue",
     "meaningFr": "tortue",
     "example_fr": "Les tortues sont lentes.",
-    "exampleFr": "Les tortues sont lentes."
+    "exampleFr": "Les tortues sont lentes.",
+    "meaning_ja": "カメ",
+    "example_ja": "ここで素晴らしいカメを見ました。",
+    "meaning_vi": "Con rùa",
+    "example_vi": "Tôi thấy một con rùa tuyệt vời ở đây.",
+    "meaning_hi": "कछुआ",
+    "example_hi": "मुझे यहाँ एक अद्भुत कछुआ दिखाई दे रहा है।"
   },
   {
     "id": 105,
@@ -1993,7 +2617,13 @@ const wordList500 = [
     "meaning_fr": "baleine",
     "meaningFr": "baleine",
     "example_fr": "Les baleines sont très grosses.",
-    "exampleFr": "Les baleines sont très grosses."
+    "exampleFr": "Les baleines sont très grosses.",
+    "meaning_ja": "鯨",
+    "example_ja": "ここで素晴らしいクジラを見ます。",
+    "meaning_vi": "Cá voi",
+    "example_vi": "Tôi thấy một con cá voi tuyệt vời ở đây.",
+    "meaning_hi": "व्हेल",
+    "example_hi": "मुझे यहां एक अद्भुत व्हेल दिखाई देती है।"
   },
   {
     "id": 106,
@@ -2012,7 +2642,13 @@ const wordList500 = [
     "meaning_fr": "dauphin",
     "meaningFr": "dauphin",
     "example_fr": "Les dauphins sont intelligents.",
-    "exampleFr": "Les dauphins sont intelligents."
+    "exampleFr": "Les dauphins sont intelligents.",
+    "meaning_ja": "イルカ",
+    "example_ja": "ここで素晴らしいイルカを見ます。",
+    "meaning_vi": "Cá heo",
+    "example_vi": "Tôi thấy một con cá heo tuyệt vời ở đây.",
+    "meaning_hi": "डॉल्फिन",
+    "example_hi": "मुझे यहां एक अद्भुत डॉल्फिन दिखाई देती है।"
   },
   {
     "id": 107,
@@ -2031,7 +2667,13 @@ const wordList500 = [
     "meaning_fr": "requin",
     "meaningFr": "requin",
     "example_fr": "Les requins ont des dents pointues.",
-    "exampleFr": "Les requins ont des dents pointues."
+    "exampleFr": "Les requins ont des dents pointues.",
+    "meaning_ja": "サメ",
+    "example_ja": "ここで素晴らしいサメを見ました。",
+    "meaning_vi": "cá mập",
+    "example_vi": "Tôi thấy một con cá mập tuyệt vời ở đây.",
+    "meaning_hi": "शार्क",
+    "example_hi": "मुझे यहां एक अद्भुत शार्क दिखाई दे रही है।"
   },
   {
     "id": 108,
@@ -2050,7 +2692,13 @@ const wordList500 = [
     "meaning_fr": "rat",
     "meaningFr": "rat",
     "example_fr": "Les rats sont très petits.",
-    "exampleFr": "Les rats sont très petits."
+    "exampleFr": "Les rats sont très petits.",
+    "meaning_ja": "ねずみ",
+    "example_ja": "ここで素晴らしいネズミを見ました。",
+    "meaning_vi": "Chuột",
+    "example_vi": "Tôi thấy một con chuột tuyệt vời ở đây.",
+    "meaning_hi": "चूहा",
+    "example_hi": "मुझे यहाँ एक अद्भुत चूहा दिखाई देता है।"
   },
   {
     "id": 109,
@@ -2069,7 +2717,13 @@ const wordList500 = [
     "meaning_fr": "papillon",
     "meaningFr": "papillon",
     "example_fr": "Le papillon est joli.",
-    "exampleFr": "Le papillon est joli."
+    "exampleFr": "Le papillon est joli.",
+    "meaning_ja": "蝶",
+    "example_ja": "ここで素晴らしい蝶を見ます。",
+    "meaning_vi": "Bươm bướm",
+    "example_vi": "Tôi thấy một con bướm tuyệt vời ở đây.",
+    "meaning_hi": "तितली",
+    "example_hi": "मुझे यहाँ एक अद्भुत तितली दिखाई देती है।"
   },
   {
     "id": 110,
@@ -2088,7 +2742,13 @@ const wordList500 = [
     "meaning_fr": "abeille",
     "meaningFr": "abeille",
     "example_fr": "Les abeilles fabriquent du miel.",
-    "exampleFr": "Les abeilles fabriquent du miel."
+    "exampleFr": "Les abeilles fabriquent du miel.",
+    "meaning_ja": "蜂",
+    "example_ja": "ここで素晴らしいミツバチを見ました。",
+    "meaning_vi": "Con ong",
+    "example_vi": "Tôi thấy một con ong tuyệt vời ở đây.",
+    "meaning_hi": "मधुमक्खी",
+    "example_hi": "मुझे यहां एक अद्भुत मधुमक्खी दिखाई दे रही है।"
   },
   {
     "id": 111,
@@ -2107,7 +2767,13 @@ const wordList500 = [
     "meaning_fr": "fourmi",
     "meaningFr": "fourmi",
     "example_fr": "Les fourmis travaillent dur.",
-    "exampleFr": "Les fourmis travaillent dur."
+    "exampleFr": "Les fourmis travaillent dur.",
+    "meaning_ja": "アリ",
+    "example_ja": "ここで素晴らしいアリを見ました。",
+    "meaning_vi": "Kiến",
+    "example_vi": "Tôi thấy một con kiến ​​tuyệt vời ở đây.",
+    "meaning_hi": "चींटी",
+    "example_hi": "मुझे यहां एक अद्भुत चींटी दिखाई दे रही है।"
   },
   {
     "id": 112,
@@ -2126,7 +2792,13 @@ const wordList500 = [
     "meaning_fr": "araignée",
     "meaningFr": "araignée",
     "example_fr": "Une araignée tisse une toile.",
-    "exampleFr": "Une araignée tisse une toile."
+    "exampleFr": "Une araignée tisse une toile.",
+    "meaning_ja": "スパイダー",
+    "example_ja": "ここで素晴らしい蜘蛛を見ました。",
+    "meaning_vi": "nhện",
+    "example_vi": "Tôi thấy một con nhện tuyệt vời ở đây.",
+    "meaning_hi": "मकड़ी",
+    "example_hi": "मुझे यहाँ एक अद्भुत मकड़ी दिखाई देती है।"
   },
   {
     "id": 113,
@@ -2145,7 +2817,13 @@ const wordList500 = [
     "meaning_fr": "pingouin",
     "meaningFr": "pingouin",
     "example_fr": "Les pingouins vivent dans la neige.",
-    "exampleFr": "Les pingouins vivent dans la neige."
+    "exampleFr": "Les pingouins vivent dans la neige.",
+    "meaning_ja": "ペンギン",
+    "example_ja": "ここで素晴らしいペンギンを見ました。",
+    "meaning_vi": "chim cánh cụt",
+    "example_vi": "Tôi thấy một con chim cánh cụt tuyệt vời ở đây.",
+    "meaning_hi": "पेंगुइन",
+    "example_hi": "मुझे यहां एक अद्भुत पेंगुइन दिखाई दे रहा है।"
   },
   {
     "id": 114,
@@ -2164,7 +2842,13 @@ const wordList500 = [
     "meaning_fr": "Panda",
     "meaningFr": "Panda",
     "example_fr": "Les pandas mangent du bambou.",
-    "exampleFr": "Les pandas mangent du bambou."
+    "exampleFr": "Les pandas mangent du bambou.",
+    "meaning_ja": "パンダ",
+    "example_ja": "ここで素晴らしいパンダを見ました。",
+    "meaning_vi": "gấu trúc",
+    "example_vi": "Tôi thấy một con gấu trúc tuyệt vời ở đây.",
+    "meaning_hi": "पांडा",
+    "example_hi": "मुझे यहाँ एक अद्भुत पांडा दिखाई देता है।"
   },
   {
     "id": 115,
@@ -2183,7 +2867,13 @@ const wordList500 = [
     "meaning_fr": "loup",
     "meaningFr": "loup",
     "example_fr": "Je regarde Wonderful Wolf.",
-    "exampleFr": "Je regarde Wonderful Wolf."
+    "exampleFr": "Je regarde Wonderful Wolf.",
+    "meaning_ja": "狼",
+    "example_ja": "ここで素晴らしいオオカミを見ました。",
+    "meaning_vi": "Sói",
+    "example_vi": "Tôi thấy một con sói tuyệt vời ở đây.",
+    "meaning_hi": "भेड़िया",
+    "example_hi": "मुझे यहां एक अद्भुत भेड़िया दिखाई दे रहा है।"
   },
   {
     "id": 116,
@@ -2202,7 +2892,13 @@ const wordList500 = [
     "meaning_fr": "cerf",
     "meaningFr": "cerf",
     "example_fr": "Je vois un joli cerf.",
-    "exampleFr": "Je vois un joli cerf."
+    "exampleFr": "Je vois un joli cerf.",
+    "meaning_ja": "鹿",
+    "example_ja": "ここで素晴らしい鹿を見ます。",
+    "meaning_vi": "Con nai",
+    "example_vi": "Tôi thấy một con nai tuyệt vời ở đây.",
+    "meaning_hi": "हिरन",
+    "example_hi": "मुझे यहाँ एक अद्भुत हिरण दिखाई देता है।"
   },
   {
     "id": 117,
@@ -2221,7 +2917,13 @@ const wordList500 = [
     "meaning_fr": "zèbre",
     "meaningFr": "zèbre",
     "example_fr": "Je vois un joli zèbre.",
-    "exampleFr": "Je vois un joli zèbre."
+    "exampleFr": "Je vois un joli zèbre.",
+    "meaning_ja": "ゼブラ",
+    "example_ja": "ここで素晴らしいシマウマを見ます。",
+    "meaning_vi": "Ngựa vằn",
+    "example_vi": "Tôi thấy một con ngựa vằn tuyệt vời ở đây.",
+    "meaning_hi": "ज़ेबरा",
+    "example_hi": "मुझे यहां एक अद्भुत ज़ेबरा दिखाई दे रहा है।"
   },
   {
     "id": 118,
@@ -2240,7 +2942,13 @@ const wordList500 = [
     "meaning_fr": "koala",
     "meaningFr": "koala",
     "example_fr": "Je vois un magnifique koala.",
-    "exampleFr": "Je vois un magnifique koala."
+    "exampleFr": "Je vois un magnifique koala.",
+    "meaning_ja": "コアラ",
+    "example_ja": "ここで素晴らしいコアラを見ました。",
+    "meaning_vi": "gấu túi",
+    "example_vi": "Tôi thấy một con gấu túi tuyệt vời ở đây.",
+    "meaning_hi": "कोअला",
+    "example_hi": "मुझे यहां एक अद्भुत कोआला दिखाई दे रहा है।"
   },
   {
     "id": 119,
@@ -2259,7 +2967,13 @@ const wordList500 = [
     "meaning_fr": "chouette",
     "meaningFr": "chouette",
     "example_fr": "Je vois un merveilleux hibou.",
-    "exampleFr": "Je vois un merveilleux hibou."
+    "exampleFr": "Je vois un merveilleux hibou.",
+    "meaning_ja": "フクロウ",
+    "example_ja": "ここで素晴らしいフクロウを見ました。",
+    "meaning_vi": "Con cú",
+    "example_vi": "Tôi thấy một con cú tuyệt vời ở đây.",
+    "meaning_hi": "उल्लू",
+    "example_hi": "मुझे यहाँ एक अद्भुत उल्लू दिखाई देता है।"
   },
   {
     "id": 120,
@@ -2278,7 +2992,13 @@ const wordList500 = [
     "meaning_fr": "aigle",
     "meaningFr": "aigle",
     "example_fr": "Je vois un magnifique aigle.",
-    "exampleFr": "Je vois un magnifique aigle."
+    "exampleFr": "Je vois un magnifique aigle.",
+    "meaning_ja": "イーグル",
+    "example_ja": "ここで素晴らしいワシを見ました。",
+    "meaning_vi": "Chim ưng",
+    "example_vi": "Tôi thấy một con đại bàng tuyệt vời ở đây.",
+    "meaning_hi": "गरुड़",
+    "example_hi": "मुझे यहाँ एक अद्भुत चील दिखाई देती है।"
   },
   {
     "id": 121,
@@ -2297,7 +3017,13 @@ const wordList500 = [
     "meaning_fr": "chauve-souris",
     "meaningFr": "chauve-souris",
     "example_fr": "Je vois une jolie chauve-souris.",
-    "exampleFr": "Je vois une jolie chauve-souris."
+    "exampleFr": "Je vois une jolie chauve-souris.",
+    "meaning_ja": "バット",
+    "example_ja": "ここで素晴らしいコウモリを見ました。",
+    "meaning_vi": "dơi",
+    "example_vi": "Tôi thấy một con dơi tuyệt vời ở đây.",
+    "meaning_hi": "बल्ला",
+    "example_hi": "मुझे यहाँ एक अद्भुत बल्ला दिखाई देता है।"
   },
   {
     "id": 122,
@@ -2316,7 +3042,13 @@ const wordList500 = [
     "meaning_fr": "crabe",
     "meaningFr": "crabe",
     "example_fr": "Je vois un crabe sympa.",
-    "exampleFr": "Je vois un crabe sympa."
+    "exampleFr": "Je vois un crabe sympa.",
+    "meaning_ja": "カニ",
+    "example_ja": "ここで素晴らしいカニを見ました。",
+    "meaning_vi": "Cua",
+    "example_vi": "Tôi thấy một con cua tuyệt vời ở đây.",
+    "meaning_hi": "केकड़ा",
+    "example_hi": "मुझे यहाँ एक अद्भुत केकड़ा दिखाई दे रहा है।"
   },
   {
     "id": 123,
@@ -2335,7 +3067,13 @@ const wordList500 = [
     "meaning_fr": "poulpe",
     "meaningFr": "poulpe",
     "example_fr": "Je vois une merveilleuse pieuvre.",
-    "exampleFr": "Je vois une merveilleuse pieuvre."
+    "exampleFr": "Je vois une merveilleuse pieuvre.",
+    "meaning_ja": "タコ",
+    "example_ja": "ここで素晴らしいタコを見ました。",
+    "meaning_vi": "bạch tuộc",
+    "example_vi": "Tôi thấy một con bạch tuộc tuyệt vời ở đây.",
+    "meaning_hi": "ऑक्टोपस",
+    "example_hi": "मुझे यहां एक अद्भुत ऑक्टोपस दिखाई देता है।"
   },
   {
     "id": 124,
@@ -2354,7 +3092,13 @@ const wordList500 = [
     "meaning_fr": "chameau",
     "meaningFr": "chameau",
     "example_fr": "Je vois un joli chameau.",
-    "exampleFr": "Je vois un joli chameau."
+    "exampleFr": "Je vois un joli chameau.",
+    "meaning_ja": "キャメル",
+    "example_ja": "ここで素晴らしいラクダを見ました。",
+    "meaning_vi": "Con lạc đà",
+    "example_vi": "Tôi thấy một con lạc đà tuyệt vời ở đây.",
+    "meaning_hi": "ऊंट",
+    "example_hi": "मुझे यहाँ एक अद्भुत ऊँट दिखाई देता है।"
   },
   {
     "id": 125,
@@ -2373,7 +3117,13 @@ const wordList500 = [
     "meaning_fr": "chèvre",
     "meaningFr": "chèvre",
     "example_fr": "Je vois une jolie chèvre.",
-    "exampleFr": "Je vois une jolie chèvre."
+    "exampleFr": "Je vois une jolie chèvre.",
+    "meaning_ja": "ヤギ",
+    "example_ja": "ここで素晴らしいヤギを見ました。",
+    "meaning_vi": "Con dê",
+    "example_vi": "Tôi thấy một con dê tuyệt vời ở đây.",
+    "meaning_hi": "बकरी",
+    "example_hi": "मुझे यहाँ एक अद्भुत बकरी दिखाई देती है।"
   },
   {
     "id": 126,
@@ -2392,7 +3142,13 @@ const wordList500 = [
     "meaning_fr": "âne",
     "meaningFr": "âne",
     "example_fr": "Je vois un joli âne.",
-    "exampleFr": "Je vois un joli âne."
+    "exampleFr": "Je vois un joli âne.",
+    "meaning_ja": "ロバ",
+    "example_ja": "ここで素晴らしいロバを見かけます。",
+    "meaning_vi": "con lừa",
+    "example_vi": "Tôi thấy một con lừa tuyệt vời ở đây.",
+    "meaning_hi": "गधा",
+    "example_hi": "मुझे यहाँ एक अद्भुत गधा दिखाई देता है।"
   },
   {
     "id": 127,
@@ -2411,7 +3167,13 @@ const wordList500 = [
     "meaning_fr": "bec",
     "meaningFr": "bec",
     "example_fr": "Je vois un joli bec.",
-    "exampleFr": "Je vois un joli bec."
+    "exampleFr": "Je vois un joli bec.",
+    "meaning_ja": "嘴",
+    "example_ja": "ここに素晴らしいくちばしが見えます。",
+    "meaning_vi": "Mỏ",
+    "example_vi": "Tôi thấy một cái mỏ tuyệt vời ở đây.",
+    "meaning_hi": "चोंच",
+    "example_hi": "मुझे यहाँ एक अद्भुत चोंच दिखाई देती है।"
   },
   {
     "id": 128,
@@ -2430,7 +3192,13 @@ const wordList500 = [
     "meaning_fr": "castor",
     "meaningFr": "castor",
     "example_fr": "Je vois un castor sympa.",
-    "exampleFr": "Je vois un castor sympa."
+    "exampleFr": "Je vois un castor sympa.",
+    "meaning_ja": "ビーバー",
+    "example_ja": "ここで素晴らしいビーバーを見ました。",
+    "meaning_vi": "hải ly",
+    "example_vi": "Tôi thấy một con hải ly tuyệt vời ở đây.",
+    "meaning_hi": "ऊदबिलाव",
+    "example_hi": "मुझे यहाँ एक अद्भुत ऊदबिलाव दिखाई देता है।"
   },
   {
     "id": 129,
@@ -2449,7 +3217,13 @@ const wordList500 = [
     "meaning_fr": "bug",
     "meaningFr": "bug",
     "example_fr": "Je vois un merveilleux bug.",
-    "exampleFr": "Je vois un merveilleux bug."
+    "exampleFr": "Je vois un merveilleux bug.",
+    "meaning_ja": "バグ",
+    "example_ja": "ここで素晴らしいバグを見つけました。",
+    "meaning_vi": "Sâu bọ",
+    "example_vi": "Tôi thấy một lỗi tuyệt vời ở đây.",
+    "meaning_hi": "कीड़ा",
+    "example_hi": "मुझे यहां एक अद्भुत बग दिखाई दे रहा है।"
   },
   {
     "id": 130,
@@ -2468,7 +3242,13 @@ const wordList500 = [
     "meaning_fr": "veau",
     "meaningFr": "veau",
     "example_fr": "Je vois un joli veau.",
-    "exampleFr": "Je vois un joli veau."
+    "exampleFr": "Je vois un joli veau.",
+    "meaning_ja": "カーフ",
+    "example_ja": "ここで素晴らしい子牛を見ました。",
+    "meaning_vi": "bê",
+    "example_vi": "Tôi thấy một con bê tuyệt vời ở đây.",
+    "meaning_hi": "बछड़ा",
+    "example_hi": "मुझे यहाँ एक अद्भुत बछड़ा दिखाई देता है।"
   },
   {
     "id": 131,
@@ -2487,7 +3267,13 @@ const wordList500 = [
     "meaning_fr": "dinosaure",
     "meaningFr": "dinosaure",
     "example_fr": "Je vois un dinosaure sympa.",
-    "exampleFr": "Je vois un dinosaure sympa."
+    "exampleFr": "Je vois un dinosaure sympa.",
+    "meaning_ja": "恐竜",
+    "example_ja": "ここで素晴らしい恐竜を見ました。",
+    "meaning_vi": "khủng long",
+    "example_vi": "Tôi thấy một con khủng long tuyệt vời ở đây.",
+    "meaning_hi": "डायनासोर",
+    "example_hi": "मुझे यहां एक अद्भुत डायनासोर दिखाई देता है।"
   },
   {
     "id": 132,
@@ -2506,7 +3292,13 @@ const wordList500 = [
     "meaning_fr": "insecte",
     "meaningFr": "insecte",
     "example_fr": "Je vois un insecte merveilleux.",
-    "exampleFr": "Je vois un insecte merveilleux."
+    "exampleFr": "Je vois un insecte merveilleux.",
+    "meaning_ja": "昆虫",
+    "example_ja": "ここで素晴らしい昆虫を見ました。",
+    "meaning_vi": "Côn trùng",
+    "example_vi": "Tôi thấy một con côn trùng tuyệt vời ở đây.",
+    "meaning_hi": "कीड़ा",
+    "example_hi": "मुझे यहाँ एक अद्भुत कीट दिखाई देता है।"
   },
   {
     "id": 133,
@@ -2525,7 +3317,13 @@ const wordList500 = [
     "meaning_fr": "kangourou",
     "meaningFr": "kangourou",
     "example_fr": "Je vois un kangourou sympa.",
-    "exampleFr": "Je vois un kangourou sympa."
+    "exampleFr": "Je vois un kangourou sympa.",
+    "meaning_ja": "カンガルー",
+    "example_ja": "ここで素晴らしいカンガルーを見ました。",
+    "meaning_vi": "chuột túi",
+    "example_vi": "Tôi thấy một con kangaroo tuyệt vời ở đây.",
+    "meaning_hi": "कंगेरू",
+    "example_hi": "मुझे यहां एक अद्भुत कंगारू दिखाई दे रहा है।"
   },
   {
     "id": 134,
@@ -2544,7 +3342,13 @@ const wordList500 = [
     "meaning_fr": "chaton",
     "meaningFr": "chaton",
     "example_fr": "Je vois un merveilleux chaton.",
-    "exampleFr": "Je vois un merveilleux chaton."
+    "exampleFr": "Je vois un merveilleux chaton.",
+    "meaning_ja": "子猫",
+    "example_ja": "ここで素晴らしい子猫を見かけました。",
+    "meaning_vi": "mèo con",
+    "example_vi": "Tôi thấy một chú mèo con tuyệt vời ở đây.",
+    "meaning_hi": "बिल्ली का बच्चा",
+    "example_hi": "मुझे यहाँ एक अद्भुत बिल्ली का बच्चा दिखाई दे रहा है।"
   },
   {
     "id": 135,
@@ -2563,7 +3367,13 @@ const wordList500 = [
     "meaning_fr": "lézard",
     "meaningFr": "lézard",
     "example_fr": "Je vois un joli lézard.",
-    "exampleFr": "Je vois un joli lézard."
+    "exampleFr": "Je vois un joli lézard.",
+    "meaning_ja": "トカゲ",
+    "example_ja": "ここで素晴らしいトカゲを見ました。",
+    "meaning_vi": "thằn lằn",
+    "example_vi": "Tôi thấy một con thằn lằn tuyệt vời ở đây.",
+    "meaning_hi": "छिपकली",
+    "example_hi": "मुझे यहाँ एक अद्भुत छिपकली दिखाई देती है।"
   },
   {
     "id": 136,
@@ -2582,7 +3392,13 @@ const wordList500 = [
     "meaning_fr": "écureuil",
     "meaningFr": "écureuil",
     "example_fr": "L'écureuil cache les glands.",
-    "exampleFr": "L'écureuil cache les glands."
+    "exampleFr": "L'écureuil cache les glands.",
+    "meaning_ja": "リス",
+    "example_ja": "ここで素晴らしいリスを見ました。",
+    "meaning_vi": "Sóc",
+    "example_vi": "Tôi thấy một con sóc tuyệt vời ở đây.",
+    "meaning_hi": "गिलहरी",
+    "example_hi": "मुझे यहाँ एक अद्भुत गिलहरी दिखाई दे रही है।"
   },
   {
     "id": 137,
@@ -2601,7 +3417,13 @@ const wordList500 = [
     "meaning_fr": "rat",
     "meaningFr": "rat",
     "example_fr": "La souris est entrée dans le trou.",
-    "exampleFr": "La souris est entrée dans le trou."
+    "exampleFr": "La souris est entrée dans le trou.",
+    "meaning_ja": "ねずみ",
+    "example_ja": "ここで素晴らしいネズミを見ました。",
+    "meaning_vi": "Con chuột",
+    "example_vi": "Tôi thấy một con chuột tuyệt vời ở đây.",
+    "meaning_hi": "चूहा",
+    "example_hi": "मुझे यहाँ एक अद्भुत चूहा दिखाई दे रहा है।"
   },
   {
     "id": 138,
@@ -2620,7 +3442,13 @@ const wordList500 = [
     "meaning_fr": "hamster",
     "meaningFr": "hamster",
     "example_fr": "Mon hamster court sur une roue.",
-    "exampleFr": "Mon hamster court sur une roue."
+    "exampleFr": "Mon hamster court sur une roue.",
+    "meaning_ja": "ハムスター",
+    "example_ja": "ここで素晴らしいハムスターを見ました。",
+    "meaning_vi": "chuột đồng",
+    "example_vi": "Tôi thấy một con hamster tuyệt vời ở đây.",
+    "meaning_hi": "हम्सटर",
+    "example_hi": "मुझे यहां एक अद्भुत हम्सटर दिखाई दे रहा है।"
   },
   {
     "id": 139,
@@ -2639,7 +3467,13 @@ const wordList500 = [
     "meaning_fr": "crocodile",
     "meaningFr": "crocodile",
     "example_fr": "Les crocodiles ont des dents pointues.",
-    "exampleFr": "Les crocodiles ont des dents pointues."
+    "exampleFr": "Les crocodiles ont des dents pointues.",
+    "meaning_ja": "クロコダイル",
+    "example_ja": "ここで素晴らしいワニを見ました。",
+    "meaning_vi": "cá sấu",
+    "example_vi": "Tôi thấy một con cá sấu tuyệt vời ở đây.",
+    "meaning_hi": "मगरमच्छ",
+    "example_hi": "मुझे यहाँ एक अद्भुत मगरमच्छ दिखाई देता है।"
   },
   {
     "id": 140,
@@ -2658,7 +3492,13 @@ const wordList500 = [
     "meaning_fr": "méduse",
     "meaningFr": "méduse",
     "example_fr": "Les méduses flottent dans la mer.",
-    "exampleFr": "Les méduses flottent dans la mer."
+    "exampleFr": "Les méduses flottent dans la mer.",
+    "meaning_ja": "クラゲ",
+    "example_ja": "ここで素晴らしいクラゲを見ました。",
+    "meaning_vi": "Sứa",
+    "example_vi": "Tôi thấy một con sứa tuyệt vời ở đây.",
+    "meaning_hi": "जेलिफ़िश",
+    "example_hi": "मुझे यहां एक अद्भुत जेलिफ़िश दिखाई देती है।"
   },
   {
     "id": 141,
@@ -2677,7 +3517,13 @@ const wordList500 = [
     "meaning_fr": "étoile de mer",
     "meaningFr": "étoile de mer",
     "example_fr": "J'ai trouvé une étoile de mer dans le sable.",
-    "exampleFr": "J'ai trouvé une étoile de mer dans le sable."
+    "exampleFr": "J'ai trouvé une étoile de mer dans le sable.",
+    "meaning_ja": "ヒトデ",
+    "example_ja": "ここで素晴らしいヒトデを見ました。",
+    "meaning_vi": "sao biển",
+    "example_vi": "Tôi thấy một con sao biển tuyệt vời ở đây.",
+    "meaning_hi": "तारामछली",
+    "example_hi": "मुझे यहां एक अद्भुत तारामछली दिखाई देती है।"
   },
   {
     "id": 142,
@@ -2696,7 +3542,13 @@ const wordList500 = [
     "meaning_fr": "sceau",
     "meaningFr": "sceau",
     "example_fr": "Les phoques battent des nageoires.",
-    "exampleFr": "Les phoques battent des nageoires."
+    "exampleFr": "Les phoques battent des nageoires.",
+    "meaning_ja": "シール",
+    "example_ja": "ここで素晴らしいアザラシを見ました。",
+    "meaning_vi": "Niêm phong",
+    "example_vi": "Tôi thấy một con dấu tuyệt vời ở đây.",
+    "meaning_hi": "मुहर",
+    "example_hi": "मुझे यहाँ एक अद्भुत मुहर दिखाई देती है।"
   },
   {
     "id": 143,
@@ -2715,7 +3567,13 @@ const wordList500 = [
     "meaning_fr": "corbeau",
     "meaningFr": "corbeau",
     "example_fr": "Les corbeaux sont noirs.",
-    "exampleFr": "Les corbeaux sont noirs."
+    "exampleFr": "Les corbeaux sont noirs.",
+    "meaning_ja": "カラス",
+    "example_ja": "ここで素晴らしいカラスを見ました。",
+    "meaning_vi": "con quạ",
+    "example_vi": "Tôi thấy một con quạ tuyệt vời ở đây.",
+    "meaning_hi": "कौआ",
+    "example_hi": "मुझे यहाँ एक अद्भुत कौआ दिखाई देता है।"
   },
   {
     "id": 144,
@@ -2734,7 +3592,13 @@ const wordList500 = [
     "meaning_fr": "moineau",
     "meaningFr": "moineau",
     "example_fr": "Un moineau était assis sur le fil.",
-    "exampleFr": "Un moineau était assis sur le fil."
+    "exampleFr": "Un moineau était assis sur le fil.",
+    "meaning_ja": "スズメ",
+    "example_ja": "ここで素晴らしいスズメを見ました。",
+    "meaning_vi": "chim sẻ",
+    "example_vi": "Tôi thấy một con chim sẻ tuyệt vời ở đây.",
+    "meaning_hi": "गौरैया",
+    "example_hi": "मुझे यहाँ एक अद्भुत गौरैया दिखाई देती है।"
   },
   {
     "id": 145,
@@ -2753,7 +3617,13 @@ const wordList500 = [
     "meaning_fr": "pigeon",
     "meaningFr": "pigeon",
     "example_fr": "Les pigeons se promènent dans le parc.",
-    "exampleFr": "Les pigeons se promènent dans le parc."
+    "exampleFr": "Les pigeons se promènent dans le parc.",
+    "meaning_ja": "鳩",
+    "example_ja": "ここで素晴らしい鳩を見ました。",
+    "meaning_vi": "chim bồ câu",
+    "example_vi": "Tôi thấy một con chim bồ câu tuyệt vời ở đây.",
+    "meaning_hi": "कबूतर",
+    "example_hi": "मुझे यहाँ एक अद्भुत कबूतर दिखाई देता है।"
   },
   {
     "id": 146,
@@ -2772,7 +3642,13 @@ const wordList500 = [
     "meaning_fr": "perroquet",
     "meaningFr": "perroquet",
     "example_fr": "Les perroquets peuvent parler.",
-    "exampleFr": "Les perroquets peuvent parler."
+    "exampleFr": "Les perroquets peuvent parler.",
+    "meaning_ja": "オウム",
+    "example_ja": "ここで素晴らしいオウムを見ます。",
+    "meaning_vi": "Con vẹt",
+    "example_vi": "Tôi thấy một con vẹt tuyệt vời ở đây.",
+    "meaning_hi": "तोता",
+    "example_hi": "मुझे यहाँ एक अद्भुत तोता दिखाई देता है।"
   },
   {
     "id": 147,
@@ -2791,7 +3667,13 @@ const wordList500 = [
     "meaning_fr": "paon",
     "meaningFr": "paon",
     "example_fr": "Le paon écarte la queue.",
-    "exampleFr": "Le paon écarte la queue."
+    "exampleFr": "Le paon écarte la queue.",
+    "meaning_ja": "孔雀",
+    "example_ja": "ここで素晴らしい孔雀を見ます。",
+    "meaning_vi": "Con công",
+    "example_vi": "Tôi thấy một con công tuyệt vời ở đây.",
+    "meaning_hi": "मोर",
+    "example_hi": "मुझे यहाँ एक अद्भुत मोर दिखाई देता है।"
   },
   {
     "id": 148,
@@ -2810,7 +3692,13 @@ const wordList500 = [
     "meaning_fr": "cygne",
     "meaningFr": "cygne",
     "example_fr": "Des cygnes blancs nagent dans le lac.",
-    "exampleFr": "Des cygnes blancs nagent dans le lac."
+    "exampleFr": "Des cygnes blancs nagent dans le lac.",
+    "meaning_ja": "白鳥",
+    "example_ja": "ここで素晴らしい白鳥を見ます。",
+    "meaning_vi": "thiên nga",
+    "example_vi": "Tôi thấy một con thiên nga tuyệt vời ở đây.",
+    "meaning_hi": "स्वैन",
+    "example_hi": "मुझे यहाँ एक अद्भुत हंस दिखाई देता है।"
   },
   {
     "id": 149,
@@ -2829,7 +3717,13 @@ const wordList500 = [
     "meaning_fr": "oie",
     "meaningFr": "oie",
     "example_fr": "Les oies ont un long cou.",
-    "exampleFr": "Les oies ont un long cou."
+    "exampleFr": "Les oies ont un long cou.",
+    "meaning_ja": "ガチョウ",
+    "example_ja": "ここで素晴らしいガチョウを見かけます。",
+    "meaning_vi": "Ngỗng",
+    "example_vi": "Tôi thấy một con ngỗng tuyệt vời ở đây.",
+    "meaning_hi": "बत्तख",
+    "example_hi": "मुझे यहां एक अद्भुत हंस दिखाई दे रहा है।"
   },
   {
     "id": 150,
@@ -2848,7 +3742,13 @@ const wordList500 = [
     "meaning_fr": "hippopotame",
     "meaningFr": "hippopotame",
     "example_fr": "L'hippopotame est dans l'eau.",
-    "exampleFr": "L'hippopotame est dans l'eau."
+    "exampleFr": "L'hippopotame est dans l'eau.",
+    "meaning_ja": "カバ",
+    "example_ja": "ここで素晴らしいカバを見ました。",
+    "meaning_vi": "Hà mã",
+    "example_vi": "Tôi thấy một con hà mã tuyệt vời ở đây.",
+    "meaning_hi": "हिप्पो",
+    "example_hi": "मुझे यहाँ एक अद्भुत दरियाई घोड़ा दिखाई देता है।"
   },
   {
     "id": 151,
@@ -2867,7 +3767,13 @@ const wordList500 = [
     "meaning_fr": "escargot",
     "meaningFr": "escargot",
     "example_fr": "Les escargots se déplacent très lentement.",
-    "exampleFr": "Les escargots se déplacent très lentement."
+    "exampleFr": "Les escargots se déplacent très lentement.",
+    "meaning_ja": "カタツムリ",
+    "example_ja": "ここで素晴らしいカタツムリを見ました。",
+    "meaning_vi": "Ốc sên",
+    "example_vi": "Tôi thấy một con ốc tuyệt vời ở đây.",
+    "meaning_hi": "घोंघा",
+    "example_hi": "मुझे यहां एक अद्भुत घोंघा दिखाई दे रहा है।"
   },
   {
     "id": 152,
@@ -2886,7 +3792,13 @@ const wordList500 = [
     "meaning_fr": "ver de terre",
     "meaningFr": "ver de terre",
     "example_fr": "Les vers de terre vivent sous terre.",
-    "exampleFr": "Les vers de terre vivent sous terre."
+    "exampleFr": "Les vers de terre vivent sous terre.",
+    "meaning_ja": "ワーム",
+    "example_ja": "ここで素晴らしい虫を見ました。",
+    "meaning_vi": "Sâu",
+    "example_vi": "Tôi thấy một con sâu tuyệt vời ở đây.",
+    "meaning_hi": "कीड़ा",
+    "example_hi": "मुझे यहाँ एक अद्भुत कीड़ा दिखाई देता है।"
   },
   {
     "id": 153,
@@ -2905,7 +3817,13 @@ const wordList500 = [
     "meaning_fr": "coléoptère",
     "meaningFr": "coléoptère",
     "example_fr": "Les coléoptères ont le dos dur.",
-    "exampleFr": "Les coléoptères ont le dos dur."
+    "exampleFr": "Les coléoptères ont le dos dur.",
+    "meaning_ja": "甲虫",
+    "example_ja": "ここで素晴らしいカブトムシを見ました。",
+    "meaning_vi": "Bọ cánh cứng",
+    "example_vi": "Tôi thấy một con bọ tuyệt vời ở đây.",
+    "meaning_hi": "भृंग",
+    "example_hi": "मुझे यहाँ एक अद्भुत भृंग दिखाई देता है।"
   },
   {
     "id": 154,
@@ -2924,7 +3842,13 @@ const wordList500 = [
     "meaning_fr": "sauterelle",
     "meaningFr": "sauterelle",
     "example_fr": "Les sauterelles sautent haut.",
-    "exampleFr": "Les sauterelles sautent haut."
+    "exampleFr": "Les sauterelles sautent haut.",
+    "meaning_ja": "バッタ",
+    "example_ja": "ここで素晴らしいバッタを見ました。",
+    "meaning_vi": "châu chấu",
+    "example_vi": "Tôi thấy một con châu chấu tuyệt vời ở đây.",
+    "meaning_hi": "टिड्डी",
+    "example_hi": "मुझे यहां एक अद्भुत टिड्डा दिखाई दे रहा है।"
   },
   {
     "id": 155,
@@ -2943,7 +3867,13 @@ const wordList500 = [
     "meaning_fr": "libellule",
     "meaningFr": "libellule",
     "example_fr": "La libellule a survolé l'étang.",
-    "exampleFr": "La libellule a survolé l'étang."
+    "exampleFr": "La libellule a survolé l'étang.",
+    "meaning_ja": "トンボ",
+    "example_ja": "ここで素晴らしいトンボを見ました。",
+    "meaning_vi": "Chuồn chuồn",
+    "example_vi": "Tôi thấy một con chuồn chuồn tuyệt vời ở đây.",
+    "meaning_hi": "Dragonfly",
+    "example_hi": "मुझे यहां एक अद्भुत ड्रैगनफ्लाई दिखाई दे रही है।"
   },
   {
     "id": 156,
@@ -2962,7 +3892,13 @@ const wordList500 = [
     "meaning_fr": "luciole",
     "meaningFr": "luciole",
     "example_fr": "Les lucioles brillent la nuit.",
-    "exampleFr": "Les lucioles brillent la nuit."
+    "exampleFr": "Les lucioles brillent la nuit.",
+    "meaning_ja": "ホタル",
+    "example_ja": "ここで素晴らしいホタルが見られます。",
+    "meaning_vi": "Đom đóm",
+    "example_vi": "Tôi thấy một con đom đóm tuyệt vời ở đây.",
+    "meaning_hi": "जुगनू",
+    "example_hi": "मुझे यहाँ एक अद्भुत जुगनू दिखाई देता है।"
   },
   {
     "id": 157,
@@ -2981,7 +3917,13 @@ const wordList500 = [
     "meaning_fr": "moustique",
     "meaningFr": "moustique",
     "example_fr": "Un moustique m'a piqué le bras.",
-    "exampleFr": "Un moustique m'a piqué le bras."
+    "exampleFr": "Un moustique m'a piqué le bras.",
+    "meaning_ja": "蚊",
+    "example_ja": "ここで素晴らしい蚊を見ました。",
+    "meaning_vi": "Muỗi",
+    "example_vi": "Tôi thấy một con muỗi tuyệt vời ở đây.",
+    "meaning_hi": "मच्छर",
+    "example_hi": "मुझे यहाँ एक अद्भुत मच्छर दिखाई देता है।"
   },
   {
     "id": 158,
@@ -3000,7 +3942,13 @@ const wordList500 = [
     "meaning_fr": "chenille",
     "meaningFr": "chenille",
     "example_fr": "Une chenille devient un papillon.",
-    "exampleFr": "Une chenille devient un papillon."
+    "exampleFr": "Une chenille devient un papillon.",
+    "meaning_ja": "キャタピラー",
+    "example_ja": "ここで素晴らしい毛虫を見ました。",
+    "meaning_vi": "sâu bướm",
+    "example_vi": "Tôi thấy một con sâu bướm tuyệt vời ở đây.",
+    "meaning_hi": "कमला",
+    "example_hi": "मुझे यहां एक अद्भुत कैटरपिलर दिखाई दे रहा है।"
   },
   {
     "id": 159,
@@ -3019,7 +3967,13 @@ const wordList500 = [
     "meaning_fr": "papillon de nuit",
     "meaningFr": "papillon de nuit",
     "example_fr": "Un papillon de nuit vola vers la lumière.",
-    "exampleFr": "Un papillon de nuit vola vers la lumière."
+    "exampleFr": "Un papillon de nuit vola vers la lumière.",
+    "meaning_ja": "蛾",
+    "example_ja": "ここで素晴らしい蛾を見ました。",
+    "meaning_vi": "Bướm đêm",
+    "example_vi": "Tôi thấy một con bướm tuyệt vời ở đây.",
+    "meaning_hi": "कीट",
+    "example_hi": "मुझे यहाँ एक अद्भुत पतंगा दिखाई देता है।"
   },
   {
     "id": 160,
@@ -3038,7 +3992,13 @@ const wordList500 = [
     "meaning_fr": "coccinelle",
     "meaningFr": "coccinelle",
     "example_fr": "Les coccinelles ont les ailes rouges.",
-    "exampleFr": "Les coccinelles ont les ailes rouges."
+    "exampleFr": "Les coccinelles ont les ailes rouges.",
+    "meaning_ja": "てんとう虫",
+    "example_ja": "ここで素晴らしいてんとう虫を見ました。",
+    "meaning_vi": "bọ rùa",
+    "example_vi": "Tôi thấy một con bọ rùa tuyệt vời ở đây.",
+    "meaning_hi": "एक प्रकार का गुबरैला",
+    "example_hi": "मुझे यहां एक अद्भुत लेडीबग दिखाई दे रही है।"
   },
   {
     "id": 161,
@@ -3057,7 +4017,13 @@ const wordList500 = [
     "meaning_fr": "ailes",
     "meaningFr": "ailes",
     "example_fr": "Les oiseaux volent avec des ailes.",
-    "exampleFr": "Les oiseaux volent avec des ailes."
+    "exampleFr": "Les oiseaux volent avec des ailes.",
+    "meaning_ja": "翼",
+    "example_ja": "ここに素晴らしい翼が見えます。",
+    "meaning_vi": "Cánh",
+    "example_vi": "Tôi thấy một đôi cánh tuyệt vời ở đây.",
+    "meaning_hi": "विंग",
+    "example_hi": "मुझे यहाँ एक अद्भुत पंख दिखाई देता है।"
   },
   {
     "id": 162,
@@ -3076,7 +4042,13 @@ const wordList500 = [
     "meaning_fr": "queue",
     "meaningFr": "queue",
     "example_fr": "Le chien remue la queue.",
-    "exampleFr": "Le chien remue la queue."
+    "exampleFr": "Le chien remue la queue.",
+    "meaning_ja": "しっぽ",
+    "example_ja": "ここに素晴らしい尾が見えます。",
+    "meaning_vi": "Đuôi",
+    "example_vi": "Tôi thấy một cái đuôi tuyệt vời ở đây.",
+    "meaning_hi": "पूँछ",
+    "example_hi": "मुझे यहाँ एक अद्भुत पूँछ दिखाई देती है।"
   },
   {
     "id": 163,
@@ -3095,7 +4067,13 @@ const wordList500 = [
     "meaning_fr": "pied, pied avant",
     "meaningFr": "pied, pied avant",
     "example_fr": "Le chat se lèche les pattes avant.",
-    "exampleFr": "Le chat se lèche les pattes avant."
+    "exampleFr": "Le chat se lèche les pattes avant.",
+    "meaning_ja": "足",
+    "example_ja": "ここに素晴らしい足が見えます。",
+    "meaning_vi": "chân",
+    "example_vi": "Tôi thấy một bàn chân tuyệt vời ở đây.",
+    "meaning_hi": "पंजा",
+    "example_hi": "मुझे यहाँ एक अद्भुत पंजा दिखाई देता है।"
   },
   {
     "id": 164,
@@ -3114,7 +4092,13 @@ const wordList500 = [
     "meaning_fr": "père/père",
     "meaningFr": "père/père",
     "example_fr": "Mon père est gentil.",
-    "exampleFr": "Mon père est gentil."
+    "exampleFr": "Mon père est gentil.",
+    "meaning_ja": "父親",
+    "example_ja": "ここには素晴らしい父親がいます。",
+    "meaning_vi": "Bố",
+    "example_vi": "Tôi thấy ở đây có một người cha tuyệt vời.",
+    "meaning_hi": "पिता",
+    "example_hi": "मैं यहाँ एक अद्भुत पिता को देखता हूँ।"
   },
   {
     "id": 165,
@@ -3133,7 +4117,13 @@ const wordList500 = [
     "meaning_fr": "mère/maman",
     "meaningFr": "mère/maman",
     "example_fr": "Ma mère est une bonne cuisinière.",
-    "exampleFr": "Ma mère est une bonne cuisinière."
+    "exampleFr": "Ma mère est une bonne cuisinière.",
+    "meaning_ja": "母親",
+    "example_ja": "ここには素晴らしい母親がいます。",
+    "meaning_vi": "Mẹ",
+    "example_vi": "Tôi thấy ở đây có một người mẹ tuyệt vời.",
+    "meaning_hi": "माँ",
+    "example_hi": "मैं यहाँ एक अद्भुत माँ को देखता हूँ।"
   },
   {
     "id": 166,
@@ -3152,7 +4142,13 @@ const wordList500 = [
     "meaning_fr": "frère cadet/frère aîné/oppa",
     "meaningFr": "frère cadet/frère aîné/oppa",
     "example_fr": "J'ai un petit frère.",
-    "exampleFr": "J'ai un petit frère."
+    "exampleFr": "J'ai un petit frère.",
+    "meaning_ja": "兄弟",
+    "example_ja": "ここに素晴らしい兄弟がいます。",
+    "meaning_vi": "Anh trai",
+    "example_vi": "Tôi thấy ở đây có một người anh em tuyệt vời.",
+    "meaning_hi": "भाई",
+    "example_hi": "मैं यहाँ एक अद्भुत भाई को देखता हूँ।"
   },
   {
     "id": 167,
@@ -3171,7 +4167,13 @@ const wordList500 = [
     "meaning_fr": "sœur cadette/sœur aînée/sœur aînée",
     "meaningFr": "sœur cadette/sœur aînée/sœur aînée",
     "example_fr": "Ma sœur est grande.",
-    "exampleFr": "Ma sœur est grande."
+    "exampleFr": "Ma sœur est grande.",
+    "meaning_ja": "妹",
+    "example_ja": "ここで素晴らしい姉妹に会ったよ。",
+    "meaning_vi": "Em gái",
+    "example_vi": "Tôi thấy ở đây có một người chị tuyệt vời.",
+    "meaning_hi": "बहन",
+    "example_hi": "मैं यहाँ एक अद्भुत बहन को देखता हूँ।"
   },
   {
     "id": 168,
@@ -3190,7 +4192,13 @@ const wordList500 = [
     "meaning_fr": "bébé",
     "meaningFr": "bébé",
     "example_fr": "Le bébé dort.",
-    "exampleFr": "Le bébé dort."
+    "exampleFr": "Le bébé dort.",
+    "meaning_ja": "赤ちゃん",
+    "example_ja": "ここで素晴らしい赤ちゃんに会ったよ。",
+    "meaning_vi": "Đứa bé",
+    "example_vi": "Tôi thấy một em bé tuyệt vời ở đây.",
+    "meaning_hi": "बच्चा",
+    "example_hi": "मैं यहाँ एक अद्भुत बच्चा देख रहा हूँ।"
   },
   {
     "id": 169,
@@ -3209,7 +4217,13 @@ const wordList500 = [
     "meaning_fr": "grand-père",
     "meaningFr": "grand-père",
     "example_fr": "Mon grand-père sourit beaucoup.",
-    "exampleFr": "Mon grand-père sourit beaucoup."
+    "exampleFr": "Mon grand-père sourit beaucoup.",
+    "meaning_ja": "祖父",
+    "example_ja": "ここで素晴らしいおじいちゃんに会ったよ。",
+    "meaning_vi": "Ông nội",
+    "example_vi": "Tôi thấy một người ông tuyệt vời ở đây.",
+    "meaning_hi": "दादा",
+    "example_hi": "मैं यहाँ एक अद्भुत दादाजी को देखता हूँ।"
   },
   {
     "id": 170,
@@ -3228,7 +4242,13 @@ const wordList500 = [
     "meaning_fr": "grand-mère",
     "meaningFr": "grand-mère",
     "example_fr": "Grand-mère me raconte une histoire.",
-    "exampleFr": "Grand-mère me raconte une histoire."
+    "exampleFr": "Grand-mère me raconte une histoire.",
+    "meaning_ja": "祖母",
+    "example_ja": "ここで素敵なおばあちゃんに会ったよ。",
+    "meaning_vi": "bà ngoại",
+    "example_vi": "Tôi thấy một người bà tuyệt vời ở đây.",
+    "meaning_hi": "दादी",
+    "example_hi": "मैं यहां एक अद्भुत दादी को देखता हूं।"
   },
   {
     "id": 171,
@@ -3247,7 +4267,13 @@ const wordList500 = [
     "meaning_fr": "famille",
     "meaningFr": "famille",
     "example_fr": "J'aime ma famille.",
-    "exampleFr": "J'aime ma famille."
+    "exampleFr": "J'aime ma famille.",
+    "meaning_ja": "家族",
+    "example_ja": "ここには素晴らしい家族がいます。",
+    "meaning_vi": "Gia đình",
+    "example_vi": "Tôi thấy một gia đình tuyệt vời ở đây.",
+    "meaning_hi": "परिवार",
+    "example_hi": "मैं यहां एक अद्भुत परिवार देखता हूं।"
   },
   {
     "id": 172,
@@ -3266,7 +4292,13 @@ const wordList500 = [
     "meaning_fr": "ami",
     "meaningFr": "ami",
     "example_fr": "C'est ma meilleure amie.",
-    "exampleFr": "C'est ma meilleure amie."
+    "exampleFr": "C'est ma meilleure amie.",
+    "meaning_ja": "友達",
+    "example_ja": "ここで素晴らしい友人に会いました。",
+    "meaning_vi": "Bạn bè",
+    "example_vi": "Tôi thấy một người bạn tuyệt vời ở đây.",
+    "meaning_hi": "दोस्त",
+    "example_hi": "मुझे यहां एक अद्भुत मित्र दिखाई दे रहा है।"
   },
   {
     "id": 173,
@@ -3285,7 +4317,13 @@ const wordList500 = [
     "meaning_fr": "étudiant",
     "meaningFr": "étudiant",
     "example_fr": "Je suis étudiant.",
-    "exampleFr": "Je suis étudiant."
+    "exampleFr": "Je suis étudiant.",
+    "meaning_ja": "学生",
+    "example_ja": "ここで素晴らしい学生を見かけます。",
+    "meaning_vi": "Học sinh",
+    "example_vi": "Tôi thấy một học sinh tuyệt vời ở đây.",
+    "meaning_hi": "विद्यार्थी",
+    "example_hi": "मैं यहाँ एक अद्भुत छात्र को देखता हूँ।"
   },
   {
     "id": 174,
@@ -3304,7 +4342,13 @@ const wordList500 = [
     "meaning_fr": "garçon",
     "meaningFr": "garçon",
     "example_fr": "Je vois un gentil garçon.",
-    "exampleFr": "Je vois un gentil garçon."
+    "exampleFr": "Je vois un gentil garçon.",
+    "meaning_ja": "男の子",
+    "example_ja": "ここで素晴らしい男の子を見かけました。",
+    "meaning_vi": "Con trai",
+    "example_vi": "Tôi thấy một cậu bé tuyệt vời ở đây.",
+    "meaning_hi": "लड़का",
+    "example_hi": "मुझे यहाँ एक अद्भुत लड़का दिखाई दे रहा है।"
   },
   {
     "id": 175,
@@ -3323,7 +4367,13 @@ const wordList500 = [
     "meaning_fr": "fille",
     "meaningFr": "fille",
     "example_fr": "Je vois une gentille fille.",
-    "exampleFr": "Je vois une gentille fille."
+    "exampleFr": "Je vois une gentille fille.",
+    "meaning_ja": "女の子",
+    "example_ja": "ここで素晴らしい女の子を見かけました。",
+    "meaning_vi": "Con gái",
+    "example_vi": "Tôi thấy một cô gái tuyệt vời ở đây.",
+    "meaning_hi": "लड़की",
+    "example_hi": "मुझे यहाँ एक अद्भुत लड़की दिखाई देती है।"
   },
   {
     "id": 176,
@@ -3342,7 +4392,13 @@ const wordList500 = [
     "meaning_fr": "homme",
     "meaningFr": "homme",
     "example_fr": "Je vois un gars sympa.",
-    "exampleFr": "Je vois un gars sympa."
+    "exampleFr": "Je vois un gars sympa.",
+    "meaning_ja": "男",
+    "example_ja": "私はここで素晴らしい人に会いました。",
+    "meaning_vi": "Người đàn ông",
+    "example_vi": "Tôi thấy một người đàn ông tuyệt vời ở đây.",
+    "meaning_hi": "आदमी",
+    "example_hi": "मैं यहां एक अद्भुत व्यक्ति को देखता हूं।"
   },
   {
     "id": 177,
@@ -3361,7 +4417,13 @@ const wordList500 = [
     "meaning_fr": "femme",
     "meaningFr": "femme",
     "example_fr": "Je vois une gentille femme.",
-    "exampleFr": "Je vois une gentille femme."
+    "exampleFr": "Je vois une gentille femme.",
+    "meaning_ja": "女性",
+    "example_ja": "ここで素晴らしい女性を見かけます。",
+    "meaning_vi": "Đàn bà",
+    "example_vi": "Tôi thấy một người phụ nữ tuyệt vời ở đây.",
+    "meaning_hi": "महिला",
+    "example_hi": "मैं यहाँ एक अद्भुत महिला को देखता हूँ।"
   },
   {
     "id": 178,
@@ -3380,7 +4442,13 @@ const wordList500 = [
     "meaning_fr": "les enfants",
     "meaningFr": "les enfants",
     "example_fr": "Je vois des enfants sympas.",
-    "exampleFr": "Je vois des enfants sympas."
+    "exampleFr": "Je vois des enfants sympas.",
+    "meaning_ja": "子供",
+    "example_ja": "ここで素晴らしい子供に会ったよ。",
+    "meaning_vi": "Đứa trẻ",
+    "example_vi": "Tôi thấy một đứa trẻ tuyệt vời ở đây.",
+    "meaning_hi": "बच्चा",
+    "example_hi": "मैं यहाँ एक अद्भुत बच्चा देख रहा हूँ।"
   },
   {
     "id": 179,
@@ -3399,7 +4467,13 @@ const wordList500 = [
     "meaning_fr": "parents",
     "meaningFr": "parents",
     "example_fr": "J'ai des parents merveilleux.",
-    "exampleFr": "J'ai des parents merveilleux."
+    "exampleFr": "J'ai des parents merveilleux.",
+    "meaning_ja": "親",
+    "example_ja": "ここには素晴らしい親がいます。",
+    "meaning_vi": "cha mẹ",
+    "example_vi": "Tôi thấy một phụ huynh tuyệt vời ở đây.",
+    "meaning_hi": "माता-पिता",
+    "example_hi": "मैं यहां एक अद्भुत माता-पिता को देखता हूं।"
   },
   {
     "id": 180,
@@ -3418,7 +4492,13 @@ const wordList500 = [
     "meaning_fr": "roi",
     "meaningFr": "roi",
     "example_fr": "Je regarde le merveilleux roi.",
-    "exampleFr": "Je regarde le merveilleux roi."
+    "exampleFr": "Je regarde le merveilleux roi.",
+    "meaning_ja": "王",
+    "example_ja": "私はここに素晴らしい王を見ました。",
+    "meaning_vi": "Nhà vua",
+    "example_vi": "Tôi thấy một vị vua tuyệt vời ở đây.",
+    "meaning_hi": "राजा",
+    "example_hi": "मैं यहाँ एक अद्भुत राजा को देखता हूँ।"
   },
   {
     "id": 181,
@@ -3437,7 +4517,13 @@ const wordList500 = [
     "meaning_fr": "reine",
     "meaningFr": "reine",
     "example_fr": "Je regarde la merveilleuse reine.",
-    "exampleFr": "Je regarde la merveilleuse reine."
+    "exampleFr": "Je regarde la merveilleuse reine.",
+    "meaning_ja": "女王",
+    "example_ja": "私はここに素晴らしい女王を見ました。",
+    "meaning_vi": "Nữ hoàng",
+    "example_vi": "Tôi thấy một nữ hoàng tuyệt vời ở đây.",
+    "meaning_hi": "रानी",
+    "example_hi": "मुझे यहाँ एक अद्भुत रानी दिखाई देती है।"
   },
   {
     "id": 182,
@@ -3456,7 +4542,13 @@ const wordList500 = [
     "meaning_fr": "héros",
     "meaningFr": "héros",
     "example_fr": "Je vois un héros merveilleux.",
-    "exampleFr": "Je vois un héros merveilleux."
+    "exampleFr": "Je vois un héros merveilleux.",
+    "meaning_ja": "ヒーロー",
+    "example_ja": "私はここに素晴らしい英雄を見ました。",
+    "meaning_vi": "anh hùng",
+    "example_vi": "Tôi thấy một anh hùng tuyệt vời ở đây.",
+    "meaning_hi": "नायक",
+    "example_hi": "मैं यहाँ एक अद्भुत नायक को देखता हूँ।"
   },
   {
     "id": 183,
@@ -3475,7 +4567,13 @@ const wordList500 = [
     "meaning_fr": "groupe",
     "meaningFr": "groupe",
     "example_fr": "Je vois un super groupe.",
-    "exampleFr": "Je vois un super groupe."
+    "exampleFr": "Je vois un super groupe.",
+    "meaning_ja": "グループ",
+    "example_ja": "ここで素晴らしいグループを見ました。",
+    "meaning_vi": "Nhóm",
+    "example_vi": "Tôi thấy ở đây có một nhóm tuyệt vời.",
+    "meaning_hi": "समूह",
+    "example_hi": "मुझे यहाँ एक अद्भुत समूह दिखाई देता है।"
   },
   {
     "id": 184,
@@ -3494,7 +4592,13 @@ const wordList500 = [
     "meaning_fr": "fête",
     "meaningFr": "fête",
     "example_fr": "Je vois une grande fête.",
-    "exampleFr": "Je vois une grande fête."
+    "exampleFr": "Je vois une grande fête.",
+    "meaning_ja": "パーティー",
+    "example_ja": "ここで素晴らしいパーティーが見られます。",
+    "meaning_vi": "Buổi tiệc",
+    "example_vi": "Tôi thấy một bữa tiệc tuyệt vời ở đây.",
+    "meaning_hi": "दल",
+    "example_hi": "मुझे यहां एक अद्भुत पार्टी दिख रही है."
   },
   {
     "id": 185,
@@ -3513,7 +4617,13 @@ const wordList500 = [
     "meaning_fr": "ange",
     "meaningFr": "ange",
     "example_fr": "Je vois un ange merveilleux.",
-    "exampleFr": "Je vois un ange merveilleux."
+    "exampleFr": "Je vois un ange merveilleux.",
+    "meaning_ja": "天使",
+    "example_ja": "ここに素晴らしい天使が見えます。",
+    "meaning_vi": "Thiên thần",
+    "example_vi": "Tôi thấy một thiên thần tuyệt vời ở đây.",
+    "meaning_hi": "देवदूत",
+    "example_hi": "मुझे यहाँ एक अद्भुत देवदूत दिखाई देता है।"
   },
   {
     "id": 186,
@@ -3532,7 +4642,13 @@ const wordList500 = [
     "meaning_fr": "beauté",
     "meaningFr": "beauté",
     "example_fr": "Je vois une beauté merveilleuse.",
-    "exampleFr": "Je vois une beauté merveilleuse."
+    "exampleFr": "Je vois une beauté merveilleuse.",
+    "meaning_ja": "美しさ",
+    "example_ja": "私はここで素晴らしい美しさを目にしました。",
+    "meaning_vi": "Sắc đẹp",
+    "example_vi": "Tôi thấy ở đây có một vẻ đẹp tuyệt vời.",
+    "meaning_hi": "सुंदरता",
+    "example_hi": "मुझे यहाँ अद्भुत सौन्दर्य दिखाई देता है।"
   },
   {
     "id": 187,
@@ -3551,7 +4667,13 @@ const wordList500 = [
     "meaning_fr": "cousine",
     "meaningFr": "cousine",
     "example_fr": "Je regarde ma merveilleuse cousine.",
-    "exampleFr": "Je regarde ma merveilleuse cousine."
+    "exampleFr": "Je regarde ma merveilleuse cousine.",
+    "meaning_ja": "いとこ",
+    "example_ja": "ここで素晴らしいいとこに会ったよ。",
+    "meaning_vi": "Anh em họ",
+    "example_vi": "Tôi thấy một người anh em họ tuyệt vời ở đây.",
+    "meaning_hi": "चचेरा",
+    "example_hi": "मैं यहाँ एक अद्भुत चचेरा भाई देखता हूँ।"
   },
   {
     "id": 188,
@@ -3570,7 +4692,13 @@ const wordList500 = [
     "meaning_fr": "géant",
     "meaningFr": "géant",
     "example_fr": "Je vois un merveilleux géant.",
-    "exampleFr": "Je vois un merveilleux géant."
+    "exampleFr": "Je vois un merveilleux géant.",
+    "meaning_ja": "巨人",
+    "example_ja": "ここで素晴らしい巨人を見ました。",
+    "meaning_vi": "Người khổng lồ",
+    "example_vi": "Tôi thấy một người khổng lồ tuyệt vời ở đây.",
+    "meaning_hi": "बहुत बड़ा",
+    "example_hi": "मुझे यहाँ एक अद्भुत दैत्य दिखाई देता है।"
   },
   {
     "id": 189,
@@ -3589,7 +4717,13 @@ const wordList500 = [
     "meaning_fr": "monstre",
     "meaningFr": "monstre",
     "example_fr": "Je vois un monstre cool.",
-    "exampleFr": "Je vois un monstre cool."
+    "exampleFr": "Je vois un monstre cool.",
+    "meaning_ja": "モンスター",
+    "example_ja": "ここで素晴らしい怪物を見た。",
+    "meaning_vi": "Quái vật",
+    "example_vi": "Tôi thấy một con quái vật tuyệt vời ở đây.",
+    "meaning_hi": "राक्षस",
+    "example_hi": "मुझे यहाँ एक अद्भुत राक्षस दिखाई देता है।"
   },
   {
     "id": 190,
@@ -3608,7 +4742,13 @@ const wordList500 = [
     "meaning_fr": "Neveu (homme)",
     "meaningFr": "Neveu (homme)",
     "example_fr": "Mon neveu a cinq ans.",
-    "exampleFr": "Mon neveu a cinq ans."
+    "exampleFr": "Mon neveu a cinq ans.",
+    "meaning_ja": "甥",
+    "example_ja": "ここで素晴らしい甥に会ったよ。",
+    "meaning_vi": "Cháu trai",
+    "example_vi": "Tôi thấy một người cháu tuyệt vời ở đây.",
+    "meaning_hi": "भतीजा",
+    "example_hi": "मैं यहां एक अद्भुत भतीजे को देख रहा हूं।"
   },
   {
     "id": 191,
@@ -3627,7 +4767,13 @@ const wordList500 = [
     "meaning_fr": "Neveu (femme)",
     "meaningFr": "Neveu (femme)",
     "example_fr": "Mon neveu aime dessiner.",
-    "exampleFr": "Mon neveu aime dessiner."
+    "exampleFr": "Mon neveu aime dessiner.",
+    "meaning_ja": "姪",
+    "example_ja": "ここに素晴らしい姪がいます。",
+    "meaning_vi": "cháu gái",
+    "example_vi": "Tôi thấy một cô cháu gái tuyệt vời ở đây.",
+    "meaning_hi": "भतीजी",
+    "example_hi": "मैं यहाँ एक अद्भुत भतीजी को देखता हूँ।"
   },
   {
     "id": 192,
@@ -3646,7 +4792,13 @@ const wordList500 = [
     "meaning_fr": "jumeaux",
     "meaningFr": "jumeaux",
     "example_fr": "Ce sont des jumeaux.",
-    "exampleFr": "Ce sont des jumeaux."
+    "exampleFr": "Ce sont des jumeaux.",
+    "meaning_ja": "ツイン",
+    "example_ja": "ここに素晴らしい双子が見えます。",
+    "meaning_vi": "sinh đôi",
+    "example_vi": "Tôi thấy một cặp song sinh tuyệt vời ở đây.",
+    "meaning_hi": "जुड़वां",
+    "example_hi": "मुझे यहाँ एक अद्भुत जुड़वाँ दिखाई दे रहा है।"
   },
   {
     "id": 193,
@@ -3665,7 +4817,13 @@ const wordList500 = [
     "meaning_fr": "enfant",
     "meaningFr": "enfant",
     "example_fr": "Les enfants jouent dehors.",
-    "exampleFr": "Les enfants jouent dehors."
+    "exampleFr": "Les enfants jouent dehors.",
+    "meaning_ja": "子供",
+    "example_ja": "ここで素晴らしい子供に会ったよ。",
+    "meaning_vi": "đứa trẻ",
+    "example_vi": "Tôi thấy một đứa trẻ tuyệt vời ở đây.",
+    "meaning_hi": "बच्चा",
+    "example_hi": "मैं यहाँ एक अद्भुत बच्चा देख रहा हूँ।"
   },
   {
     "id": 194,
@@ -3684,7 +4842,13 @@ const wordList500 = [
     "meaning_fr": "camarade de classe",
     "meaningFr": "camarade de classe",
     "example_fr": "Mon camarade de classe est assis à côté de moi.",
-    "exampleFr": "Mon camarade de classe est assis à côté de moi."
+    "exampleFr": "Mon camarade de classe est assis à côté de moi.",
+    "meaning_ja": "同級生",
+    "example_ja": "ここで素晴らしいクラスメートに会いました。",
+    "meaning_vi": "Bạn cùng lớp",
+    "example_vi": "Tôi thấy ở đây có một người bạn cùng lớp tuyệt vời.",
+    "meaning_hi": "सहपाठी",
+    "example_hi": "मैं यहाँ एक अद्भुत सहपाठी को देखता हूँ।"
   },
   {
     "id": 195,
@@ -3703,7 +4867,13 @@ const wordList500 = [
     "meaning_fr": "colocataire",
     "meaningFr": "colocataire",
     "example_fr": "Mon colocataire est très soigné.",
-    "exampleFr": "Mon colocataire est très soigné."
+    "exampleFr": "Mon colocataire est très soigné.",
+    "meaning_ja": "ルームメイト",
+    "example_ja": "ここに素晴らしいルームメイトがいます。",
+    "meaning_vi": "Bạn cùng phòng",
+    "example_vi": "Tôi thấy ở đây có một người bạn cùng phòng tuyệt vời.",
+    "meaning_hi": "रहनेवाला",
+    "example_hi": "मुझे यहां एक अद्भुत रूममेट दिख रहा है।"
   },
   {
     "id": 196,
@@ -3722,7 +4892,13 @@ const wordList500 = [
     "meaning_fr": "petits-enfants",
     "meaningFr": "petits-enfants",
     "example_fr": "Ma grand-mère a quatre petits-enfants.",
-    "exampleFr": "Ma grand-mère a quatre petits-enfants."
+    "exampleFr": "Ma grand-mère a quatre petits-enfants.",
+    "meaning_ja": "孫",
+    "example_ja": "ここで素晴らしい孫に会えます。",
+    "meaning_vi": "Cháu nội",
+    "example_vi": "Tôi thấy một đứa cháu tuyệt vời ở đây.",
+    "meaning_hi": "पोता",
+    "example_hi": "मैं यहां एक अद्भुत पोते को देखता हूं।"
   },
   {
     "id": 197,
@@ -3741,7 +4917,13 @@ const wordList500 = [
     "meaning_fr": "petit-fils",
     "meaningFr": "petit-fils",
     "example_fr": "Il est son seul petit-fils.",
-    "exampleFr": "Il est son seul petit-fils."
+    "exampleFr": "Il est son seul petit-fils.",
+    "meaning_ja": "孫",
+    "example_ja": "ここで素晴らしい孫に会います。",
+    "meaning_vi": "Cháu trai",
+    "example_vi": "Tôi thấy một đứa cháu trai tuyệt vời ở đây.",
+    "meaning_hi": "पोता",
+    "example_hi": "मैं यहां एक अद्भुत पोते को देखता हूं।"
   },
   {
     "id": 198,
@@ -3760,7 +4942,13 @@ const wordList500 = [
     "meaning_fr": "petite-fille",
     "meaningFr": "petite-fille",
     "example_fr": "La petite-fille chante bien.",
-    "exampleFr": "La petite-fille chante bien."
+    "exampleFr": "La petite-fille chante bien.",
+    "meaning_ja": "孫娘",
+    "example_ja": "ここで素晴らしい孫娘に会います。",
+    "meaning_vi": "cháu gái",
+    "example_vi": "Tôi thấy một đứa cháu gái tuyệt vời ở đây.",
+    "meaning_hi": "पोती",
+    "example_hi": "मैं यहां एक अद्भुत पोती को देखता हूं।"
   },
   {
     "id": 199,
@@ -3779,7 +4967,13 @@ const wordList500 = [
     "meaning_fr": "monsieur",
     "meaningFr": "monsieur",
     "example_fr": "Le monsieur a ouvert la porte.",
-    "exampleFr": "Le monsieur a ouvert la porte."
+    "exampleFr": "Le monsieur a ouvert la porte.",
+    "meaning_ja": "紳士",
+    "example_ja": "ここで素晴らしい紳士を見かけます。",
+    "meaning_vi": "quý ông",
+    "example_vi": "Tôi thấy một quý ông tuyệt vời ở đây.",
+    "meaning_hi": "सज्जन",
+    "example_hi": "मैं यहाँ एक अद्भुत सज्जन को देखता हूँ।"
   },
   {
     "id": 200,
@@ -3798,7 +4992,13 @@ const wordList500 = [
     "meaning_fr": "dame, femme",
     "meaningFr": "dame, femme",
     "example_fr": "Une femme sympathique m'a aidé.",
-    "exampleFr": "Une femme sympathique m'a aidé."
+    "exampleFr": "Une femme sympathique m'a aidé.",
+    "meaning_ja": "レディ",
+    "example_ja": "ここで素晴らしい女性を見かけます。",
+    "meaning_vi": "Quý bà",
+    "example_vi": "Tôi thấy một người phụ nữ tuyệt vời ở đây.",
+    "meaning_hi": "महिला",
+    "example_hi": "मैं यहाँ एक अद्भुत महिला को देखता हूँ।"
   },
   {
     "id": 201,
@@ -3817,7 +5017,13 @@ const wordList500 = [
     "meaning_fr": "quartier",
     "meaningFr": "quartier",
     "example_fr": "Notre quartier est calme.",
-    "exampleFr": "Notre quartier est calme."
+    "exampleFr": "Notre quartier est calme.",
+    "meaning_ja": "近所",
+    "example_ja": "ここに素晴らしい地域が見えます。",
+    "meaning_vi": "Hàng xóm",
+    "example_vi": "Tôi thấy một khu phố tuyệt vời ở đây.",
+    "meaning_hi": "अड़ोस-पड़ोस",
+    "example_hi": "मुझे यहां एक अद्भुत पड़ोस दिखाई देता है।"
   },
   {
     "id": 202,
@@ -3836,7 +5042,13 @@ const wordList500 = [
     "meaning_fr": "professeur",
     "meaningFr": "professeur",
     "example_fr": "Notre professeur est bon.",
-    "exampleFr": "Notre professeur est bon."
+    "exampleFr": "Notre professeur est bon.",
+    "meaning_ja": "教師",
+    "example_ja": "ここで素晴らしい先生に会いました。",
+    "meaning_vi": "Giáo viên",
+    "example_vi": "Tôi thấy ở đây có một giáo viên tuyệt vời.",
+    "meaning_hi": "अध्यापक",
+    "example_hi": "मैं यहाँ एक अद्भुत शिक्षक को देखता हूँ।"
   },
   {
     "id": 203,
@@ -3855,7 +5067,13 @@ const wordList500 = [
     "meaning_fr": "docteur",
     "meaningFr": "docteur",
     "example_fr": "Les médecins aident les malades.",
-    "exampleFr": "Les médecins aident les malades."
+    "exampleFr": "Les médecins aident les malades.",
+    "meaning_ja": "医者",
+    "example_ja": "ここで素晴らしい医者に会いました。",
+    "meaning_vi": "Bác sĩ",
+    "example_vi": "Tôi thấy một bác sĩ tuyệt vời ở đây.",
+    "meaning_hi": "चिकित्सक",
+    "example_hi": "मैं यहां एक अद्भुत डॉक्टर से मिल रहा हूं।"
   },
   {
     "id": 204,
@@ -3874,7 +5092,13 @@ const wordList500 = [
     "meaning_fr": "infirmière",
     "meaningFr": "infirmière",
     "example_fr": "L'infirmière est gentille.",
-    "exampleFr": "L'infirmière est gentille."
+    "exampleFr": "L'infirmière est gentille.",
+    "meaning_ja": "看護師",
+    "example_ja": "ここで素晴らしい看護師に会ったよ。",
+    "meaning_vi": "Y tá",
+    "example_vi": "Tôi thấy một y tá tuyệt vời ở đây.",
+    "meaning_hi": "देखभाल करना",
+    "example_hi": "मुझे यहां एक अद्भुत नर्स दिख रही है।"
   },
   {
     "id": 205,
@@ -3893,7 +5117,13 @@ const wordList500 = [
     "meaning_fr": "agriculteur",
     "meaningFr": "agriculteur",
     "example_fr": "Un agriculteur cultive du riz.",
-    "exampleFr": "Un agriculteur cultive du riz."
+    "exampleFr": "Un agriculteur cultive du riz.",
+    "meaning_ja": "農家",
+    "example_ja": "ここで素晴らしい農家を見かけました。",
+    "meaning_vi": "Nông dân",
+    "example_vi": "Tôi thấy một người nông dân tuyệt vời ở đây.",
+    "meaning_hi": "किसान",
+    "example_hi": "मैं यहाँ एक अद्भुत किसान को देखता हूँ।"
   },
   {
     "id": 206,
@@ -3912,7 +5142,13 @@ const wordList500 = [
     "meaning_fr": "chef cuisinier",
     "meaningFr": "chef cuisinier",
     "example_fr": "Le chef prépare les plats.",
-    "exampleFr": "Le chef prépare les plats."
+    "exampleFr": "Le chef prépare les plats.",
+    "meaning_ja": "料理する",
+    "example_ja": "ここで素晴らしい料理人を見かけました。",
+    "meaning_vi": "Đầu bếp",
+    "example_vi": "Tôi thấy ở đây có một đầu bếp tuyệt vời.",
+    "meaning_hi": "पकाना",
+    "example_hi": "मुझे यहाँ एक अद्भुत रसोइया दिखाई देता है।"
   },
   {
     "id": 207,
@@ -3931,7 +5167,13 @@ const wordList500 = [
     "meaning_fr": "police",
     "meaningFr": "police",
     "example_fr": "Je regarde Cool Cop.",
-    "exampleFr": "Je regarde Cool Cop."
+    "exampleFr": "Je regarde Cool Cop.",
+    "meaning_ja": "警察",
+    "example_ja": "ここに素晴らしい警察がいます。",
+    "meaning_vi": "Cảnh sát",
+    "example_vi": "Tôi thấy ở đây có một cảnh sát tuyệt vời.",
+    "meaning_hi": "पुलिस",
+    "example_hi": "मैं यहाँ एक अद्भुत पुलिस देखता हूँ।"
   },
   {
     "id": 208,
@@ -3950,7 +5192,13 @@ const wordList500 = [
     "meaning_fr": "pompier",
     "meaningFr": "pompier",
     "example_fr": "Je vois un pompier sympa.",
-    "exampleFr": "Je vois un pompier sympa."
+    "exampleFr": "Je vois un pompier sympa.",
+    "meaning_ja": "消防士",
+    "example_ja": "ここで素晴らしい消防士を見ました。",
+    "meaning_vi": "lính cứu hỏa",
+    "example_vi": "Tôi thấy một người lính cứu hỏa tuyệt vời ở đây.",
+    "meaning_hi": "फायर फाइटर",
+    "example_hi": "मुझे यहां एक अद्भुत फायर फाइटर दिख रहा है।"
   },
   {
     "id": 209,
@@ -3969,7 +5217,13 @@ const wordList500 = [
     "meaning_fr": "chanteur",
     "meaningFr": "chanteur",
     "example_fr": "Je vois un grand chanteur.",
-    "exampleFr": "Je vois un grand chanteur."
+    "exampleFr": "Je vois un grand chanteur.",
+    "meaning_ja": "歌手",
+    "example_ja": "ここで素晴らしい歌手を見かけます。",
+    "meaning_vi": "Ca sĩ",
+    "example_vi": "Tôi thấy một ca sĩ tuyệt vời ở đây.",
+    "meaning_hi": "गायक",
+    "example_hi": "मैं यहाँ एक अद्भुत गायक को देखता हूँ।"
   },
   {
     "id": 210,
@@ -3988,7 +5242,13 @@ const wordList500 = [
     "meaning_fr": "danseur",
     "meaningFr": "danseur",
     "example_fr": "Je vois un grand danseur.",
-    "exampleFr": "Je vois un grand danseur."
+    "exampleFr": "Je vois un grand danseur.",
+    "meaning_ja": "ダンサー",
+    "example_ja": "ここで素晴らしいダンサーを見かけました。",
+    "meaning_vi": "vũ công",
+    "example_vi": "Tôi thấy một vũ công tuyệt vời ở đây.",
+    "meaning_hi": "नर्तक",
+    "example_hi": "मैं यहाँ एक अद्भुत नर्तकी को देखता हूँ।"
   },
   {
     "id": 211,
@@ -4007,7 +5267,13 @@ const wordList500 = [
     "meaning_fr": "pilote",
     "meaningFr": "pilote",
     "example_fr": "Je regarde Awesome Pilots.",
-    "exampleFr": "Je regarde Awesome Pilots."
+    "exampleFr": "Je regarde Awesome Pilots.",
+    "meaning_ja": "パイロット",
+    "example_ja": "ここで素晴らしいパイロットに会ったよ。",
+    "meaning_vi": "Phi công",
+    "example_vi": "Tôi thấy một phi công tuyệt vời ở đây.",
+    "meaning_hi": "पायलट",
+    "example_hi": "मुझे यहां एक अद्भुत पायलट दिख रहा है।"
   },
   {
     "id": 212,
@@ -4026,7 +5292,13 @@ const wordList500 = [
     "meaning_fr": "conducteur",
     "meaningFr": "conducteur",
     "example_fr": "Je vois un gentil chauffeur.",
-    "exampleFr": "Je vois un gentil chauffeur."
+    "exampleFr": "Je vois un gentil chauffeur.",
+    "meaning_ja": "ドライバ",
+    "example_ja": "ここで素晴らしいドライバーを見かけました。",
+    "meaning_vi": "Tài xế",
+    "example_vi": "Tôi thấy một người lái xe tuyệt vời ở đây.",
+    "meaning_hi": "चालक",
+    "example_hi": "मुझे यहां एक अद्भुत ड्राइवर दिख रहा है।"
   },
   {
     "id": 213,
@@ -4045,7 +5317,13 @@ const wordList500 = [
     "meaning_fr": "joueur",
     "meaningFr": "joueur",
     "example_fr": "Je vois un grand joueur.",
-    "exampleFr": "Je vois un grand joueur."
+    "exampleFr": "Je vois un grand joueur.",
+    "meaning_ja": "プレーヤー",
+    "example_ja": "ここで素晴らしい選手を見た。",
+    "meaning_vi": "Người chơi",
+    "example_vi": "Tôi thấy một cầu thủ tuyệt vời ở đây.",
+    "meaning_hi": "खिलाड़ी",
+    "example_hi": "मुझे यहां एक अद्भुत खिलाड़ी दिख रहा है."
   },
   {
     "id": 214,
@@ -4064,7 +5342,13 @@ const wordList500 = [
     "meaning_fr": "acteur",
     "meaningFr": "acteur",
     "example_fr": "Je vois un grand acteur.",
-    "exampleFr": "Je vois un grand acteur."
+    "exampleFr": "Je vois un grand acteur.",
+    "meaning_ja": "俳優",
+    "example_ja": "ここで素晴らしい俳優に会ったよ。",
+    "meaning_vi": "Diễn viên",
+    "example_vi": "Tôi thấy một diễn viên tuyệt vời ở đây.",
+    "meaning_hi": "अभिनेता",
+    "example_hi": "मैं यहां एक अद्भुत अभिनेता को देखता हूं।"
   },
   {
     "id": 215,
@@ -4083,7 +5367,13 @@ const wordList500 = [
     "meaning_fr": "actrice",
     "meaningFr": "actrice",
     "example_fr": "Je vois une merveilleuse actrice.",
-    "exampleFr": "Je vois une merveilleuse actrice."
+    "exampleFr": "Je vois une merveilleuse actrice.",
+    "meaning_ja": "女優",
+    "example_ja": "ここで素晴らしい女優に会ったよ。",
+    "meaning_vi": "Nữ diễn viên",
+    "example_vi": "Tôi thấy một nữ diễn viên tuyệt vời ở đây.",
+    "meaning_hi": "अभिनेत्री",
+    "example_hi": "मैं यहाँ एक अद्भुत अभिनेत्री को देखता हूँ।"
   },
   {
     "id": 216,
@@ -4102,7 +5392,13 @@ const wordList500 = [
     "meaning_fr": "artiste",
     "meaningFr": "artiste",
     "example_fr": "Je vois un artiste merveilleux.",
-    "exampleFr": "Je vois un artiste merveilleux."
+    "exampleFr": "Je vois un artiste merveilleux.",
+    "meaning_ja": "アーティスト",
+    "example_ja": "ここで素晴らしいアーティストに会ったよ。",
+    "meaning_vi": "Nghệ sĩ",
+    "example_vi": "Tôi thấy một nghệ sĩ tuyệt vời ở đây.",
+    "meaning_hi": "कलाकार",
+    "example_hi": "मैं यहाँ एक अद्भुत कलाकार को देखता हूँ।"
   },
   {
     "id": 217,
@@ -4121,7 +5417,13 @@ const wordList500 = [
     "meaning_fr": "coiffeur",
     "meaningFr": "coiffeur",
     "example_fr": "Je regarde Le Grand Barbier.",
-    "exampleFr": "Je regarde Le Grand Barbier."
+    "exampleFr": "Je regarde Le Grand Barbier.",
+    "meaning_ja": "理容師",
+    "example_ja": "ここで素晴らしい床屋さんを見かけました。",
+    "meaning_vi": "thợ cắt tóc",
+    "example_vi": "Tôi thấy một thợ cắt tóc tuyệt vời ở đây.",
+    "meaning_hi": "नाई",
+    "example_hi": "मुझे यहाँ एक अद्भुत नाई दिखाई देता है।"
   },
   {
     "id": 218,
@@ -4140,7 +5442,13 @@ const wordList500 = [
     "meaning_fr": "chef cuisinier",
     "meaningFr": "chef cuisinier",
     "example_fr": "Je vois un grand chef.",
-    "exampleFr": "Je vois un grand chef."
+    "exampleFr": "Je vois un grand chef.",
+    "meaning_ja": "シェフ",
+    "example_ja": "ここで素晴らしいシェフに会ったよ。",
+    "meaning_vi": "đầu bếp",
+    "example_vi": "Tôi thấy một đầu bếp tuyệt vời ở đây.",
+    "meaning_hi": "बावर्ची",
+    "example_hi": "मुझे यहां एक अद्भुत शेफ दिख रहा है।"
   },
   {
     "id": 219,
@@ -4159,7 +5467,13 @@ const wordList500 = [
     "meaning_fr": "clown",
     "meaningFr": "clown",
     "example_fr": "Je vois un clown sympa.",
-    "exampleFr": "Je vois un clown sympa."
+    "exampleFr": "Je vois un clown sympa.",
+    "meaning_ja": "ピエロ",
+    "example_ja": "ここで素晴らしいピエロを見ました。",
+    "meaning_vi": "Chú hề",
+    "example_vi": "Tôi thấy một chú hề tuyệt vời ở đây.",
+    "meaning_hi": "जोकर",
+    "example_hi": "मुझे यहाँ एक अद्भुत जोकर दिखाई देता है।"
   },
   {
     "id": 220,
@@ -4178,7 +5492,13 @@ const wordList500 = [
     "meaning_fr": "dentiste",
     "meaningFr": "dentiste",
     "example_fr": "Le dentiste regarde mes dents.",
-    "exampleFr": "Le dentiste regarde mes dents."
+    "exampleFr": "Le dentiste regarde mes dents.",
+    "meaning_ja": "歯医者",
+    "example_ja": "ここで素晴らしい歯医者を見つけました。",
+    "meaning_vi": "Nha sĩ",
+    "example_vi": "Tôi thấy một nha sĩ tuyệt vời ở đây.",
+    "meaning_hi": "दाँतों का डॉक्टर",
+    "example_hi": "मैं यहाँ एक अद्भुत दंतचिकित्सक से मिल रहा हूँ।"
   },
   {
     "id": 221,
@@ -4197,7 +5517,13 @@ const wordList500 = [
     "meaning_fr": "vétérinaire",
     "meaningFr": "vétérinaire",
     "example_fr": "Les vétérinaires aident les animaux malades.",
-    "exampleFr": "Les vétérinaires aident les animaux malades."
+    "exampleFr": "Les vétérinaires aident les animaux malades.",
+    "meaning_ja": "獣医",
+    "example_ja": "ここで素晴らしい獣医に会いました。",
+    "meaning_vi": "bác sĩ thú y",
+    "example_vi": "Tôi thấy một bác sĩ thú y tuyệt vời ở đây.",
+    "meaning_hi": "पशु चिकित्सक",
+    "example_hi": "मुझे यहां एक अद्भुत पशुचिकित्सक दिख रहा है।"
   },
   {
     "id": 222,
@@ -4216,7 +5542,13 @@ const wordList500 = [
     "meaning_fr": "boulanger",
     "meaningFr": "boulanger",
     "example_fr": "Un boulanger prépare du pain fraîchement sorti du four.",
-    "exampleFr": "Un boulanger prépare du pain fraîchement sorti du four."
+    "exampleFr": "Un boulanger prépare du pain fraîchement sorti du four.",
+    "meaning_ja": "ベイカー",
+    "example_ja": "ここで素晴らしいパン屋さんを見かけました。",
+    "meaning_vi": "thợ làm bánh",
+    "example_vi": "Tôi thấy một thợ làm bánh tuyệt vời ở đây.",
+    "meaning_hi": "बेकर",
+    "example_hi": "मुझे यहाँ एक अद्भुत बेकर दिख रहा है।"
   },
   {
     "id": 223,
@@ -4235,7 +5567,13 @@ const wordList500 = [
     "meaning_fr": "tailleur",
     "meaningFr": "tailleur",
     "example_fr": "Un tailleur confectionne un costume.",
-    "exampleFr": "Un tailleur confectionne un costume."
+    "exampleFr": "Un tailleur confectionne un costume.",
+    "meaning_ja": "仕立て屋",
+    "example_ja": "ここで素晴らしい仕立て屋を見かけました。",
+    "meaning_vi": "thợ may",
+    "example_vi": "Tôi thấy một thợ may tuyệt vời ở đây.",
+    "meaning_hi": "दर्जी",
+    "example_hi": "मैं यहाँ एक अद्भुत दर्जी को देखता हूँ।"
   },
   {
     "id": 224,
@@ -4254,7 +5592,13 @@ const wordList500 = [
     "meaning_fr": "marin",
     "meaningFr": "marin",
     "example_fr": "Les marins travaillent sur les navires.",
-    "exampleFr": "Les marins travaillent sur les navires."
+    "exampleFr": "Les marins travaillent sur les navires.",
+    "meaning_ja": "船員",
+    "example_ja": "ここで素晴らしい船員を見かけました。",
+    "meaning_vi": "thủy thủ",
+    "example_vi": "Tôi thấy một thủy thủ tuyệt vời ở đây.",
+    "meaning_hi": "नाविक",
+    "example_hi": "मुझे यहाँ एक अद्भुत नाविक दिखाई देता है।"
   },
   {
     "id": 225,
@@ -4273,7 +5617,13 @@ const wordList500 = [
     "meaning_fr": "scientifique",
     "meaningFr": "scientifique",
     "example_fr": "Les scientifiques étudient les étoiles.",
-    "exampleFr": "Les scientifiques étudient les étoiles."
+    "exampleFr": "Les scientifiques étudient les étoiles.",
+    "meaning_ja": "科学者",
+    "example_ja": "ここで素晴らしい科学者に会った。",
+    "meaning_vi": "nhà khoa học",
+    "example_vi": "Tôi thấy một nhà khoa học tuyệt vời ở đây.",
+    "meaning_hi": "वैज्ञानिक",
+    "example_hi": "मैं यहाँ एक अद्भुत वैज्ञानिक को देखता हूँ।"
   },
   {
     "id": 226,
@@ -4292,7 +5642,13 @@ const wordList500 = [
     "meaning_fr": "journaliste",
     "meaningFr": "journaliste",
     "example_fr": "Le journaliste pose une question.",
-    "exampleFr": "Le journaliste pose une question."
+    "exampleFr": "Le journaliste pose une question.",
+    "meaning_ja": "記者",
+    "example_ja": "ここで素晴らしいレポーターを見かけました。",
+    "meaning_vi": "Phóng viên",
+    "example_vi": "Tôi thấy một phóng viên tuyệt vời ở đây.",
+    "meaning_hi": "रिपोर्टर",
+    "example_hi": "मुझे यहां एक अद्भुत रिपोर्टर दिख रहा है।"
   },
   {
     "id": 227,
@@ -4311,7 +5667,13 @@ const wordList500 = [
     "meaning_fr": "photographe",
     "meaningFr": "photographe",
     "example_fr": "Un photographe prend des photos.",
-    "exampleFr": "Un photographe prend des photos."
+    "exampleFr": "Un photographe prend des photos.",
+    "meaning_ja": "写真家",
+    "example_ja": "ここで素晴らしい写真家に会った。",
+    "meaning_vi": "Nhiếp ảnh gia",
+    "example_vi": "Tôi thấy một nhiếp ảnh gia tuyệt vời ở đây.",
+    "meaning_hi": "फोटोग्राफर",
+    "example_hi": "मुझे यहां एक अद्भुत फोटोग्राफर दिख रहा है।"
   },
   {
     "id": 228,
@@ -4330,7 +5692,13 @@ const wordList500 = [
     "meaning_fr": "concepteur",
     "meaningFr": "concepteur",
     "example_fr": "Un créateur dessine de nouveaux vêtements.",
-    "exampleFr": "Un créateur dessine de nouveaux vêtements."
+    "exampleFr": "Un créateur dessine de nouveaux vêtements.",
+    "meaning_ja": "デザイナー",
+    "example_ja": "ここで素晴らしいデザイナーに会ったよ。",
+    "meaning_vi": "Nhà thiết kế",
+    "example_vi": "Tôi thấy một nhà thiết kế tuyệt vời ở đây.",
+    "meaning_hi": "डिजाइनर",
+    "example_hi": "मैं यहां एक अद्भुत डिजाइनर को देखता हूं।"
   },
   {
     "id": 229,
@@ -4349,7 +5717,13 @@ const wordList500 = [
     "meaning_fr": "mécanicien",
     "meaningFr": "mécanicien",
     "example_fr": "Le mécanicien répare la voiture.",
-    "exampleFr": "Le mécanicien répare la voiture."
+    "exampleFr": "Le mécanicien répare la voiture.",
+    "meaning_ja": "メカニック",
+    "example_ja": "ここで素晴らしいメカニックを見かけました。",
+    "meaning_vi": "Thợ cơ khí",
+    "example_vi": "Tôi thấy một người thợ máy tuyệt vời ở đây.",
+    "meaning_hi": "मैकेनिक",
+    "example_hi": "मुझे यहाँ एक अद्भुत मैकेनिक दिखाई देता है।"
   },
   {
     "id": 230,
@@ -4368,7 +5742,13 @@ const wordList500 = [
     "meaning_fr": "charpentier",
     "meaningFr": "charpentier",
     "example_fr": "Un menuisier fabrique une table.",
-    "exampleFr": "Un menuisier fabrique une table."
+    "exampleFr": "Un menuisier fabrique une table.",
+    "meaning_ja": "大工",
+    "example_ja": "ここで素晴らしい大工さんを見かけます。",
+    "meaning_vi": "Thợ mộc",
+    "example_vi": "Tôi thấy một người thợ mộc tuyệt vời ở đây.",
+    "meaning_hi": "बढ़ई",
+    "example_hi": "मुझे यहाँ एक अद्भुत बढ़ई दिखाई देता है।"
   },
   {
     "id": 231,
@@ -4387,7 +5767,13 @@ const wordList500 = [
     "meaning_fr": "jardinier",
     "meaningFr": "jardinier",
     "example_fr": "Le jardinier arrose les fleurs.",
-    "exampleFr": "Le jardinier arrose les fleurs."
+    "exampleFr": "Le jardinier arrose les fleurs.",
+    "meaning_ja": "庭師",
+    "example_ja": "ここで素晴らしい庭師を見かけました。",
+    "meaning_vi": "Người làm vườn",
+    "example_vi": "Tôi thấy một người làm vườn tuyệt vời ở đây.",
+    "meaning_hi": "माली",
+    "example_hi": "मुझे यहाँ एक अद्भुत माली दिखाई देता है।"
   },
   {
     "id": 232,
@@ -4406,7 +5792,13 @@ const wordList500 = [
     "meaning_fr": "tête",
     "meaningFr": "tête",
     "example_fr": "Touchez votre tête.",
-    "exampleFr": "Touchez votre tête."
+    "exampleFr": "Touchez votre tête.",
+    "meaning_ja": "頭",
+    "example_ja": "ここに素晴らしい頭が見えます。",
+    "meaning_vi": "Cái đầu",
+    "example_vi": "Tôi thấy một cái đầu tuyệt vời ở đây.",
+    "meaning_hi": "सिर",
+    "example_hi": "मुझे यहाँ एक अद्भुत सिर दिखाई देता है।"
   },
   {
     "id": 233,
@@ -4425,7 +5817,13 @@ const wordList500 = [
     "meaning_fr": "cheveux",
     "meaningFr": "cheveux",
     "example_fr": "Ses cheveux sont longs.",
-    "exampleFr": "Ses cheveux sont longs."
+    "exampleFr": "Ses cheveux sont longs.",
+    "meaning_ja": "髪",
+    "example_ja": "ここで素晴らしい髪を見ます。",
+    "meaning_vi": "Tóc",
+    "example_vi": "Tôi thấy một mái tóc tuyệt vời ở đây.",
+    "meaning_hi": "बाल",
+    "example_hi": "मुझे यहाँ एक अद्भुत बाल दिखाई देता है।"
   },
   {
     "id": 234,
@@ -4444,7 +5842,13 @@ const wordList500 = [
     "meaning_fr": "neige",
     "meaningFr": "neige",
     "example_fr": "J'ai deux yeux.",
-    "exampleFr": "J'ai deux yeux."
+    "exampleFr": "J'ai deux yeux.",
+    "meaning_ja": "目",
+    "example_ja": "ここで素晴らしい目を見た。",
+    "meaning_vi": "Mắt",
+    "example_vi": "Tôi thấy một con mắt tuyệt vời ở đây.",
+    "meaning_hi": "आँख",
+    "example_hi": "मुझे यहाँ एक अद्भुत आँख दिखाई देती है।"
   },
   {
     "id": 235,
@@ -4463,7 +5867,13 @@ const wordList500 = [
     "meaning_fr": "nez",
     "meaningFr": "nez",
     "example_fr": "Mon nez est petit.",
-    "exampleFr": "Mon nez est petit."
+    "exampleFr": "Mon nez est petit.",
+    "meaning_ja": "鼻",
+    "example_ja": "ここに素晴らしい鼻が見えます。",
+    "meaning_vi": "Mũi",
+    "example_vi": "Tôi thấy một chiếc mũi tuyệt vời ở đây.",
+    "meaning_hi": "नाक",
+    "example_hi": "मुझे यहाँ एक अद्भुत नाक दिखाई देती है।"
   },
   {
     "id": 236,
@@ -4482,7 +5892,13 @@ const wordList500 = [
     "meaning_fr": "bouche",
     "meaningFr": "bouche",
     "example_fr": "Ouvrez la bouche.",
-    "exampleFr": "Ouvrez la bouche."
+    "exampleFr": "Ouvrez la bouche.",
+    "meaning_ja": "口",
+    "example_ja": "ここに素晴らしい口が見えます。",
+    "meaning_vi": "Miệng",
+    "example_vi": "Tôi thấy một cái miệng tuyệt vời ở đây.",
+    "meaning_hi": "मुँह",
+    "example_hi": "मुझे यहाँ एक अद्भुत मुख दिखाई देता है।"
   },
   {
     "id": 237,
@@ -4501,7 +5917,13 @@ const wordList500 = [
     "meaning_fr": "oreilles",
     "meaningFr": "oreilles",
     "example_fr": "J'écoute avec mes oreilles.",
-    "exampleFr": "J'écoute avec mes oreilles."
+    "exampleFr": "J'écoute avec mes oreilles.",
+    "meaning_ja": "耳",
+    "example_ja": "ここに素晴らしい耳が見えます。",
+    "meaning_vi": "Tai",
+    "example_vi": "Tôi thấy một cái tai tuyệt vời ở đây.",
+    "meaning_hi": "कान",
+    "example_hi": "मुझे यहाँ एक अद्भुत कान दिखाई देता है।"
   },
   {
     "id": 238,
@@ -4520,7 +5942,13 @@ const wordList500 = [
     "meaning_fr": "dent/dents",
     "meaningFr": "dent/dents",
     "example_fr": "Brossez-vous les dents.",
-    "exampleFr": "Brossez-vous les dents."
+    "exampleFr": "Brossez-vous les dents.",
+    "meaning_ja": "歯",
+    "example_ja": "ここに素晴らしい歯が見えます。",
+    "meaning_vi": "Răng",
+    "example_vi": "Tôi thấy một chiếc răng tuyệt vời ở đây.",
+    "meaning_hi": "दाँत",
+    "example_hi": "मुझे यहाँ एक अद्भुत दाँत दिखाई देता है।"
   },
   {
     "id": 239,
@@ -4539,7 +5967,13 @@ const wordList500 = [
     "meaning_fr": "visage",
     "meaningFr": "visage",
     "example_fr": "Lavez-vous le visage.",
-    "exampleFr": "Lavez-vous le visage."
+    "exampleFr": "Lavez-vous le visage.",
+    "meaning_ja": "顔",
+    "example_ja": "ここに素晴らしい顔が見えます。",
+    "meaning_vi": "Khuôn mặt",
+    "example_vi": "Tôi thấy một khuôn mặt tuyệt vời ở đây.",
+    "meaning_hi": "चेहरा",
+    "example_hi": "मुझे यहाँ एक अद्भुत चेहरा दिखाई देता है।"
   },
   {
     "id": 240,
@@ -4558,7 +5992,13 @@ const wordList500 = [
     "meaning_fr": "main",
     "meaningFr": "main",
     "example_fr": "Levez la main.",
-    "exampleFr": "Levez la main."
+    "exampleFr": "Levez la main.",
+    "meaning_ja": "手",
+    "example_ja": "ここに素晴らしい手が見えます。",
+    "meaning_vi": "Tay",
+    "example_vi": "Tôi thấy một bàn tay tuyệt vời ở đây.",
+    "meaning_hi": "हाथ",
+    "example_hi": "मुझे यहाँ एक अद्भुत हाथ दिख रहा है।"
   },
   {
     "id": 241,
@@ -4577,7 +6017,13 @@ const wordList500 = [
     "meaning_fr": "doigt",
     "meaningFr": "doigt",
     "example_fr": "J'ai dix doigts.",
-    "exampleFr": "J'ai dix doigts."
+    "exampleFr": "J'ai dix doigts.",
+    "meaning_ja": "指",
+    "example_ja": "ここに素晴らしい指が見えます。",
+    "meaning_vi": "Ngón tay",
+    "example_vi": "Tôi thấy một ngón tay tuyệt vời ở đây.",
+    "meaning_hi": "उँगलिया",
+    "example_hi": "मुझे यहां एक अद्भुत उंगली दिखाई देती है।"
   },
   {
     "id": 242,
@@ -4596,7 +6042,13 @@ const wordList500 = [
     "meaning_fr": "bras",
     "meaningFr": "bras",
     "example_fr": "Mon bras me fait mal.",
-    "exampleFr": "Mon bras me fait mal."
+    "exampleFr": "Mon bras me fait mal.",
+    "meaning_ja": "アーム",
+    "example_ja": "ここに素晴らしい腕が見えます。",
+    "meaning_vi": "Cánh tay",
+    "example_vi": "Tôi thấy một cánh tay tuyệt vời ở đây.",
+    "meaning_hi": "हाथ",
+    "example_hi": "मुझे यहाँ एक अद्भुत भुजा दिखाई देती है।"
   },
   {
     "id": 243,
@@ -4615,7 +6067,13 @@ const wordList500 = [
     "meaning_fr": "pont",
     "meaningFr": "pont",
     "example_fr": "Il a des jambes fortes.",
-    "exampleFr": "Il a des jambes fortes."
+    "exampleFr": "Il a des jambes fortes.",
+    "meaning_ja": "脚",
+    "example_ja": "ここに素晴らしい脚が見えます。",
+    "meaning_vi": "Chân",
+    "example_vi": "Tôi thấy một cái chân tuyệt vời ở đây.",
+    "meaning_hi": "टांग",
+    "example_hi": "मुझे यहाँ एक अद्भुत पैर दिखाई देता है।"
   },
   {
     "id": 244,
@@ -4634,7 +6092,13 @@ const wordList500 = [
     "meaning_fr": "pied",
     "meaningFr": "pied",
     "example_fr": "J'ai les pieds froids.",
-    "exampleFr": "J'ai les pieds froids."
+    "exampleFr": "J'ai les pieds froids.",
+    "meaning_ja": "足",
+    "example_ja": "ここに素晴らしい足が見えます。",
+    "meaning_vi": "Chân",
+    "example_vi": "Tôi thấy một bàn chân tuyệt vời ở đây.",
+    "meaning_hi": "पैर",
+    "example_hi": "मुझे यहाँ एक अद्भुत पैर दिखाई देता है।"
   },
   {
     "id": 245,
@@ -4653,7 +6117,13 @@ const wordList500 = [
     "meaning_fr": "cou",
     "meaningFr": "cou",
     "example_fr": "Les girafes ont un long cou.",
-    "exampleFr": "Les girafes ont un long cou."
+    "exampleFr": "Les girafes ont un long cou.",
+    "meaning_ja": "ネック",
+    "example_ja": "ここに素晴らしい首が見えます。",
+    "meaning_vi": "Cổ",
+    "example_vi": "Tôi thấy một cái cổ tuyệt vời ở đây.",
+    "meaning_hi": "गरदन",
+    "example_hi": "मुझे यहाँ एक अद्भुत गर्दन दिखाई देती है।"
   },
   {
     "id": 246,
@@ -4672,7 +6142,13 @@ const wordList500 = [
     "meaning_fr": "épaule",
     "meaningFr": "épaule",
     "example_fr": "Mettez votre sac sur votre épaule.",
-    "exampleFr": "Mettez votre sac sur votre épaule."
+    "exampleFr": "Mettez votre sac sur votre épaule.",
+    "meaning_ja": "ショルダー",
+    "example_ja": "ここに素晴らしい肩が見えます。",
+    "meaning_vi": "Vai",
+    "example_vi": "Tôi thấy một bờ vai tuyệt vời ở đây.",
+    "meaning_hi": "कंधा",
+    "example_hi": "मुझे यहां एक अद्भुत कंधा दिखाई देता है।"
   },
   {
     "id": 247,
@@ -4691,7 +6167,13 @@ const wordList500 = [
     "meaning_fr": "orteils",
     "meaningFr": "orteils",
     "example_fr": "Je vois de jolis orteils.",
-    "exampleFr": "Je vois de jolis orteils."
+    "exampleFr": "Je vois de jolis orteils.",
+    "meaning_ja": "つま先",
+    "example_ja": "ここに素晴らしいつま先が見えます。",
+    "meaning_vi": "ngón chân",
+    "example_vi": "Tôi thấy một ngón chân tuyệt vời ở đây.",
+    "meaning_hi": "पैर की अंगुली",
+    "example_hi": "मुझे यहां एक अद्भुत पैर का अंगूठा दिखाई देता है।"
   },
   {
     "id": 248,
@@ -4710,7 +6192,13 @@ const wordList500 = [
     "meaning_fr": "corps",
     "meaningFr": "corps",
     "example_fr": "Je vois un joli corps.",
-    "exampleFr": "Je vois un joli corps."
+    "exampleFr": "Je vois un joli corps.",
+    "meaning_ja": "体",
+    "example_ja": "ここで素晴らしい体を見ます。",
+    "meaning_vi": "Thân hình",
+    "example_vi": "Tôi thấy một cơ thể tuyệt vời ở đây.",
+    "meaning_hi": "शरीर",
+    "example_hi": "मुझे यहाँ एक अद्भुत शरीर दिखाई देता है।"
   },
   {
     "id": 249,
@@ -4729,7 +6217,13 @@ const wordList500 = [
     "meaning_fr": "voix",
     "meaningFr": "voix",
     "example_fr": "Je vois une voix merveilleuse.",
-    "exampleFr": "Je vois une voix merveilleuse."
+    "exampleFr": "Je vois une voix merveilleuse.",
+    "meaning_ja": "声",
+    "example_ja": "ここで素晴らしい声を見かけます。",
+    "meaning_vi": "Tiếng nói",
+    "example_vi": "Tôi thấy một giọng nói tuyệt vời ở đây.",
+    "meaning_hi": "आवाज़",
+    "example_hi": "मुझे यहां एक अद्भुत आवाज दिखाई दे रही है।"
   },
   {
     "id": 250,
@@ -4748,7 +6242,13 @@ const wordList500 = [
     "meaning_fr": "barbe",
     "meaningFr": "barbe",
     "example_fr": "Je vois une belle barbe.",
-    "exampleFr": "Je vois une belle barbe."
+    "exampleFr": "Je vois une belle barbe.",
+    "meaning_ja": "あごひげ",
+    "example_ja": "ここに素晴らしいひげが見えます。",
+    "meaning_vi": "Râu",
+    "example_vi": "Tôi thấy một bộ râu tuyệt vời ở đây.",
+    "meaning_hi": "दाढ़ी",
+    "example_hi": "मुझे यहाँ एक अद्भुत दाढ़ी दिखाई देती है।"
   },
   {
     "id": 251,
@@ -4767,7 +6267,13 @@ const wordList500 = [
     "meaning_fr": "os",
     "meaningFr": "os",
     "example_fr": "Je vois de beaux os.",
-    "exampleFr": "Je vois de beaux os."
+    "exampleFr": "Je vois de beaux os.",
+    "meaning_ja": "骨",
+    "example_ja": "ここに素晴らしい骨が見えます。",
+    "meaning_vi": "Xương",
+    "example_vi": "Tôi thấy một khúc xương tuyệt vời ở đây.",
+    "meaning_hi": "हड्डी",
+    "example_hi": "मुझे यहाँ एक अद्भुत हड्डी दिखाई देती है।"
   },
   {
     "id": 252,
@@ -4786,7 +6292,13 @@ const wordList500 = [
     "meaning_fr": "cerveau",
     "meaningFr": "cerveau",
     "example_fr": "Je vois un cerveau merveilleux.",
-    "exampleFr": "Je vois un cerveau merveilleux."
+    "exampleFr": "Je vois un cerveau merveilleux.",
+    "meaning_ja": "脳",
+    "example_ja": "ここに素晴らしい頭脳が見られます。",
+    "meaning_vi": "Não",
+    "example_vi": "Tôi thấy một bộ não tuyệt vời ở đây.",
+    "meaning_hi": "दिमाग",
+    "example_hi": "मुझे यहाँ एक अद्भुत मस्तिष्क दिखाई देता है।"
   },
   {
     "id": 253,
@@ -4805,7 +6317,13 @@ const wordList500 = [
     "meaning_fr": "poitrine",
     "meaningFr": "poitrine",
     "example_fr": "Je vois de beaux seins.",
-    "exampleFr": "Je vois de beaux seins."
+    "exampleFr": "Je vois de beaux seins.",
+    "meaning_ja": "胸",
+    "example_ja": "ここに素晴らしい胸が見えます。",
+    "meaning_vi": "Ngực",
+    "example_vi": "Tôi thấy một bộ ngực tuyệt vời ở đây.",
+    "meaning_hi": "छाती",
+    "example_hi": "मुझे यहां एक अद्भुत संदूक दिखाई देता है।"
   },
   {
     "id": 254,
@@ -4824,7 +6342,13 @@ const wordList500 = [
     "meaning_fr": "menton",
     "meaningFr": "menton",
     "example_fr": "Je vois un joli menton.",
-    "exampleFr": "Je vois un joli menton."
+    "exampleFr": "Je vois un joli menton.",
+    "meaning_ja": "顎",
+    "example_ja": "ここに素晴らしい顎が見えます。",
+    "meaning_vi": "Cằm",
+    "example_vi": "Tôi thấy một cái cằm tuyệt vời ở đây.",
+    "meaning_hi": "ठोड़ी",
+    "example_hi": "मुझे यहां एक अद्भुत ठुड्डी दिखाई दे रही है।"
   },
   {
     "id": 255,
@@ -4843,7 +6367,13 @@ const wordList500 = [
     "meaning_fr": "les griffes",
     "meaningFr": "les griffes",
     "example_fr": "Je vois de jolis ongles.",
-    "exampleFr": "Je vois de jolis ongles."
+    "exampleFr": "Je vois de jolis ongles.",
+    "meaning_ja": "爪",
+    "example_ja": "ここに素晴らしい爪が見えます。",
+    "meaning_vi": "móng vuốt",
+    "example_vi": "Tôi thấy một móng vuốt tuyệt vời ở đây.",
+    "meaning_hi": "पंजा",
+    "example_hi": "मुझे यहाँ एक अद्भुत पंजा दिखाई देता है।"
   },
   {
     "id": 256,
@@ -4862,7 +6392,13 @@ const wordList500 = [
     "meaning_fr": "plume",
     "meaningFr": "plume",
     "example_fr": "Je vois de belles plumes.",
-    "exampleFr": "Je vois de belles plumes."
+    "exampleFr": "Je vois de belles plumes.",
+    "meaning_ja": "フェザー",
+    "example_ja": "ここに素晴らしい羽が見えます。",
+    "meaning_vi": "Lông vũ",
+    "example_vi": "Tôi thấy một chiếc lông tuyệt vời ở đây.",
+    "meaning_hi": "पंख",
+    "example_hi": "मुझे यहाँ एक अद्भुत पंख दिखाई देता है।"
   },
   {
     "id": 257,
@@ -4881,7 +6417,13 @@ const wordList500 = [
     "meaning_fr": "empreinte digitale",
     "meaningFr": "empreinte digitale",
     "example_fr": "Je vois de superbes impressions.",
-    "exampleFr": "Je vois de superbes impressions."
+    "exampleFr": "Je vois de superbes impressions.",
+    "meaning_ja": "指紋",
+    "example_ja": "ここに素晴らしい指紋が見えます。",
+    "meaning_vi": "Dấu vân tay",
+    "example_vi": "Tôi thấy một dấu vân tay tuyệt vời ở đây.",
+    "meaning_hi": "अंगुली की छाप",
+    "example_hi": "मुझे यहां एक अद्भुत फिंगरप्रिंट दिखाई दे रहा है।"
   },
   {
     "id": 258,
@@ -4900,7 +6442,13 @@ const wordList500 = [
     "meaning_fr": "corne/corne",
     "meaningFr": "corne/corne",
     "example_fr": "Je vois une jolie corne/corne.",
-    "exampleFr": "Je vois une jolie corne/corne."
+    "exampleFr": "Je vois une jolie corne/corne.",
+    "meaning_ja": "ホルン",
+    "example_ja": "ここに素晴らしいホルンが見えます。",
+    "meaning_vi": "Sừng",
+    "example_vi": "Tôi thấy một chiếc sừng tuyệt vời ở đây.",
+    "meaning_hi": "सींग",
+    "example_hi": "मुझे यहाँ एक अद्भुत सींग दिखाई देता है।"
   },
   {
     "id": 259,
@@ -4919,7 +6467,13 @@ const wordList500 = [
     "meaning_fr": "front",
     "meaningFr": "front",
     "example_fr": "Maman m'a touché le front.",
-    "exampleFr": "Maman m'a touché le front."
+    "exampleFr": "Maman m'a touché le front.",
+    "meaning_ja": "額",
+    "example_ja": "ここに素晴らしい額が見えます。",
+    "meaning_vi": "Trán",
+    "example_vi": "Tôi thấy một vầng trán tuyệt vời ở đây.",
+    "meaning_hi": "माथा",
+    "example_hi": "मुझे यहाँ एक अद्भुत माथा दिखाई देता है।"
   },
   {
     "id": 260,
@@ -4938,7 +6492,13 @@ const wordList500 = [
     "meaning_fr": "joue, joue",
     "meaningFr": "joue, joue",
     "example_fr": "Ses joues sont rouges.",
-    "exampleFr": "Ses joues sont rouges."
+    "exampleFr": "Ses joues sont rouges.",
+    "meaning_ja": "頬",
+    "example_ja": "ここに素晴らしい頬が見えます。",
+    "meaning_vi": "Má",
+    "example_vi": "Tôi thấy một cái má tuyệt vời ở đây.",
+    "meaning_hi": "गाल",
+    "example_hi": "मुझे यहाँ एक अद्भुत गाल दिखाई देता है।"
   },
   {
     "id": 261,
@@ -4957,7 +6517,13 @@ const wordList500 = [
     "meaning_fr": "gorge",
     "meaningFr": "gorge",
     "example_fr": "J'ai mal au cou aujourd'hui.",
-    "exampleFr": "J'ai mal au cou aujourd'hui."
+    "exampleFr": "J'ai mal au cou aujourd'hui.",
+    "meaning_ja": "喉",
+    "example_ja": "ここに素晴らしい喉が見えます。",
+    "meaning_vi": "Họng",
+    "example_vi": "Tôi thấy một cổ họng tuyệt vời ở đây.",
+    "meaning_hi": "गला",
+    "example_hi": "मुझे यहाँ एक अद्भुत गला दिखाई देता है।"
   },
   {
     "id": 262,
@@ -4976,7 +6542,13 @@ const wordList500 = [
     "meaning_fr": "coude",
     "meaningFr": "coude",
     "example_fr": "Je me suis cogné le coude contre la porte.",
-    "exampleFr": "Je me suis cogné le coude contre la porte."
+    "exampleFr": "Je me suis cogné le coude contre la porte.",
+    "meaning_ja": "肘",
+    "example_ja": "ここに素晴らしい肘が見えます。",
+    "meaning_vi": "Khuỷu tay",
+    "example_vi": "Tôi thấy một khuỷu tay tuyệt vời ở đây.",
+    "meaning_hi": "कोहनी",
+    "example_hi": "मुझे यहां एक अद्भुत कोहनी दिखाई दे रही है।"
   },
   {
     "id": 263,
@@ -4995,7 +6567,13 @@ const wordList500 = [
     "meaning_fr": "poignet",
     "meaningFr": "poignet",
     "example_fr": "Je porte une montre au poignet.",
-    "exampleFr": "Je porte une montre au poignet."
+    "exampleFr": "Je porte une montre au poignet.",
+    "meaning_ja": "手首",
+    "example_ja": "ここに素晴らしい手首が見えます。",
+    "meaning_vi": "Cổ tay",
+    "example_vi": "Tôi thấy một cổ tay tuyệt vời ở đây.",
+    "meaning_hi": "कलाई",
+    "example_hi": "मुझे यहाँ एक अद्भुत कलाई दिखाई देती है।"
   },
   {
     "id": 264,
@@ -5014,7 +6592,13 @@ const wordList500 = [
     "meaning_fr": "paume",
     "meaningFr": "paume",
     "example_fr": "Il tenait une pièce de monnaie dans sa paume.",
-    "exampleFr": "Il tenait une pièce de monnaie dans sa paume."
+    "exampleFr": "Il tenait une pièce de monnaie dans sa paume.",
+    "meaning_ja": "ヤシ",
+    "example_ja": "ここで素晴らしいヤシを見ます。",
+    "meaning_vi": "Cọ",
+    "example_vi": "Tôi thấy một cây cọ tuyệt vời ở đây.",
+    "meaning_hi": "हथेली",
+    "example_hi": "मुझे यहां एक अद्भुत ताड़ का पेड़ दिखाई देता है।"
   },
   {
     "id": 265,
@@ -5033,7 +6617,13 @@ const wordList500 = [
     "meaning_fr": "pouce",
     "meaningFr": "pouce",
     "example_fr": "Tenez le stylo avec votre pouce.",
-    "exampleFr": "Tenez le stylo avec votre pouce."
+    "exampleFr": "Tenez le stylo avec votre pouce.",
+    "meaning_ja": "親指",
+    "example_ja": "ここに素晴らしい親指が見えます。",
+    "meaning_vi": "ngón tay cái",
+    "example_vi": "Tôi thấy một ngón tay cái tuyệt vời ở đây.",
+    "meaning_hi": "अँगूठा",
+    "example_hi": "मुझे यहां एक अद्भुत अंगूठा दिखाई दे रहा है।"
   },
   {
     "id": 266,
@@ -5052,7 +6642,13 @@ const wordList500 = [
     "meaning_fr": "taille",
     "meaningFr": "taille",
     "example_fr": "Mettez une ceinture autour de votre taille.",
-    "exampleFr": "Mettez une ceinture autour de votre taille."
+    "exampleFr": "Mettez une ceinture autour de votre taille.",
+    "meaning_ja": "ウエスト",
+    "example_ja": "ここで素晴らしいウエストが見えます。",
+    "meaning_vi": "Thắt lưng",
+    "example_vi": "Tôi thấy một vòng eo tuyệt vời ở đây.",
+    "meaning_hi": "कमर",
+    "example_hi": "मुझे यहाँ एक अद्भुत कमर दिखाई देती है।"
   },
   {
     "id": 267,
@@ -5071,7 +6667,13 @@ const wordList500 = [
     "meaning_fr": "les fesses",
     "meaningFr": "les fesses",
     "example_fr": "Mettez vos mains sur vos hanches.",
-    "exampleFr": "Mettez vos mains sur vos hanches."
+    "exampleFr": "Mettez vos mains sur vos hanches.",
+    "meaning_ja": "ヒップ",
+    "example_ja": "ここに素晴らしいヒップが見えます。",
+    "meaning_vi": "Hông",
+    "example_vi": "Tôi thấy một cái hông tuyệt vời ở đây.",
+    "meaning_hi": "कूल्हा",
+    "example_hi": "मुझे यहाँ एक अद्भुत कूल्हा दिखाई देता है।"
   },
   {
     "id": 268,
@@ -5090,7 +6692,13 @@ const wordList500 = [
     "meaning_fr": "cuisses",
     "meaningFr": "cuisses",
     "example_fr": "J'avais mal aux cuisses après avoir couru.",
-    "exampleFr": "J'avais mal aux cuisses après avoir couru."
+    "exampleFr": "J'avais mal aux cuisses après avoir couru.",
+    "meaning_ja": "大腿",
+    "example_ja": "ここに素晴らしい太ももが見えます。",
+    "meaning_vi": "Đùi",
+    "example_vi": "Tôi thấy một cái đùi tuyệt vời ở đây.",
+    "meaning_hi": "जाँघ",
+    "example_hi": "मुझे यहाँ एक अद्भुत जाँघ दिखाई दे रही है।"
   },
   {
     "id": 269,
@@ -5109,7 +6717,13 @@ const wordList500 = [
     "meaning_fr": "chapeau",
     "meaningFr": "chapeau",
     "example_fr": "Je vois un joli chapeau.",
-    "exampleFr": "Je vois un joli chapeau."
+    "exampleFr": "Je vois un joli chapeau.",
+    "meaning_ja": "キャップ",
+    "example_ja": "ここで素晴らしいキャップを見ました。",
+    "meaning_vi": "mũ lưỡi trai",
+    "example_vi": "Tôi thấy một chiếc mũ tuyệt vời ở đây.",
+    "meaning_hi": "टोपी",
+    "example_hi": "मुझे यहाँ एक अद्भुत टोपी दिखाई देती है।"
   },
   {
     "id": 270,
@@ -5128,7 +6742,13 @@ const wordList500 = [
     "meaning_fr": "chapeau",
     "meaningFr": "chapeau",
     "example_fr": "Je vois un joli chapeau.",
-    "exampleFr": "Je vois un joli chapeau."
+    "exampleFr": "Je vois un joli chapeau.",
+    "meaning_ja": "帽子",
+    "example_ja": "ここで素敵な帽子を見ました。",
+    "meaning_vi": "Mũ",
+    "example_vi": "Tôi thấy một chiếc mũ tuyệt vời ở đây.",
+    "meaning_hi": "टोपी",
+    "example_hi": "मुझे यहाँ एक अद्भुत टोपी दिखाई देती है।"
   },
   {
     "id": 271,
@@ -5147,7 +6767,13 @@ const wordList500 = [
     "meaning_fr": "chemise",
     "meaningFr": "chemise",
     "example_fr": "Je vois une jolie chemise.",
-    "exampleFr": "Je vois une jolie chemise."
+    "exampleFr": "Je vois une jolie chemise.",
+    "meaning_ja": "シャツ",
+    "example_ja": "ここで素晴らしいシャツを見ました。",
+    "meaning_vi": "Áo sơ mi",
+    "example_vi": "Tôi thấy một chiếc áo tuyệt vời ở đây.",
+    "meaning_hi": "कमीज",
+    "example_hi": "मुझे यहां एक अद्भुत शर्ट दिख रही है।"
   },
   {
     "id": 272,
@@ -5166,7 +6792,13 @@ const wordList500 = [
     "meaning_fr": "pantalon",
     "meaningFr": "pantalon",
     "example_fr": "Je vois de jolis pantalons.",
-    "exampleFr": "Je vois de jolis pantalons."
+    "exampleFr": "Je vois de jolis pantalons.",
+    "meaning_ja": "パンツ",
+    "example_ja": "ここに素晴らしいパンツがあります。",
+    "meaning_vi": "Quần dài",
+    "example_vi": "Tôi thấy một chiếc quần tuyệt vời ở đây.",
+    "meaning_hi": "पैंट",
+    "example_hi": "मुझे यहाँ एक अद्भुत पैंट दिख रही है।"
   },
   {
     "id": 273,
@@ -5185,7 +6817,13 @@ const wordList500 = [
     "meaning_fr": "chaussures",
     "meaningFr": "chaussures",
     "example_fr": "Je vois de belles chaussures.",
-    "exampleFr": "Je vois de belles chaussures."
+    "exampleFr": "Je vois de belles chaussures.",
+    "meaning_ja": "靴",
+    "example_ja": "ここで素晴らしい靴を見ました。",
+    "meaning_vi": "Đôi giày",
+    "example_vi": "Tôi thấy một đôi giày tuyệt vời ở đây.",
+    "meaning_hi": "जूते",
+    "example_hi": "मैं यहाँ एक अद्भुत जूते देखता हूँ।"
   },
   {
     "id": 274,
@@ -5204,7 +6842,13 @@ const wordList500 = [
     "meaning_fr": "poche",
     "meaningFr": "poche",
     "example_fr": "Je vois de jolies poches.",
-    "exampleFr": "Je vois de jolies poches."
+    "exampleFr": "Je vois de jolies poches.",
+    "meaning_ja": "ポケット",
+    "example_ja": "ここに素晴らしいポケットが見えます。",
+    "meaning_vi": "Túi",
+    "example_vi": "Tôi thấy một cái túi tuyệt vời ở đây.",
+    "meaning_hi": "जेब",
+    "example_hi": "मुझे यहां एक अद्भुत पॉकेट दिखाई देती है।"
   },
   {
     "id": 275,
@@ -5223,7 +6867,13 @@ const wordList500 = [
     "meaning_fr": "tablier",
     "meaningFr": "tablier",
     "example_fr": "Je regarde le magnifique Apron Village.",
-    "exampleFr": "Je regarde le magnifique Apron Village."
+    "exampleFr": "Je regarde le magnifique Apron Village.",
+    "meaning_ja": "エプロン",
+    "example_ja": "ここで素晴らしいエプロンを見ました。",
+    "meaning_vi": "tạp dề",
+    "example_vi": "Tôi thấy một chiếc tạp dề tuyệt vời ở đây.",
+    "meaning_hi": "तहबंद",
+    "example_hi": "मुझे यहाँ एक अद्भुत एप्रन दिखाई देता है।"
   },
   {
     "id": 276,
@@ -5242,7 +6892,13 @@ const wordList500 = [
     "meaning_fr": "insigne",
     "meaningFr": "insigne",
     "example_fr": "Je vois un badge sympa.",
-    "exampleFr": "Je vois un badge sympa."
+    "exampleFr": "Je vois un badge sympa.",
+    "meaning_ja": "バッジ",
+    "example_ja": "ここで素晴らしいバッジを見ました。",
+    "meaning_vi": "Huy hiệu",
+    "example_vi": "Tôi thấy một huy hiệu tuyệt vời ở đây.",
+    "meaning_hi": "बिल्ला",
+    "example_hi": "मुझे यहां एक अद्भुत बैज दिखाई दे रहा है।"
   },
   {
     "id": 277,
@@ -5261,7 +6917,13 @@ const wordList500 = [
     "meaning_fr": "ceinture",
     "meaningFr": "ceinture",
     "example_fr": "Je vois une jolie ceinture.",
-    "exampleFr": "Je vois une jolie ceinture."
+    "exampleFr": "Je vois une jolie ceinture.",
+    "meaning_ja": "ベルト",
+    "example_ja": "ここで素晴らしいベルトを見ました。",
+    "meaning_vi": "Thắt lưng",
+    "example_vi": "Tôi thấy một chiếc thắt lưng tuyệt vời ở đây.",
+    "meaning_hi": "बेल्ट",
+    "example_hi": "मुझे यहां एक अद्भुत बेल्ट दिखाई देती है।"
   },
   {
     "id": 278,
@@ -5280,7 +6942,13 @@ const wordList500 = [
     "meaning_fr": "chemisier",
     "meaningFr": "chemisier",
     "example_fr": "Je vois un joli chemisier.",
-    "exampleFr": "Je vois un joli chemisier."
+    "exampleFr": "Je vois un joli chemisier.",
+    "meaning_ja": "ブラウス",
+    "example_ja": "ここに素敵なブラウスがあります。",
+    "meaning_vi": "Áo cánh",
+    "example_vi": "Tôi thấy một chiếc áo tuyệt vời ở đây.",
+    "meaning_hi": "ब्लाउज",
+    "example_hi": "मुझे यहां एक अद्भुत ब्लाउज दिखाई दे रहा है।"
   },
   {
     "id": 279,
@@ -5299,7 +6967,13 @@ const wordList500 = [
     "meaning_fr": "manteau",
     "meaningFr": "manteau",
     "example_fr": "Je vois un joli manteau.",
-    "exampleFr": "Je vois un joli manteau."
+    "exampleFr": "Je vois un joli manteau.",
+    "meaning_ja": "コート",
+    "example_ja": "ここで素晴らしいコートを見ました。",
+    "meaning_vi": "Áo choàng",
+    "example_vi": "Tôi thấy một chiếc áo khoác tuyệt vời ở đây.",
+    "meaning_hi": "परत",
+    "example_hi": "मुझे यहाँ एक अद्भुत कोट दिखाई देता है।"
   },
   {
     "id": 280,
@@ -5318,7 +6992,13 @@ const wordList500 = [
     "meaning_fr": "revers",
     "meaningFr": "revers",
     "example_fr": "Je vois un joli collier.",
-    "exampleFr": "Je vois un joli collier."
+    "exampleFr": "Je vois un joli collier.",
+    "meaning_ja": "襟",
+    "example_ja": "ここに素晴らしい首輪が見えます。",
+    "meaning_vi": "cổ áo",
+    "example_vi": "Tôi thấy một chiếc cổ áo tuyệt vời ở đây.",
+    "meaning_hi": "गले का पट्टा",
+    "example_hi": "मुझे यहां एक अद्भुत कॉलर दिखाई दे रहा है।"
   },
   {
     "id": 281,
@@ -5337,7 +7017,13 @@ const wordList500 = [
     "meaning_fr": "couronne",
     "meaningFr": "couronne",
     "example_fr": "Je vois une magnifique couronne.",
-    "exampleFr": "Je vois une magnifique couronne."
+    "exampleFr": "Je vois une magnifique couronne.",
+    "meaning_ja": "クラウン",
+    "example_ja": "ここに素晴らしい王冠が見えます。",
+    "meaning_vi": "Vương miện",
+    "example_vi": "Tôi thấy một chiếc vương miện tuyệt vời ở đây.",
+    "meaning_hi": "ताज",
+    "example_hi": "मुझे यहाँ एक अद्भुत मुकुट दिखाई देता है।"
   },
   {
     "id": 282,
@@ -5356,7 +7042,13 @@ const wordList500 = [
     "meaning_fr": "robe",
     "meaningFr": "robe",
     "example_fr": "Je vois une jolie robe.",
-    "exampleFr": "Je vois une jolie robe."
+    "exampleFr": "Je vois une jolie robe.",
+    "meaning_ja": "ドレス",
+    "example_ja": "ここで素晴らしいドレスを見ました。",
+    "meaning_vi": "Đầm",
+    "example_vi": "Tôi thấy một chiếc váy tuyệt vời ở đây.",
+    "meaning_hi": "पोशाक",
+    "example_hi": "मुझे यहाँ एक अद्भुत पोशाक दिख रही है।"
   },
   {
     "id": 283,
@@ -5375,7 +7067,13 @@ const wordList500 = [
     "meaning_fr": "gants",
     "meaningFr": "gants",
     "example_fr": "Je vois de jolis gants.",
-    "exampleFr": "Je vois de jolis gants."
+    "exampleFr": "Je vois de jolis gants.",
+    "meaning_ja": "グローブ",
+    "example_ja": "ここで素晴らしい手袋を見ました。",
+    "meaning_vi": "Găng tay",
+    "example_vi": "Tôi thấy một chiếc găng tay tuyệt vời ở đây.",
+    "meaning_hi": "दस्ताना",
+    "example_hi": "मुझे यहां एक अद्भुत दस्ताना दिखाई दे रहा है।"
   },
   {
     "id": 284,
@@ -5394,7 +7092,13 @@ const wordList500 = [
     "meaning_fr": "casque",
     "meaningFr": "casque",
     "example_fr": "Je vois un joli casque.",
-    "exampleFr": "Je vois un joli casque."
+    "exampleFr": "Je vois un joli casque.",
+    "meaning_ja": "ヘルメット",
+    "example_ja": "ここで素晴らしいヘルメットを見ました。",
+    "meaning_vi": "Mũ bảo hiểm",
+    "example_vi": "Tôi thấy một chiếc mũ bảo hiểm tuyệt vời ở đây.",
+    "meaning_hi": "हेलमेट",
+    "example_hi": "मुझे यहां एक अद्भुत हेलमेट दिखाई दे रहा है।"
   },
   {
     "id": 285,
@@ -5413,7 +7117,13 @@ const wordList500 = [
     "meaning_fr": "veste",
     "meaningFr": "veste",
     "example_fr": "Je vois une jolie veste.",
-    "exampleFr": "Je vois une jolie veste."
+    "exampleFr": "Je vois une jolie veste.",
+    "meaning_ja": "ジャケット",
+    "example_ja": "ここで素晴らしいジャケットを見ました。",
+    "meaning_vi": "Áo khoác",
+    "example_vi": "Tôi thấy một chiếc áo khoác tuyệt vời ở đây.",
+    "meaning_hi": "जैकेट",
+    "example_hi": "मुझे यहां एक अद्भुत जैकेट दिखाई दे रही है।"
   },
   {
     "id": 286,
@@ -5432,7 +7142,13 @@ const wordList500 = [
     "meaning_fr": "jupe",
     "meaningFr": "jupe",
     "example_fr": "Elle porte une jupe bleue.",
-    "exampleFr": "Elle porte une jupe bleue."
+    "exampleFr": "Elle porte une jupe bleue.",
+    "meaning_ja": "スカート",
+    "example_ja": "ここに素晴らしいスカートがあります。",
+    "meaning_vi": "Váy ngắn",
+    "example_vi": "Tôi thấy một chiếc váy tuyệt vời ở đây.",
+    "meaning_hi": "स्कर्ट",
+    "example_hi": "मुझे यहां एक अद्भुत स्कर्ट दिखाई दे रही है।"
   },
   {
     "id": 287,
@@ -5451,7 +7167,13 @@ const wordList500 = [
     "meaning_fr": "pull",
     "meaningFr": "pull",
     "example_fr": "Ce pull est chaud.",
-    "exampleFr": "Ce pull est chaud."
+    "exampleFr": "Ce pull est chaud.",
+    "meaning_ja": "セーター",
+    "example_ja": "ここに素晴らしいセーターがあります。",
+    "meaning_vi": "Áo len",
+    "example_vi": "Tôi thấy một chiếc áo len tuyệt vời ở đây.",
+    "meaning_hi": "स्वेटर",
+    "example_hi": "मुझे यहां एक अद्भुत स्वेटर दिखाई दे रहा है।"
   },
   {
     "id": 288,
@@ -5470,7 +7192,13 @@ const wordList500 = [
     "meaning_fr": "gilet",
     "meaningFr": "gilet",
     "example_fr": "Il porte un gilet par-dessus sa chemise.",
-    "exampleFr": "Il porte un gilet par-dessus sa chemise."
+    "exampleFr": "Il porte un gilet par-dessus sa chemise.",
+    "meaning_ja": "ベスト",
+    "example_ja": "ここで素晴らしいベストを見ました。",
+    "meaning_vi": "áo vest",
+    "example_vi": "Tôi thấy một chiếc áo vest tuyệt vời ở đây.",
+    "meaning_hi": "बनियान",
+    "example_hi": "मुझे यहाँ एक अद्भुत बनियान दिख रही है।"
   },
   {
     "id": 289,
@@ -5489,7 +7217,13 @@ const wordList500 = [
     "meaning_fr": "jean",
     "meaningFr": "jean",
     "example_fr": "Mon jean est bleu.",
-    "exampleFr": "Mon jean est bleu."
+    "exampleFr": "Mon jean est bleu.",
+    "meaning_ja": "ジーンズ",
+    "example_ja": "ここで素晴らしいジーンズを見ました。",
+    "meaning_vi": "quần jean",
+    "example_vi": "Tôi thấy một chiếc quần jean tuyệt vời ở đây.",
+    "meaning_hi": "जींस",
+    "example_hi": "मुझे यहाँ एक अद्भुत जीन्स दिख रही है।"
   },
   {
     "id": 290,
@@ -5508,7 +7242,13 @@ const wordList500 = [
     "meaning_fr": "short",
     "meaningFr": "short",
     "example_fr": "Je porte des shorts en été.",
-    "exampleFr": "Je porte des shorts en été."
+    "exampleFr": "Je porte des shorts en été.",
+    "meaning_ja": "ショーツ",
+    "example_ja": "ここに素晴らしいショートパンツがあります。",
+    "meaning_vi": "quần short",
+    "example_vi": "Tôi thấy một chiếc quần short tuyệt vời ở đây.",
+    "meaning_hi": "शॉर्ट्स",
+    "example_hi": "मुझे यहां एक अद्भुत शॉर्ट्स दिख रहा है।"
   },
   {
     "id": 291,
@@ -5527,7 +7267,13 @@ const wordList500 = [
     "meaning_fr": "bottes de pluie, bottes",
     "meaningFr": "bottes de pluie, bottes",
     "example_fr": "Je porte des bottes quand il pleut.",
-    "exampleFr": "Je porte des bottes quand il pleut."
+    "exampleFr": "Je porte des bottes quand il pleut.",
+    "meaning_ja": "ブーツ",
+    "example_ja": "ここで素晴らしいブーツを見ました。",
+    "meaning_vi": "Bốt",
+    "example_vi": "Tôi thấy một đôi giày tuyệt vời ở đây.",
+    "meaning_hi": "घुटनों तक पहने जाने वाले जूते",
+    "example_hi": "मुझे यहाँ एक अद्भुत जूते दिख रहे हैं।"
   },
   {
     "id": 292,
@@ -5546,7 +7292,13 @@ const wordList500 = [
     "meaning_fr": "sandales",
     "meaningFr": "sandales",
     "example_fr": "Elle porte des sandales à la plage.",
-    "exampleFr": "Elle porte des sandales à la plage."
+    "exampleFr": "Elle porte des sandales à la plage.",
+    "meaning_ja": "サンダル",
+    "example_ja": "ここで素晴らしいサンダルを見ました。",
+    "meaning_vi": "Dép xăng đan",
+    "example_vi": "Tôi thấy một đôi dép tuyệt vời ở đây.",
+    "meaning_hi": "सैंडल",
+    "example_hi": "मैं यहाँ एक अद्भुत सैंडल देखता हूँ।"
   },
   {
     "id": 293,
@@ -5565,7 +7317,13 @@ const wordList500 = [
     "meaning_fr": "baskets",
     "meaningFr": "baskets",
     "example_fr": "Mes baskets sont blanches.",
-    "exampleFr": "Mes baskets sont blanches."
+    "exampleFr": "Mes baskets sont blanches.",
+    "meaning_ja": "スニーカー",
+    "example_ja": "ここで素晴らしいスニーカーを見つけました。",
+    "meaning_vi": "giày thể thao",
+    "example_vi": "Tôi thấy một đôi giày thể thao tuyệt vời ở đây.",
+    "meaning_hi": "स्नीकर्स",
+    "example_hi": "मैं यहाँ एक अद्भुत स्नीकर्स देखता हूँ।"
   },
   {
     "id": 294,
@@ -5584,7 +7342,13 @@ const wordList500 = [
     "meaning_fr": "Chaussures d'intérieur, pantoufles",
     "meaningFr": "Chaussures d'intérieur, pantoufles",
     "example_fr": "Portez des pantoufles à l'intérieur.",
-    "exampleFr": "Portez des pantoufles à l'intérieur."
+    "exampleFr": "Portez des pantoufles à l'intérieur.",
+    "meaning_ja": "スリッパ",
+    "example_ja": "ここで素晴らしいスリッパを見ました。",
+    "meaning_vi": "Dép đi trong nhà",
+    "example_vi": "Tôi thấy một đôi dép tuyệt vời ở đây.",
+    "meaning_hi": "चप्पलें",
+    "example_hi": "मुझे यहाँ एक अद्भुत चप्पल दिखाई देती है।"
   },
   {
     "id": 295,
@@ -5603,7 +7367,13 @@ const wordList500 = [
     "meaning_fr": "gants",
     "meaningFr": "gants",
     "example_fr": "Je porte des gants en hiver.",
-    "exampleFr": "Je porte des gants en hiver."
+    "exampleFr": "Je porte des gants en hiver.",
+    "meaning_ja": "手袋",
+    "example_ja": "ここで素晴らしい手袋を見ました。",
+    "meaning_vi": "Găng tay",
+    "example_vi": "Tôi thấy một chiếc găng tay tuyệt vời ở đây.",
+    "meaning_hi": "दस्ताने",
+    "example_hi": "मुझे यहां एक अद्भुत दस्ताने दिख रहे हैं।"
   },
   {
     "id": 296,
@@ -5622,7 +7392,13 @@ const wordList500 = [
     "meaning_fr": "école",
     "meaningFr": "école",
     "example_fr": "Je vais à l'école.",
-    "exampleFr": "Je vais à l'école."
+    "exampleFr": "Je vais à l'école.",
+    "meaning_ja": "学校",
+    "example_ja": "ここに素晴らしい学校があります。",
+    "meaning_vi": "Trường học",
+    "example_vi": "Tôi thấy ở đây có một ngôi trường tuyệt vời.",
+    "meaning_hi": "विद्यालय",
+    "example_hi": "मुझे यहाँ एक अद्भुत विद्यालय दिखाई देता है।"
   },
   {
     "id": 297,
@@ -5641,7 +7417,13 @@ const wordList500 = [
     "meaning_fr": "livre",
     "meaningFr": "livre",
     "example_fr": "Je lis des livres.",
-    "exampleFr": "Je lis des livres."
+    "exampleFr": "Je lis des livres.",
+    "meaning_ja": "本",
+    "example_ja": "ここで素晴らしい本を見ました。",
+    "meaning_vi": "Sách",
+    "example_vi": "Tôi thấy một cuốn sách tuyệt vời ở đây.",
+    "meaning_hi": "किताब",
+    "example_hi": "मुझे यहाँ एक अद्भुत पुस्तक दिखाई देती है।"
   },
   {
     "id": 298,
@@ -5660,7 +7442,13 @@ const wordList500 = [
     "meaning_fr": "crayon",
     "meaningFr": "crayon",
     "example_fr": "Ce crayon est neuf.",
-    "exampleFr": "Ce crayon est neuf."
+    "exampleFr": "Ce crayon est neuf.",
+    "meaning_ja": "鉛筆",
+    "example_ja": "ここに素晴らしい鉛筆があります。",
+    "meaning_vi": "Bút chì",
+    "example_vi": "Tôi thấy một cây bút chì tuyệt vời ở đây.",
+    "meaning_hi": "पेंसिल",
+    "example_hi": "मुझे यहाँ एक अद्भुत पेंसिल दिख रही है।"
   },
   {
     "id": 299,
@@ -5679,7 +7467,13 @@ const wordList500 = [
     "meaning_fr": "stylo",
     "meaningFr": "stylo",
     "example_fr": "Écrivez avec un stylo.",
-    "exampleFr": "Écrivez avec un stylo."
+    "exampleFr": "Écrivez avec un stylo.",
+    "meaning_ja": "ペン",
+    "example_ja": "ここで素晴らしいペンを見ました。",
+    "meaning_vi": "Cái bút",
+    "example_vi": "Tôi thấy một cây bút tuyệt vời ở đây.",
+    "meaning_hi": "कलम",
+    "example_hi": "मुझे यहां एक अद्भुत कलम दिखाई दे रही है।"
   },
   {
     "id": 300,
@@ -5698,7 +7492,13 @@ const wordList500 = [
     "meaning_fr": "gomme",
     "meaningFr": "gomme",
     "example_fr": "J'ai besoin d'une gomme.",
-    "exampleFr": "J'ai besoin d'une gomme."
+    "exampleFr": "J'ai besoin d'une gomme.",
+    "meaning_ja": "消しゴム",
+    "example_ja": "ここで素晴らしい消しゴムを見ました。",
+    "meaning_vi": "Cục tẩy",
+    "example_vi": "Tôi thấy một cục tẩy tuyệt vời ở đây.",
+    "meaning_hi": "रबड़",
+    "example_hi": "मुझे यहां एक अद्भुत इरेज़र दिखाई दे रहा है।"
   },
   {
     "id": 301,
@@ -5717,7 +7517,13 @@ const wordList500 = [
     "meaning_fr": "Maintenant",
     "meaningFr": "Maintenant",
     "example_fr": "Tracez une ligne avec une règle.",
-    "exampleFr": "Tracez une ligne avec une règle."
+    "exampleFr": "Tracez une ligne avec une règle.",
+    "meaning_ja": "ルーラー",
+    "example_ja": "私はここに素晴らしい統治者を見ました。",
+    "meaning_vi": "Cái thước kẻ",
+    "example_vi": "Tôi thấy một người cai trị tuyệt vời ở đây.",
+    "meaning_hi": "शासक",
+    "example_hi": "मैं यहाँ एक अद्भुत शासक को देखता हूँ।"
   },
   {
     "id": 302,
@@ -5736,7 +7542,13 @@ const wordList500 = [
     "meaning_fr": "crayon de couleur",
     "meaningFr": "crayon de couleur",
     "example_fr": "Je colorie avec des crayons.",
-    "exampleFr": "Je colorie avec des crayons."
+    "exampleFr": "Je colorie avec des crayons.",
+    "meaning_ja": "クレヨン",
+    "example_ja": "ここで素晴らしいクレヨンを見ました。",
+    "meaning_vi": "bút chì màu",
+    "example_vi": "Tôi thấy một cây bút chì tuyệt vời ở đây.",
+    "meaning_hi": "क्रेयॉन",
+    "example_hi": "मुझे यहाँ एक अद्भुत क्रेयॉन दिखाई देता है।"
   },
   {
     "id": 303,
@@ -5755,7 +7567,13 @@ const wordList500 = [
     "meaning_fr": "ciseaux",
     "meaningFr": "ciseaux",
     "example_fr": "Coupez le papier avec des ciseaux.",
-    "exampleFr": "Coupez le papier avec des ciseaux."
+    "exampleFr": "Coupez le papier avec des ciseaux.",
+    "meaning_ja": "ハサミ",
+    "example_ja": "ここで素晴らしいハサミを見ました。",
+    "meaning_vi": "Kéo",
+    "example_vi": "Tôi thấy một chiếc kéo tuyệt vời ở đây.",
+    "meaning_hi": "कैंची",
+    "example_hi": "मुझे यहाँ एक अद्भुत कैंची दिखाई देती है।"
   },
   {
     "id": 304,
@@ -5774,7 +7592,13 @@ const wordList500 = [
     "meaning_fr": "herbe",
     "meaningFr": "herbe",
     "example_fr": "Fixez-le avec de la colle.",
-    "exampleFr": "Fixez-le avec de la colle."
+    "exampleFr": "Fixez-le avec de la colle.",
+    "meaning_ja": "のり",
+    "example_ja": "ここで素晴らしい接着剤を見ました。",
+    "meaning_vi": "Keo dán",
+    "example_vi": "Tôi thấy một loại keo tuyệt vời ở đây.",
+    "meaning_hi": "गोंद",
+    "example_hi": "मुझे यहाँ एक अद्भुत गोंद दिखाई दे रहा है।"
   },
   {
     "id": 305,
@@ -5793,7 +7617,13 @@ const wordList500 = [
     "meaning_fr": "cahier",
     "meaningFr": "cahier",
     "example_fr": "Mon cahier est épais.",
-    "exampleFr": "Mon cahier est épais."
+    "exampleFr": "Mon cahier est épais.",
+    "meaning_ja": "ノート",
+    "example_ja": "ここで素晴らしいノートを見ました。",
+    "meaning_vi": "Sổ tay",
+    "example_vi": "Tôi thấy một cuốn sổ tay tuyệt vời ở đây.",
+    "meaning_hi": "स्मरण पुस्तक",
+    "example_hi": "मुझे यहां एक अद्भुत नोटबुक दिखाई दे रही है।"
   },
   {
     "id": 306,
@@ -5812,7 +7642,13 @@ const wordList500 = [
     "meaning_fr": "sac",
     "meaningFr": "sac",
     "example_fr": "Mon sac est lourd.",
-    "exampleFr": "Mon sac est lourd."
+    "exampleFr": "Mon sac est lourd.",
+    "meaning_ja": "バッグ",
+    "example_ja": "ここで素敵なバッグを見ました。",
+    "meaning_vi": "Cái túi",
+    "example_vi": "Tôi thấy một chiếc túi tuyệt vời ở đây.",
+    "meaning_hi": "थैला",
+    "example_hi": "मुझे यहाँ एक अद्भुत थैला दिखाई देता है।"
   },
   {
     "id": 307,
@@ -5831,7 +7667,13 @@ const wordList500 = [
     "meaning_fr": "bureau",
     "meaningFr": "bureau",
     "example_fr": "Mon bureau est propre.",
-    "exampleFr": "Mon bureau est propre."
+    "exampleFr": "Mon bureau est propre.",
+    "meaning_ja": "机",
+    "example_ja": "ここに素晴らしい机があります。",
+    "meaning_vi": "Bàn làm việc",
+    "example_vi": "Tôi thấy một cái bàn tuyệt vời ở đây.",
+    "meaning_hi": "मेज़",
+    "example_hi": "मुझे यहां एक अद्भुत डेस्क दिखाई दे रही है।"
   },
   {
     "id": 308,
@@ -5850,7 +7692,13 @@ const wordList500 = [
     "meaning_fr": "chaise",
     "meaningFr": "chaise",
     "example_fr": "Veuillez vous asseoir sur la chaise.",
-    "exampleFr": "Veuillez vous asseoir sur la chaise."
+    "exampleFr": "Veuillez vous asseoir sur la chaise.",
+    "meaning_ja": "椅子",
+    "example_ja": "ここで素晴らしい椅子を見ました。",
+    "meaning_vi": "Ghế",
+    "example_vi": "Tôi thấy một chiếc ghế tuyệt vời ở đây.",
+    "meaning_hi": "कुर्सी",
+    "example_hi": "मुझे यहाँ एक अद्भुत कुर्सी दिखाई देती है।"
   },
   {
     "id": 309,
@@ -5869,7 +7717,13 @@ const wordList500 = [
     "meaning_fr": "salle de classe",
     "meaningFr": "salle de classe",
     "example_fr": "Notre classe est lumineuse.",
-    "exampleFr": "Notre classe est lumineuse."
+    "exampleFr": "Notre classe est lumineuse.",
+    "meaning_ja": "教室",
+    "example_ja": "ここに素晴らしい教室があります。",
+    "meaning_vi": "lớp học",
+    "example_vi": "Tôi thấy một lớp học tuyệt vời ở đây.",
+    "meaning_hi": "कक्षा",
+    "example_hi": "मुझे यहां एक अद्भुत कक्षा दिखाई देती है।"
   },
   {
     "id": 310,
@@ -5888,7 +7742,13 @@ const wordList500 = [
     "meaning_fr": "tableau noir",
     "meaningFr": "tableau noir",
     "example_fr": "Le professeur écrit au tableau.",
-    "exampleFr": "Le professeur écrit au tableau."
+    "exampleFr": "Le professeur écrit au tableau.",
+    "meaning_ja": "黒板",
+    "example_ja": "ここに素晴らしい黒板があります。",
+    "meaning_vi": "Bảng đen",
+    "example_vi": "Tôi thấy một bảng đen tuyệt vời ở đây.",
+    "meaning_hi": "ब्लैकबोर्ड",
+    "example_hi": "मुझे यहाँ एक अद्भुत ब्लैकबोर्ड दिखाई देता है।"
   },
   {
     "id": 311,
@@ -5907,7 +7767,13 @@ const wordList500 = [
     "meaning_fr": "ordinateur",
     "meaningFr": "ordinateur",
     "example_fr": "J'utilise un ordinateur.",
-    "exampleFr": "J'utilise un ordinateur."
+    "exampleFr": "J'utilise un ordinateur.",
+    "meaning_ja": "コンピューター",
+    "example_ja": "ここで素晴らしいコンピューターを見ました。",
+    "meaning_vi": "Máy tính",
+    "example_vi": "Tôi thấy một chiếc máy tính tuyệt vời ở đây.",
+    "meaning_hi": "कंप्यूटर",
+    "example_hi": "मुझे यहां एक अद्भुत कंप्यूटर दिखाई दे रहा है।"
   },
   {
     "id": 312,
@@ -5926,7 +7792,13 @@ const wordList500 = [
     "meaning_fr": "papier",
     "meaningFr": "papier",
     "example_fr": "S'il vous plaît, donnez-moi un morceau de papier.",
-    "exampleFr": "S'il vous plaît, donnez-moi un morceau de papier."
+    "exampleFr": "S'il vous plaît, donnez-moi un morceau de papier.",
+    "meaning_ja": "紙",
+    "example_ja": "ここで素晴らしい論文を見ました。",
+    "meaning_vi": "Giấy",
+    "example_vi": "Tôi thấy một bài báo tuyệt vời ở đây.",
+    "meaning_hi": "कागज़",
+    "example_hi": "मुझे यहां एक अद्भुत पेपर दिख रहा है।"
   },
   {
     "id": 313,
@@ -5945,7 +7817,13 @@ const wordList500 = [
     "meaning_fr": "tableau noir",
     "meaningFr": "tableau noir",
     "example_fr": "Je vois un joli tableau noir.",
-    "exampleFr": "Je vois un joli tableau noir."
+    "exampleFr": "Je vois un joli tableau noir.",
+    "meaning_ja": "ボード",
+    "example_ja": "ここで素晴らしいボードを見ました。",
+    "meaning_vi": "Bảng",
+    "example_vi": "Tôi thấy một bảng tuyệt vời ở đây.",
+    "meaning_hi": "तख़्ता",
+    "example_hi": "मुझे यहाँ एक अद्भुत बोर्ड दिखाई देता है।"
   },
   {
     "id": 314,
@@ -5964,7 +7842,13 @@ const wordList500 = [
     "meaning_fr": "art",
     "meaningFr": "art",
     "example_fr": "Je vois du grand art.",
-    "exampleFr": "Je vois du grand art."
+    "exampleFr": "Je vois du grand art.",
+    "meaning_ja": "美術",
+    "example_ja": "ここで素晴らしい芸術を見ました。",
+    "meaning_vi": "Nghệ thuật",
+    "example_vi": "Tôi thấy một nghệ thuật tuyệt vời ở đây.",
+    "meaning_hi": "कला",
+    "example_hi": "मैं यहाँ एक अद्भुत कला देखता हूँ।"
   },
   {
     "id": 315,
@@ -5983,7 +7867,13 @@ const wordList500 = [
     "meaning_fr": "mathématiques",
     "meaningFr": "mathématiques",
     "example_fr": "Je regarde Cool Maths.",
-    "exampleFr": "Je regarde Cool Maths."
+    "exampleFr": "Je regarde Cool Maths.",
+    "meaning_ja": "数学",
+    "example_ja": "ここで素晴らしい数学を見ました。",
+    "meaning_vi": "Toán học",
+    "example_vi": "Tôi thấy một phép toán tuyệt vời ở đây.",
+    "meaning_hi": "गणित",
+    "example_hi": "मुझे यहाँ एक अद्भुत गणित दिखाई देता है।"
   },
   {
     "id": 316,
@@ -6002,7 +7892,13 @@ const wordList500 = [
     "meaning_fr": "sciences",
     "meaningFr": "sciences",
     "example_fr": "Je regarde Cool Science.",
-    "exampleFr": "Je regarde Cool Science."
+    "exampleFr": "Je regarde Cool Science.",
+    "meaning_ja": "科学",
+    "example_ja": "私はここで素晴らしい科学を見ました。",
+    "meaning_vi": "Khoa học",
+    "example_vi": "Tôi thấy một nền khoa học tuyệt vời ở đây.",
+    "meaning_hi": "विज्ञान",
+    "example_hi": "मैं यहाँ एक अद्भुत विज्ञान देखता हूँ।"
   },
   {
     "id": 317,
@@ -6021,7 +7917,13 @@ const wordList500 = [
     "meaning_fr": "histoire",
     "meaningFr": "histoire",
     "example_fr": "Je regarde une histoire merveilleuse.",
-    "exampleFr": "Je regarde une histoire merveilleuse."
+    "exampleFr": "Je regarde une histoire merveilleuse.",
+    "meaning_ja": "歴史",
+    "example_ja": "ここで素晴らしい歴史を見ることができます。",
+    "meaning_vi": "Lịch sử",
+    "example_vi": "Tôi thấy một lịch sử tuyệt vời ở đây.",
+    "meaning_hi": "इतिहास",
+    "example_hi": "मैं यहां एक अद्भुत इतिहास देखता हूं।"
   },
   {
     "id": 318,
@@ -6040,7 +7942,13 @@ const wordList500 = [
     "meaning_fr": "anglais",
     "meaningFr": "anglais",
     "example_fr": "Je vois un excellent anglais.",
-    "exampleFr": "Je vois un excellent anglais."
+    "exampleFr": "Je vois un excellent anglais.",
+    "meaning_ja": "英語",
+    "example_ja": "ここで素晴らしい英語を見ます。",
+    "meaning_vi": "Tiếng Anh",
+    "example_vi": "Tôi thấy một tiếng Anh tuyệt vời ở đây.",
+    "meaning_hi": "अंग्रेज़ी",
+    "example_hi": "मैं यहाँ एक अद्भुत अंग्रेजी देखता हूँ।"
   },
   {
     "id": 319,
@@ -6059,7 +7967,13 @@ const wordList500 = [
     "meaning_fr": "classe",
     "meaningFr": "classe",
     "example_fr": "Je vois une grande classe.",
-    "exampleFr": "Je vois une grande classe."
+    "exampleFr": "Je vois une grande classe.",
+    "meaning_ja": "クラス",
+    "example_ja": "ここで素晴らしいクラスを見ました。",
+    "meaning_vi": "Lớp học",
+    "example_vi": "Tôi thấy một lớp học tuyệt vời ở đây.",
+    "meaning_hi": "कक्षा",
+    "example_hi": "मैं यहां एक अद्भुत कक्षा देखता हूं।"
   },
   {
     "id": 320,
@@ -6078,7 +7992,13 @@ const wordList500 = [
     "meaning_fr": "classe",
     "meaningFr": "classe",
     "example_fr": "Je regarde un super cours.",
-    "exampleFr": "Je regarde un super cours."
+    "exampleFr": "Je regarde un super cours.",
+    "meaning_ja": "レッスン",
+    "example_ja": "ここで素晴らしい教訓を学びました。",
+    "meaning_vi": "Bài học",
+    "example_vi": "Tôi thấy một bài học tuyệt vời ở đây.",
+    "meaning_hi": "पाठ",
+    "example_hi": "मुझे यहाँ एक अद्भुत पाठ दिखाई देता है।"
   },
   {
     "id": 321,
@@ -6097,7 +8017,13 @@ const wordList500 = [
     "meaning_fr": "note",
     "meaningFr": "note",
     "example_fr": "J'ai une excellente année scolaire.",
-    "exampleFr": "J'ai une excellente année scolaire."
+    "exampleFr": "J'ai une excellente année scolaire.",
+    "meaning_ja": "学年",
+    "example_ja": "ここには素晴らしい成績が見られます。",
+    "meaning_vi": "Cấp",
+    "example_vi": "Tôi thấy một lớp tuyệt vời ở đây.",
+    "meaning_hi": "श्रेणी",
+    "example_hi": "मुझे यहां एक अद्भुत ग्रेड दिखाई दे रहा है।"
   },
   {
     "id": 322,
@@ -6116,7 +8042,13 @@ const wordList500 = [
     "meaning_fr": "tester",
     "meaningFr": "tester",
     "example_fr": "Je passe un super test.",
-    "exampleFr": "Je passe un super test."
+    "exampleFr": "Je passe un super test.",
+    "meaning_ja": "テスト",
+    "example_ja": "ここで素晴らしいテストを見ました。",
+    "meaning_vi": "Bài kiểm tra",
+    "example_vi": "Tôi thấy một bài kiểm tra tuyệt vời ở đây.",
+    "meaning_hi": "परीक्षा",
+    "example_hi": "मैं यहाँ एक अद्भुत परीक्षण देख रहा हूँ।"
   },
   {
     "id": 323,
@@ -6135,7 +8067,13 @@ const wordList500 = [
     "meaning_fr": "score",
     "meaningFr": "score",
     "example_fr": "Je vois d'excellents scores.",
-    "exampleFr": "Je vois d'excellents scores."
+    "exampleFr": "Je vois d'excellents scores.",
+    "meaning_ja": "スコア",
+    "example_ja": "ここで素晴らしいスコアを見ました。",
+    "meaning_vi": "Điểm",
+    "example_vi": "Tôi thấy một điểm số tuyệt vời ở đây.",
+    "meaning_hi": "अंक",
+    "example_hi": "मुझे यहाँ एक अद्भुत स्कोर दिखाई दे रहा है।"
   },
   {
     "id": 324,
@@ -6154,7 +8092,13 @@ const wordList500 = [
     "meaning_fr": "craie",
     "meaningFr": "craie",
     "example_fr": "Je vois une belle craie.",
-    "exampleFr": "Je vois une belle craie."
+    "exampleFr": "Je vois une belle craie.",
+    "meaning_ja": "チョーク",
+    "example_ja": "ここで素晴らしいチョークを見ました。",
+    "meaning_vi": "Phấn",
+    "example_vi": "Tôi thấy một viên phấn tuyệt vời ở đây.",
+    "meaning_hi": "चाक",
+    "example_hi": "मुझे यहाँ एक अद्भुत चाक दिखाई देता है।"
   },
   {
     "id": 325,
@@ -6173,7 +8117,13 @@ const wordList500 = [
     "meaning_fr": "dessin animé",
     "meaningFr": "dessin animé",
     "example_fr": "Je regarde des dessins animés sympas.",
-    "exampleFr": "Je regarde des dessins animés sympas."
+    "exampleFr": "Je regarde des dessins animés sympas.",
+    "meaning_ja": "漫画",
+    "example_ja": "ここで素晴らしい漫画を見ました。",
+    "meaning_vi": "truyện tranh",
+    "example_vi": "Tôi thấy một bộ truyện tranh tuyệt vời ở đây.",
+    "meaning_hi": "हास्य",
+    "example_hi": "मुझे यहां एक अद्भुत कॉमिक दिखाई दे रही है।"
   },
   {
     "id": 326,
@@ -6192,7 +8142,13 @@ const wordList500 = [
     "meaning_fr": "cube",
     "meaningFr": "cube",
     "example_fr": "Je vois un joli cube.",
-    "exampleFr": "Je vois un joli cube."
+    "exampleFr": "Je vois un joli cube.",
+    "meaning_ja": "キューブ",
+    "example_ja": "ここに素晴らしい立方体が見えます。",
+    "meaning_vi": "khối lập phương",
+    "example_vi": "Tôi thấy một khối lập phương tuyệt vời ở đây.",
+    "meaning_hi": "घनक्षेत्र",
+    "example_hi": "मुझे यहां एक अद्भुत घन दिखाई देता है।"
   },
   {
     "id": 327,
@@ -6211,7 +8167,13 @@ const wordList500 = [
     "meaning_fr": "journal intime",
     "meaningFr": "journal intime",
     "example_fr": "Je regarde un magnifique journal.",
-    "exampleFr": "Je regarde un magnifique journal."
+    "exampleFr": "Je regarde un magnifique journal.",
+    "meaning_ja": "日記",
+    "example_ja": "ここで素晴らしい日記を見ました。",
+    "meaning_vi": "Nhật ký",
+    "example_vi": "Tôi thấy một cuốn nhật ký tuyệt vời ở đây.",
+    "meaning_hi": "डायरी",
+    "example_hi": "मुझे यहाँ एक अद्भुत डायरी दिखाई देती है।"
   },
   {
     "id": 328,
@@ -6230,7 +8192,13 @@ const wordList500 = [
     "meaning_fr": "dictionnaire",
     "meaningFr": "dictionnaire",
     "example_fr": "Je regarde un joli dictionnaire.",
-    "exampleFr": "Je regarde un joli dictionnaire."
+    "exampleFr": "Je regarde un joli dictionnaire.",
+    "meaning_ja": "辞書",
+    "example_ja": "ここで素晴らしい辞書を見ました。",
+    "meaning_vi": "Từ điển",
+    "example_vi": "Tôi thấy một cuốn từ điển tuyệt vời ở đây.",
+    "meaning_hi": "शब्दकोष",
+    "example_hi": "मुझे यहाँ एक अद्भुत शब्दकोष दिखाई देता है।"
   },
   {
     "id": 329,
@@ -6249,7 +8217,13 @@ const wordList500 = [
     "meaning_fr": "monde",
     "meaningFr": "monde",
     "example_fr": "Je vois un globe merveilleux.",
-    "exampleFr": "Je vois un globe merveilleux."
+    "exampleFr": "Je vois un globe merveilleux.",
+    "meaning_ja": "グローブ",
+    "example_ja": "ここで素晴らしい地球儀を見ます。",
+    "meaning_vi": "Khối cầu",
+    "example_vi": "Tôi thấy một quả địa cầu tuyệt vời ở đây.",
+    "meaning_hi": "ग्लोब",
+    "example_hi": "मुझे यहां एक अद्भुत ग्लोब दिखाई देता है।"
   },
   {
     "id": 330,
@@ -6268,7 +8242,13 @@ const wordList500 = [
     "meaning_fr": "grammaire",
     "meaningFr": "grammaire",
     "example_fr": "Je regarde Awesome Grammar.",
-    "exampleFr": "Je regarde Awesome Grammar."
+    "exampleFr": "Je regarde Awesome Grammar.",
+    "meaning_ja": "文法",
+    "example_ja": "ここに素晴らしい文法が見られます。",
+    "meaning_vi": "Ngữ pháp",
+    "example_vi": "Tôi thấy một ngữ pháp tuyệt vời ở đây.",
+    "meaning_hi": "व्याकरण",
+    "example_hi": "मुझे यहाँ एक अद्भुत व्याकरण दिखाई देता है।"
   },
   {
     "id": 331,
@@ -6287,7 +8267,13 @@ const wordList500 = [
     "meaning_fr": "aimant",
     "meaningFr": "aimant",
     "example_fr": "Je vois un aimant sympa.",
-    "exampleFr": "Je vois un aimant sympa."
+    "exampleFr": "Je vois un aimant sympa.",
+    "meaning_ja": "磁石",
+    "example_ja": "ここに素晴らしい磁石があります。",
+    "meaning_vi": "Nam châm",
+    "example_vi": "Tôi thấy một nam châm tuyệt vời ở đây.",
+    "meaning_hi": "चुंबक",
+    "example_hi": "मुझे यहाँ एक अद्भुत चुम्बक दिखाई देता है।"
   },
   {
     "id": 332,
@@ -6306,7 +8292,13 @@ const wordList500 = [
     "meaning_fr": "aire de jeux, terrain de jeux",
     "meaningFr": "aire de jeux, terrain de jeux",
     "example_fr": "Nous jouons au football sur le terrain de jeu.",
-    "exampleFr": "Nous jouons au football sur le terrain de jeu."
+    "exampleFr": "Nous jouons au football sur le terrain de jeu.",
+    "meaning_ja": "遊び場",
+    "example_ja": "ここに素晴らしい遊び場があります。",
+    "meaning_vi": "Sân chơi",
+    "example_vi": "Tôi thấy ở đây có một sân chơi tuyệt vời.",
+    "meaning_hi": "खेल का मैदान",
+    "example_hi": "मुझे यहाँ एक अद्भुत खेल का मैदान दिखाई देता है।"
   },
   {
     "id": 333,
@@ -6325,7 +8317,13 @@ const wordList500 = [
     "meaning_fr": "salle de gym",
     "meaningFr": "salle de gym",
     "example_fr": "La salle de sport est à côté de la bibliothèque.",
-    "exampleFr": "La salle de sport est à côté de la bibliothèque."
+    "exampleFr": "La salle de sport est à côté de la bibliothèque.",
+    "meaning_ja": "ジム",
+    "example_ja": "ここに素晴らしいジムがあります。",
+    "meaning_vi": "phòng tập thể dục",
+    "example_vi": "Tôi thấy một phòng tập thể dục tuyệt vời ở đây.",
+    "meaning_hi": "जिम",
+    "example_hi": "मुझे यहाँ एक अद्भुत जिम दिखाई देता है।"
   },
   {
     "id": 334,
@@ -6344,7 +8342,13 @@ const wordList500 = [
     "meaning_fr": "cafétéria, cafétéria",
     "meaningFr": "cafétéria, cafétéria",
     "example_fr": "Nous déjeunons à la cafétéria.",
-    "exampleFr": "Nous déjeunons à la cafétéria."
+    "exampleFr": "Nous déjeunons à la cafétéria.",
+    "meaning_ja": "カフェテリア",
+    "example_ja": "ここに素晴らしいカフェテリアがあります。",
+    "meaning_vi": "Nhà ăn",
+    "example_vi": "Tôi thấy một quán cà phê tuyệt vời ở đây.",
+    "meaning_hi": "काफ़ीहाउस",
+    "example_hi": "मुझे यहां एक अद्भुत कैफेटेरिया दिखाई देता है।"
   },
   {
     "id": 335,
@@ -6363,7 +8367,13 @@ const wordList500 = [
     "meaning_fr": "devoirs",
     "meaningFr": "devoirs",
     "example_fr": "Je dîne et je fais mes devoirs.",
-    "exampleFr": "Je dîne et je fais mes devoirs."
+    "exampleFr": "Je dîne et je fais mes devoirs.",
+    "meaning_ja": "宿題",
+    "example_ja": "ここで素晴らしい宿題を見ました。",
+    "meaning_vi": "bài tập về nhà",
+    "example_vi": "Tôi thấy một bài tập về nhà tuyệt vời ở đây.",
+    "meaning_hi": "गृहकार्य",
+    "example_hi": "मैं यहाँ एक अद्भुत होमवर्क देखता हूँ।"
   },
   {
     "id": 336,
@@ -6382,7 +8392,13 @@ const wordList500 = [
     "meaning_fr": "Cahier d'exercices",
     "meaningFr": "Cahier d'exercices",
     "example_fr": "Passez à la page 5 du cahier d’exercices.",
-    "exampleFr": "Passez à la page 5 du cahier d’exercices."
+    "exampleFr": "Passez à la page 5 du cahier d’exercices.",
+    "meaning_ja": "ワークブック",
+    "example_ja": "ここで素晴らしいワークブックを見ました。",
+    "meaning_vi": "Sổ làm việc",
+    "example_vi": "Tôi thấy một cuốn sách bài tập tuyệt vời ở đây.",
+    "meaning_hi": "वर्कबुक",
+    "example_hi": "मुझे यहां एक अद्भुत कार्यपुस्तिका दिखाई दे रही है।"
   },
   {
     "id": 337,
@@ -6401,7 +8417,13 @@ const wordList500 = [
     "meaning_fr": "agrafeuse",
     "meaningFr": "agrafeuse",
     "example_fr": "S'il vous plaît, donnez-moi l'agrafeuse.",
-    "exampleFr": "S'il vous plaît, donnez-moi l'agrafeuse."
+    "exampleFr": "S'il vous plaît, donnez-moi l'agrafeuse.",
+    "meaning_ja": "ホッチキス",
+    "example_ja": "ここで素晴らしいホッチキスを見ました。",
+    "meaning_vi": "Máy dập ghim",
+    "example_vi": "Tôi thấy một cái bấm ghim tuyệt vời ở đây.",
+    "meaning_hi": "ऊन बेचनेवाला",
+    "example_hi": "मुझे यहां एक अद्भुत स्टेपलर दिखाई दे रहा है।"
   },
   {
     "id": 338,
@@ -6420,7 +8442,13 @@ const wordList500 = [
     "meaning_fr": "marqueur, magie",
     "meaningFr": "marqueur, magie",
     "example_fr": "Elle écrit avec un marqueur rouge.",
-    "exampleFr": "Elle écrit avec un marqueur rouge."
+    "exampleFr": "Elle écrit avec un marqueur rouge.",
+    "meaning_ja": "マーカー",
+    "example_ja": "ここに素晴らしいマーカーが見えます。",
+    "meaning_vi": "điểm đánh dấu",
+    "example_vi": "Tôi thấy một điểm đánh dấu tuyệt vời ở đây.",
+    "meaning_hi": "निशान",
+    "example_hi": "मुझे यहां एक अद्भुत मार्कर दिखाई देता है।"
   },
   {
     "id": 339,
@@ -6439,7 +8467,13 @@ const wordList500 = [
     "meaning_fr": "surligneur",
     "meaningFr": "surligneur",
     "example_fr": "J'utilise un surligneur jaune.",
-    "exampleFr": "J'utilise un surligneur jaune."
+    "exampleFr": "J'utilise un surligneur jaune.",
+    "meaning_ja": "ハイライター",
+    "example_ja": "ここで素晴らしいハイライトを見ました。",
+    "meaning_vi": "Bút đánh dấu",
+    "example_vi": "Tôi thấy một highlighter tuyệt vời ở đây.",
+    "meaning_hi": "हाइलाइटर",
+    "example_hi": "मुझे यहां एक अद्भुत हाइलाइटर दिखाई दे रहा है।"
   },
   {
     "id": 340,
@@ -6458,7 +8492,13 @@ const wordList500 = [
     "meaning_fr": "tableau blanc",
     "meaningFr": "tableau blanc",
     "example_fr": "L'enseignant écrit au tableau blanc.",
-    "exampleFr": "L'enseignant écrit au tableau blanc."
+    "exampleFr": "L'enseignant écrit au tableau blanc.",
+    "meaning_ja": "ホワイトボード",
+    "example_ja": "ここに素晴らしいホワイトボードがあります。",
+    "meaning_vi": "Bảng trắng",
+    "example_vi": "Tôi thấy một bảng trắng tuyệt vời ở đây.",
+    "meaning_hi": "व्हाइटबोर्ड",
+    "example_hi": "मुझे यहां एक अद्भुत व्हाइटबोर्ड दिखाई दे रहा है।"
   },
   {
     "id": 341,
@@ -6477,7 +8517,13 @@ const wordList500 = [
     "meaning_fr": "casier",
     "meaningFr": "casier",
     "example_fr": "Mes livres sont dans mon casier.",
-    "exampleFr": "Mes livres sont dans mon casier."
+    "exampleFr": "Mes livres sont dans mon casier.",
+    "meaning_ja": "ロッカー",
+    "example_ja": "ここに素晴らしいロッカーがあります。",
+    "meaning_vi": "tủ đựng đồ",
+    "example_vi": "Tôi thấy một tủ đựng đồ tuyệt vời ở đây.",
+    "meaning_hi": "लॉकर",
+    "example_hi": "मुझे यहां एक अद्भुत लॉकर दिखाई देता है।"
   },
   {
     "id": 342,
@@ -6496,7 +8542,13 @@ const wordList500 = [
     "meaning_fr": "taille-crayon",
     "meaningFr": "taille-crayon",
     "example_fr": "Le taille-crayon est sur le bureau.",
-    "exampleFr": "Le taille-crayon est sur le bureau."
+    "exampleFr": "Le taille-crayon est sur le bureau.",
+    "meaning_ja": "シャープナー",
+    "example_ja": "ここで素晴らしい研ぎ器を見ました。",
+    "meaning_vi": "Máy mài",
+    "example_vi": "Tôi thấy một cái mài tuyệt vời ở đây.",
+    "meaning_hi": "आसियाना",
+    "example_hi": "मुझे यहां एक अद्भुत शार्पनर दिख रहा है।"
   },
   {
     "id": 343,
@@ -6515,7 +8567,13 @@ const wordList500 = [
     "meaning_fr": "calculatrice",
     "meaningFr": "calculatrice",
     "example_fr": "Je vérifie mes réponses avec une calculatrice.",
-    "exampleFr": "Je vérifie mes réponses avec une calculatrice."
+    "exampleFr": "Je vérifie mes réponses avec une calculatrice.",
+    "meaning_ja": "電卓",
+    "example_ja": "ここで素晴らしい計算機を見ました。",
+    "meaning_vi": "Máy tính",
+    "example_vi": "Tôi thấy một máy tính tuyệt vời ở đây.",
+    "meaning_hi": "कैलकुलेटर",
+    "example_hi": "मुझे यहां एक अद्भुत कैलकुलेटर दिख रहा है।"
   },
   {
     "id": 344,
@@ -6534,7 +8592,13 @@ const wordList500 = [
     "meaning_fr": "cloche, cloche",
     "meaningFr": "cloche, cloche",
     "example_fr": "La cloche sonne à neuf heures.",
-    "exampleFr": "La cloche sonne à neuf heures."
+    "exampleFr": "La cloche sonne à neuf heures.",
+    "meaning_ja": "ベル",
+    "example_ja": "ここで素晴らしい鐘を見ます。",
+    "meaning_vi": "Chuông",
+    "example_vi": "Tôi thấy một cái chuông tuyệt vời ở đây.",
+    "meaning_hi": "घंटी",
+    "example_hi": "मुझे यहाँ एक अद्भुत घंटी दिखाई देती है।"
   },
   {
     "id": 345,
@@ -6553,7 +8617,13 @@ const wordList500 = [
     "meaning_fr": "diagramme, tableau",
     "meaningFr": "diagramme, tableau",
     "example_fr": "Le tableau montre nos scores.",
-    "exampleFr": "Le tableau montre nos scores."
+    "exampleFr": "Le tableau montre nos scores.",
+    "meaning_ja": "チャート",
+    "example_ja": "ここで素晴らしいチャートを見ました。",
+    "meaning_vi": "Biểu đồ",
+    "example_vi": "Tôi thấy một biểu đồ tuyệt vời ở đây.",
+    "meaning_hi": "चार्ट",
+    "example_hi": "मुझे यहां एक अद्भुत चार्ट दिखाई दे रहा है।"
   },
   {
     "id": 346,
@@ -6572,7 +8642,13 @@ const wordList500 = [
     "meaning_fr": "modèle",
     "meaningFr": "modèle",
     "example_fr": "Il a réalisé une maquette de bateau.",
-    "exampleFr": "Il a réalisé une maquette de bateau."
+    "exampleFr": "Il a réalisé une maquette de bateau.",
+    "meaning_ja": "モデル",
+    "example_ja": "ここで素晴らしいモデルを見ました。",
+    "meaning_vi": "Người mẫu",
+    "example_vi": "Tôi thấy một mô hình tuyệt vời ở đây.",
+    "meaning_hi": "नमूना",
+    "example_hi": "मैं यहां एक अद्भुत मॉडल देखता हूं।"
   },
   {
     "id": 347,
@@ -6591,7 +8667,13 @@ const wordList500 = [
     "meaning_fr": "calendrier",
     "meaningFr": "calendrier",
     "example_fr": "Consultez l'horaire du lundi.",
-    "exampleFr": "Consultez l'horaire du lundi."
+    "exampleFr": "Consultez l'horaire du lundi.",
+    "meaning_ja": "時刻表",
+    "example_ja": "ここで素晴らしい時刻表を見ました。",
+    "meaning_vi": "Thời gian biểu",
+    "example_vi": "Tôi thấy một thời gian biểu tuyệt vời ở đây.",
+    "meaning_hi": "समय सारिणी",
+    "example_hi": "मुझे यहां एक अद्भुत समय सारिणी दिखाई दे रही है।"
   },
   {
     "id": 348,
@@ -6610,7 +8692,13 @@ const wordList500 = [
     "meaning_fr": "horloge",
     "meaningFr": "horloge",
     "example_fr": "Il y a une horloge accrochée au mur.",
-    "exampleFr": "Il y a une horloge accrochée au mur."
+    "exampleFr": "Il y a une horloge accrochée au mur.",
+    "meaning_ja": "クロック",
+    "example_ja": "ここで素晴らしい時計を見ました。",
+    "meaning_vi": "Cái đồng hồ",
+    "example_vi": "Tôi thấy một chiếc đồng hồ tuyệt vời ở đây.",
+    "meaning_hi": "घड़ी",
+    "example_hi": "मुझे यहाँ एक अद्भुत घड़ी दिखाई देती है।"
   },
   {
     "id": 349,
@@ -6629,7 +8717,13 @@ const wordList500 = [
     "meaning_fr": "maison",
     "meaningFr": "maison",
     "example_fr": "Je rentre à la maison.",
-    "exampleFr": "Je rentre à la maison."
+    "exampleFr": "Je rentre à la maison.",
+    "meaning_ja": "家",
+    "example_ja": "ここに素晴らしい家が見えます。",
+    "meaning_vi": "Trang chủ",
+    "example_vi": "Tôi thấy một ngôi nhà tuyệt vời ở đây.",
+    "meaning_hi": "घर",
+    "example_hi": "मुझे यहाँ एक अद्भुत घर दिख रहा है।"
   },
   {
     "id": 350,
@@ -6648,7 +8742,13 @@ const wordList500 = [
     "meaning_fr": "maison/maison",
     "meaningFr": "maison/maison",
     "example_fr": "La maison est grande.",
-    "exampleFr": "La maison est grande."
+    "exampleFr": "La maison est grande.",
+    "meaning_ja": "家",
+    "example_ja": "ここに素晴らしい家が見えます。",
+    "meaning_vi": "Căn nhà",
+    "example_vi": "Tôi thấy một ngôi nhà tuyệt vời ở đây.",
+    "meaning_hi": "घर",
+    "example_hi": "मुझे यहाँ एक अद्भुत घर दिखाई देता है।"
   },
   {
     "id": 351,
@@ -6667,7 +8767,13 @@ const wordList500 = [
     "meaning_fr": "porte",
     "meaningFr": "porte",
     "example_fr": "Ouvrez la porte.",
-    "exampleFr": "Ouvrez la porte."
+    "exampleFr": "Ouvrez la porte.",
+    "meaning_ja": "ドア",
+    "example_ja": "ここに素晴らしいドアが見えます。",
+    "meaning_vi": "cửa",
+    "example_vi": "Tôi thấy một cánh cửa tuyệt vời ở đây.",
+    "meaning_hi": "दरवाजा",
+    "example_hi": "मुझे यहां एक अद्भुत दरवाजा दिखाई देता है।"
   },
   {
     "id": 352,
@@ -6686,7 +8792,13 @@ const wordList500 = [
     "meaning_fr": "fenêtre",
     "meaningFr": "fenêtre",
     "example_fr": "Fermez la fenêtre.",
-    "exampleFr": "Fermez la fenêtre."
+    "exampleFr": "Fermez la fenêtre.",
+    "meaning_ja": "ウィンドウ",
+    "example_ja": "ここに素晴らしい窓が見えます。",
+    "meaning_vi": "Cửa sổ",
+    "example_vi": "Tôi thấy một cửa sổ tuyệt vời ở đây.",
+    "meaning_hi": "खिड़की",
+    "example_hi": "मुझे यहाँ एक अद्भुत खिड़की दिखाई देती है।"
   },
   {
     "id": 353,
@@ -6705,7 +8817,13 @@ const wordList500 = [
     "meaning_fr": "chambre",
     "meaningFr": "chambre",
     "example_fr": "Ma chambre est petite.",
-    "exampleFr": "Ma chambre est petite."
+    "exampleFr": "Ma chambre est petite.",
+    "meaning_ja": "部屋",
+    "example_ja": "ここに素晴らしい部屋が見えます。",
+    "meaning_vi": "Phòng",
+    "example_vi": "Tôi thấy một căn phòng tuyệt vời ở đây.",
+    "meaning_hi": "कमरा",
+    "example_hi": "मुझे यहाँ एक अद्भुत कमरा दिख रहा है।"
   },
   {
     "id": 354,
@@ -6724,7 +8842,13 @@ const wordList500 = [
     "meaning_fr": "lit",
     "meaningFr": "lit",
     "example_fr": "Je dors au lit.",
-    "exampleFr": "Je dors au lit."
+    "exampleFr": "Je dors au lit.",
+    "meaning_ja": "ベッド",
+    "example_ja": "ここに素晴らしいベッドがあります。",
+    "meaning_vi": "Giường",
+    "example_vi": "Tôi thấy một chiếc giường tuyệt vời ở đây.",
+    "meaning_hi": "बिस्तर",
+    "example_hi": "मुझे यहाँ एक अद्भुत बिस्तर दिखाई देता है।"
   },
   {
     "id": 355,
@@ -6743,7 +8867,13 @@ const wordList500 = [
     "meaning_fr": "table/table à manger",
     "meaningFr": "table/table à manger",
     "example_fr": "Placez-le sur la table.",
-    "exampleFr": "Placez-le sur la table."
+    "exampleFr": "Placez-le sur la table.",
+    "meaning_ja": "テーブル",
+    "example_ja": "ここに素晴らしいテーブルがあります。",
+    "meaning_vi": "Bàn",
+    "example_vi": "Tôi thấy một cái bàn tuyệt vời ở đây.",
+    "meaning_hi": "मेज़",
+    "example_hi": "मुझे यहाँ एक अद्भुत मेज़ दिखाई देती है।"
   },
   {
     "id": 356,
@@ -6762,7 +8892,13 @@ const wordList500 = [
     "meaning_fr": "tasse",
     "meaningFr": "tasse",
     "example_fr": "La coupe est pleine.",
-    "exampleFr": "La coupe est pleine."
+    "exampleFr": "La coupe est pleine.",
+    "meaning_ja": "カップ",
+    "example_ja": "ここで素晴らしいカップを見ました。",
+    "meaning_vi": "Tách",
+    "example_vi": "Tôi thấy một chiếc cốc tuyệt vời ở đây.",
+    "meaning_hi": "कप",
+    "example_hi": "मुझे यहाँ एक अद्भुत कप दिखाई दे रहा है।"
   },
   {
     "id": 357,
@@ -6781,7 +8917,13 @@ const wordList500 = [
     "meaning_fr": "cuillère",
     "meaningFr": "cuillère",
     "example_fr": "Mangez-le avec une cuillère.",
-    "exampleFr": "Mangez-le avec une cuillère."
+    "exampleFr": "Mangez-le avec une cuillère.",
+    "meaning_ja": "スプーン",
+    "example_ja": "ここで素晴らしいスプーンを見ました。",
+    "meaning_vi": "Thìa",
+    "example_vi": "Tôi thấy một chiếc thìa tuyệt vời ở đây.",
+    "meaning_hi": "चम्मच",
+    "example_hi": "मुझे यहाँ एक अद्भुत चम्मच दिखाई दे रहा है।"
   },
   {
     "id": 358,
@@ -6800,7 +8942,13 @@ const wordList500 = [
     "meaning_fr": "fourchette",
     "meaningFr": "fourchette",
     "example_fr": "Utilisez une fourchette.",
-    "exampleFr": "Utilisez une fourchette."
+    "exampleFr": "Utilisez une fourchette.",
+    "meaning_ja": "フォーク",
+    "example_ja": "ここに素晴らしい分岐点が見えます。",
+    "meaning_vi": "Cái nĩa",
+    "example_vi": "Tôi thấy một cái nĩa tuyệt vời ở đây.",
+    "meaning_hi": "काँटा",
+    "example_hi": "मुझे यहाँ एक अद्भुत काँटा दिखाई देता है।"
   },
   {
     "id": 359,
@@ -6819,7 +8967,13 @@ const wordList500 = [
     "meaning_fr": "plaque",
     "meaningFr": "plaque",
     "example_fr": "L'assiette est ronde.",
-    "exampleFr": "L'assiette est ronde."
+    "exampleFr": "L'assiette est ronde.",
+    "meaning_ja": "皿",
+    "example_ja": "ここで素晴らしいお皿を見ました。",
+    "meaning_vi": "Đĩa",
+    "example_vi": "Tôi thấy một cái đĩa tuyệt vời ở đây.",
+    "meaning_hi": "थाली",
+    "example_hi": "मुझे यहाँ एक अद्भुत थाली दिखाई देती है।"
   },
   {
     "id": 360,
@@ -6838,7 +8992,13 @@ const wordList500 = [
     "meaning_fr": "serviette",
     "meaningFr": "serviette",
     "example_fr": "Les serviettes sont douces.",
-    "exampleFr": "Les serviettes sont douces."
+    "exampleFr": "Les serviettes sont douces.",
+    "meaning_ja": "タオル",
+    "example_ja": "ここで素晴らしいタオルを見ました。",
+    "meaning_vi": "Cái khăn lau",
+    "example_vi": "Tôi thấy một chiếc khăn tuyệt vời ở đây.",
+    "meaning_hi": "तौलिया",
+    "example_hi": "मुझे यहाँ एक अद्भुत तौलिया दिख रहा है।"
   },
   {
     "id": 361,
@@ -6857,7 +9017,13 @@ const wordList500 = [
     "meaning_fr": "savon",
     "meaningFr": "savon",
     "example_fr": "Lavez-vous les mains avec du savon.",
-    "exampleFr": "Lavez-vous les mains avec du savon."
+    "exampleFr": "Lavez-vous les mains avec du savon.",
+    "meaning_ja": "石鹸",
+    "example_ja": "ここで素晴らしい石鹸を見ました。",
+    "meaning_vi": "xà phòng",
+    "example_vi": "Tôi thấy một loại xà phòng tuyệt vời ở đây.",
+    "meaning_hi": "साबुन",
+    "example_hi": "मुझे यहाँ एक अद्भुत साबुन दिख रहा है।"
   },
   {
     "id": 362,
@@ -6876,7 +9042,13 @@ const wordList500 = [
     "meaning_fr": "clé",
     "meaningFr": "clé",
     "example_fr": "J'ai perdu mes clés.",
-    "exampleFr": "J'ai perdu mes clés."
+    "exampleFr": "J'ai perdu mes clés.",
+    "meaning_ja": "鍵",
+    "example_ja": "ここに素晴らしい鍵が見えます。",
+    "meaning_vi": "Chìa khóa",
+    "example_vi": "Tôi thấy một chiếc chìa khóa tuyệt vời ở đây.",
+    "meaning_hi": "चाबी",
+    "example_hi": "मुझे यहां एक अद्भुत कुंजी दिखाई देती है।"
   },
   {
     "id": 363,
@@ -6895,7 +9067,13 @@ const wordList500 = [
     "meaning_fr": "téléphone",
     "meaningFr": "téléphone",
     "example_fr": "Le téléphone sonne.",
-    "exampleFr": "Le téléphone sonne."
+    "exampleFr": "Le téléphone sonne.",
+    "meaning_ja": "電話",
+    "example_ja": "ここで素晴らしい電話を見ました。",
+    "meaning_vi": "Điện thoại",
+    "example_vi": "Tôi thấy một chiếc điện thoại tuyệt vời ở đây.",
+    "meaning_hi": "फ़ोन",
+    "example_hi": "मुझे यहाँ एक अद्भुत फ़ोन दिख रहा है।"
   },
   {
     "id": 364,
@@ -6914,7 +9092,13 @@ const wordList500 = [
     "meaning_fr": "télévision",
     "meaningFr": "télévision",
     "example_fr": "Nous regardons la télévision.",
-    "exampleFr": "Nous regardons la télévision."
+    "exampleFr": "Nous regardons la télévision.",
+    "meaning_ja": "テレビ",
+    "example_ja": "ここで素晴らしいテレビを見ます。",
+    "meaning_vi": "Tivi",
+    "example_vi": "Tôi thấy một chiếc tivi tuyệt vời ở đây.",
+    "meaning_hi": "टेलीविजन",
+    "example_hi": "मैं यहां एक अद्भुत टेलीविजन देखता हूं।"
   },
   {
     "id": 365,
@@ -6933,7 +9117,13 @@ const wordList500 = [
     "meaning_fr": "jouet",
     "meaningFr": "jouet",
     "example_fr": "J'aime ce jouet.",
-    "exampleFr": "J'aime ce jouet."
+    "exampleFr": "J'aime ce jouet.",
+    "meaning_ja": "玩具",
+    "example_ja": "ここで素晴らしいおもちゃを見ました。",
+    "meaning_vi": "đồ chơi",
+    "example_vi": "Tôi thấy một món đồ chơi tuyệt vời ở đây.",
+    "meaning_hi": "खिलौने",
+    "example_hi": "मुझे यहाँ एक अद्भुत खिलौना दिखाई देता है।"
   },
   {
     "id": 366,
@@ -6952,7 +9142,13 @@ const wordList500 = [
     "meaning_fr": "poupée",
     "meaningFr": "poupée",
     "example_fr": "La poupée est mignonne.",
-    "exampleFr": "La poupée est mignonne."
+    "exampleFr": "La poupée est mignonne.",
+    "meaning_ja": "人形",
+    "example_ja": "ここで素晴らしい人形を見ました。",
+    "meaning_vi": "BÚP BÊ",
+    "example_vi": "Tôi thấy một con búp bê tuyệt vời ở đây.",
+    "meaning_hi": "गुड़िया",
+    "example_hi": "मुझे यहाँ एक अद्भुत गुड़िया दिखाई देती है।"
   },
   {
     "id": 367,
@@ -6971,7 +9167,13 @@ const wordList500 = [
     "meaning_fr": "parapluie",
     "meaningFr": "parapluie",
     "example_fr": "Prenez un parapluie.",
-    "exampleFr": "Prenez un parapluie."
+    "exampleFr": "Prenez un parapluie.",
+    "meaning_ja": "傘",
+    "example_ja": "ここで素敵な傘を見ました。",
+    "meaning_vi": "Chiếc ô",
+    "example_vi": "Tôi thấy một chiếc ô tuyệt vời ở đây.",
+    "meaning_hi": "छाता",
+    "example_hi": "मुझे यहाँ एक अद्भुत छतरी दिखाई देती है।"
   },
   {
     "id": 368,
@@ -6990,7 +9192,13 @@ const wordList500 = [
     "meaning_fr": "montre-bracelet",
     "meaningFr": "montre-bracelet",
     "example_fr": "Je vois une belle montre.",
-    "exampleFr": "Je vois une belle montre."
+    "exampleFr": "Je vois une belle montre.",
+    "meaning_ja": "時計",
+    "example_ja": "ここで素晴らしい時計を見ました。",
+    "meaning_vi": "Đồng hồ",
+    "example_vi": "Tôi thấy một chiếc đồng hồ tuyệt vời ở đây.",
+    "meaning_hi": "घड़ी",
+    "example_hi": "मुझे यहाँ एक अद्भुत घड़ी दिखाई देती है।"
   },
   {
     "id": 369,
@@ -7009,7 +9217,13 @@ const wordList500 = [
     "meaning_fr": "calendrier",
     "meaningFr": "calendrier",
     "example_fr": "Je vois un joli calendrier.",
-    "exampleFr": "Je vois un joli calendrier."
+    "exampleFr": "Je vois un joli calendrier.",
+    "meaning_ja": "カレンダー",
+    "example_ja": "ここで素晴らしいカレンダーを見ました。",
+    "meaning_vi": "Lịch",
+    "example_vi": "Tôi thấy một cuốn lịch tuyệt vời ở đây.",
+    "meaning_hi": "कैलेंडर",
+    "example_hi": "मुझे यहां एक अद्भुत कैलेंडर दिखाई दे रहा है।"
   },
   {
     "id": 370,
@@ -7028,7 +9242,13 @@ const wordList500 = [
     "meaning_fr": "carte",
     "meaningFr": "carte",
     "example_fr": "Je vois une jolie carte.",
-    "exampleFr": "Je vois une jolie carte."
+    "exampleFr": "Je vois une jolie carte.",
+    "meaning_ja": "地図",
+    "example_ja": "ここで素晴らしい地図を見ました。",
+    "meaning_vi": "Bản đồ",
+    "example_vi": "Tôi thấy một bản đồ tuyệt vời ở đây.",
+    "meaning_hi": "मानचित्र",
+    "example_hi": "मुझे यहाँ एक अद्भुत मानचित्र दिखाई देता है।"
   },
   {
     "id": 371,
@@ -7047,7 +9267,13 @@ const wordList500 = [
     "meaning_fr": "boîte",
     "meaningFr": "boîte",
     "example_fr": "Je vois une jolie boîte.",
-    "exampleFr": "Je vois une jolie boîte."
+    "exampleFr": "Je vois une jolie boîte.",
+    "meaning_ja": "箱",
+    "example_ja": "ここで素晴らしい箱を見ました。",
+    "meaning_vi": "Hộp",
+    "example_vi": "Tôi thấy một chiếc hộp tuyệt vời ở đây.",
+    "meaning_hi": "डिब्बा",
+    "example_hi": "मुझे यहाँ एक अद्भुत बक्सा दिखाई देता है।"
   },
   {
     "id": 372,
@@ -7066,7 +9292,13 @@ const wordList500 = [
     "meaning_fr": "radio",
     "meaningFr": "radio",
     "example_fr": "Je regarde une super radio.",
-    "exampleFr": "Je regarde une super radio."
+    "exampleFr": "Je regarde une super radio.",
+    "meaning_ja": "無線",
+    "example_ja": "ここで素晴らしいラジオを見ました。",
+    "meaning_vi": "Radio",
+    "example_vi": "Tôi thấy một đài phát thanh tuyệt vời ở đây.",
+    "meaning_hi": "रेडियो",
+    "example_hi": "मुझे यहाँ एक अद्भुत रेडियो दिखाई देता है।"
   },
   {
     "id": 373,
@@ -7085,7 +9317,13 @@ const wordList500 = [
     "meaning_fr": "caméra",
     "meaningFr": "caméra",
     "example_fr": "Je vois un bel appareil photo.",
-    "exampleFr": "Je vois un bel appareil photo."
+    "exampleFr": "Je vois un bel appareil photo.",
+    "meaning_ja": "カメラ",
+    "example_ja": "ここで素晴らしいカメラを見ました。",
+    "meaning_vi": "Máy ảnh",
+    "example_vi": "Tôi thấy một chiếc máy ảnh tuyệt vời ở đây.",
+    "meaning_hi": "कैमरा",
+    "example_hi": "मुझे यहां एक अद्भुत कैमरा दिखाई दे रहा है।"
   },
   {
     "id": 374,
@@ -7104,7 +9342,13 @@ const wordList500 = [
     "meaning_fr": "miroir",
     "meaningFr": "miroir",
     "example_fr": "Je regarde un joli miroir.",
-    "exampleFr": "Je regarde un joli miroir."
+    "exampleFr": "Je regarde un joli miroir.",
+    "meaning_ja": "鏡",
+    "example_ja": "ここに素晴らしい鏡が見えます。",
+    "meaning_vi": "Gương",
+    "example_vi": "Tôi thấy ở đây một tấm gương tuyệt vời.",
+    "meaning_hi": "आईना",
+    "example_hi": "मुझे यहाँ एक अद्भुत दर्पण दिखाई देता है।"
   },
   {
     "id": 375,
@@ -7123,7 +9367,13 @@ const wordList500 = [
     "meaning_fr": "tasse en verre",
     "meaningFr": "tasse en verre",
     "example_fr": "Je vois une jolie tasse en verre.",
-    "exampleFr": "Je vois une jolie tasse en verre."
+    "exampleFr": "Je vois une jolie tasse en verre.",
+    "meaning_ja": "ガラス",
+    "example_ja": "ここで素晴らしいグラスを見ました。",
+    "meaning_vi": "Thủy tinh",
+    "example_vi": "Tôi thấy một chiếc kính tuyệt vời ở đây.",
+    "meaning_hi": "काँच",
+    "example_hi": "मुझे यहाँ एक अद्भुत शीशा दिखाई देता है।"
   },
   {
     "id": 376,
@@ -7142,7 +9392,13 @@ const wordList500 = [
     "meaning_fr": "bol",
     "meaningFr": "bol",
     "example_fr": "Je vois un joli bol.",
-    "exampleFr": "Je vois un joli bol."
+    "exampleFr": "Je vois un joli bol.",
+    "meaning_ja": "ボウル",
+    "example_ja": "ここで素晴らしいボウルを見ました。",
+    "meaning_vi": "Cái bát",
+    "example_vi": "Tôi thấy một cái bát tuyệt vời ở đây.",
+    "meaning_hi": "कटोरा",
+    "example_hi": "मुझे यहाँ एक अद्भुत कटोरा दिखाई देता है।"
   },
   {
     "id": 377,
@@ -7161,7 +9417,13 @@ const wordList500 = [
     "meaning_fr": "cuisine",
     "meaningFr": "cuisine",
     "example_fr": "Je vois une belle cuisine.",
-    "exampleFr": "Je vois une belle cuisine."
+    "exampleFr": "Je vois une belle cuisine.",
+    "meaning_ja": "台所",
+    "example_ja": "ここに素晴らしいキッチンが見えます。",
+    "meaning_vi": "Phòng bếp",
+    "example_vi": "Tôi thấy một nhà bếp tuyệt vời ở đây.",
+    "meaning_hi": "रसोईघर",
+    "example_hi": "मुझे यहाँ एक अद्भुत रसोईघर दिखाई देता है।"
   },
   {
     "id": 378,
@@ -7180,7 +9442,13 @@ const wordList500 = [
     "meaning_fr": "cadeau",
     "meaningFr": "cadeau",
     "example_fr": "Je vois un merveilleux cadeau.",
-    "exampleFr": "Je vois un merveilleux cadeau."
+    "exampleFr": "Je vois un merveilleux cadeau.",
+    "meaning_ja": "贈り物",
+    "example_ja": "ここで素晴らしい贈り物を見ました。",
+    "meaning_vi": "Quà",
+    "example_vi": "Tôi thấy một món quà tuyệt vời ở đây.",
+    "meaning_hi": "उपहार",
+    "example_hi": "मुझे यहाँ एक अद्भुत उपहार दिखाई दे रहा है।"
   },
   {
     "id": 379,
@@ -7199,7 +9467,13 @@ const wordList500 = [
     "meaning_fr": "cadeau",
     "meaningFr": "cadeau",
     "example_fr": "Je vois un merveilleux cadeau.",
-    "exampleFr": "Je vois un merveilleux cadeau."
+    "exampleFr": "Je vois un merveilleux cadeau.",
+    "meaning_ja": "現在",
+    "example_ja": "ここで素晴らしいプレゼントを見ました。",
+    "meaning_vi": "Hiện tại",
+    "example_vi": "Tôi thấy một món quà tuyệt vời ở đây.",
+    "meaning_hi": "उपस्थित",
+    "example_hi": "मैं यहां एक अद्भुत उपहार देख रहा हूं।"
   },
   {
     "id": 380,
@@ -7218,7 +9492,13 @@ const wordList500 = [
     "meaning_fr": "panier",
     "meaningFr": "panier",
     "example_fr": "Je vois un joli panier.",
-    "exampleFr": "Je vois un joli panier."
+    "exampleFr": "Je vois un joli panier.",
+    "meaning_ja": "バスケット",
+    "example_ja": "ここで素晴らしいバスケットを見ました。",
+    "meaning_vi": "Rổ",
+    "example_vi": "Tôi thấy một cái giỏ tuyệt vời ở đây.",
+    "meaning_hi": "टोकरी",
+    "example_hi": "मुझे यहाँ एक अद्भुत टोकरी दिखाई देती है।"
   },
   {
     "id": 381,
@@ -7237,7 +9517,13 @@ const wordList500 = [
     "meaning_fr": "lettre",
     "meaningFr": "lettre",
     "example_fr": "Je vois une jolie lettre.",
-    "exampleFr": "Je vois une jolie lettre."
+    "exampleFr": "Je vois une jolie lettre.",
+    "meaning_ja": "手紙",
+    "example_ja": "ここで素晴らしい手紙を見ました。",
+    "meaning_vi": "Thư",
+    "example_vi": "Tôi thấy một lá thư tuyệt vời ở đây.",
+    "meaning_hi": "पत्र",
+    "example_hi": "मुझे यहां एक अद्भुत पत्र दिख रहा है।"
   },
   {
     "id": 382,
@@ -7256,7 +9542,13 @@ const wordList500 = [
     "meaning_fr": "email",
     "meaningFr": "email",
     "example_fr": "Je vois un excellent e-mail.",
-    "exampleFr": "Je vois un excellent e-mail."
+    "exampleFr": "Je vois un excellent e-mail.",
+    "meaning_ja": "電子メール",
+    "example_ja": "ここで素晴らしいメールを目にしました。",
+    "meaning_vi": "E-mail",
+    "example_vi": "Tôi thấy một email tuyệt vời ở đây.",
+    "meaning_hi": "ईमेल",
+    "example_hi": "मुझे यहां एक अद्भुत ईमेल दिखाई दे रहा है।"
   },
   {
     "id": 383,
@@ -7275,7 +9567,13 @@ const wordList500 = [
     "meaning_fr": "message",
     "meaningFr": "message",
     "example_fr": "Je vois un merveilleux message.",
-    "exampleFr": "Je vois un merveilleux message."
+    "exampleFr": "Je vois un merveilleux message.",
+    "meaning_ja": "メッセージ",
+    "example_ja": "ここで素晴らしいメッセージを目にしました。",
+    "meaning_vi": "Tin nhắn",
+    "example_vi": "Tôi thấy một thông điệp tuyệt vời ở đây.",
+    "meaning_hi": "संदेश",
+    "example_hi": "मुझे यहां एक अद्भुत संदेश दिख रहा है."
   },
   {
     "id": 384,
@@ -7294,7 +9592,13 @@ const wordList500 = [
     "meaning_fr": "nouvelles",
     "meaningFr": "nouvelles",
     "example_fr": "Je vois une excellente nouvelle.",
-    "exampleFr": "Je vois une excellente nouvelle."
+    "exampleFr": "Je vois une excellente nouvelle.",
+    "meaning_ja": "ニュース",
+    "example_ja": "ここで素晴らしいニュースを目にしました。",
+    "meaning_vi": "Tin tức",
+    "example_vi": "Tôi thấy một tin tức tuyệt vời ở đây.",
+    "meaning_hi": "समाचार",
+    "example_hi": "मुझे यहां एक अद्भुत समाचार दिखाई दे रहा है।"
   },
   {
     "id": 385,
@@ -7313,7 +9617,13 @@ const wordList500 = [
     "meaning_fr": "histoire",
     "meaningFr": "histoire",
     "example_fr": "Je regarde une belle histoire.",
-    "exampleFr": "Je regarde une belle histoire."
+    "exampleFr": "Je regarde une belle histoire.",
+    "meaning_ja": "話",
+    "example_ja": "ここで素晴らしい物語を見ました。",
+    "meaning_vi": "Câu chuyện",
+    "example_vi": "Tôi thấy một câu chuyện tuyệt vời ở đây.",
+    "meaning_hi": "कहानी",
+    "example_hi": "मुझे यहाँ एक अद्भुत कहानी दिखाई देती है।"
   },
   {
     "id": 386,
@@ -7332,7 +9642,13 @@ const wordList500 = [
     "meaning_fr": "roman",
     "meaningFr": "roman",
     "example_fr": "J'ai lu un super roman.",
-    "exampleFr": "J'ai lu un super roman."
+    "exampleFr": "J'ai lu un super roman.",
+    "meaning_ja": "小説",
+    "example_ja": "私はここで素晴らしい小説を見ました。",
+    "meaning_vi": "Cuốn tiểu thuyết",
+    "example_vi": "Tôi thấy một cuốn tiểu thuyết tuyệt vời ở đây.",
+    "meaning_hi": "उपन्यास",
+    "example_hi": "मुझे यहाँ एक अद्भुत उपन्यास दिख रहा है।"
   },
   {
     "id": 387,
@@ -7351,7 +9667,13 @@ const wordList500 = [
     "meaning_fr": "poésie",
     "meaningFr": "poésie",
     "example_fr": "Je vois un merveilleux poème.",
-    "exampleFr": "Je vois un merveilleux poème."
+    "exampleFr": "Je vois un merveilleux poème.",
+    "meaning_ja": "詩",
+    "example_ja": "ここで素晴らしい詩を見ました。",
+    "meaning_vi": "bài thơ",
+    "example_vi": "Tôi thấy ở đây có một bài thơ hay.",
+    "meaning_hi": "कविता",
+    "example_hi": "मुझे यहां एक अद्भुत कविता दिख रही है."
   },
   {
     "id": 388,
@@ -7370,7 +9692,13 @@ const wordList500 = [
     "meaning_fr": "photo",
     "meaningFr": "photo",
     "example_fr": "Je vois une belle photo.",
-    "exampleFr": "Je vois une belle photo."
+    "exampleFr": "Je vois une belle photo.",
+    "meaning_ja": "写真",
+    "example_ja": "ここで素晴らしい写真を見ました。",
+    "meaning_vi": "Hình ảnh",
+    "example_vi": "Tôi thấy một bức tranh tuyệt vời ở đây.",
+    "meaning_hi": "चित्र",
+    "example_hi": "मुझे यहाँ एक अद्भुत चित्र दिखाई दे रहा है।"
   },
   {
     "id": 389,
@@ -7389,7 +9717,13 @@ const wordList500 = [
     "meaning_fr": "photos",
     "meaningFr": "photos",
     "example_fr": "Je vois de superbes photos.",
-    "exampleFr": "Je vois de superbes photos."
+    "exampleFr": "Je vois de superbes photos.",
+    "meaning_ja": "写真",
+    "example_ja": "ここで素晴らしい写真を見ました。",
+    "meaning_vi": "Ảnh",
+    "example_vi": "Tôi thấy một bức ảnh tuyệt vời ở đây.",
+    "meaning_hi": "तस्वीर",
+    "example_hi": "मुझे यहाँ एक अद्भुत फ़ोटो दिखाई दे रही है।"
   },
   {
     "id": 390,
@@ -7408,7 +9742,13 @@ const wordList500 = [
     "meaning_fr": "cinéma",
     "meaningFr": "cinéma",
     "example_fr": "Je regarde de grands films.",
-    "exampleFr": "Je regarde de grands films."
+    "exampleFr": "Je regarde de grands films.",
+    "meaning_ja": "膜",
+    "example_ja": "ここで素晴らしい映画を見ました。",
+    "meaning_vi": "Phim ảnh",
+    "example_vi": "Tôi thấy một bộ phim tuyệt vời ở đây.",
+    "meaning_hi": "पतली परत",
+    "example_hi": "मैंने यहां एक अद्भुत फिल्म देखी।"
   },
   {
     "id": 391,
@@ -7427,7 +9767,13 @@ const wordList500 = [
     "meaning_fr": "cour",
     "meaningFr": "cour",
     "example_fr": "Je vois une jolie cour.",
-    "exampleFr": "Je vois une jolie cour."
+    "exampleFr": "Je vois une jolie cour.",
+    "meaning_ja": "ヤード",
+    "example_ja": "ここに素晴らしい庭が見えます。",
+    "meaning_vi": "Sân",
+    "example_vi": "Tôi thấy ở đây có một cái sân tuyệt vời.",
+    "meaning_hi": "यार्ड",
+    "example_hi": "मुझे यहाँ एक अद्भुत प्रांगण दिखाई देता है।"
   },
   {
     "id": 392,
@@ -7446,7 +9792,13 @@ const wordList500 = [
     "meaning_fr": "antenne",
     "meaningFr": "antenne",
     "example_fr": "Je vois une belle antenne.",
-    "exampleFr": "Je vois une belle antenne."
+    "exampleFr": "Je vois une belle antenne.",
+    "meaning_ja": "アンテナ",
+    "example_ja": "ここに素晴らしいアンテナが見えます。",
+    "meaning_vi": "Anten",
+    "example_vi": "Tôi thấy một ăng-ten tuyệt vời ở đây.",
+    "meaning_hi": "एंटीना",
+    "example_hi": "मुझे यहां एक अद्भुत एंटीना दिखाई देता है।"
   },
   {
     "id": 393,
@@ -7465,7 +9817,13 @@ const wordList500 = [
     "meaning_fr": "flèche",
     "meaningFr": "flèche",
     "example_fr": "Je vois une jolie flèche.",
-    "exampleFr": "Je vois une jolie flèche."
+    "exampleFr": "Je vois une jolie flèche.",
+    "meaning_ja": "矢印",
+    "example_ja": "ここに素晴らしい矢印が見えます。",
+    "meaning_vi": "Mũi tên",
+    "example_vi": "Tôi thấy một mũi tên tuyệt vời ở đây.",
+    "meaning_hi": "तीर",
+    "example_hi": "मुझे यहाँ एक अद्भुत तीर दिखाई देता है।"
   },
   {
     "id": 394,
@@ -7484,7 +9842,13 @@ const wordList500 = [
     "meaning_fr": "hache",
     "meaningFr": "hache",
     "example_fr": "Je vois une hache cool.",
-    "exampleFr": "Je vois une hache cool."
+    "exampleFr": "Je vois une hache cool.",
+    "meaning_ja": "斧",
+    "example_ja": "ここで素晴らしい斧を見ました。",
+    "meaning_vi": "Rìu",
+    "example_vi": "Tôi thấy một chiếc rìu tuyệt vời ở đây.",
+    "meaning_hi": "कुल्हाड़ी",
+    "example_hi": "मुझे यहाँ एक अद्भुत कुल्हाड़ी दिखाई देती है।"
   },
   {
     "id": 395,
@@ -7503,7 +9867,13 @@ const wordList500 = [
     "meaning_fr": "balcon",
     "meaningFr": "balcon",
     "example_fr": "Je vois un joli balcon.",
-    "exampleFr": "Je vois un joli balcon."
+    "exampleFr": "Je vois un joli balcon.",
+    "meaning_ja": "バルコニー",
+    "example_ja": "ここに素晴らしいバルコニーが見えます。",
+    "meaning_vi": "Ban công",
+    "example_vi": "Tôi thấy một ban công tuyệt vời ở đây.",
+    "meaning_hi": "बालकनी",
+    "example_hi": "मुझे यहां एक अद्भुत बालकनी दिखाई देती है।"
   },
   {
     "id": 396,
@@ -7522,7 +9892,13 @@ const wordList500 = [
     "meaning_fr": "ballon",
     "meaningFr": "ballon",
     "example_fr": "Je vois un joli ballon.",
-    "exampleFr": "Je vois un joli ballon."
+    "exampleFr": "Je vois un joli ballon.",
+    "meaning_ja": "バルーン",
+    "example_ja": "ここで素晴らしい気球を見ました。",
+    "meaning_vi": "Bóng bay",
+    "example_vi": "Tôi thấy một quả bóng bay tuyệt vời ở đây.",
+    "meaning_hi": "गुब्बारा",
+    "example_hi": "मुझे यहां एक अद्भुत गुब्बारा दिखाई दे रहा है।"
   },
   {
     "id": 397,
@@ -7541,7 +9917,13 @@ const wordList500 = [
     "meaning_fr": "pansement",
     "meaningFr": "pansement",
     "example_fr": "Je vois de jolis bandages.",
-    "exampleFr": "Je vois de jolis bandages."
+    "exampleFr": "Je vois de jolis bandages.",
+    "meaning_ja": "包帯",
+    "example_ja": "ここで素晴らしい包帯を見ました。",
+    "meaning_vi": "băng bó",
+    "example_vi": "Tôi thấy một miếng băng tuyệt vời ở đây.",
+    "meaning_hi": "पट्टी",
+    "example_hi": "मुझे यहाँ एक अद्भुत पट्टी दिखाई देती है।"
   },
   {
     "id": 398,
@@ -7560,7 +9942,13 @@ const wordList500 = [
     "meaning_fr": "baril",
     "meaningFr": "baril",
     "example_fr": "Je vois un joli tonneau.",
-    "exampleFr": "Je vois un joli tonneau."
+    "exampleFr": "Je vois un joli tonneau.",
+    "meaning_ja": "バレル",
+    "example_ja": "ここで素晴らしい樽を見ました。",
+    "meaning_vi": "thùng",
+    "example_vi": "Tôi thấy một cái thùng tuyệt vời ở đây.",
+    "meaning_hi": "बैरल",
+    "example_hi": "मुझे यहां एक अद्भुत बैरल दिखाई देता है।"
   },
   {
     "id": 399,
@@ -7579,7 +9967,13 @@ const wordList500 = [
     "meaning_fr": "sous-sol",
     "meaningFr": "sous-sol",
     "example_fr": "Je vois un joli sous-sol.",
-    "exampleFr": "Je vois un joli sous-sol."
+    "exampleFr": "Je vois un joli sous-sol.",
+    "meaning_ja": "地下",
+    "example_ja": "ここに素晴らしい地下室が見えます。",
+    "meaning_vi": "Tầng hầm",
+    "example_vi": "Tôi thấy một tầng hầm tuyệt vời ở đây.",
+    "meaning_hi": "तहखाना",
+    "example_hi": "मुझे यहाँ एक अद्भुत तहखाना दिखाई देता है।"
   },
   {
     "id": 400,
@@ -7598,7 +9992,13 @@ const wordList500 = [
     "meaning_fr": "batterie",
     "meaningFr": "batterie",
     "example_fr": "Je vois une belle batterie.",
-    "exampleFr": "Je vois une belle batterie."
+    "exampleFr": "Je vois une belle batterie.",
+    "meaning_ja": "バッテリー",
+    "example_ja": "ここに素晴らしいバッテリーがあります。",
+    "meaning_vi": "Ắc quy",
+    "example_vi": "Tôi thấy một pin tuyệt vời ở đây.",
+    "meaning_hi": "बैटरी",
+    "example_hi": "मुझे यहां एक अद्भुत बैटरी दिखाई देती है।"
   },
   {
     "id": 401,
@@ -7617,7 +10017,13 @@ const wordList500 = [
     "meaning_fr": "banc",
     "meaningFr": "banc",
     "example_fr": "Je vois un joli banc.",
-    "exampleFr": "Je vois un joli banc."
+    "exampleFr": "Je vois un joli banc.",
+    "meaning_ja": "ベンチ",
+    "example_ja": "ここに素晴らしいベンチがあります。",
+    "meaning_vi": "băng ghế dự bị",
+    "example_vi": "Tôi thấy một chiếc ghế dài tuyệt vời ở đây.",
+    "meaning_hi": "बेंच",
+    "example_hi": "मुझे यहां एक अद्भुत बेंच दिख रही है।"
   },
   {
     "id": 402,
@@ -7636,7 +10042,13 @@ const wordList500 = [
     "meaning_fr": "poubelle",
     "meaningFr": "poubelle",
     "example_fr": "Je vois une jolie poubelle.",
-    "exampleFr": "Je vois une jolie poubelle."
+    "exampleFr": "Je vois une jolie poubelle.",
+    "meaning_ja": "ビン",
+    "example_ja": "ここに素晴らしいゴミ箱が見えます。",
+    "meaning_vi": "Thùng",
+    "example_vi": "Tôi thấy một cái thùng tuyệt vời ở đây.",
+    "meaning_hi": "बिन",
+    "example_hi": "मुझे यहाँ एक अद्भुत बिन दिखाई देता है।"
   },
   {
     "id": 403,
@@ -7655,7 +10067,13 @@ const wordList500 = [
     "meaning_fr": "bouteille",
     "meaningFr": "bouteille",
     "example_fr": "Je vois une belle bouteille.",
-    "exampleFr": "Je vois une belle bouteille."
+    "exampleFr": "Je vois une belle bouteille.",
+    "meaning_ja": "ボトル",
+    "example_ja": "ここで素晴らしいボトルを見ました。",
+    "meaning_vi": "Cái chai",
+    "example_vi": "Tôi thấy một cái chai tuyệt vời ở đây.",
+    "meaning_hi": "बोतल",
+    "example_hi": "मुझे यहाँ एक अद्भुत बोतल दिख रही है।"
   },
   {
     "id": 404,
@@ -7674,7 +10092,13 @@ const wordList500 = [
     "meaning_fr": "brique",
     "meaningFr": "brique",
     "example_fr": "Je vois de belles briques.",
-    "exampleFr": "Je vois de belles briques."
+    "exampleFr": "Je vois de belles briques.",
+    "meaning_ja": "レンガ",
+    "example_ja": "ここに素晴らしいレンガがあります。",
+    "meaning_vi": "Gạch",
+    "example_vi": "Tôi thấy một viên gạch tuyệt vời ở đây.",
+    "meaning_hi": "ईंट",
+    "example_hi": "मुझे यहाँ एक अद्भुत ईंट दिखाई देती है।"
   },
   {
     "id": 405,
@@ -7693,7 +10117,13 @@ const wordList500 = [
     "meaning_fr": "balai",
     "meaningFr": "balai",
     "example_fr": "Je vois un joli balai.",
-    "exampleFr": "Je vois un joli balai."
+    "exampleFr": "Je vois un joli balai.",
+    "meaning_ja": "ほうき",
+    "example_ja": "ここで素晴らしいほうきを見ました。",
+    "meaning_vi": "chổi",
+    "example_vi": "Tôi thấy một cây chổi tuyệt vời ở đây.",
+    "meaning_hi": "झाड़ू",
+    "example_hi": "मुझे यहाँ एक अद्भुत झाड़ू दिखाई देती है।"
   },
   {
     "id": 406,
@@ -7712,7 +10142,13 @@ const wordList500 = [
     "meaning_fr": "seau",
     "meaningFr": "seau",
     "example_fr": "Je vois un joli seau.",
-    "exampleFr": "Je vois un joli seau."
+    "exampleFr": "Je vois un joli seau.",
+    "meaning_ja": "バケツ",
+    "example_ja": "ここで素晴らしいバケツを見つけました。",
+    "meaning_vi": "Xô",
+    "example_vi": "Tôi thấy một cái xô tuyệt vời ở đây.",
+    "meaning_hi": "बाल्टी",
+    "example_hi": "मुझे यहाँ एक अद्भुत बाल्टी दिखाई देती है।"
   },
   {
     "id": 407,
@@ -7731,7 +10167,13 @@ const wordList500 = [
     "meaning_fr": "ampoule",
     "meaningFr": "ampoule",
     "example_fr": "Je vois une belle ampoule.",
-    "exampleFr": "Je vois une belle ampoule."
+    "exampleFr": "Je vois une belle ampoule.",
+    "meaning_ja": "バルブ",
+    "example_ja": "ここで素晴らしい電球を見ました。",
+    "meaning_vi": "Bóng đèn",
+    "example_vi": "Tôi thấy một bóng đèn tuyệt vời ở đây.",
+    "meaning_hi": "बल्ब",
+    "example_hi": "मुझे यहाँ एक अद्भुत बल्ब दिखाई देता है।"
   },
   {
     "id": 408,
@@ -7750,7 +10192,13 @@ const wordList500 = [
     "meaning_fr": "câble",
     "meaningFr": "câble",
     "example_fr": "Je vois un joli câble.",
-    "exampleFr": "Je vois un joli câble."
+    "exampleFr": "Je vois un joli câble.",
+    "meaning_ja": "ケーブル",
+    "example_ja": "ここで素晴らしいケーブルを見ました。",
+    "meaning_vi": "Cáp",
+    "example_vi": "Tôi thấy một sợi cáp tuyệt vời ở đây.",
+    "meaning_hi": "केबल",
+    "example_hi": "मुझे यहाँ एक अद्भुत केबल दिखाई देती है।"
   },
   {
     "id": 409,
@@ -7769,7 +10217,13 @@ const wordList500 = [
     "meaning_fr": "cage à oiseaux",
     "meaningFr": "cage à oiseaux",
     "example_fr": "Je vois une jolie cage à oiseaux.",
-    "exampleFr": "Je vois une jolie cage à oiseaux."
+    "exampleFr": "Je vois une jolie cage à oiseaux.",
+    "meaning_ja": "ケージ",
+    "example_ja": "ここに素晴らしい檻があります。",
+    "meaning_vi": "Cái lồng",
+    "example_vi": "Tôi thấy một cái lồng tuyệt vời ở đây.",
+    "meaning_hi": "पिंजरा",
+    "example_hi": "मुझे यहाँ एक अद्भुत पिंजरा दिखाई देता है।"
   },
   {
     "id": 410,
@@ -7788,7 +10242,13 @@ const wordList500 = [
     "meaning_fr": "bougie",
     "meaningFr": "bougie",
     "example_fr": "Je vois une jolie bougie.",
-    "exampleFr": "Je vois une jolie bougie."
+    "exampleFr": "Je vois une jolie bougie.",
+    "meaning_ja": "キャンドル",
+    "example_ja": "ここで素晴らしいキャンドルを見ました。",
+    "meaning_vi": "Nến",
+    "example_vi": "Tôi thấy một ngọn nến tuyệt vời ở đây.",
+    "meaning_hi": "मोमबत्ती",
+    "example_hi": "मुझे यहाँ एक अद्भुत मोमबत्ती दिखाई देती है।"
   },
   {
     "id": 411,
@@ -7807,7 +10267,13 @@ const wordList500 = [
     "meaning_fr": "cheminée",
     "meaningFr": "cheminée",
     "example_fr": "Je vois une belle cheminée.",
-    "exampleFr": "Je vois une belle cheminée."
+    "exampleFr": "Je vois une belle cheminée.",
+    "meaning_ja": "煙突",
+    "example_ja": "ここに素晴らしい煙突が見えます。",
+    "meaning_vi": "Ống khói",
+    "example_vi": "Tôi thấy một ống khói tuyệt vời ở đây.",
+    "meaning_hi": "चिमनी",
+    "example_hi": "मुझे यहां एक अद्भुत चिमनी दिखाई देती है।"
   },
   {
     "id": 412,
@@ -7826,7 +10292,13 @@ const wordList500 = [
     "meaning_fr": "boussole",
     "meaningFr": "boussole",
     "example_fr": "Je vois une jolie boussole.",
-    "exampleFr": "Je vois une jolie boussole."
+    "exampleFr": "Je vois une jolie boussole.",
+    "meaning_ja": "コンパス",
+    "example_ja": "ここに素晴らしいコンパスが見えます。",
+    "meaning_vi": "La bàn",
+    "example_vi": "Tôi thấy một chiếc la bàn tuyệt vời ở đây.",
+    "meaning_hi": "दिशा सूचक यंत्र",
+    "example_hi": "मुझे यहाँ एक अद्भुत कम्पास दिखाई देता है।"
   },
   {
     "id": 413,
@@ -7845,7 +10317,13 @@ const wordList500 = [
     "meaning_fr": "cabine",
     "meaningFr": "cabine",
     "example_fr": "Je vois une jolie cabane.",
-    "exampleFr": "Je vois une jolie cabane."
+    "exampleFr": "Je vois une jolie cabane.",
+    "meaning_ja": "コテージ",
+    "example_ja": "ここに素晴らしい別荘が見えます。",
+    "meaning_vi": "Ngôi nhà tranh",
+    "example_vi": "Tôi thấy một ngôi nhà tuyệt vời ở đây.",
+    "meaning_hi": "झोपड़ी",
+    "example_hi": "मुझे यहाँ एक अद्भुत कुटिया दिखाई देती है।"
   },
   {
     "id": 414,
@@ -7864,7 +10342,13 @@ const wordList500 = [
     "meaning_fr": "rideau",
     "meaningFr": "rideau",
     "example_fr": "Je vois de jolis rideaux.",
-    "exampleFr": "Je vois de jolis rideaux."
+    "exampleFr": "Je vois de jolis rideaux.",
+    "meaning_ja": "カーテン",
+    "example_ja": "ここに素晴らしいカーテンが見えます。",
+    "meaning_vi": "Tấm màn",
+    "example_vi": "Tôi thấy một tấm màn tuyệt vời ở đây.",
+    "meaning_hi": "परदा",
+    "example_hi": "मुझे यहाँ एक अद्भुत पर्दा दिखाई देता है।"
   },
   {
     "id": 415,
@@ -7883,7 +10367,13 @@ const wordList500 = [
     "meaning_fr": "coussin",
     "meaningFr": "coussin",
     "example_fr": "Je vois un joli coussin.",
-    "exampleFr": "Je vois un joli coussin."
+    "exampleFr": "Je vois un joli coussin.",
+    "meaning_ja": "クッション",
+    "example_ja": "ここで素敵なクッションを見ました。",
+    "meaning_vi": "Cái đệm",
+    "example_vi": "Tôi thấy một chiếc đệm tuyệt vời ở đây.",
+    "meaning_hi": "तकिया",
+    "example_hi": "मुझे यहाँ एक अद्भुत गद्दी दिखाई देती है।"
   },
   {
     "id": 416,
@@ -7902,7 +10392,13 @@ const wordList500 = [
     "meaning_fr": "tiroir",
     "meaningFr": "tiroir",
     "example_fr": "Je vois un joli tiroir.",
-    "exampleFr": "Je vois un joli tiroir."
+    "exampleFr": "Je vois un joli tiroir.",
+    "meaning_ja": "引き出し",
+    "example_ja": "ここに素晴らしい引き出しが見えます。",
+    "meaning_vi": "ngăn kéo",
+    "example_vi": "Tôi thấy một ngăn kéo tuyệt vời ở đây.",
+    "meaning_hi": "दराज",
+    "example_hi": "मुझे यहाँ एक अद्भुत दराज दिखाई देती है।"
   },
   {
     "id": 417,
@@ -7921,7 +10417,13 @@ const wordList500 = [
     "meaning_fr": "percer",
     "meaningFr": "percer",
     "example_fr": "Je vois un exercice sympa.",
-    "exampleFr": "Je vois un exercice sympa."
+    "exampleFr": "Je vois un exercice sympa.",
+    "meaning_ja": "ドリル",
+    "example_ja": "ここで素晴らしいドリルを見ました。",
+    "meaning_vi": "Máy khoan",
+    "example_vi": "Tôi thấy một cuộc diễn tập tuyệt vời ở đây.",
+    "meaning_hi": "छेद करना",
+    "example_hi": "मुझे यहां एक अद्भुत ड्रिल दिख रही है।"
   },
   {
     "id": 418,
@@ -7940,7 +10442,13 @@ const wordList500 = [
     "meaning_fr": "enveloppe",
     "meaningFr": "enveloppe",
     "example_fr": "Je vois une jolie enveloppe.",
-    "exampleFr": "Je vois une jolie enveloppe."
+    "exampleFr": "Je vois une jolie enveloppe.",
+    "meaning_ja": "封筒",
+    "example_ja": "ここに素晴らしい封筒があります。",
+    "meaning_vi": "Phong bì",
+    "example_vi": "Tôi thấy một chiếc phong bì tuyệt vời ở đây.",
+    "meaning_hi": "लिफ़ाफ़ा",
+    "example_hi": "मुझे यहां एक अद्भुत लिफाफा दिख रहा है।"
   },
   {
     "id": 419,
@@ -7959,7 +10467,13 @@ const wordList500 = [
     "meaning_fr": "clôture",
     "meaningFr": "clôture",
     "example_fr": "Je vois une belle clôture.",
-    "exampleFr": "Je vois une belle clôture."
+    "exampleFr": "Je vois une belle clôture.",
+    "meaning_ja": "フェンス",
+    "example_ja": "ここに素晴らしいフェンスが見えます。",
+    "meaning_vi": "Hàng rào",
+    "example_vi": "Tôi thấy một hàng rào tuyệt vời ở đây.",
+    "meaning_hi": "बाड़",
+    "example_hi": "मुझे यहां एक अद्भुत बाड़ दिखाई देती है।"
   },
   {
     "id": 420,
@@ -7978,7 +10492,13 @@ const wordList500 = [
     "meaning_fr": "lampe de poche",
     "meaningFr": "lampe de poche",
     "example_fr": "Je vois une lampe de poche sympa.",
-    "exampleFr": "Je vois une lampe de poche sympa."
+    "exampleFr": "Je vois une lampe de poche sympa.",
+    "meaning_ja": "懐中電灯",
+    "example_ja": "ここに素晴らしい懐中電灯があります。",
+    "meaning_vi": "Đèn pin",
+    "example_vi": "Tôi thấy ở đây có một chiếc đèn pin tuyệt vời.",
+    "meaning_hi": "टॉर्च",
+    "example_hi": "मुझे यहां एक अद्भुत टॉर्च दिखाई देती है।"
   },
   {
     "id": 421,
@@ -7997,7 +10517,13 @@ const wordList500 = [
     "meaning_fr": "cadre photo",
     "meaningFr": "cadre photo",
     "example_fr": "Je vois un joli cadre photo.",
-    "exampleFr": "Je vois un joli cadre photo."
+    "exampleFr": "Je vois un joli cadre photo.",
+    "meaning_ja": "フレーム",
+    "example_ja": "ここで素晴らしいフレームを見ました。",
+    "meaning_vi": "Khung",
+    "example_vi": "Tôi thấy một khung hình tuyệt vời ở đây.",
+    "meaning_hi": "चौखटा",
+    "example_hi": "मुझे यहां एक अद्भुत फ्रेम दिखाई दे रहा है।"
   },
   {
     "id": 422,
@@ -8016,7 +10542,13 @@ const wordList500 = [
     "meaning_fr": "poubelle",
     "meaningFr": "poubelle",
     "example_fr": "Je vois de superbes déchets.",
-    "exampleFr": "Je vois de superbes déchets."
+    "exampleFr": "Je vois de superbes déchets.",
+    "meaning_ja": "ごみ",
+    "example_ja": "ここで素晴らしいゴミを見ました。",
+    "meaning_vi": "Rác",
+    "example_vi": "Tôi thấy ở đây có một bãi rác tuyệt vời.",
+    "meaning_hi": "कचरा",
+    "example_hi": "मुझे यहाँ एक अद्भुत कूड़ा-कचरा दिखाई देता है।"
   },
   {
     "id": 423,
@@ -8035,7 +10567,13 @@ const wordList500 = [
     "meaning_fr": "marteau",
     "meaningFr": "marteau",
     "example_fr": "Je vois un joli marteau.",
-    "exampleFr": "Je vois un joli marteau."
+    "exampleFr": "Je vois un joli marteau.",
+    "meaning_ja": "ハンマー",
+    "example_ja": "ここで素晴らしいハンマーを見ました。",
+    "meaning_vi": "Búa",
+    "example_vi": "Tôi thấy một chiếc búa tuyệt vời ở đây.",
+    "meaning_hi": "हथौड़ा",
+    "example_hi": "मुझे यहाँ एक अद्भुत हथौड़ा दिखाई देता है।"
   },
   {
     "id": 424,
@@ -8054,7 +10592,13 @@ const wordList500 = [
     "meaning_fr": "bouilloire",
     "meaningFr": "bouilloire",
     "example_fr": "Je vois une belle bouilloire.",
-    "exampleFr": "Je vois une belle bouilloire."
+    "exampleFr": "Je vois une belle bouilloire.",
+    "meaning_ja": "ケトル",
+    "example_ja": "ここで素晴らしい釜を見ました。",
+    "meaning_vi": "Ấm đun nước",
+    "example_vi": "Tôi thấy một chiếc ấm đun nước tuyệt vời ở đây.",
+    "meaning_hi": "केतली",
+    "example_hi": "मुझे यहाँ एक अद्भुत केतली दिखाई देती है।"
   },
   {
     "id": 425,
@@ -8073,7 +10617,13 @@ const wordList500 = [
     "meaning_fr": "échelle",
     "meaningFr": "échelle",
     "example_fr": "Je vois une belle échelle.",
-    "exampleFr": "Je vois une belle échelle."
+    "exampleFr": "Je vois une belle échelle.",
+    "meaning_ja": "ラダー",
+    "example_ja": "ここに素晴らしいはしごが見えます。",
+    "meaning_vi": "Thang",
+    "example_vi": "Tôi thấy một cái thang tuyệt vời ở đây.",
+    "meaning_hi": "सीढ़ी",
+    "example_hi": "मुझे यहाँ एक अद्भुत सीढ़ी दिखाई देती है।"
   },
   {
     "id": 426,
@@ -8092,7 +10642,13 @@ const wordList500 = [
     "meaning_fr": "lanterne",
     "meaningFr": "lanterne",
     "example_fr": "Je vois une magnifique lanterne.",
-    "exampleFr": "Je vois une magnifique lanterne."
+    "exampleFr": "Je vois une magnifique lanterne.",
+    "meaning_ja": "ランタン",
+    "example_ja": "ここで素晴らしい提灯を見ました。",
+    "meaning_vi": "đèn lồng",
+    "example_vi": "Tôi thấy một chiếc đèn lồng tuyệt vời ở đây.",
+    "meaning_hi": "लालटेन",
+    "example_hi": "मुझे यहाँ एक अद्भुत लालटेन दिखाई देती है।"
   },
   {
     "id": 427,
@@ -8111,7 +10667,13 @@ const wordList500 = [
     "meaning_fr": "verrouiller",
     "meaningFr": "verrouiller",
     "example_fr": "Je vois de belles serrures.",
-    "exampleFr": "Je vois de belles serrures."
+    "exampleFr": "Je vois de belles serrures.",
+    "meaning_ja": "ロック",
+    "example_ja": "ここに素晴らしい錠前が見えます。",
+    "meaning_vi": "Khóa",
+    "example_vi": "Tôi thấy một chiếc khóa tuyệt vời ở đây.",
+    "meaning_hi": "ताला",
+    "example_hi": "मुझे यहाँ एक अद्भुत ताला दिखाई देता है।"
   },
   {
     "id": 428,
@@ -8130,7 +10692,13 @@ const wordList500 = [
     "meaning_fr": "boîte aux lettres",
     "meaningFr": "boîte aux lettres",
     "example_fr": "Je vois une jolie boîte aux lettres.",
-    "exampleFr": "Je vois une jolie boîte aux lettres."
+    "exampleFr": "Je vois une jolie boîte aux lettres.",
+    "meaning_ja": "メールボックス",
+    "example_ja": "ここに素晴らしい郵便ポストが見えます。",
+    "meaning_vi": "Hộp thư",
+    "example_vi": "Tôi thấy một hộp thư tuyệt vời ở đây.",
+    "meaning_hi": "मेलबॉक्स",
+    "example_hi": "मुझे यहां एक अद्भुत मेलबॉक्स दिखाई दे रहा है।"
   },
   {
     "id": 429,
@@ -8149,7 +10717,13 @@ const wordList500 = [
     "meaning_fr": "aiguille",
     "meaningFr": "aiguille",
     "example_fr": "Je vois de belles aiguilles.",
-    "exampleFr": "Je vois de belles aiguilles."
+    "exampleFr": "Je vois de belles aiguilles.",
+    "meaning_ja": "針",
+    "example_ja": "ここで素晴らしい針を見ました。",
+    "meaning_vi": "Cây kim",
+    "example_vi": "Tôi thấy một cây kim tuyệt vời ở đây.",
+    "meaning_hi": "सुई",
+    "example_hi": "मुझे यहाँ एक अद्भुत सुई दिखाई देती है।"
   },
   {
     "id": 430,
@@ -8168,7 +10742,13 @@ const wordList500 = [
     "meaning_fr": "grenier",
     "meaningFr": "grenier",
     "example_fr": "Il y a de vieux jouets dans le grenier.",
-    "exampleFr": "Il y a de vieux jouets dans le grenier."
+    "exampleFr": "Il y a de vieux jouets dans le grenier.",
+    "meaning_ja": "屋根裏",
+    "example_ja": "ここに素晴らしい屋根裏部屋が見えます。",
+    "meaning_vi": "Gác mái",
+    "example_vi": "Tôi thấy một căn gác tuyệt vời ở đây.",
+    "meaning_hi": "अटारी",
+    "example_hi": "मुझे यहाँ एक अद्भुत अटारी दिखाई देती है।"
   },
   {
     "id": 431,
@@ -8187,7 +10767,13 @@ const wordList500 = [
     "meaning_fr": "garage",
     "meaningFr": "garage",
     "example_fr": "Papa gare la voiture dans le garage.",
-    "exampleFr": "Papa gare la voiture dans le garage."
+    "exampleFr": "Papa gare la voiture dans le garage.",
+    "meaning_ja": "ガレージ",
+    "example_ja": "ここに素晴らしいガレージがあります。",
+    "meaning_vi": "Ga-ra",
+    "example_vi": "Tôi thấy một gara tuyệt vời ở đây.",
+    "meaning_hi": "गैरेज",
+    "example_hi": "मुझे यहाँ एक अद्भुत गैराज दिखाई देता है।"
   },
   {
     "id": 432,
@@ -8206,7 +10792,13 @@ const wordList500 = [
     "meaning_fr": "cheminée",
     "meaningFr": "cheminée",
     "example_fr": "Un feu brûle dans la cheminée.",
-    "exampleFr": "Un feu brûle dans la cheminée."
+    "exampleFr": "Un feu brûle dans la cheminée.",
+    "meaning_ja": "暖炉",
+    "example_ja": "ここに素晴らしい暖炉があります。",
+    "meaning_vi": "Lò sưởi",
+    "example_vi": "Tôi thấy một lò sưởi tuyệt vời ở đây.",
+    "meaning_hi": "चिमनी",
+    "example_hi": "मुझे यहां एक अद्भुत चिमनी दिखाई देती है।"
   },
   {
     "id": 433,
@@ -8225,7 +10817,13 @@ const wordList500 = [
     "meaning_fr": "robinet",
     "meaningFr": "robinet",
     "example_fr": "Fermez le robinet.",
-    "exampleFr": "Fermez le robinet."
+    "exampleFr": "Fermez le robinet.",
+    "meaning_ja": "蛇口",
+    "example_ja": "ここに素晴らしい蛇口があります。",
+    "meaning_vi": "Vòi",
+    "example_vi": "Tôi thấy một chiếc vòi tuyệt vời ở đây.",
+    "meaning_hi": "नल",
+    "example_hi": "मुझे यहां एक अद्भुत नल दिखाई देता है।"
   },
   {
     "id": 434,
@@ -8244,7 +10842,13 @@ const wordList500 = [
     "meaning_fr": "baignoire",
     "meaningFr": "baignoire",
     "example_fr": "Le bébé joue dans la baignoire.",
-    "exampleFr": "Le bébé joue dans la baignoire."
+    "exampleFr": "Le bébé joue dans la baignoire.",
+    "meaning_ja": "バスタブ",
+    "example_ja": "ここに素晴らしい浴槽があります。",
+    "meaning_vi": "Bồn tắm",
+    "example_vi": "Tôi thấy một bồn tắm tuyệt vời ở đây.",
+    "meaning_hi": "बाथटब",
+    "example_hi": "मुझे यहां एक अद्भुत बाथटब दिखाई देता है।"
   },
   {
     "id": 435,
@@ -8263,7 +10867,13 @@ const wordList500 = [
     "meaning_fr": "douche, douche",
     "meaningFr": "douche, douche",
     "example_fr": "Je prends une douche tous les soirs.",
-    "exampleFr": "Je prends une douche tous les soirs."
+    "exampleFr": "Je prends une douche tous les soirs.",
+    "meaning_ja": "シャワー",
+    "example_ja": "ここで素晴らしいシャワーが見られます。",
+    "meaning_vi": "Vòi sen",
+    "example_vi": "Tôi thấy một cơn mưa rào tuyệt vời ở đây.",
+    "meaning_hi": "फव्वारा",
+    "example_hi": "मुझे यहाँ एक अद्भुत वर्षा दिखाई देती है।"
   },
   {
     "id": 436,
@@ -8282,7 +10892,13 @@ const wordList500 = [
     "meaning_fr": "toilettes, toilettes",
     "meaningFr": "toilettes, toilettes",
     "example_fr": "Tirez la chasse d'eau.",
-    "exampleFr": "Tirez la chasse d'eau."
+    "exampleFr": "Tirez la chasse d'eau.",
+    "meaning_ja": "トイレ",
+    "example_ja": "ここに素晴らしいトイレがあります。",
+    "meaning_vi": "nhà vệ sinh",
+    "example_vi": "Tôi thấy một nhà vệ sinh tuyệt vời ở đây.",
+    "meaning_hi": "शौचालय",
+    "example_hi": "मुझे यहाँ एक अद्भुत शौचालय दिखाई देता है।"
   },
   {
     "id": 437,
@@ -8301,7 +10917,13 @@ const wordList500 = [
     "meaning_fr": "garde-robe",
     "meaningFr": "garde-robe",
     "example_fr": "Mon manteau est dans le placard.",
-    "exampleFr": "Mon manteau est dans le placard."
+    "exampleFr": "Mon manteau est dans le placard.",
+    "meaning_ja": "クローゼット",
+    "example_ja": "ここに素晴らしいクローゼットがあります。",
+    "meaning_vi": "Buồng nhỏ",
+    "example_vi": "Tôi thấy một tủ quần áo tuyệt vời ở đây.",
+    "meaning_hi": "अलमारी",
+    "example_hi": "मुझे यहाँ एक अद्भुत कोठरी दिखाई देती है।"
   },
   {
     "id": 438,
@@ -8320,7 +10942,13 @@ const wordList500 = [
     "meaning_fr": "matelas",
     "meaningFr": "matelas",
     "example_fr": "Le matelas est moelleux.",
-    "exampleFr": "Le matelas est moelleux."
+    "exampleFr": "Le matelas est moelleux.",
+    "meaning_ja": "マットレス",
+    "example_ja": "ここで素晴らしいマットレスを見ました。",
+    "meaning_vi": "Nệm",
+    "example_vi": "Tôi thấy một tấm nệm tuyệt vời ở đây.",
+    "meaning_hi": "MATTRESS",
+    "example_hi": "मुझे यहाँ एक अद्भुत गद्दा दिखाई देता है।"
   },
   {
     "id": 439,
@@ -8339,7 +10967,13 @@ const wordList500 = [
     "meaning_fr": "couverture",
     "meaningFr": "couverture",
     "example_fr": "Ma grand-mère a confectionné cette couverture.",
-    "exampleFr": "Ma grand-mère a confectionné cette couverture."
+    "exampleFr": "Ma grand-mère a confectionné cette couverture.",
+    "meaning_ja": "キルト",
+    "example_ja": "ここで素晴らしいキルトを見ました。",
+    "meaning_vi": "Chăn",
+    "example_vi": "Tôi thấy một cái chăn tuyệt vời ở đây.",
+    "meaning_hi": "रज़ाई",
+    "example_hi": "मुझे यहां एक अद्भुत रजाई दिखाई दे रही है।"
   },
   {
     "id": 440,
@@ -8358,7 +10992,13 @@ const wordList500 = [
     "meaning_fr": "aspirateur",
     "meaningFr": "aspirateur",
     "example_fr": "Maman utilise l'aspirateur le dimanche.",
-    "exampleFr": "Maman utilise l'aspirateur le dimanche."
+    "exampleFr": "Maman utilise l'aspirateur le dimanche.",
+    "meaning_ja": "真空",
+    "example_ja": "ここには素晴らしい真空が見えます。",
+    "meaning_vi": "chân không",
+    "example_vi": "Tôi thấy ở đây có một khoảng chân không tuyệt vời.",
+    "meaning_hi": "वैक्यूम",
+    "example_hi": "मुझे यहाँ एक अद्भुत निर्वात दिखाई देता है।"
   },
   {
     "id": 441,
@@ -8377,7 +11017,13 @@ const wordList500 = [
     "meaning_fr": "cuisinière à gaz",
     "meaningFr": "cuisinière à gaz",
     "example_fr": "La marmite est sur la cuisinière à gaz.",
-    "exampleFr": "La marmite est sur la cuisinière à gaz."
+    "exampleFr": "La marmite est sur la cuisinière à gaz.",
+    "meaning_ja": "レンジ",
+    "example_ja": "ここに素晴らしいストーブがあります。",
+    "meaning_vi": "Cái lò",
+    "example_vi": "Tôi thấy một cái bếp tuyệt vời ở đây.",
+    "meaning_hi": "चूल्हा",
+    "example_hi": "मुझे यहाँ एक अद्भुत चूल्हा दिखाई देता है।"
   },
   {
     "id": 442,
@@ -8396,7 +11042,13 @@ const wordList500 = [
     "meaning_fr": "four",
     "meaningFr": "four",
     "example_fr": "Le pain est au four.",
-    "exampleFr": "Le pain est au four."
+    "exampleFr": "Le pain est au four.",
+    "meaning_ja": "オーブン",
+    "example_ja": "ここに素晴らしいオーブンがあります。",
+    "meaning_vi": "Lò vi sóng",
+    "example_vi": "Tôi thấy một lò nướng tuyệt vời ở đây.",
+    "meaning_hi": "ओवन",
+    "example_hi": "मुझे यहाँ एक अद्भुत ओवन दिखाई देता है।"
   },
   {
     "id": 443,
@@ -8415,7 +11067,13 @@ const wordList500 = [
     "meaning_fr": "four à micro-ondes",
     "meaningFr": "four à micro-ondes",
     "example_fr": "Faites chauffer le lait au micro-ondes.",
-    "exampleFr": "Faites chauffer le lait au micro-ondes."
+    "exampleFr": "Faites chauffer le lait au micro-ondes.",
+    "meaning_ja": "電子レンジ",
+    "example_ja": "ここに素晴らしい電子レンジがあります。",
+    "meaning_vi": "lò vi sóng",
+    "example_vi": "Tôi thấy một lò vi sóng tuyệt vời ở đây.",
+    "meaning_hi": "माइक्रोवेव",
+    "example_hi": "मुझे यहां एक अद्भुत माइक्रोवेव दिखाई देता है।"
   },
   {
     "id": 444,
@@ -8434,7 +11092,13 @@ const wordList500 = [
     "meaning_fr": "congélateur",
     "meaningFr": "congélateur",
     "example_fr": "La glace est au congélateur.",
-    "exampleFr": "La glace est au congélateur."
+    "exampleFr": "La glace est au congélateur.",
+    "meaning_ja": "冷凍庫",
+    "example_ja": "ここに素晴らしい冷凍庫があります。",
+    "meaning_vi": "tủ đông",
+    "example_vi": "Tôi thấy một tủ đông tuyệt vời ở đây.",
+    "meaning_hi": "फ्रीज़र",
+    "example_hi": "मुझे यहां एक अद्भुत फ्रीजर दिखाई दे रहा है।"
   },
   {
     "id": 445,
@@ -8453,7 +11117,13 @@ const wordList500 = [
     "meaning_fr": "grille-pain",
     "meaningFr": "grille-pain",
     "example_fr": "Mettez le pain au grille-pain.",
-    "exampleFr": "Mettez le pain au grille-pain."
+    "exampleFr": "Mettez le pain au grille-pain.",
+    "meaning_ja": "トースター",
+    "example_ja": "ここで素晴らしいトースターを見ました。",
+    "meaning_vi": "Máy nướng bánh mỳ",
+    "example_vi": "Tôi thấy một máy nướng bánh mì tuyệt vời ở đây.",
+    "meaning_hi": "टोअस्टर",
+    "example_hi": "मुझे यहाँ एक अद्भुत टोस्टर दिखाई दे रहा है।"
   },
   {
     "id": 446,
@@ -8472,7 +11142,13 @@ const wordList500 = [
     "meaning_fr": "bouilloire",
     "meaningFr": "bouilloire",
     "example_fr": "La bouilloire est pleine de thé.",
-    "exampleFr": "La bouilloire est pleine de thé."
+    "exampleFr": "La bouilloire est pleine de thé.",
+    "meaning_ja": "ティーポット",
+    "example_ja": "ここで素晴らしいティーポットを見ました。",
+    "meaning_vi": "Ấm trà",
+    "example_vi": "Tôi thấy một ấm trà tuyệt vời ở đây.",
+    "meaning_hi": "चायदानी",
+    "example_hi": "मुझे यहाँ एक अद्भुत चायदानी दिख रही है।"
   },
   {
     "id": 447,
@@ -8491,7 +11167,13 @@ const wordList500 = [
     "meaning_fr": "tasse tasse",
     "meaningFr": "tasse tasse",
     "example_fr": "Je bois du lait dans une grande tasse.",
-    "exampleFr": "Je bois du lait dans une grande tasse."
+    "exampleFr": "Je bois du lait dans une grande tasse.",
+    "meaning_ja": "マグ",
+    "example_ja": "ここで素晴らしいマグカップを見ました。",
+    "meaning_vi": "Cốc",
+    "example_vi": "Tôi thấy một chiếc cốc tuyệt vời ở đây.",
+    "meaning_hi": "लूट के लिए हमला करना",
+    "example_hi": "मुझे यहां एक अद्भुत मग दिखाई दे रहा है।"
   },
   {
     "id": 448,
@@ -8510,7 +11192,13 @@ const wordList500 = [
     "meaning_fr": "baguettes",
     "meaningFr": "baguettes",
     "example_fr": "Je mange du riz avec des baguettes.",
-    "exampleFr": "Je mange du riz avec des baguettes."
+    "exampleFr": "Je mange du riz avec des baguettes.",
+    "meaning_ja": "箸",
+    "example_ja": "ここで素晴らしい箸を見ました。",
+    "meaning_vi": "Đũa",
+    "example_vi": "Tôi thấy một đôi đũa tuyệt vời ở đây.",
+    "meaning_hi": "चीनी काँटा",
+    "example_hi": "मुझे यहां एक अद्भुत चॉपस्टिक दिखाई देती है।"
   },
   {
     "id": 449,
@@ -8529,7 +11217,13 @@ const wordList500 = [
     "meaning_fr": "thermos",
     "meaningFr": "thermos",
     "example_fr": "Un thermos garde l'eau chaude.",
-    "exampleFr": "Un thermos garde l'eau chaude."
+    "exampleFr": "Un thermos garde l'eau chaude.",
+    "meaning_ja": "魔法瓶",
+    "example_ja": "ここに素晴らしい魔法瓶があります。",
+    "meaning_vi": "Bình giữ nhiệt",
+    "example_vi": "Tôi thấy một chiếc bình giữ nhiệt tuyệt vời ở đây.",
+    "meaning_hi": "थरमस",
+    "example_hi": "मुझे यहां एक अद्भुत थर्मस दिखाई देता है।"
   },
   {
     "id": 450,
@@ -8548,7 +11242,13 @@ const wordList500 = [
     "meaning_fr": "haut-parleur",
     "meaningFr": "haut-parleur",
     "example_fr": "La musique sort des haut-parleurs.",
-    "exampleFr": "La musique sort des haut-parleurs."
+    "exampleFr": "La musique sort des haut-parleurs.",
+    "meaning_ja": "スピーカー",
+    "example_ja": "ここで素晴らしいスピーカーを見ました。",
+    "meaning_vi": "Loa",
+    "example_vi": "Tôi thấy một diễn giả tuyệt vời ở đây.",
+    "meaning_hi": "वक्ता",
+    "example_hi": "मुझे यहाँ एक अद्भुत वक्ता दिखाई देता है।"
   },
   {
     "id": 451,
@@ -8567,7 +11267,13 @@ const wordList500 = [
     "meaning_fr": "écouteurs",
     "meaningFr": "écouteurs",
     "example_fr": "Il utilise des écouteurs dans le bus.",
-    "exampleFr": "Il utilise des écouteurs dans le bus."
+    "exampleFr": "Il utilise des écouteurs dans le bus.",
+    "meaning_ja": "ヘッドホン",
+    "example_ja": "ここで素晴らしいヘッドフォンを見ました。",
+    "meaning_vi": "Tai nghe",
+    "example_vi": "Tôi thấy một chiếc tai nghe tuyệt vời ở đây.",
+    "meaning_hi": "हेड फोन्स",
+    "example_hi": "मुझे यहां एक अद्भुत हेडफोन दिख रहा है।"
   },
   {
     "id": 452,
@@ -8586,7 +11292,13 @@ const wordList500 = [
     "meaning_fr": "parc",
     "meaningFr": "parc",
     "example_fr": "Je vois un joli parc.",
-    "exampleFr": "Je vois un joli parc."
+    "exampleFr": "Je vois un joli parc.",
+    "meaning_ja": "公園",
+    "example_ja": "ここに素晴らしい公園があります。",
+    "meaning_vi": "Công viên",
+    "example_vi": "Tôi thấy ở đây có một công viên tuyệt vời.",
+    "meaning_hi": "पार्क",
+    "example_hi": "मुझे यहाँ एक अद्भुत पार्क दिखाई देता है।"
   },
   {
     "id": 453,
@@ -8605,7 +11317,13 @@ const wordList500 = [
     "meaning_fr": "zoo",
     "meaningFr": "zoo",
     "example_fr": "Je vois un magnifique zoo.",
-    "exampleFr": "Je vois un magnifique zoo."
+    "exampleFr": "Je vois un magnifique zoo.",
+    "meaning_ja": "動物園",
+    "example_ja": "ここに素晴らしい動物園があります。",
+    "meaning_vi": "Sở thú",
+    "example_vi": "Tôi thấy một vườn thú tuyệt vời ở đây.",
+    "meaning_hi": "चिड़ियाघर",
+    "example_hi": "मुझे यहाँ एक अद्भुत चिड़ियाघर दिखाई देता है।"
   },
   {
     "id": 454,
@@ -8624,7 +11342,13 @@ const wordList500 = [
     "meaning_fr": "hôpital",
     "meaningFr": "hôpital",
     "example_fr": "Je vois un merveilleux hôpital.",
-    "exampleFr": "Je vois un merveilleux hôpital."
+    "exampleFr": "Je vois un merveilleux hôpital.",
+    "meaning_ja": "病院",
+    "example_ja": "ここに素晴らしい病院があります。",
+    "meaning_vi": "Bệnh viện",
+    "example_vi": "Tôi thấy ở đây có một bệnh viện tuyệt vời.",
+    "meaning_hi": "अस्पताल",
+    "example_hi": "मुझे यहाँ एक अद्भुत अस्पताल दिखाई देता है।"
   },
   {
     "id": 455,
@@ -8643,7 +11367,13 @@ const wordList500 = [
     "meaning_fr": "magasin",
     "meaningFr": "magasin",
     "example_fr": "Je vois un joli magasin.",
-    "exampleFr": "Je vois un joli magasin."
+    "exampleFr": "Je vois un joli magasin.",
+    "meaning_ja": "店",
+    "example_ja": "ここに素敵なお店を見つけました。",
+    "meaning_vi": "Cửa hàng",
+    "example_vi": "Tôi thấy một cửa hàng tuyệt vời ở đây.",
+    "meaning_hi": "इकट्ठा करना",
+    "example_hi": "मुझे यहाँ एक अद्भुत दुकान दिख रही है।"
   },
   {
     "id": 456,
@@ -8662,7 +11392,13 @@ const wordList500 = [
     "meaning_fr": "bibliothèque",
     "meaningFr": "bibliothèque",
     "example_fr": "Je vois une magnifique bibliothèque.",
-    "exampleFr": "Je vois une magnifique bibliothèque."
+    "exampleFr": "Je vois une magnifique bibliothèque.",
+    "meaning_ja": "図書館",
+    "example_ja": "ここに素晴らしい図書館があります。",
+    "meaning_vi": "Thư viện",
+    "example_vi": "Tôi thấy ở đây có một thư viện tuyệt vời.",
+    "meaning_hi": "पुस्तकालय",
+    "example_hi": "मुझे यहां एक अद्भुत पुस्तकालय दिखाई देता है।"
   },
   {
     "id": 457,
@@ -8681,7 +11417,13 @@ const wordList500 = [
     "meaning_fr": "banque",
     "meaningFr": "banque",
     "example_fr": "Je vois une belle banque.",
-    "exampleFr": "Je vois une belle banque."
+    "exampleFr": "Je vois une belle banque.",
+    "meaning_ja": "銀行",
+    "example_ja": "ここに素晴らしい銀行があります。",
+    "meaning_vi": "Ngân hàng",
+    "example_vi": "Tôi thấy một ngân hàng tuyệt vời ở đây.",
+    "meaning_hi": "किनारा",
+    "example_hi": "मुझे यहाँ एक अद्भुत बैंक दिखाई दे रहा है।"
   },
   {
     "id": 458,
@@ -8700,7 +11442,13 @@ const wordList500 = [
     "meaning_fr": "arrêter",
     "meaningFr": "arrêter",
     "example_fr": "Je vois un bel arrêt.",
-    "exampleFr": "Je vois un bel arrêt."
+    "exampleFr": "Je vois un bel arrêt.",
+    "meaning_ja": "駅",
+    "example_ja": "ここに素晴らしい駅が見えます。",
+    "meaning_vi": "Ga tàu",
+    "example_vi": "Tôi thấy một nhà ga tuyệt vời ở đây.",
+    "meaning_hi": "स्टेशन",
+    "example_hi": "मुझे यहाँ एक अद्भुत स्टेशन दिखाई देता है।"
   },
   {
     "id": 459,
@@ -8719,7 +11467,13 @@ const wordList500 = [
     "meaning_fr": "aéroport",
     "meaningFr": "aéroport",
     "example_fr": "Je vois un bel aéroport.",
-    "exampleFr": "Je vois un bel aéroport."
+    "exampleFr": "Je vois un bel aéroport.",
+    "meaning_ja": "空港",
+    "example_ja": "ここに素晴らしい空港が見えます。",
+    "meaning_vi": "Sân bay",
+    "example_vi": "Tôi thấy một sân bay tuyệt vời ở đây.",
+    "meaning_hi": "एयरपोर्ट",
+    "example_hi": "मुझे यहाँ एक अद्भुत हवाई अड्डा दिखाई देता है।"
   },
   {
     "id": 460,
@@ -8738,7 +11492,13 @@ const wordList500 = [
     "meaning_fr": "hôtel",
     "meaningFr": "hôtel",
     "example_fr": "Je vois un bel hôtel.",
-    "exampleFr": "Je vois un bel hôtel."
+    "exampleFr": "Je vois un bel hôtel.",
+    "meaning_ja": "ホテル",
+    "example_ja": "ここに素晴らしいホテルが見えます。",
+    "meaning_vi": "Khách sạn",
+    "example_vi": "Tôi thấy một khách sạn tuyệt vời ở đây.",
+    "meaning_hi": "होटल",
+    "example_hi": "मुझे यहाँ एक अद्भुत होटल दिख रहा है।"
   },
   {
     "id": 461,
@@ -8757,7 +11517,13 @@ const wordList500 = [
     "meaning_fr": "marché",
     "meaningFr": "marché",
     "example_fr": "Je vois un marché merveilleux.",
-    "exampleFr": "Je vois un marché merveilleux."
+    "exampleFr": "Je vois un marché merveilleux.",
+    "meaning_ja": "市場",
+    "example_ja": "ここに素晴らしい市場があるのを見ました。",
+    "meaning_vi": "Chợ",
+    "example_vi": "Tôi thấy một thị trường tuyệt vời ở đây.",
+    "meaning_hi": "बाज़ार",
+    "example_hi": "मुझे यहाँ एक अद्भुत बाज़ार दिखाई देता है।"
   },
   {
     "id": 462,
@@ -8776,7 +11542,13 @@ const wordList500 = [
     "meaning_fr": "magasin",
     "meaningFr": "magasin",
     "example_fr": "Je vois un joli magasin.",
-    "exampleFr": "Je vois un joli magasin."
+    "exampleFr": "Je vois un joli magasin.",
+    "meaning_ja": "店",
+    "example_ja": "ここに素敵なお店を見つけました。",
+    "meaning_vi": "Cửa hàng",
+    "example_vi": "Tôi thấy một cửa hàng tuyệt vời ở đây.",
+    "meaning_hi": "दुकान",
+    "example_hi": "मुझे यहाँ एक अद्भुत दुकान दिख रही है।"
   },
   {
     "id": 463,
@@ -8795,7 +11567,13 @@ const wordList500 = [
     "meaning_fr": "scène",
     "meaningFr": "scène",
     "example_fr": "Je vois une grande scène.",
-    "exampleFr": "Je vois une grande scène."
+    "exampleFr": "Je vois une grande scène.",
+    "meaning_ja": "ステージ",
+    "example_ja": "ここには素晴らしいステージが見えます。",
+    "meaning_vi": "Sân khấu",
+    "example_vi": "Tôi thấy một sân khấu tuyệt vời ở đây.",
+    "meaning_hi": "अवस्था",
+    "example_hi": "मुझे यहाँ एक अद्भुत मंच दिखाई देता है।"
   },
   {
     "id": 464,
@@ -8814,7 +11592,13 @@ const wordList500 = [
     "meaning_fr": "ferme",
     "meaningFr": "ferme",
     "example_fr": "Je vois une magnifique ferme.",
-    "exampleFr": "Je vois une magnifique ferme."
+    "exampleFr": "Je vois une magnifique ferme.",
+    "meaning_ja": "農場",
+    "example_ja": "ここに素晴らしい農場が見えます。",
+    "meaning_vi": "Nông trại",
+    "example_vi": "Tôi thấy một trang trại tuyệt vời ở đây.",
+    "meaning_hi": "खेत",
+    "example_hi": "मुझे यहाँ एक अद्भुत खेत दिखाई देता है।"
   },
   {
     "id": 465,
@@ -8833,7 +11617,13 @@ const wordList500 = [
     "meaning_fr": "arc",
     "meaningFr": "arc",
     "example_fr": "Je vois une belle arche.",
-    "exampleFr": "Je vois une belle arche."
+    "exampleFr": "Je vois une belle arche.",
+    "meaning_ja": "アーチ",
+    "example_ja": "ここに素晴らしいアーチが見えます。",
+    "meaning_vi": "Vòm",
+    "example_vi": "Tôi thấy một mái vòm tuyệt vời ở đây.",
+    "meaning_hi": "मेहराब",
+    "example_hi": "मुझे यहाँ एक अद्भुत मेहराब दिखाई देती है।"
   },
   {
     "id": 466,
@@ -8852,7 +11642,13 @@ const wordList500 = [
     "meaning_fr": "grange",
     "meaningFr": "grange",
     "example_fr": "Je vois une jolie grange.",
-    "exampleFr": "Je vois une jolie grange."
+    "exampleFr": "Je vois une jolie grange.",
+    "meaning_ja": "納屋",
+    "example_ja": "ここに素晴らしい納屋が見えます。",
+    "meaning_vi": "Chuồng",
+    "example_vi": "Tôi thấy một nhà kho tuyệt vời ở đây.",
+    "meaning_hi": "खलिहान",
+    "example_hi": "मुझे यहाँ एक अद्भुत खलिहान दिखाई देता है।"
   },
   {
     "id": 467,
@@ -8871,7 +11667,13 @@ const wordList500 = [
     "meaning_fr": "nom de famille",
     "meaningFr": "nom de famille",
     "example_fr": "Je vois un joli château.",
-    "exampleFr": "Je vois un joli château."
+    "exampleFr": "Je vois un joli château.",
+    "meaning_ja": "城",
+    "example_ja": "ここに素晴らしい城が見えます。",
+    "meaning_vi": "Lâu đài",
+    "example_vi": "Tôi thấy một lâu đài tuyệt vời ở đây.",
+    "meaning_hi": "किला",
+    "example_hi": "मुझे यहाँ एक अद्भुत महल दिखाई देता है।"
   },
   {
     "id": 468,
@@ -8890,7 +11692,13 @@ const wordList500 = [
     "meaning_fr": "mât de drapeau",
     "meaningFr": "mât de drapeau",
     "example_fr": "Je vois un joli mât de drapeau.",
-    "exampleFr": "Je vois un joli mât de drapeau."
+    "exampleFr": "Je vois un joli mât de drapeau.",
+    "meaning_ja": "旗竿",
+    "example_ja": "ここに素晴らしい旗竿が見えます。",
+    "meaning_vi": "Cột cờ",
+    "example_vi": "Tôi thấy một cột cờ tuyệt vời ở đây.",
+    "meaning_hi": "झंडे का खंभा",
+    "example_hi": "मुझे यहां एक अद्भुत ध्वजस्तंभ दिखाई देता है।"
   },
   {
     "id": 469,
@@ -8909,7 +11717,13 @@ const wordList500 = [
     "meaning_fr": "fontaine",
     "meaningFr": "fontaine",
     "example_fr": "Je vois une jolie fontaine.",
-    "exampleFr": "Je vois une jolie fontaine."
+    "exampleFr": "Je vois une jolie fontaine.",
+    "meaning_ja": "噴水",
+    "example_ja": "ここに素晴らしい噴水が見えます。",
+    "meaning_vi": "Đài phun nước",
+    "example_vi": "Tôi thấy một đài phun nước tuyệt vời ở đây.",
+    "meaning_hi": "फव्वारा",
+    "example_hi": "मुझे यहाँ एक अद्भुत फव्वारा दिखाई देता है।"
   },
   {
     "id": 470,
@@ -8928,7 +11742,13 @@ const wordList500 = [
     "meaning_fr": "cimetière",
     "meaningFr": "cimetière",
     "example_fr": "Je vois un joli cimetière.",
-    "exampleFr": "Je vois un joli cimetière."
+    "exampleFr": "Je vois un joli cimetière.",
+    "meaning_ja": "墓地",
+    "example_ja": "ここに素晴らしい墓地が見えます。",
+    "meaning_vi": "nghĩa địa",
+    "example_vi": "Tôi thấy ở đây có một nghĩa địa tuyệt vời.",
+    "meaning_hi": "कब्रिस्तान",
+    "example_hi": "मुझे यहाँ एक अद्भुत कब्रिस्तान दिखाई देता है।"
   },
   {
     "id": 471,
@@ -8947,7 +11767,13 @@ const wordList500 = [
     "meaning_fr": "musée",
     "meaningFr": "musée",
     "example_fr": "Je vois un joli musée.",
-    "exampleFr": "Je vois un joli musée."
+    "exampleFr": "Je vois un joli musée.",
+    "meaning_ja": "博物館",
+    "example_ja": "ここに素晴らしい博物館があります。",
+    "meaning_vi": "Bảo tàng",
+    "example_vi": "Tôi thấy một bảo tàng tuyệt vời ở đây.",
+    "meaning_hi": "संग्रहालय",
+    "example_hi": "मुझे यहाँ एक अद्भुत संग्रहालय दिखाई देता है।"
   },
   {
     "id": 472,
@@ -8966,7 +11792,13 @@ const wordList500 = [
     "meaning_fr": "église",
     "meaningFr": "église",
     "example_fr": "L'église a une haute tour.",
-    "exampleFr": "L'église a une haute tour."
+    "exampleFr": "L'église a une haute tour.",
+    "meaning_ja": "教会",
+    "example_ja": "ここに素晴らしい教会が見えます。",
+    "meaning_vi": "Nhà thờ",
+    "example_vi": "Tôi thấy ở đây có một nhà thờ tuyệt vời.",
+    "meaning_hi": "गिरजाघर",
+    "example_hi": "मुझे यहां एक अद्भुत चर्च दिखाई देता है।"
   },
   {
     "id": 473,
@@ -8985,7 +11817,13 @@ const wordList500 = [
     "meaning_fr": "temple, temple",
     "meaningFr": "temple, temple",
     "example_fr": "Le temple est sur une montagne.",
-    "exampleFr": "Le temple est sur une montagne."
+    "exampleFr": "Le temple est sur une montagne.",
+    "meaning_ja": "寺",
+    "example_ja": "ここに素晴らしい寺院が見えます。",
+    "meaning_vi": "Ngôi đền",
+    "example_vi": "Tôi thấy ở đây có một ngôi chùa tuyệt vời.",
+    "meaning_hi": "मंदिर",
+    "example_hi": "मुझे यहां एक अद्भुत मंदिर दिखाई देता है।"
   },
   {
     "id": 474,
@@ -9004,7 +11842,13 @@ const wordList500 = [
     "meaning_fr": "palais",
     "meaningFr": "palais",
     "example_fr": "Le roi vivait dans le palais.",
-    "exampleFr": "Le roi vivait dans le palais."
+    "exampleFr": "Le roi vivait dans le palais.",
+    "meaning_ja": "宮殿",
+    "example_ja": "ここに素晴らしい宮殿が見えます。",
+    "meaning_vi": "Cung điện",
+    "example_vi": "Tôi thấy ở đây có một cung điện tuyệt vời.",
+    "meaning_hi": "पैलेस",
+    "example_hi": "मुझे यहाँ एक अद्भुत महल दिखाई देता है।"
   },
   {
     "id": 475,
@@ -9023,7 +11867,13 @@ const wordList500 = [
     "meaning_fr": "théâtre",
     "meaningFr": "théâtre",
     "example_fr": "Nous avons vu une pièce de théâtre au théâtre.",
-    "exampleFr": "Nous avons vu une pièce de théâtre au théâtre."
+    "exampleFr": "Nous avons vu une pièce de théâtre au théâtre.",
+    "meaning_ja": "劇場",
+    "example_ja": "ここに素晴らしい劇場があります。",
+    "meaning_vi": "Nhà hát",
+    "example_vi": "Tôi thấy một nhà hát tuyệt vời ở đây.",
+    "meaning_hi": "थिएटर",
+    "example_hi": "मैं यहां एक अद्भुत थिएटर देखता हूं।"
   },
   {
     "id": 476,
@@ -9042,7 +11892,13 @@ const wordList500 = [
     "meaning_fr": "salle de cinéma",
     "meaningFr": "salle de cinéma",
     "example_fr": "La salle de cinéma est au 3ème étage.",
-    "exampleFr": "La salle de cinéma est au 3ème étage."
+    "exampleFr": "La salle de cinéma est au 3ème étage.",
+    "meaning_ja": "シネマ",
+    "example_ja": "ここで素晴らしい映画を見ます。",
+    "meaning_vi": "Rạp chiếu phim",
+    "example_vi": "Tôi thấy một rạp chiếu phim tuyệt vời ở đây.",
+    "meaning_hi": "सिनेमा",
+    "example_hi": "मैं यहां एक अद्भुत सिनेमा देखता हूं।"
   },
   {
     "id": 477,
@@ -9061,7 +11917,13 @@ const wordList500 = [
     "meaning_fr": "stade",
     "meaningFr": "stade",
     "example_fr": "Le stade était plein de monde.",
-    "exampleFr": "Le stade était plein de monde."
+    "exampleFr": "Le stade était plein de monde.",
+    "meaning_ja": "スタジアム",
+    "example_ja": "ここに素晴らしいスタジアムが見えます。",
+    "meaning_vi": "Sân vận động",
+    "example_vi": "Tôi thấy một sân vận động tuyệt vời ở đây.",
+    "meaning_hi": "स्टेडियम",
+    "example_hi": "मुझे यहां एक अद्भुत स्टेडियम दिख रहा है।"
   },
   {
     "id": 478,
@@ -9080,7 +11942,13 @@ const wordList500 = [
     "meaning_fr": "centre commercial",
     "meaningFr": "centre commercial",
     "example_fr": "Nous faisons nos courses au centre commercial le week-end.",
-    "exampleFr": "Nous faisons nos courses au centre commercial le week-end."
+    "exampleFr": "Nous faisons nos courses au centre commercial le week-end.",
+    "meaning_ja": "モール",
+    "example_ja": "ここに素晴らしいショッピングモールが見えます。",
+    "meaning_vi": "Trung tâm mua sắm",
+    "example_vi": "Tôi thấy một trung tâm mua sắm tuyệt vời ở đây.",
+    "meaning_hi": "मॉल",
+    "example_hi": "मुझे यहाँ एक अद्भुत मॉल दिख रहा है।"
   },
   {
     "id": 479,
@@ -9099,7 +11967,13 @@ const wordList500 = [
     "meaning_fr": "supermarché",
     "meaningFr": "supermarché",
     "example_fr": "Maman achète du lait au supermarché.",
-    "exampleFr": "Maman achète du lait au supermarché."
+    "exampleFr": "Maman achète du lait au supermarché.",
+    "meaning_ja": "スーパーマーケット",
+    "example_ja": "ここに素晴らしいスーパーマーケットがあります。",
+    "meaning_vi": "Siêu thị",
+    "example_vi": "Tôi thấy một siêu thị tuyệt vời ở đây.",
+    "meaning_hi": "सुपरमार्केट",
+    "example_hi": "मुझे यहां एक अद्भुत सुपरमार्केट दिखाई दे रहा है।"
   },
   {
     "id": 480,
@@ -9118,7 +11992,13 @@ const wordList500 = [
     "meaning_fr": "boulangerie",
     "meaningFr": "boulangerie",
     "example_fr": "La boulangerie sent bon.",
-    "exampleFr": "La boulangerie sent bon."
+    "exampleFr": "La boulangerie sent bon.",
+    "meaning_ja": "ベーカリー",
+    "example_ja": "ここに素敵なパン屋さんを見つけました。",
+    "meaning_vi": "tiệm bánh",
+    "example_vi": "Tôi thấy một tiệm bánh tuyệt vời ở đây.",
+    "meaning_hi": "बेकरी",
+    "example_hi": "मुझे यहाँ एक अद्भुत बेकरी दिखाई देती है।"
   },
   {
     "id": 481,
@@ -9137,7 +12017,13 @@ const wordList500 = [
     "meaning_fr": "restaurant",
     "meaningFr": "restaurant",
     "example_fr": "Nous avons mangé dans un restaurant coréen.",
-    "exampleFr": "Nous avons mangé dans un restaurant coréen."
+    "exampleFr": "Nous avons mangé dans un restaurant coréen.",
+    "meaning_ja": "レストラン",
+    "example_ja": "ここに素晴らしいレストランがあります。",
+    "meaning_vi": "Nhà hàng",
+    "example_vi": "Tôi thấy ở đây có một nhà hàng tuyệt vời.",
+    "meaning_hi": "रेस्टोरेंट",
+    "example_hi": "मुझे यहां एक अद्भुत रेस्तरां दिख रहा है।"
   },
   {
     "id": 482,
@@ -9156,7 +12042,13 @@ const wordList500 = [
     "meaning_fr": "café",
     "meaningFr": "café",
     "example_fr": "Ils parlent dans un café.",
-    "exampleFr": "Ils parlent dans un café."
+    "exampleFr": "Ils parlent dans un café.",
+    "meaning_ja": "カフェ",
+    "example_ja": "ここに素敵なカフェがあります。",
+    "meaning_vi": "quán cà phê",
+    "example_vi": "Tôi thấy một quán cà phê tuyệt vời ở đây.",
+    "meaning_hi": "कैफ़े",
+    "example_hi": "मुझे यहाँ एक अद्भुत कैफ़े दिख रहा है।"
   },
   {
     "id": 483,
@@ -9175,7 +12067,13 @@ const wordList500 = [
     "meaning_fr": "usine",
     "meaningFr": "usine",
     "example_fr": "L'usine fabrique des voitures.",
-    "exampleFr": "L'usine fabrique des voitures."
+    "exampleFr": "L'usine fabrique des voitures.",
+    "meaning_ja": "工場",
+    "example_ja": "ここに素晴らしい工場があります。",
+    "meaning_vi": "Nhà máy",
+    "example_vi": "Tôi thấy một nhà máy tuyệt vời ở đây.",
+    "meaning_hi": "कारखाना",
+    "example_hi": "मुझे यहाँ एक अद्भुत फ़ैक्टरी दिखाई देती है।"
   },
   {
     "id": 484,
@@ -9194,7 +12092,13 @@ const wordList500 = [
     "meaning_fr": "bureau",
     "meaningFr": "bureau",
     "example_fr": "Ma mère travaille dans un bureau.",
-    "exampleFr": "Ma mère travaille dans un bureau."
+    "exampleFr": "Ma mère travaille dans un bureau.",
+    "meaning_ja": "オフィス",
+    "example_ja": "ここに素晴らしいオフィスが見えます。",
+    "meaning_vi": "Văn phòng",
+    "example_vi": "Tôi thấy ở đây có một văn phòng tuyệt vời.",
+    "meaning_hi": "कार्यालय",
+    "example_hi": "मुझे यहाँ एक अद्भुत कार्यालय दिखाई देता है।"
   },
   {
     "id": 485,
@@ -9213,7 +12117,13 @@ const wordList500 = [
     "meaning_fr": "village",
     "meaningFr": "village",
     "example_fr": "Il y a un petit village près de la rivière.",
-    "exampleFr": "Il y a un petit village près de la rivière."
+    "exampleFr": "Il y a un petit village près de la rivière.",
+    "meaning_ja": "村",
+    "example_ja": "ここに素晴らしい村が見えます。",
+    "meaning_vi": "Làng bản",
+    "example_vi": "Tôi thấy một ngôi làng tuyệt vời ở đây.",
+    "meaning_hi": "गाँव",
+    "example_hi": "मुझे यहाँ एक अद्भुत गाँव दिखाई देता है।"
   },
   {
     "id": 486,
@@ -9232,7 +12142,13 @@ const wordList500 = [
     "meaning_fr": "voiture",
     "meaningFr": "voiture",
     "example_fr": "La voiture est rapide.",
-    "exampleFr": "La voiture est rapide."
+    "exampleFr": "La voiture est rapide.",
+    "meaning_ja": "車",
+    "example_ja": "ここで素晴らしい車を見ました。",
+    "meaning_vi": "Xe hơi",
+    "example_vi": "Tôi thấy một chiếc xe tuyệt vời ở đây.",
+    "meaning_hi": "कार",
+    "example_hi": "मुझे यहाँ एक अद्भुत कार दिखाई दे रही है।"
   },
   {
     "id": 487,
@@ -9251,7 +12167,13 @@ const wordList500 = [
     "meaning_fr": "autobus",
     "meaningFr": "autobus",
     "example_fr": "Je prends le bus.",
-    "exampleFr": "Je prends le bus."
+    "exampleFr": "Je prends le bus.",
+    "meaning_ja": "バス",
+    "example_ja": "ここに素晴らしいバスが見えます。",
+    "meaning_vi": "xe buýt",
+    "example_vi": "Tôi thấy một chiếc xe buýt tuyệt vời ở đây.",
+    "meaning_hi": "बस",
+    "example_hi": "मुझे यहाँ एक अद्भुत बस दिखाई देती है।"
   },
   {
     "id": 488,
@@ -9270,7 +12192,13 @@ const wordList500 = [
     "meaning_fr": "former",
     "meaningFr": "former",
     "example_fr": "Le train est long.",
-    "exampleFr": "Le train est long."
+    "exampleFr": "Le train est long.",
+    "meaning_ja": "電車",
+    "example_ja": "ここで素晴らしい電車を見ます。",
+    "meaning_vi": "Xe lửa",
+    "example_vi": "Tôi thấy một chuyến tàu tuyệt vời ở đây.",
+    "meaning_hi": "रेलगाड़ी",
+    "example_hi": "मुझे यहाँ एक अद्भुत रेलगाड़ी दिखाई देती है।"
   },
   {
     "id": 489,
@@ -9289,7 +12217,13 @@ const wordList500 = [
     "meaning_fr": "métro",
     "meaningFr": "métro",
     "example_fr": "Je prends le métro.",
-    "exampleFr": "Je prends le métro."
+    "exampleFr": "Je prends le métro.",
+    "meaning_ja": "地下鉄",
+    "example_ja": "ここに素晴らしい地下鉄が見えます。",
+    "meaning_vi": "tàu điện ngầm",
+    "example_vi": "Tôi thấy ở đây có một chiếc tàu điện ngầm tuyệt vời.",
+    "meaning_hi": "सबवे",
+    "example_hi": "मुझे यहां एक अद्भुत सबवे दिखाई देता है।"
   },
   {
     "id": 490,
@@ -9308,7 +12242,13 @@ const wordList500 = [
     "meaning_fr": "avion",
     "meaningFr": "avion",
     "example_fr": "L'avion vole haut.",
-    "exampleFr": "L'avion vole haut."
+    "exampleFr": "L'avion vole haut.",
+    "meaning_ja": "飛行機",
+    "example_ja": "ここで素晴らしい飛行機を見ます。",
+    "meaning_vi": "Máy bay",
+    "example_vi": "Tôi thấy một chiếc máy bay tuyệt vời ở đây.",
+    "meaning_hi": "हवाई जहाज",
+    "example_hi": "मुझे यहां एक अद्भुत हवाई जहाज दिखाई देता है।"
   },
   {
     "id": 491,
@@ -9327,7 +12267,13 @@ const wordList500 = [
     "meaning_fr": "navire",
     "meaningFr": "navire",
     "example_fr": "Le navire est en mer.",
-    "exampleFr": "Le navire est en mer."
+    "exampleFr": "Le navire est en mer.",
+    "meaning_ja": "船",
+    "example_ja": "ここに素晴らしい船が見えます。",
+    "meaning_vi": "Tàu thủy",
+    "example_vi": "Tôi thấy một con tàu tuyệt vời ở đây.",
+    "meaning_hi": "जहाज",
+    "example_hi": "मुझे यहाँ एक अद्भुत जहाज दिखाई देता है।"
   },
   {
     "id": 492,
@@ -9346,7 +12292,13 @@ const wordList500 = [
     "meaning_fr": "bateau/petit bateau",
     "meaningFr": "bateau/petit bateau",
     "example_fr": "Nous prenons un bateau.",
-    "exampleFr": "Nous prenons un bateau."
+    "exampleFr": "Nous prenons un bateau.",
+    "meaning_ja": "ボート",
+    "example_ja": "ここで素晴らしい船を見ます。",
+    "meaning_vi": "Thuyền",
+    "example_vi": "Tôi thấy một chiếc thuyền tuyệt vời ở đây.",
+    "meaning_hi": "नाव",
+    "example_hi": "मुझे यहाँ एक अद्भुत नाव दिखाई देती है।"
   },
   {
     "id": 493,
@@ -9365,7 +12317,13 @@ const wordList500 = [
     "meaning_fr": "vélo",
     "meaningFr": "vélo",
     "example_fr": "Je fais du vélo.",
-    "exampleFr": "Je fais du vélo."
+    "exampleFr": "Je fais du vélo.",
+    "meaning_ja": "自転車",
+    "example_ja": "ここで素晴らしい自転車を見ました。",
+    "meaning_vi": "Xe đạp",
+    "example_vi": "Tôi thấy một chiếc xe đạp tuyệt vời ở đây.",
+    "meaning_hi": "साइकिल",
+    "example_hi": "मुझे यहां एक अद्भुत साइकिल दिखाई देती है।"
   },
   {
     "id": 494,
@@ -9384,7 +12342,13 @@ const wordList500 = [
     "meaning_fr": "taxi",
     "meaningFr": "taxi",
     "example_fr": "Appelez un taxi.",
-    "exampleFr": "Appelez un taxi."
+    "exampleFr": "Appelez un taxi.",
+    "meaning_ja": "タクシー",
+    "example_ja": "ここで素晴らしいタクシーを見かけました。",
+    "meaning_vi": "Taxi",
+    "example_vi": "Tôi thấy một chiếc taxi tuyệt vời ở đây.",
+    "meaning_hi": "टैक्सी",
+    "example_hi": "मुझे यहाँ एक अद्भुत टैक्सी दिखाई देती है।"
   },
   {
     "id": 495,
@@ -9403,7 +12367,13 @@ const wordList500 = [
     "meaning_fr": "camion",
     "meaningFr": "camion",
     "example_fr": "Le camion est lourd.",
-    "exampleFr": "Le camion est lourd."
+    "exampleFr": "Le camion est lourd.",
+    "meaning_ja": "トラック",
+    "example_ja": "ここで素晴らしいトラックを見ました。",
+    "meaning_vi": "Xe tải",
+    "example_vi": "Tôi thấy một chiếc xe tải tuyệt vời ở đây.",
+    "meaning_hi": "ट्रक",
+    "example_hi": "मुझे यहां एक अद्भुत ट्रक दिखाई दे रहा है।"
   },
   {
     "id": 496,
@@ -9422,7 +12392,13 @@ const wordList500 = [
     "meaning_fr": "moto",
     "meaningFr": "moto",
     "example_fr": "La moto est bruyante.",
-    "exampleFr": "La moto est bruyante."
+    "exampleFr": "La moto est bruyante.",
+    "meaning_ja": "オートバイ",
+    "example_ja": "ここで素晴らしいバイクを見ました。",
+    "meaning_vi": "xe máy",
+    "example_vi": "Tôi thấy một chiếc xe máy tuyệt vời ở đây.",
+    "meaning_hi": "मोटरसाइकिल",
+    "example_hi": "मुझे यहां एक अद्भुत मोटरसाइकिल दिखाई देती है।"
   },
   {
     "id": 497,
@@ -9441,7 +12417,13 @@ const wordList500 = [
     "meaning_fr": "chemin/route",
     "meaningFr": "chemin/route",
     "example_fr": "La route est large.",
-    "exampleFr": "La route est large."
+    "exampleFr": "La route est large.",
+    "meaning_ja": "道",
+    "example_ja": "ここに素晴らしい道が見えます。",
+    "meaning_vi": "Đường",
+    "example_vi": "Tôi thấy một con đường tuyệt vời ở đây.",
+    "meaning_hi": "सड़क",
+    "example_hi": "मुझे यहाँ एक अद्भुत सड़क दिखाई देती है।"
   },
   {
     "id": 498,
@@ -9460,7 +12442,13 @@ const wordList500 = [
     "meaning_fr": "vélo",
     "meaningFr": "vélo",
     "example_fr": "Je vois un joli vélo.",
-    "exampleFr": "Je vois un joli vélo."
+    "exampleFr": "Je vois un joli vélo.",
+    "meaning_ja": "自転車",
+    "example_ja": "ここで素晴らしいバイクを見ました。",
+    "meaning_vi": "Xe đạp",
+    "example_vi": "Tôi thấy một chiếc xe đạp tuyệt vời ở đây.",
+    "meaning_hi": "बाइक",
+    "example_hi": "मुझे यहां एक अद्भुत बाइक दिखाई दे रही है।"
   },
   {
     "id": 499,
@@ -9479,7 +12467,13 @@ const wordList500 = [
     "meaning_fr": "distance",
     "meaningFr": "distance",
     "example_fr": "Je vois une jolie rue.",
-    "exampleFr": "Je vois une jolie rue."
+    "exampleFr": "Je vois une jolie rue.",
+    "meaning_ja": "通り",
+    "example_ja": "ここに素晴らしい通りが見えます。",
+    "meaning_vi": "Đường phố",
+    "example_vi": "Tôi thấy một con phố tuyệt vời ở đây.",
+    "meaning_hi": "गली",
+    "example_hi": "मुझे यहां एक अद्भुत सड़क दिखाई देती है।"
   },
   {
     "id": 500,
@@ -9498,7 +12492,13 @@ const wordList500 = [
     "meaning_fr": "pont",
     "meaningFr": "pont",
     "example_fr": "Je vois de belles jambes.",
-    "exampleFr": "Je vois de belles jambes."
+    "exampleFr": "Je vois de belles jambes.",
+    "meaning_ja": "橋",
+    "example_ja": "ここに素晴らしい橋が見えます。",
+    "meaning_vi": "Cầu",
+    "example_vi": "Tôi thấy một cây cầu tuyệt vời ở đây.",
+    "meaning_hi": "पुल",
+    "example_hi": "मुझे यहाँ एक अद्भुत पुल दिखाई देता है।"
   },
   {
     "id": 501,
@@ -9517,7 +12517,13 @@ const wordList500 = [
     "meaning_fr": "voyage",
     "meaningFr": "voyage",
     "example_fr": "J'ai un merveilleux voyage.",
-    "exampleFr": "J'ai un merveilleux voyage."
+    "exampleFr": "J'ai un merveilleux voyage.",
+    "meaning_ja": "旅行",
+    "example_ja": "ここで素晴らしい旅を見ることができます。",
+    "meaning_vi": "Chuyến đi",
+    "example_vi": "Tôi thấy một chuyến đi tuyệt vời ở đây.",
+    "meaning_hi": "यात्रा",
+    "example_hi": "मैं यहाँ एक अद्भुत यात्रा देख रहा हूँ।"
   },
   {
     "id": 502,
@@ -9536,7 +12542,13 @@ const wordList500 = [
     "meaning_fr": "route principale",
     "meaningFr": "route principale",
     "example_fr": "Je vois une jolie rue principale.",
-    "exampleFr": "Je vois une jolie rue principale."
+    "exampleFr": "Je vois une jolie rue principale.",
+    "meaning_ja": "アベニュー",
+    "example_ja": "ここに素晴らしい通りが見えます。",
+    "meaning_vi": "Đại lộ",
+    "example_vi": "Tôi thấy một đại lộ tuyệt vời ở đây.",
+    "meaning_hi": "मार्ग",
+    "example_hi": "मुझे यहां एक अद्भुत रास्ता दिखाई देता है।"
   },
   {
     "id": 503,
@@ -9555,7 +12567,13 @@ const wordList500 = [
     "meaning_fr": "moteur",
     "meaningFr": "moteur",
     "example_fr": "Je vois un beau moteur.",
-    "exampleFr": "Je vois un beau moteur."
+    "exampleFr": "Je vois un beau moteur.",
+    "meaning_ja": "エンジン",
+    "example_ja": "ここに素晴らしいエンジンが見えます。",
+    "meaning_vi": "Động cơ",
+    "example_vi": "Tôi thấy một động cơ tuyệt vời ở đây.",
+    "meaning_hi": "इंजन",
+    "example_hi": "मुझे यहाँ एक अद्भुत इंजन दिखाई देता है।"
   },
   {
     "id": 504,
@@ -9574,7 +12592,13 @@ const wordList500 = [
     "meaning_fr": "autoroute",
     "meaningFr": "autoroute",
     "example_fr": "Je vois une belle autoroute.",
-    "exampleFr": "Je vois une belle autoroute."
+    "exampleFr": "Je vois une belle autoroute.",
+    "meaning_ja": "高速道路",
+    "example_ja": "ここに素晴らしい高速道路が見えます。",
+    "meaning_vi": "Quốc lộ",
+    "example_vi": "Tôi thấy ở đây có một đường cao tốc tuyệt vời.",
+    "meaning_hi": "हाइवे",
+    "example_hi": "मुझे यहाँ एक अद्भुत राजमार्ग दिखाई देता है।"
   },
   {
     "id": 505,
@@ -9593,7 +12617,13 @@ const wordList500 = [
     "meaning_fr": "fourgon",
     "meaningFr": "fourgon",
     "example_fr": "La camionnette transporte huit personnes.",
-    "exampleFr": "La camionnette transporte huit personnes."
+    "exampleFr": "La camionnette transporte huit personnes.",
+    "meaning_ja": "バン",
+    "example_ja": "ここで素晴らしいバンを見ました。",
+    "meaning_vi": "Vân",
+    "example_vi": "Tôi thấy một chiếc xe tải tuyệt vời ở đây.",
+    "meaning_hi": "वैन",
+    "example_hi": "मुझे यहाँ एक अद्भुत वैन दिखाई देती है।"
   },
   {
     "id": 506,
@@ -9612,7 +12642,13 @@ const wordList500 = [
     "meaning_fr": "scooter, planche à roulettes",
     "meaningFr": "scooter, planche à roulettes",
     "example_fr": "Il va à l'école sur une planche.",
-    "exampleFr": "Il va à l'école sur une planche."
+    "exampleFr": "Il va à l'école sur une planche.",
+    "meaning_ja": "スクーター",
+    "example_ja": "ここで素晴らしいスクーターを見ました。",
+    "meaning_vi": "Xe tay ga",
+    "example_vi": "Tôi thấy một chiếc xe tay ga tuyệt vời ở đây.",
+    "meaning_hi": "स्कूटर",
+    "example_hi": "मुझे यहाँ एक अद्भुत स्कूटर दिखाई देता है।"
   },
   {
     "id": 507,
@@ -9631,7 +12667,13 @@ const wordList500 = [
     "meaning_fr": "hélicoptère",
     "meaningFr": "hélicoptère",
     "example_fr": "Un hélicoptère a survolé la ville.",
-    "exampleFr": "Un hélicoptère a survolé la ville."
+    "exampleFr": "Un hélicoptère a survolé la ville.",
+    "meaning_ja": "ヘリコプター",
+    "example_ja": "ここで素晴らしいヘリコプターを見ました。",
+    "meaning_vi": "Trực thăng",
+    "example_vi": "Tôi thấy một chiếc trực thăng tuyệt vời ở đây.",
+    "meaning_hi": "हेलीकाप्टर",
+    "example_hi": "मुझे यहाँ एक अद्भुत हेलीकाप्टर दिखाई देता है।"
   },
   {
     "id": 508,
@@ -9650,7 +12692,13 @@ const wordList500 = [
     "meaning_fr": "navire à passagers",
     "meaningFr": "navire à passagers",
     "example_fr": "Nous avons pris le ferry et sommes allés sur l'île.",
-    "exampleFr": "Nous avons pris le ferry et sommes allés sur l'île."
+    "exampleFr": "Nous avons pris le ferry et sommes allés sur l'île.",
+    "meaning_ja": "フェリー",
+    "example_ja": "ここに素晴らしいフェリーが見えます。",
+    "meaning_vi": "Phà",
+    "example_vi": "Tôi thấy một chiếc phà tuyệt vời ở đây.",
+    "meaning_hi": "नौका",
+    "example_hi": "मुझे यहाँ एक अद्भुत नौका दिखाई देती है।"
   },
   {
     "id": 509,
@@ -9669,7 +12717,13 @@ const wordList500 = [
     "meaning_fr": "voilier",
     "meaningFr": "voilier",
     "example_fr": "Les voiliers bougent avec le vent.",
-    "exampleFr": "Les voiliers bougent avec le vent."
+    "exampleFr": "Les voiliers bougent avec le vent.",
+    "meaning_ja": "ヨット",
+    "example_ja": "ここで素晴らしい帆船を見ます。",
+    "meaning_vi": "Thuyền buồm",
+    "example_vi": "Tôi thấy một chiếc thuyền buồm tuyệt vời ở đây.",
+    "meaning_hi": "जलयात्रा नाव",
+    "example_hi": "मुझे यहां एक अद्भुत नौका दिखाई देती है।"
   },
   {
     "id": 510,
@@ -9688,7 +12742,13 @@ const wordList500 = [
     "meaning_fr": "tracteur",
     "meaningFr": "tracteur",
     "example_fr": "Un agriculteur conduit un tracteur.",
-    "exampleFr": "Un agriculteur conduit un tracteur."
+    "exampleFr": "Un agriculteur conduit un tracteur.",
+    "meaning_ja": "トラクター",
+    "example_ja": "ここで素晴らしいトラクターを見ました。",
+    "meaning_vi": "Máy kéo",
+    "example_vi": "Tôi thấy một chiếc máy kéo tuyệt vời ở đây.",
+    "meaning_hi": "ट्रैक्टर",
+    "example_hi": "मुझे यहाँ एक अद्भुत ट्रैक्टर दिख रहा है।"
   },
   {
     "id": 511,
@@ -9707,7 +12767,13 @@ const wordList500 = [
     "meaning_fr": "ambulance",
     "meaningFr": "ambulance",
     "example_fr": "L'ambulance est arrivée rapidement.",
-    "exampleFr": "L'ambulance est arrivée rapidement."
+    "exampleFr": "L'ambulance est arrivée rapidement.",
+    "meaning_ja": "救急車",
+    "example_ja": "ここで素晴らしい救急車を見ました。",
+    "meaning_vi": "xe cứu thương",
+    "example_vi": "Tôi thấy một chiếc xe cứu thương tuyệt vời ở đây.",
+    "meaning_hi": "एम्बुलेंस",
+    "example_hi": "मुझे यहां एक अद्भुत एम्बुलेंस दिखाई देती है।"
   },
   {
     "id": 512,
@@ -9726,7 +12792,13 @@ const wordList500 = [
     "meaning_fr": "panier",
     "meaningFr": "panier",
     "example_fr": "Le cheval tire la charrette.",
-    "exampleFr": "Le cheval tire la charrette."
+    "exampleFr": "Le cheval tire la charrette.",
+    "meaning_ja": "ワゴン",
+    "example_ja": "ここに素晴らしいワゴンがあります。",
+    "meaning_vi": "toa xe",
+    "example_vi": "Tôi thấy một toa xe tuyệt vời ở đây.",
+    "meaning_hi": "गाड़ी",
+    "example_hi": "मुझे यहां एक अद्भुत वैगन दिखाई दे रहा है।"
   },
   {
     "id": 513,
@@ -9745,7 +12817,13 @@ const wordList500 = [
     "meaning_fr": "poussette",
     "meaningFr": "poussette",
     "example_fr": "Le bébé dort dans la poussette.",
-    "exampleFr": "Le bébé dort dans la poussette."
+    "exampleFr": "Le bébé dort dans la poussette.",
+    "meaning_ja": "ベビーカー",
+    "example_ja": "ここで素晴らしいベビーカーを見ました。",
+    "meaning_vi": "Xe đẩy",
+    "example_vi": "Tôi thấy một chiếc xe đẩy tuyệt vời ở đây.",
+    "meaning_hi": "घुमक्कड़",
+    "example_hi": "मुझे यहाँ एक अद्भुत घुमक्कड़ी दिखाई देती है।"
   },
   {
     "id": 514,
@@ -9764,7 +12842,13 @@ const wordList500 = [
     "meaning_fr": "port",
     "meaningFr": "port",
     "example_fr": "Il y a de nombreux navires dans le port.",
-    "exampleFr": "Il y a de nombreux navires dans le port."
+    "exampleFr": "Il y a de nombreux navires dans le port.",
+    "meaning_ja": "港",
+    "example_ja": "ここに素晴らしい港が見えます。",
+    "meaning_vi": "Bến cảng",
+    "example_vi": "Tôi thấy một bến cảng tuyệt vời ở đây.",
+    "meaning_hi": "बंदरगाह",
+    "example_hi": "मुझे यहां एक अद्भुत बंदरगाह दिखाई देता है।"
   },
   {
     "id": 515,
@@ -9783,7 +12867,13 @@ const wordList500 = [
     "meaning_fr": "soleil/soleil",
     "meaningFr": "soleil/soleil",
     "example_fr": "Le soleil brille.",
-    "exampleFr": "Le soleil brille."
+    "exampleFr": "Le soleil brille.",
+    "meaning_ja": "太陽",
+    "example_ja": "ここで素晴らしい太陽が見えます。",
+    "meaning_vi": "Mặt trời",
+    "example_vi": "Tôi thấy mặt trời ở đây thật tuyệt vời.",
+    "meaning_hi": "सूरज",
+    "example_hi": "मुझे यहाँ एक अद्भुत सूर्य दिखाई देता है।"
   },
   {
     "id": 516,
@@ -9802,7 +12892,13 @@ const wordList500 = [
     "meaning_fr": "lune",
     "meaningFr": "lune",
     "example_fr": "La lune est ronde ce soir.",
-    "exampleFr": "La lune est ronde ce soir."
+    "exampleFr": "La lune est ronde ce soir.",
+    "meaning_ja": "月",
+    "example_ja": "ここで素晴らしい月が見えます。",
+    "meaning_vi": "Mặt trăng",
+    "example_vi": "Tôi thấy mặt trăng tuyệt vời ở đây.",
+    "meaning_hi": "चंद्रमा",
+    "example_hi": "मुझे यहां एक अद्भुत चंद्रमा दिखाई देता है।"
   },
   {
     "id": 517,
@@ -9821,7 +12917,13 @@ const wordList500 = [
     "meaning_fr": "étoile",
     "meaningFr": "étoile",
     "example_fr": "Les étoiles brillent la nuit.",
-    "exampleFr": "Les étoiles brillent la nuit."
+    "exampleFr": "Les étoiles brillent la nuit.",
+    "meaning_ja": "星",
+    "example_ja": "ここで素晴らしい星を見ます。",
+    "meaning_vi": "Ngôi sao",
+    "example_vi": "Tôi thấy một ngôi sao tuyệt vời ở đây.",
+    "meaning_hi": "तारा",
+    "example_hi": "मुझे यहाँ एक अद्भुत तारा दिखाई देता है।"
   },
   {
     "id": 518,
@@ -9840,7 +12942,13 @@ const wordList500 = [
     "meaning_fr": "ciel",
     "meaningFr": "ciel",
     "example_fr": "Le ciel est bleu.",
-    "exampleFr": "Le ciel est bleu."
+    "exampleFr": "Le ciel est bleu.",
+    "meaning_ja": "空",
+    "example_ja": "ここで素晴らしい空が見えます。",
+    "meaning_vi": "Bầu trời",
+    "example_vi": "Tôi thấy một bầu trời tuyệt vời ở đây.",
+    "meaning_hi": "आकाश",
+    "example_hi": "मुझे यहाँ अद्भुत आकाश दिखाई देता है।"
   },
   {
     "id": 519,
@@ -9859,7 +12967,13 @@ const wordList500 = [
     "meaning_fr": "nuages",
     "meaningFr": "nuages",
     "example_fr": "Les nuages sont blancs.",
-    "exampleFr": "Les nuages sont blancs."
+    "exampleFr": "Les nuages sont blancs.",
+    "meaning_ja": "雲",
+    "example_ja": "ここで素晴らしい雲が見えます。",
+    "meaning_vi": "Đám mây",
+    "example_vi": "Tôi thấy một đám mây tuyệt vời ở đây.",
+    "meaning_hi": "बादल",
+    "example_hi": "मुझे यहां एक अद्भुत बादल दिखाई दे रहा है।"
   },
   {
     "id": 520,
@@ -9878,7 +12992,13 @@ const wordList500 = [
     "meaning_fr": "pluie",
     "meaningFr": "pluie",
     "example_fr": "Il pleut aujourd'hui.",
-    "exampleFr": "Il pleut aujourd'hui."
+    "exampleFr": "Il pleut aujourd'hui.",
+    "meaning_ja": "雨",
+    "example_ja": "ここで素晴らしい雨が降っています。",
+    "meaning_vi": "Cơn mưa",
+    "example_vi": "Tôi thấy một cơn mưa tuyệt vời ở đây.",
+    "meaning_hi": "बारिश",
+    "example_hi": "मैं यहाँ अद्भुत वर्षा देख रहा हूँ।"
   },
   {
     "id": 521,
@@ -9897,7 +13017,13 @@ const wordList500 = [
     "meaning_fr": "neige",
     "meaningFr": "neige",
     "example_fr": "Les yeux sont froids.",
-    "exampleFr": "Les yeux sont froids."
+    "exampleFr": "Les yeux sont froids.",
+    "meaning_ja": "雪",
+    "example_ja": "ここで素晴らしい雪が見られます。",
+    "meaning_vi": "Tuyết",
+    "example_vi": "Tôi thấy tuyết ở đây tuyệt vời.",
+    "meaning_hi": "बर्फ",
+    "example_hi": "मुझे यहां अद्भुत बर्फ दिखाई दे रही है।"
   },
   {
     "id": 522,
@@ -9916,7 +13042,13 @@ const wordList500 = [
     "meaning_fr": "vent",
     "meaningFr": "vent",
     "example_fr": "Il y a du vent.",
-    "exampleFr": "Il y a du vent."
+    "exampleFr": "Il y a du vent.",
+    "meaning_ja": "風",
+    "example_ja": "ここでは素晴らしい風が吹いています。",
+    "meaning_vi": "Gió",
+    "example_vi": "Tôi thấy một cơn gió tuyệt vời ở đây.",
+    "meaning_hi": "हवा",
+    "example_hi": "मुझे यहां एक अद्भुत हवा दिखाई दे रही है।"
   },
   {
     "id": 523,
@@ -9935,7 +13067,13 @@ const wordList500 = [
     "meaning_fr": "arc en ciel",
     "meaningFr": "arc en ciel",
     "example_fr": "Je vois un arc-en-ciel.",
-    "exampleFr": "Je vois un arc-en-ciel."
+    "exampleFr": "Je vois un arc-en-ciel.",
+    "meaning_ja": "虹",
+    "example_ja": "ここで素晴らしい虹が見えます。",
+    "meaning_vi": "cầu vồng",
+    "example_vi": "Tôi thấy cầu vồng tuyệt vời ở đây.",
+    "meaning_hi": "इंद्रधनुष",
+    "example_hi": "मुझे यहां एक अद्भुत इंद्रधनुष दिखाई देता है।"
   },
   {
     "id": 524,
@@ -9954,7 +13092,13 @@ const wordList500 = [
     "meaning_fr": "arbre",
     "meaningFr": "arbre",
     "example_fr": "Les arbres sont grands.",
-    "exampleFr": "Les arbres sont grands."
+    "exampleFr": "Les arbres sont grands.",
+    "meaning_ja": "木",
+    "example_ja": "ここで素晴らしい木を見ます。",
+    "meaning_vi": "Cây",
+    "example_vi": "Tôi thấy một cái cây tuyệt vời ở đây.",
+    "meaning_hi": "पेड़",
+    "example_hi": "मुझे यहाँ एक अद्भुत वृक्ष दिखाई देता है।"
   },
   {
     "id": 525,
@@ -9973,7 +13117,13 @@ const wordList500 = [
     "meaning_fr": "fleur",
     "meaningFr": "fleur",
     "example_fr": "J'aime le parfum des fleurs.",
-    "exampleFr": "J'aime le parfum des fleurs."
+    "exampleFr": "J'aime le parfum des fleurs.",
+    "meaning_ja": "花",
+    "example_ja": "ここで素晴らしい花を見ました。",
+    "meaning_vi": "Hoa",
+    "example_vi": "Tôi thấy một bông hoa tuyệt vời ở đây.",
+    "meaning_hi": "फूल",
+    "example_hi": "मुझे यहाँ एक अद्भुत फूल दिखाई देता है।"
   },
   {
     "id": 526,
@@ -9992,7 +13142,13 @@ const wordList500 = [
     "meaning_fr": "herbe/pelouse",
     "meaningFr": "herbe/pelouse",
     "example_fr": "L'herbe est verte.",
-    "exampleFr": "L'herbe est verte."
+    "exampleFr": "L'herbe est verte.",
+    "meaning_ja": "草",
+    "example_ja": "ここで素晴らしい草を見ます。",
+    "meaning_vi": "Cỏ",
+    "example_vi": "Tôi thấy một loại cỏ tuyệt vời ở đây.",
+    "meaning_hi": "घास",
+    "example_hi": "मुझे यहाँ एक अद्भुत घास दिखाई देती है।"
   },
   {
     "id": 527,
@@ -10011,7 +13167,13 @@ const wordList500 = [
     "meaning_fr": "feuilles",
     "meaningFr": "feuilles",
     "example_fr": "Les feuilles tombent.",
-    "exampleFr": "Les feuilles tombent."
+    "exampleFr": "Les feuilles tombent.",
+    "meaning_ja": "葉",
+    "example_ja": "ここで素晴らしい葉っぱを見ました。",
+    "meaning_vi": "Lá cây",
+    "example_vi": "Tôi thấy một chiếc lá tuyệt vời ở đây.",
+    "meaning_hi": "पत्ता",
+    "example_hi": "मुझे यहाँ एक अद्भुत पत्ता दिखाई देता है।"
   },
   {
     "id": 528,
@@ -10030,7 +13192,13 @@ const wordList500 = [
     "meaning_fr": "montagne",
     "meaningFr": "montagne",
     "example_fr": "La montagne est haute.",
-    "exampleFr": "La montagne est haute."
+    "exampleFr": "La montagne est haute.",
+    "meaning_ja": "山",
+    "example_ja": "ここに素晴らしい山が見えます。",
+    "meaning_vi": "Núi",
+    "example_vi": "Tôi thấy một ngọn núi tuyệt vời ở đây.",
+    "meaning_hi": "पर्वत",
+    "example_hi": "मुझे यहाँ एक अद्भुत पर्वत दिखाई देता है।"
   },
   {
     "id": 529,
@@ -10049,7 +13217,13 @@ const wordList500 = [
     "meaning_fr": "rivière",
     "meaningFr": "rivière",
     "example_fr": "La rivière est longue.",
-    "exampleFr": "La rivière est longue."
+    "exampleFr": "La rivière est longue.",
+    "meaning_ja": "川",
+    "example_ja": "ここには素晴らしい川が見えます。",
+    "meaning_vi": "Dòng sông",
+    "example_vi": "Tôi thấy một dòng sông tuyệt vời ở đây.",
+    "meaning_hi": "नदी",
+    "example_hi": "मुझे यहाँ एक अद्भुत नदी दिखाई देती है।"
   },
   {
     "id": 530,
@@ -10068,7 +13242,13 @@ const wordList500 = [
     "meaning_fr": "mer",
     "meaningFr": "mer",
     "example_fr": "La mer est profonde.",
-    "exampleFr": "La mer est profonde."
+    "exampleFr": "La mer est profonde.",
+    "meaning_ja": "海",
+    "example_ja": "ここには素晴らしい海が見えます。",
+    "meaning_vi": "Biển",
+    "example_vi": "Tôi thấy biển ở đây tuyệt vời.",
+    "meaning_hi": "समुद्र",
+    "example_hi": "मुझे यहाँ एक अद्भुत समुद्र दिखाई देता है।"
   },
   {
     "id": 531,
@@ -10087,7 +13267,13 @@ const wordList500 = [
     "meaning_fr": "plage",
     "meaningFr": "plage",
     "example_fr": "Nous jouons à la plage.",
-    "exampleFr": "Nous jouons à la plage."
+    "exampleFr": "Nous jouons à la plage.",
+    "meaning_ja": "ビーチ",
+    "example_ja": "ここに素晴らしいビーチが見えます。",
+    "meaning_vi": "Bãi biển",
+    "example_vi": "Tôi thấy một bãi biển tuyệt vời ở đây.",
+    "meaning_hi": "समुद्र तट",
+    "example_hi": "मुझे यहां एक अद्भुत समुद्र तट दिखाई देता है।"
   },
   {
     "id": 532,
@@ -10106,7 +13292,13 @@ const wordList500 = [
     "meaning_fr": "pierre",
     "meaningFr": "pierre",
     "example_fr": "Les pierres sont dures.",
-    "exampleFr": "Les pierres sont dures."
+    "exampleFr": "Les pierres sont dures.",
+    "meaning_ja": "石",
+    "example_ja": "ここで素晴らしい石を見ました。",
+    "meaning_vi": "Cục đá",
+    "example_vi": "Tôi thấy một hòn đá tuyệt vời ở đây.",
+    "meaning_hi": "पत्थर",
+    "example_hi": "मुझे यहाँ एक अद्भुत पत्थर दिखाई देता है।"
   },
   {
     "id": 533,
@@ -10125,7 +13317,13 @@ const wordList500 = [
     "meaning_fr": "feu",
     "meaningFr": "feu",
     "example_fr": "Le feu est chaud.",
-    "exampleFr": "Le feu est chaud."
+    "exampleFr": "Le feu est chaud.",
+    "meaning_ja": "火",
+    "example_ja": "ここで素晴らしい火が見られます。",
+    "meaning_vi": "Ngọn lửa",
+    "example_vi": "Tôi thấy một ngọn lửa tuyệt vời ở đây.",
+    "meaning_hi": "आग",
+    "example_hi": "मुझे यहाँ एक अद्भुत अग्नि दिखाई दे रही है।"
   },
   {
     "id": 534,
@@ -10144,7 +13342,13 @@ const wordList500 = [
     "meaning_fr": "sable",
     "meaningFr": "sable",
     "example_fr": "Je joue avec du sable.",
-    "exampleFr": "Je joue avec du sable."
+    "exampleFr": "Je joue avec du sable.",
+    "meaning_ja": "砂",
+    "example_ja": "ここで素晴らしい砂を見ます。",
+    "meaning_vi": "Cát",
+    "example_vi": "Tôi thấy cát ở đây tuyệt vời.",
+    "meaning_hi": "रेत",
+    "example_hi": "मुझे यहाँ अद्भुत रेत दिखाई देती है।"
   },
   {
     "id": 535,
@@ -10163,7 +13367,13 @@ const wordList500 = [
     "meaning_fr": "glace",
     "meaningFr": "glace",
     "example_fr": "Je vois de la belle glace.",
-    "exampleFr": "Je vois de la belle glace."
+    "exampleFr": "Je vois de la belle glace.",
+    "meaning_ja": "氷",
+    "example_ja": "ここで素晴らしい氷を見ます。",
+    "meaning_vi": "Đá",
+    "example_vi": "Tôi thấy một tảng băng tuyệt vời ở đây.",
+    "meaning_hi": "बर्फ़",
+    "example_hi": "मुझे यहाँ अद्भुत बर्फ दिखाई देती है।"
   },
   {
     "id": 536,
@@ -10182,7 +13392,13 @@ const wordList500 = [
     "meaning_fr": "forêt",
     "meaningFr": "forêt",
     "example_fr": "Je vois une forêt magnifique.",
-    "exampleFr": "Je vois une forêt magnifique."
+    "exampleFr": "Je vois une forêt magnifique.",
+    "meaning_ja": "森",
+    "example_ja": "ここには素晴らしい森が見えます。",
+    "meaning_vi": "Rừng",
+    "example_vi": "Tôi thấy một khu rừng tuyệt vời ở đây.",
+    "meaning_hi": "जंगल",
+    "example_hi": "मुझे यहाँ एक अद्भुत जंगल दिखाई देता है।"
   },
   {
     "id": 537,
@@ -10201,7 +13417,13 @@ const wordList500 = [
     "meaning_fr": "océan",
     "meaningFr": "océan",
     "example_fr": "Je vois un océan merveilleux.",
-    "exampleFr": "Je vois un océan merveilleux."
+    "exampleFr": "Je vois un océan merveilleux.",
+    "meaning_ja": "海",
+    "example_ja": "ここには素晴らしい海が見えます。",
+    "meaning_vi": "Đại dương",
+    "example_vi": "Tôi thấy một đại dương tuyệt vời ở đây.",
+    "meaning_hi": "महासागर",
+    "example_hi": "मुझे यहाँ एक अद्भुत महासागर दिखाई देता है।"
   },
   {
     "id": 538,
@@ -10220,7 +13442,13 @@ const wordList500 = [
     "meaning_fr": "terre",
     "meaningFr": "terre",
     "example_fr": "Je vois une Terre merveilleuse.",
-    "exampleFr": "Je vois une Terre merveilleuse."
+    "exampleFr": "Je vois une Terre merveilleuse.",
+    "meaning_ja": "地球",
+    "example_ja": "ここには素晴らしい地球が見えます。",
+    "meaning_vi": "Trái đất",
+    "example_vi": "Tôi thấy một trái đất tuyệt vời ở đây.",
+    "meaning_hi": "धरती",
+    "example_hi": "मुझे यहाँ एक अद्भुत पृथ्वी दिखाई देती है।"
   },
   {
     "id": 539,
@@ -10239,7 +13467,13 @@ const wordList500 = [
     "meaning_fr": "or",
     "meaningFr": "or",
     "example_fr": "Je vois de l'or merveilleux.",
-    "exampleFr": "Je vois de l'or merveilleux."
+    "exampleFr": "Je vois de l'or merveilleux.",
+    "meaning_ja": "金",
+    "example_ja": "ここに素晴らしい金が見えます。",
+    "meaning_vi": "Vàng",
+    "example_vi": "Tôi thấy vàng tuyệt vời ở đây.",
+    "meaning_hi": "सोना",
+    "example_hi": "मुझे यहाँ अद्भुत सोना दिखाई देता है।"
   },
   {
     "id": 540,
@@ -10258,7 +13492,13 @@ const wordList500 = [
     "meaning_fr": "argent",
     "meaningFr": "argent",
     "example_fr": "Je vois un bel argent.",
-    "exampleFr": "Je vois un bel argent."
+    "exampleFr": "Je vois un bel argent.",
+    "meaning_ja": "銀",
+    "example_ja": "ここに素晴らしい銀が見えます。",
+    "meaning_vi": "Bạc",
+    "example_vi": "Tôi thấy một màu bạc tuyệt vời ở đây.",
+    "meaning_hi": "चाँदी",
+    "example_hi": "मुझे यहाँ एक अद्भुत चाँदी दिखाई देती है।"
   },
   {
     "id": 541,
@@ -10277,7 +13517,13 @@ const wordList500 = [
     "meaning_fr": "fer à repasser",
     "meaningFr": "fer à repasser",
     "example_fr": "Je vois un fer merveilleux.",
-    "exampleFr": "Je vois un fer merveilleux."
+    "exampleFr": "Je vois un fer merveilleux.",
+    "meaning_ja": "鉄",
+    "example_ja": "ここで素晴らしいアイアンを見ました。",
+    "meaning_vi": "Sắt",
+    "example_vi": "Tôi thấy một bàn ủi tuyệt vời ở đây.",
+    "meaning_hi": "लोहा",
+    "example_hi": "मुझे यहाँ एक अद्भुत लोहा दिखाई देता है।"
   },
   {
     "id": 542,
@@ -10296,7 +13542,13 @@ const wordList500 = [
     "meaning_fr": "lac",
     "meaningFr": "lac",
     "example_fr": "Je vois un joli lac.",
-    "exampleFr": "Je vois un joli lac."
+    "exampleFr": "Je vois un joli lac.",
+    "meaning_ja": "湖",
+    "example_ja": "ここに素晴らしい湖が見えます。",
+    "meaning_vi": "Hồ",
+    "example_vi": "Tôi thấy một cái hồ tuyệt vời ở đây.",
+    "meaning_hi": "झील",
+    "example_hi": "मुझे यहाँ एक अद्भुत झील दिखाई देती है।"
   },
   {
     "id": 543,
@@ -10315,7 +13567,13 @@ const wordList500 = [
     "meaning_fr": "étang",
     "meaningFr": "étang",
     "example_fr": "Je vois un joli étang.",
-    "exampleFr": "Je vois un joli étang."
+    "exampleFr": "Je vois un joli étang.",
+    "meaning_ja": "池",
+    "example_ja": "ここに素晴らしい池が見えます。",
+    "meaning_vi": "Ao",
+    "example_vi": "Tôi thấy một cái ao tuyệt vời ở đây.",
+    "meaning_hi": "तालाब",
+    "example_hi": "मुझे यहाँ एक अद्भुत तालाब दिखाई देता है।"
   },
   {
     "id": 544,
@@ -10334,7 +13592,13 @@ const wordList500 = [
     "meaning_fr": "colline",
     "meaningFr": "colline",
     "example_fr": "Je vois une belle colline.",
-    "exampleFr": "Je vois une belle colline."
+    "exampleFr": "Je vois une belle colline.",
+    "meaning_ja": "丘",
+    "example_ja": "ここに素晴らしい丘が見えます。",
+    "meaning_vi": "Đồi",
+    "example_vi": "Tôi thấy một ngọn đồi tuyệt vời ở đây.",
+    "meaning_hi": "पहाड़ी",
+    "example_hi": "मुझे यहाँ एक अद्भुत पहाड़ी दिखाई देती है।"
   },
   {
     "id": 545,
@@ -10353,7 +13617,13 @@ const wordList500 = [
     "meaning_fr": "champ",
     "meaningFr": "champ",
     "example_fr": "Je vois un joli champ.",
-    "exampleFr": "Je vois un joli champ."
+    "exampleFr": "Je vois un joli champ.",
+    "meaning_ja": "分野",
+    "example_ja": "ここに素晴らしい畑が見えます。",
+    "meaning_vi": "Cánh đồng",
+    "example_vi": "Tôi thấy ở đây có một cánh đồng tuyệt vời.",
+    "meaning_hi": "मैदान",
+    "example_hi": "मुझे यहाँ एक अद्भुत मैदान दिखाई देता है।"
   },
   {
     "id": 546,
@@ -10372,7 +13642,13 @@ const wordList500 = [
     "meaning_fr": "île",
     "meaningFr": "île",
     "example_fr": "Je vois une île merveilleuse.",
-    "exampleFr": "Je vois une île merveilleuse."
+    "exampleFr": "Je vois une île merveilleuse.",
+    "meaning_ja": "島",
+    "example_ja": "ここに素晴らしい島が見えます。",
+    "meaning_vi": "Hòn đảo",
+    "example_vi": "Tôi thấy một hòn đảo tuyệt vời ở đây.",
+    "meaning_hi": "द्वीप",
+    "example_hi": "मुझे यहाँ एक अद्भुत द्वीप दिखाई देता है।"
   },
   {
     "id": 547,
@@ -10391,7 +13667,13 @@ const wordList500 = [
     "meaning_fr": "air",
     "meaningFr": "air",
     "example_fr": "Je vois un air merveilleux.",
-    "exampleFr": "Je vois un air merveilleux."
+    "exampleFr": "Je vois un air merveilleux.",
+    "meaning_ja": "空気",
+    "example_ja": "ここには素晴らしい空気が見えます。",
+    "meaning_vi": "Không khí",
+    "example_vi": "Tôi thấy không khí tuyệt vời ở đây.",
+    "meaning_hi": "वायु",
+    "example_hi": "मुझे यहां एक अद्भुत हवा दिखाई देती है।"
   },
   {
     "id": 548,
@@ -10410,7 +13692,13 @@ const wordList500 = [
     "meaning_fr": "fumée",
     "meaningFr": "fumée",
     "example_fr": "Je vois un bon jeu d'acteur.",
-    "exampleFr": "Je vois un bon jeu d'acteur."
+    "exampleFr": "Je vois un bon jeu d'acteur.",
+    "meaning_ja": "煙",
+    "example_ja": "ここで素晴らしい煙が見えます。",
+    "meaning_vi": "Khói",
+    "example_vi": "Tôi thấy khói tuyệt vời ở đây.",
+    "meaning_hi": "धुआँ",
+    "example_hi": "मुझे यहाँ एक अद्भुत धुआँ दिखाई दे रहा है।"
   },
   {
     "id": 549,
@@ -10429,7 +13717,13 @@ const wordList500 = [
     "meaning_fr": "lumière",
     "meaningFr": "lumière",
     "example_fr": "Je vois une lumière merveilleuse.",
-    "exampleFr": "Je vois une lumière merveilleuse."
+    "exampleFr": "Je vois une lumière merveilleuse.",
+    "meaning_ja": "ライト",
+    "example_ja": "ここに素晴らしい光が見えます。",
+    "meaning_vi": "Ánh sáng",
+    "example_vi": "Tôi thấy ở đây có ánh sáng tuyệt vời.",
+    "meaning_hi": "रोशनी",
+    "example_hi": "मुझे यहाँ एक अद्भुत रोशनी दिखाई देती है।"
   },
   {
     "id": 550,
@@ -10448,7 +13742,13 @@ const wordList500 = [
     "meaning_fr": "ombre",
     "meaningFr": "ombre",
     "example_fr": "Je vois une ombre merveilleuse.",
-    "exampleFr": "Je vois une ombre merveilleuse."
+    "exampleFr": "Je vois une ombre merveilleuse.",
+    "meaning_ja": "影",
+    "example_ja": "ここに素晴らしい影が見えます。",
+    "meaning_vi": "Bóng tối",
+    "example_vi": "Tôi thấy một cái bóng tuyệt vời ở đây.",
+    "meaning_hi": "छाया",
+    "example_hi": "मुझे यहाँ एक अद्भुत छाया दिखाई देती है।"
   },
   {
     "id": 551,
@@ -10467,7 +13767,13 @@ const wordList500 = [
     "meaning_fr": "du son",
     "meaningFr": "du son",
     "example_fr": "Je vois un son merveilleux.",
-    "exampleFr": "Je vois un son merveilleux."
+    "exampleFr": "Je vois un son merveilleux.",
+    "meaning_ja": "音",
+    "example_ja": "ここで素晴らしい音を見ます。",
+    "meaning_vi": "Âm thanh",
+    "example_vi": "Tôi thấy một âm thanh tuyệt vời ở đây.",
+    "meaning_hi": "आवाज़",
+    "example_hi": "मुझे यहाँ एक अद्भुत ध्वनि दिखाई देती है।"
   },
   {
     "id": 552,
@@ -10486,7 +13792,13 @@ const wordList500 = [
     "meaning_fr": "jungle",
     "meaningFr": "jungle",
     "example_fr": "Je vois une jungle magnifique.",
-    "exampleFr": "Je vois une jungle magnifique."
+    "exampleFr": "Je vois une jungle magnifique.",
+    "meaning_ja": "ジャングル",
+    "example_ja": "ここには素晴らしいジャングルが見えます。",
+    "meaning_vi": "Rừng",
+    "example_vi": "Tôi thấy một khu rừng tuyệt vời ở đây.",
+    "meaning_hi": "JUNGLE",
+    "example_hi": "मुझे यहाँ एक अद्भुत जंगल दिखाई देता है।"
   },
   {
     "id": 553,
@@ -10505,7 +13817,13 @@ const wordList500 = [
     "meaning_fr": "désert",
     "meaningFr": "désert",
     "example_fr": "Je vois un désert merveilleux.",
-    "exampleFr": "Je vois un désert merveilleux."
+    "exampleFr": "Je vois un désert merveilleux.",
+    "meaning_ja": "砂漠",
+    "example_ja": "ここには素晴らしい砂漠が見えます。",
+    "meaning_vi": "Sa mạc",
+    "example_vi": "Tôi thấy ở đây có một sa mạc tuyệt vời.",
+    "meaning_hi": "रेगिस्तान",
+    "example_hi": "मुझे यहाँ एक अद्भुत रेगिस्तान दिखाई देता है।"
   },
   {
     "id": 554,
@@ -10524,7 +13842,13 @@ const wordList500 = [
     "meaning_fr": "bambou",
     "meaningFr": "bambou",
     "example_fr": "Je vois un magnifique bambou.",
-    "exampleFr": "Je vois un magnifique bambou."
+    "exampleFr": "Je vois un magnifique bambou.",
+    "meaning_ja": "竹",
+    "example_ja": "ここで素晴らしい竹を見ました。",
+    "meaning_vi": "Cây tre",
+    "example_vi": "Tôi thấy một cây tre tuyệt vời ở đây.",
+    "meaning_hi": "बांस",
+    "example_hi": "मुझे यहाँ एक अद्भुत बांस दिखाई देता है।"
   },
   {
     "id": 555,
@@ -10543,7 +13867,13 @@ const wordList500 = [
     "meaning_fr": "branche d'arbre",
     "meaningFr": "branche d'arbre",
     "example_fr": "Je vois de belles branches d'arbres.",
-    "exampleFr": "Je vois de belles branches d'arbres."
+    "exampleFr": "Je vois de belles branches d'arbres.",
+    "meaning_ja": "支店",
+    "example_ja": "ここに素晴らしい枝が見えます。",
+    "meaning_vi": "Chi nhánh",
+    "example_vi": "Tôi thấy một chi nhánh tuyệt vời ở đây.",
+    "meaning_hi": "शाखा",
+    "example_hi": "मुझे यहाँ एक अद्भुत शाखा दिखाई देती है।"
   },
   {
     "id": 556,
@@ -10562,7 +13892,13 @@ const wordList500 = [
     "meaning_fr": "des buissons",
     "meaningFr": "des buissons",
     "example_fr": "Je vois un joli buisson.",
-    "exampleFr": "Je vois un joli buisson."
+    "exampleFr": "Je vois un joli buisson.",
+    "meaning_ja": "ブッシュ",
+    "example_ja": "ここに素晴らしい茂みが見えます。",
+    "meaning_vi": "bụi cây",
+    "example_vi": "Tôi thấy một bụi cây tuyệt vời ở đây.",
+    "meaning_hi": "झाड़ी",
+    "example_hi": "मुझे यहाँ एक अद्भुत झाड़ी दिखाई देती है।"
   },
   {
     "id": 557,
@@ -10581,7 +13917,13 @@ const wordList500 = [
     "meaning_fr": "cactus",
     "meaningFr": "cactus",
     "example_fr": "Je vois un joli cactus.",
-    "exampleFr": "Je vois un joli cactus."
+    "exampleFr": "Je vois un joli cactus.",
+    "meaning_ja": "カクタス",
+    "example_ja": "ここで素晴らしいサボテンを見ます。",
+    "meaning_vi": "xương rồng",
+    "example_vi": "Tôi thấy một cây xương rồng tuyệt vời ở đây.",
+    "meaning_hi": "कैक्टस",
+    "example_hi": "मुझे यहां एक अद्भुत कैक्टस दिखाई दे रहा है।"
   },
   {
     "id": 558,
@@ -10600,7 +13942,13 @@ const wordList500 = [
     "meaning_fr": "canyon",
     "meaningFr": "canyon",
     "example_fr": "Je vois un magnifique canyon.",
-    "exampleFr": "Je vois un magnifique canyon."
+    "exampleFr": "Je vois un magnifique canyon.",
+    "meaning_ja": "キャニオン",
+    "example_ja": "ここには素晴らしい渓谷が見えます。",
+    "meaning_vi": "Hẻm núi",
+    "example_vi": "Tôi thấy một hẻm núi tuyệt vời ở đây.",
+    "meaning_hi": "घाटी",
+    "example_hi": "मुझे यहां एक अद्भुत घाटी दिखाई देती है।"
   },
   {
     "id": 559,
@@ -10619,7 +13967,13 @@ const wordList500 = [
     "meaning_fr": "grotte",
     "meaningFr": "grotte",
     "example_fr": "Je vois une grotte magnifique.",
-    "exampleFr": "Je vois une grotte magnifique."
+    "exampleFr": "Je vois une grotte magnifique.",
+    "meaning_ja": "洞窟",
+    "example_ja": "ここに素晴らしい洞窟があります。",
+    "meaning_vi": "Hang",
+    "example_vi": "Tôi thấy một hang động tuyệt vời ở đây.",
+    "meaning_hi": "गुफ़ा",
+    "example_hi": "मुझे यहाँ एक अद्भुत गुफा दिखाई देती है।"
   },
   {
     "id": 560,
@@ -10638,7 +13992,13 @@ const wordList500 = [
     "meaning_fr": "falaise",
     "meaningFr": "falaise",
     "example_fr": "Je vois une jolie falaise.",
-    "exampleFr": "Je vois une jolie falaise."
+    "exampleFr": "Je vois une jolie falaise.",
+    "meaning_ja": "崖",
+    "example_ja": "ここに素晴らしい崖が見えます。",
+    "meaning_vi": "Vách đá",
+    "example_vi": "Tôi thấy một vách đá tuyệt vời ở đây.",
+    "meaning_hi": "टीला",
+    "example_hi": "मुझे यहाँ एक अद्भुत चट्टान दिखाई देती है।"
   },
   {
     "id": 561,
@@ -10657,7 +14017,13 @@ const wordList500 = [
     "meaning_fr": "coton",
     "meaningFr": "coton",
     "example_fr": "Je vois du coton merveilleux.",
-    "exampleFr": "Je vois du coton merveilleux."
+    "exampleFr": "Je vois du coton merveilleux.",
+    "meaning_ja": "コットン",
+    "example_ja": "ここに素晴らしい綿が見えます。",
+    "meaning_vi": "Bông",
+    "example_vi": "Tôi thấy ở đây có loại bông tuyệt vời.",
+    "meaning_hi": "कपास",
+    "example_hi": "मुझे यहाँ एक अद्भुत कपास दिखाई देती है।"
   },
   {
     "id": 562,
@@ -10676,7 +14042,13 @@ const wordList500 = [
     "meaning_fr": "diamant",
     "meaningFr": "diamant",
     "example_fr": "Je vois un merveilleux diamant.",
-    "exampleFr": "Je vois un merveilleux diamant."
+    "exampleFr": "Je vois un merveilleux diamant.",
+    "meaning_ja": "ダイヤモンド",
+    "example_ja": "ここに素晴らしいダイヤモンドが見えます。",
+    "meaning_vi": "Kim cương",
+    "example_vi": "Tôi thấy một viên kim cương tuyệt vời ở đây.",
+    "meaning_hi": "डायमंड",
+    "example_hi": "मुझे यहाँ एक अद्भुत हीरा दिखाई देता है।"
   },
   {
     "id": 563,
@@ -10695,7 +14067,13 @@ const wordList500 = [
     "meaning_fr": "bijoux",
     "meaningFr": "bijoux",
     "example_fr": "Je vois de merveilleux bijoux.",
-    "exampleFr": "Je vois de merveilleux bijoux."
+    "exampleFr": "Je vois de merveilleux bijoux.",
+    "meaning_ja": "宝石",
+    "example_ja": "ここで素晴らしい宝石を見ました。",
+    "meaning_vi": "Ngọc",
+    "example_vi": "Tôi thấy một viên ngọc tuyệt vời ở đây.",
+    "meaning_hi": "गहना",
+    "example_hi": "मुझे यहाँ एक अद्भुत रत्न दिखाई देता है।"
   },
   {
     "id": 564,
@@ -10714,7 +14092,13 @@ const wordList500 = [
     "meaning_fr": "pelouse",
     "meaningFr": "pelouse",
     "example_fr": "Je vois une belle pelouse.",
-    "exampleFr": "Je vois une belle pelouse."
+    "exampleFr": "Je vois une belle pelouse.",
+    "meaning_ja": "芝生",
+    "example_ja": "ここに素晴らしい芝生が見えます。",
+    "meaning_vi": "Bãi cỏ",
+    "example_vi": "Tôi thấy một bãi cỏ tuyệt vời ở đây.",
+    "meaning_hi": "घास का मैदान",
+    "example_hi": "मुझे यहाँ एक अद्भुत लॉन दिखाई देता है।"
   },
   {
     "id": 565,
@@ -10733,7 +14117,13 @@ const wordList500 = [
     "meaning_fr": "typhon",
     "meaningFr": "typhon",
     "example_fr": "Le typhon a apporté de fortes pluies.",
-    "exampleFr": "Le typhon a apporté de fortes pluies."
+    "exampleFr": "Le typhon a apporté de fortes pluies.",
+    "meaning_ja": "台風",
+    "example_ja": "ここで素晴らしい台風が見られます。",
+    "meaning_vi": "cơn bão",
+    "example_vi": "Tôi thấy một cơn bão tuyệt vời ở đây.",
+    "meaning_hi": "आंधी",
+    "example_hi": "मुझे यहाँ एक अद्भुत तूफ़ान दिख रहा है।"
   },
   {
     "id": 566,
@@ -10752,7 +14142,13 @@ const wordList500 = [
     "meaning_fr": "tourbillon",
     "meaningFr": "tourbillon",
     "example_fr": "Un tourbillon tourne très vite.",
-    "exampleFr": "Un tourbillon tourne très vite."
+    "exampleFr": "Un tourbillon tourne très vite.",
+    "meaning_ja": "竜巻",
+    "example_ja": "ここで素晴らしい竜巻が見られます。",
+    "meaning_vi": "cơn lốc xoáy",
+    "example_vi": "Tôi thấy một cơn lốc xoáy tuyệt vời ở đây.",
+    "meaning_hi": "बवंडर",
+    "example_hi": "मैं यहाँ एक अद्भुत बवंडर देख रहा हूँ।"
   },
   {
     "id": 567,
@@ -10771,7 +14167,13 @@ const wordList500 = [
     "meaning_fr": "grêle",
     "meaningFr": "grêle",
     "example_fr": "La grêle est tombée sur le toit.",
-    "exampleFr": "La grêle est tombée sur le toit."
+    "exampleFr": "La grêle est tombée sur le toit.",
+    "meaning_ja": "雹",
+    "example_ja": "ここで素晴らしい雹が降っているのが見えます。",
+    "meaning_vi": "Kêu",
+    "example_vi": "Tôi thấy một trận mưa đá tuyệt vời ở đây.",
+    "meaning_hi": "ओलों",
+    "example_hi": "मैं यहां अद्भुत ओले देख रहा हूं।"
   },
   {
     "id": 568,
@@ -10790,7 +14192,13 @@ const wordList500 = [
     "meaning_fr": "flaque d'eau",
     "meaningFr": "flaque d'eau",
     "example_fr": "J'ai sauté par-dessus une flaque d'eau.",
-    "exampleFr": "J'ai sauté par-dessus une flaque d'eau."
+    "exampleFr": "J'ai sauté par-dessus une flaque d'eau.",
+    "meaning_ja": "水たまり",
+    "example_ja": "ここに素晴らしい水たまりが見えます。",
+    "meaning_vi": "vũng nước",
+    "example_vi": "Tôi thấy ở đây có một vũng nước tuyệt vời.",
+    "meaning_hi": "पोखर",
+    "example_hi": "मुझे यहाँ एक अद्भुत पोखर दिखाई देता है।"
   },
   {
     "id": 569,
@@ -10809,7 +14217,13 @@ const wordList500 = [
     "meaning_fr": "glaçon",
     "meaningFr": "glaçon",
     "example_fr": "Des glaçons pendent du toit.",
-    "exampleFr": "Des glaçons pendent du toit."
+    "exampleFr": "Des glaçons pendent du toit.",
+    "meaning_ja": "つらら",
+    "example_ja": "ここで素晴らしい氷柱が見られます。",
+    "meaning_vi": "băng",
+    "example_vi": "Tôi thấy một cột băng tuyệt vời ở đây.",
+    "meaning_hi": "हिमलंब",
+    "example_hi": "मुझे यहां एक अद्भुत हिमलंब दिखाई देता है।"
   },
   {
     "id": 570,
@@ -10828,7 +14242,13 @@ const wordList500 = [
     "meaning_fr": "lever du soleil",
     "meaningFr": "lever du soleil",
     "example_fr": "Nous avons vu le lever du soleil.",
-    "exampleFr": "Nous avons vu le lever du soleil."
+    "exampleFr": "Nous avons vu le lever du soleil.",
+    "meaning_ja": "日の出",
+    "example_ja": "ここで素晴らしい日の出を見ることができます。",
+    "meaning_vi": "Bình minh",
+    "example_vi": "Tôi thấy bình minh tuyệt vời ở đây.",
+    "meaning_hi": "सूर्योदय",
+    "example_hi": "मुझे यहाँ अद्भुत सूर्योदय दिखाई देता है।"
   },
   {
     "id": 571,
@@ -10847,7 +14267,13 @@ const wordList500 = [
     "meaning_fr": "coucher de soleil, lueur",
     "meaningFr": "coucher de soleil, lueur",
     "example_fr": "Le coucher de soleil est magnifique.",
-    "exampleFr": "Le coucher de soleil est magnifique."
+    "exampleFr": "Le coucher de soleil est magnifique.",
+    "meaning_ja": "日没",
+    "example_ja": "ここで素晴らしい夕日が見えます。",
+    "meaning_vi": "Hoàng hôn",
+    "example_vi": "Tôi thấy hoàng hôn tuyệt vời ở đây.",
+    "meaning_hi": "सूर्यास्त",
+    "example_hi": "मुझे यहां अद्भुत सूर्यास्त दिखाई देता है।"
   },
   {
     "id": 572,
@@ -10866,7 +14292,13 @@ const wordList500 = [
     "meaning_fr": "aube",
     "meaningFr": "aube",
     "example_fr": "Les oiseaux chantent à l'aube.",
-    "exampleFr": "Les oiseaux chantent à l'aube."
+    "exampleFr": "Les oiseaux chantent à l'aube.",
+    "meaning_ja": "夜明け",
+    "example_ja": "ここで素晴らしい夜明けが見えます。",
+    "meaning_vi": "Bình minh",
+    "example_vi": "Tôi thấy bình minh tuyệt vời ở đây.",
+    "meaning_hi": "भोर",
+    "example_hi": "मैं यहां एक अद्भुत सुबह देख रहा हूं।"
   },
   {
     "id": 573,
@@ -10885,7 +14317,13 @@ const wordList500 = [
     "meaning_fr": "coucher de soleil",
     "meaningFr": "coucher de soleil",
     "example_fr": "Nous sommes rentrés à la maison au coucher du soleil.",
-    "exampleFr": "Nous sommes rentrés à la maison au coucher du soleil."
+    "exampleFr": "Nous sommes rentrés à la maison au coucher du soleil.",
+    "meaning_ja": "夕暮れ",
+    "example_ja": "ここで素晴らしい夕暮れを見ます。",
+    "meaning_vi": "Chạng vạng",
+    "example_vi": "Tôi thấy cảnh hoàng hôn tuyệt vời ở đây.",
+    "meaning_hi": "गोधूलि बेला",
+    "example_hi": "मुझे यहां एक अद्भुत सांझ दिखाई देती है।"
   },
   {
     "id": 574,
@@ -10904,7 +14342,13 @@ const wordList500 = [
     "meaning_fr": "ombre",
     "meaningFr": "ombre",
     "example_fr": "Reposez-vous à l'ombre.",
-    "exampleFr": "Reposez-vous à l'ombre."
+    "exampleFr": "Reposez-vous à l'ombre.",
+    "meaning_ja": "シェード",
+    "example_ja": "ここに素晴らしい色合いが見えます。",
+    "meaning_vi": "bóng râm",
+    "example_vi": "Tôi thấy một bóng mát tuyệt vời ở đây.",
+    "meaning_hi": "छाया",
+    "example_hi": "मुझे यहां अद्भुत छटा दिखाई देती है."
   },
   {
     "id": 575,
@@ -10923,7 +14367,13 @@ const wordList500 = [
     "meaning_fr": "cascade",
     "meaningFr": "cascade",
     "example_fr": "Le bruit de la cascade est très fort.",
-    "exampleFr": "Le bruit de la cascade est très fort."
+    "exampleFr": "Le bruit de la cascade est très fort.",
+    "meaning_ja": "滝",
+    "example_ja": "ここで素晴らしい滝が見られます。",
+    "meaning_vi": "thác nước",
+    "example_vi": "Tôi thấy một thác nước tuyệt vời ở đây.",
+    "meaning_hi": "झरना",
+    "example_hi": "मुझे यहाँ एक अद्भुत झरना दिखाई देता है।"
   },
   {
     "id": 576,
@@ -10942,7 +14392,13 @@ const wordList500 = [
     "meaning_fr": "pavé",
     "meaningFr": "pavé",
     "example_fr": "J'ai ramassé un petit caillou.",
-    "exampleFr": "J'ai ramassé un petit caillou."
+    "exampleFr": "J'ai ramassé un petit caillou.",
+    "meaning_ja": "小石",
+    "example_ja": "ここで素晴らしい小石を見ます。",
+    "meaning_vi": "Sỏi",
+    "example_vi": "Tôi thấy một viên sỏi tuyệt vời ở đây.",
+    "meaning_hi": "कंकड़",
+    "example_hi": "मुझे यहाँ एक अद्भुत कंकड़ दिखाई देता है।"
   },
   {
     "id": 577,
@@ -10961,7 +14417,13 @@ const wordList500 = [
     "meaning_fr": "tronc d'arbre",
     "meaningFr": "tronc d'arbre",
     "example_fr": "Le tronc de cet arbre est épais.",
-    "exampleFr": "Le tronc de cet arbre est épais."
+    "exampleFr": "Le tronc de cet arbre est épais.",
+    "meaning_ja": "トランク",
+    "example_ja": "ここに素晴らしいトランクがあります。",
+    "meaning_vi": "Thân cây",
+    "example_vi": "Tôi thấy một cái rương tuyệt vời ở đây.",
+    "meaning_hi": "तना",
+    "example_hi": "मुझे यहां एक अद्भुत ट्रंक दिखाई देता है।"
   },
   {
     "id": 578,
@@ -10980,7 +14442,13 @@ const wordList500 = [
     "meaning_fr": "brindilles",
     "meaningFr": "brindilles",
     "example_fr": "L'oiseau portait une brindille dans sa gueule.",
-    "exampleFr": "L'oiseau portait une brindille dans sa gueule."
+    "exampleFr": "L'oiseau portait une brindille dans sa gueule.",
+    "meaning_ja": "小枝",
+    "example_ja": "ここに素晴らしい小枝が見えます。",
+    "meaning_vi": "cành cây",
+    "example_vi": "Tôi thấy một cành cây tuyệt vời ở đây.",
+    "meaning_hi": "फ़ैशन",
+    "example_hi": "मुझे यहाँ एक अद्भुत टहनी दिखाई देती है।"
   },
   {
     "id": 579,
@@ -10999,7 +14467,13 @@ const wordList500 = [
     "meaning_fr": "brouillard",
     "meaningFr": "brouillard",
     "example_fr": "Le brouillard recouvrait la vallée.",
-    "exampleFr": "Le brouillard recouvrait la vallée."
+    "exampleFr": "Le brouillard recouvrait la vallée.",
+    "meaning_ja": "ミスト",
+    "example_ja": "ここで素晴らしい霧が見えます。",
+    "meaning_vi": "sương mù",
+    "example_vi": "Tôi thấy ở đây có sương mù tuyệt vời.",
+    "meaning_hi": "कुहासा",
+    "example_hi": "मुझे यहाँ एक अद्भुत धुंध दिखाई देती है।"
   },
   {
     "id": 580,
@@ -11018,7 +14492,13 @@ const wordList500 = [
     "meaning_fr": "fleur, épanouissement",
     "meaningFr": "fleur, épanouissement",
     "example_fr": "Les fleurs de cerisier tombent au printemps.",
-    "exampleFr": "Les fleurs de cerisier tombent au printemps."
+    "exampleFr": "Les fleurs de cerisier tombent au printemps.",
+    "meaning_ja": "花",
+    "example_ja": "ここで素晴らしい花が咲きました。",
+    "meaning_vi": "Hoa",
+    "example_vi": "Tôi thấy một bông hoa tuyệt vời ở đây.",
+    "meaning_hi": "खिलना",
+    "example_hi": "मुझे यहां एक अद्भुत फूल दिखाई देता है।"
   },
   {
     "id": 581,
@@ -11037,7 +14517,13 @@ const wordList500 = [
     "meaning_fr": "pétales",
     "meaningFr": "pétales",
     "example_fr": "Un pétale est tombé sur l'eau.",
-    "exampleFr": "Un pétale est tombé sur l'eau."
+    "exampleFr": "Un pétale est tombé sur l'eau.",
+    "meaning_ja": "花弁",
+    "example_ja": "ここに素晴らしい花びらが見えます。",
+    "meaning_vi": "Cánh hoa",
+    "example_vi": "Tôi thấy một cánh hoa tuyệt vời ở đây.",
+    "meaning_hi": "पत्ती",
+    "example_hi": "मुझे यहां एक अद्भुत पंखुड़ी दिखाई दे रही है।"
   },
   {
     "id": 582,
@@ -11056,7 +14542,13 @@ const wordList500 = [
     "meaning_fr": "vigne",
     "meaningFr": "vigne",
     "example_fr": "Les vignes grimpent sur le mur.",
-    "exampleFr": "Les vignes grimpent sur le mur."
+    "exampleFr": "Les vignes grimpent sur le mur.",
+    "meaning_ja": "つる",
+    "example_ja": "ここに素晴らしいブドウの木が見えます。",
+    "meaning_vi": "Cây nho",
+    "example_vi": "Tôi thấy một cây nho tuyệt vời ở đây.",
+    "meaning_hi": "बेल",
+    "example_hi": "मुझे यहाँ एक अद्भुत लता दिखाई देती है।"
   },
   {
     "id": 583,
@@ -11075,7 +14567,13 @@ const wordList500 = [
     "meaning_fr": "printemps",
     "meaningFr": "printemps",
     "example_fr": "Je vois un printemps merveilleux.",
-    "exampleFr": "Je vois un printemps merveilleux."
+    "exampleFr": "Je vois un printemps merveilleux.",
+    "meaning_ja": "春",
+    "example_ja": "ここには素晴らしい春が見えます。",
+    "meaning_vi": "Mùa xuân",
+    "example_vi": "Tôi thấy ở đây một mùa xuân tuyệt vời.",
+    "meaning_hi": "वसंत",
+    "example_hi": "मुझे यहाँ एक अद्भुत झरना दिखाई देता है।"
   },
   {
     "id": 584,
@@ -11094,7 +14592,13 @@ const wordList500 = [
     "meaning_fr": "été",
     "meaningFr": "été",
     "example_fr": "Je vois un été merveilleux.",
-    "exampleFr": "Je vois un été merveilleux."
+    "exampleFr": "Je vois un été merveilleux.",
+    "meaning_ja": "夏",
+    "example_ja": "ここで素晴らしい夏を見ることができます。",
+    "meaning_vi": "Mùa hè",
+    "example_vi": "Tôi thấy một mùa hè tuyệt vời ở đây.",
+    "meaning_hi": "गर्मी",
+    "example_hi": "मैं यहां अद्भुत गर्मी देख रहा हूं।"
   },
   {
     "id": 585,
@@ -11113,7 +14617,13 @@ const wordList500 = [
     "meaning_fr": "automne",
     "meaningFr": "automne",
     "example_fr": "Je vois une chute merveilleuse.",
-    "exampleFr": "Je vois une chute merveilleuse."
+    "exampleFr": "Je vois une chute merveilleuse.",
+    "meaning_ja": "秋",
+    "example_ja": "ここで素晴らしい秋が見られます。",
+    "meaning_vi": "Ngã",
+    "example_vi": "Tôi thấy một mùa thu tuyệt vời ở đây.",
+    "meaning_hi": "गिरना",
+    "example_hi": "मैं यहां एक अद्भुत गिरावट देख रहा हूं।"
   },
   {
     "id": 586,
@@ -11132,7 +14642,13 @@ const wordList500 = [
     "meaning_fr": "hiver",
     "meaningFr": "hiver",
     "example_fr": "Je vois un hiver merveilleux.",
-    "exampleFr": "Je vois un hiver merveilleux."
+    "exampleFr": "Je vois un hiver merveilleux.",
+    "meaning_ja": "冬",
+    "example_ja": "ここで素晴らしい冬が見られます。",
+    "meaning_vi": "Mùa đông",
+    "example_vi": "Tôi thấy một mùa đông tuyệt vời ở đây.",
+    "meaning_hi": "सर्दी",
+    "example_hi": "मुझे यहां अद्भुत सर्दी दिख रही है।"
   },
   {
     "id": 587,
@@ -11151,7 +14667,13 @@ const wordList500 = [
     "meaning_fr": "matin",
     "meaningFr": "matin",
     "example_fr": "Je vois une merveilleuse matinée.",
-    "exampleFr": "Je vois une merveilleuse matinée."
+    "exampleFr": "Je vois une merveilleuse matinée.",
+    "meaning_ja": "朝",
+    "example_ja": "ここで素晴らしい朝を見ることができます。",
+    "meaning_vi": "Buổi sáng",
+    "example_vi": "Tôi thấy một buổi sáng tuyệt vời ở đây.",
+    "meaning_hi": "सुबह",
+    "example_hi": "मैं यहां एक अद्भुत सुबह देख रहा हूं।"
   },
   {
     "id": 588,
@@ -11170,7 +14692,13 @@ const wordList500 = [
     "meaning_fr": "après-midi",
     "meaningFr": "après-midi",
     "example_fr": "Je passe un merveilleux après-midi.",
-    "exampleFr": "Je passe un merveilleux après-midi."
+    "exampleFr": "Je passe un merveilleux après-midi.",
+    "meaning_ja": "午後",
+    "example_ja": "ここで素晴らしい午後を見ることができます。",
+    "meaning_vi": "Buổi chiều",
+    "example_vi": "Tôi thấy một buổi chiều tuyệt vời ở đây.",
+    "meaning_hi": "दोपहर",
+    "example_hi": "मैं यहां एक अद्भुत दोपहर देख रहा हूं।"
   },
   {
     "id": 589,
@@ -11189,7 +14717,13 @@ const wordList500 = [
     "meaning_fr": "dîner",
     "meaningFr": "dîner",
     "example_fr": "Je passe une merveilleuse soirée.",
-    "exampleFr": "Je passe une merveilleuse soirée."
+    "exampleFr": "Je passe une merveilleuse soirée.",
+    "meaning_ja": "夕方",
+    "example_ja": "ここで素晴らしい夜を見ることができます。",
+    "meaning_vi": "Buổi tối",
+    "example_vi": "Tôi thấy một buổi tối tuyệt vời ở đây.",
+    "meaning_hi": "शाम",
+    "example_hi": "मैं यहां एक अद्भुत शाम देख रहा हूं।"
   },
   {
     "id": 590,
@@ -11208,7 +14742,13 @@ const wordList500 = [
     "meaning_fr": "nuit",
     "meaningFr": "nuit",
     "example_fr": "Je vois une nuit merveilleuse.",
-    "exampleFr": "Je vois une nuit merveilleuse."
+    "exampleFr": "Je vois une nuit merveilleuse.",
+    "meaning_ja": "夜",
+    "example_ja": "ここで素晴らしい夜を見ることができます。",
+    "meaning_vi": "Đêm",
+    "example_vi": "Tôi thấy một đêm tuyệt vời ở đây.",
+    "meaning_hi": "रात",
+    "example_hi": "मैं यहां एक अद्भुत रात देख रहा हूं।"
   },
   {
     "id": 591,
@@ -11227,7 +14767,13 @@ const wordList500 = [
     "meaning_fr": "aujourd'hui",
     "meaningFr": "aujourd'hui",
     "example_fr": "J'ai une journée merveilleuse.",
-    "exampleFr": "J'ai une journée merveilleuse."
+    "exampleFr": "J'ai une journée merveilleuse.",
+    "meaning_ja": "今日",
+    "example_ja": "今日はピアノのレッスンがあります。",
+    "meaning_vi": "Hôm nay",
+    "example_vi": "Hôm nay tôi có tiết học piano.",
+    "meaning_hi": "आज",
+    "example_hi": "आज मेरा एक पियानो पाठ है।"
   },
   {
     "id": 592,
@@ -11246,7 +14792,13 @@ const wordList500 = [
     "meaning_fr": "demain",
     "meaningFr": "demain",
     "example_fr": "Je vois un merveilleux demain.",
-    "exampleFr": "Je vois un merveilleux demain."
+    "exampleFr": "Je vois un merveilleux demain.",
+    "meaning_ja": "明日",
+    "example_ja": "ここで素晴らしい明日が見えます。",
+    "meaning_vi": "Ngày mai",
+    "example_vi": "Tôi thấy một ngày mai tuyệt vời ở đây.",
+    "meaning_hi": "कल",
+    "example_hi": "मैं यहां एक अद्भुत कल देख रहा हूं।"
   },
   {
     "id": 593,
@@ -11265,7 +14817,13 @@ const wordList500 = [
     "meaning_fr": "hier",
     "meaningFr": "hier",
     "example_fr": "Je regarde Merveilleux hier.",
-    "exampleFr": "Je regarde Merveilleux hier."
+    "exampleFr": "Je regarde Merveilleux hier.",
+    "meaning_ja": "昨日",
+    "example_ja": "昨日はピアノのレッスンがあります。",
+    "meaning_vi": "Hôm qua",
+    "example_vi": "Tôi có một bài học piano vào ngày hôm qua.",
+    "meaning_hi": "कल",
+    "example_hi": "कल मेरा एक पियानो पाठ है।"
   },
   {
     "id": 594,
@@ -11284,7 +14842,13 @@ const wordList500 = [
     "meaning_fr": "état",
     "meaningFr": "état",
     "example_fr": "Je vois une semaine merveilleuse.",
-    "exampleFr": "Je vois une semaine merveilleuse."
+    "exampleFr": "Je vois une semaine merveilleuse.",
+    "meaning_ja": "週",
+    "example_ja": "ここで素晴らしい一週間を見ることができます。",
+    "meaning_vi": "Tuần",
+    "example_vi": "Tôi thấy một tuần tuyệt vời ở đây.",
+    "meaning_hi": "सप्ताह",
+    "example_hi": "मैं यहां एक अद्भुत सप्ताह देख रहा हूं।"
   },
   {
     "id": 595,
@@ -11303,7 +14867,13 @@ const wordList500 = [
     "meaning_fr": "mois",
     "meaningFr": "mois",
     "example_fr": "Je vois un mois merveilleux.",
-    "exampleFr": "Je vois un mois merveilleux."
+    "exampleFr": "Je vois un mois merveilleux.",
+    "meaning_ja": "月",
+    "example_ja": "ここでは素晴らしい月が見られます。",
+    "meaning_vi": "Tháng",
+    "example_vi": "Tôi thấy một tháng tuyệt vời ở đây.",
+    "meaning_hi": "महीना",
+    "example_hi": "मैं यहाँ एक अद्भुत महीना देख रहा हूँ।"
   },
   {
     "id": 596,
@@ -11322,7 +14892,13 @@ const wordList500 = [
     "meaning_fr": "année",
     "meaningFr": "année",
     "example_fr": "Je vois une super chienne.",
-    "exampleFr": "Je vois une super chienne."
+    "exampleFr": "Je vois une super chienne.",
+    "meaning_ja": "年",
+    "example_ja": "ここで素晴らしい一年を見ることができます。",
+    "meaning_vi": "Năm",
+    "example_vi": "Tôi thấy một năm tuyệt vời ở đây.",
+    "meaning_hi": "वर्ष",
+    "example_hi": "मैं यहां एक अद्भुत वर्ष देख रहा हूं।"
   },
   {
     "id": 597,
@@ -11341,7 +14917,13 @@ const wordList500 = [
     "meaning_fr": "lundi",
     "meaningFr": "lundi",
     "example_fr": "J'ai un merveilleux lundi.",
-    "exampleFr": "J'ai un merveilleux lundi."
+    "exampleFr": "J'ai un merveilleux lundi.",
+    "meaning_ja": "月曜日",
+    "example_ja": "月曜日にピアノのレッスンがあります。",
+    "meaning_vi": "Thứ hai",
+    "example_vi": "Tôi có một bài học piano vào thứ Hai.",
+    "meaning_hi": "सोमवार",
+    "example_hi": "सोमवार को मेरा पियानो पाठ है।"
   },
   {
     "id": 598,
@@ -11360,7 +14942,13 @@ const wordList500 = [
     "meaning_fr": "mardi",
     "meaningFr": "mardi",
     "example_fr": "J'ai un merveilleux mardi.",
-    "exampleFr": "J'ai un merveilleux mardi."
+    "exampleFr": "J'ai un merveilleux mardi.",
+    "meaning_ja": "火曜日",
+    "example_ja": "火曜日にピアノのレッスンがあります。",
+    "meaning_vi": "Thứ ba",
+    "example_vi": "Tôi có một bài học piano vào thứ ba.",
+    "meaning_hi": "मंगलवार",
+    "example_hi": "मंगलवार को मेरा पियानो पाठ है।"
   },
   {
     "id": 599,
@@ -11379,7 +14967,13 @@ const wordList500 = [
     "meaning_fr": "mercredi",
     "meaningFr": "mercredi",
     "example_fr": "Je passe un merveilleux mercredi.",
-    "exampleFr": "Je passe un merveilleux mercredi."
+    "exampleFr": "Je passe un merveilleux mercredi.",
+    "meaning_ja": "水曜日",
+    "example_ja": "水曜日にピアノのレッスンがあります。",
+    "meaning_vi": "Thứ Tư",
+    "example_vi": "Tôi có một bài học piano vào thứ Tư.",
+    "meaning_hi": "बुधवार",
+    "example_hi": "बुधवार को मेरा पियानो पाठ है।"
   },
   {
     "id": 600,
@@ -11398,7 +14992,13 @@ const wordList500 = [
     "meaning_fr": "jeudi",
     "meaningFr": "jeudi",
     "example_fr": "J'ai un merveilleux jeudi.",
-    "exampleFr": "J'ai un merveilleux jeudi."
+    "exampleFr": "J'ai un merveilleux jeudi.",
+    "meaning_ja": "木曜日",
+    "example_ja": "木曜日はピアノのレッスンがあります。",
+    "meaning_vi": "Thứ năm",
+    "example_vi": "Tôi có một bài học piano vào thứ năm.",
+    "meaning_hi": "गुरुवार",
+    "example_hi": "गुरुवार को मेरा पियानो पाठ है।"
   },
   {
     "id": 601,
@@ -11417,7 +15017,13 @@ const wordList500 = [
     "meaning_fr": "vendredi",
     "meaningFr": "vendredi",
     "example_fr": "Je passe un excellent vendredi.",
-    "exampleFr": "Je passe un excellent vendredi."
+    "exampleFr": "Je passe un excellent vendredi.",
+    "meaning_ja": "金曜日",
+    "example_ja": "金曜日にピアノのレッスンがあります。",
+    "meaning_vi": "Thứ sáu",
+    "example_vi": "Tôi có một bài học piano vào thứ Sáu.",
+    "meaning_hi": "शुक्रवार",
+    "example_hi": "शुक्रवार को मेरा पियानो पाठ है।"
   },
   {
     "id": 602,
@@ -11436,7 +15042,13 @@ const wordList500 = [
     "meaning_fr": "samedi",
     "meaningFr": "samedi",
     "example_fr": "Je passe un merveilleux samedi.",
-    "exampleFr": "Je passe un merveilleux samedi."
+    "exampleFr": "Je passe un merveilleux samedi.",
+    "meaning_ja": "土曜日",
+    "example_ja": "土曜日にピアノのレッスンがあります。",
+    "meaning_vi": "Thứ bảy",
+    "example_vi": "Tôi có một bài học piano vào thứ bảy.",
+    "meaning_hi": "शनिवार",
+    "example_hi": "मुझे शनिवार को पियानो का पाठ करना है।"
   },
   {
     "id": 603,
@@ -11455,7 +15067,13 @@ const wordList500 = [
     "meaning_fr": "dimanche",
     "meaningFr": "dimanche",
     "example_fr": "Je passe un merveilleux dimanche.",
-    "exampleFr": "Je passe un merveilleux dimanche."
+    "exampleFr": "Je passe un merveilleux dimanche.",
+    "meaning_ja": "日曜日",
+    "example_ja": "私は日曜日にピアノのレッスンがあります。",
+    "meaning_vi": "Chủ nhật",
+    "example_vi": "Tôi có một bài học piano vào chủ nhật.",
+    "meaning_hi": "रविवार",
+    "example_hi": "रविवार को मेरा पियानो पाठ है।"
   },
   {
     "id": 604,
@@ -11474,7 +15092,13 @@ const wordList500 = [
     "meaning_fr": "janvier",
     "meaningFr": "janvier",
     "example_fr": "J'ai un mois de janvier merveilleux.",
-    "exampleFr": "J'ai un mois de janvier merveilleux."
+    "exampleFr": "J'ai un mois de janvier merveilleux.",
+    "meaning_ja": "1月",
+    "example_ja": "私の誕生日は1月です。",
+    "meaning_vi": "Tháng Một",
+    "example_vi": "Sinh nhật của tôi là vào tháng Giêng.",
+    "meaning_hi": "जनवरी",
+    "example_hi": "मेरा जन्मदिन जनवरी में है."
   },
   {
     "id": 605,
@@ -11493,7 +15117,13 @@ const wordList500 = [
     "meaning_fr": "Février",
     "meaningFr": "Février",
     "example_fr": "J'ai un mois de février merveilleux.",
-    "exampleFr": "J'ai un mois de février merveilleux."
+    "exampleFr": "J'ai un mois de février merveilleux.",
+    "meaning_ja": "2月",
+    "example_ja": "私の誕生日は2月です。",
+    "meaning_vi": "Tháng hai",
+    "example_vi": "Sinh nhật của tôi là vào tháng Hai.",
+    "meaning_hi": "फ़रवरी",
+    "example_hi": "मेरा जन्मदिन फरवरी में है."
   },
   {
     "id": 606,
@@ -11512,7 +15142,13 @@ const wordList500 = [
     "meaning_fr": "Mars",
     "meaningFr": "Mars",
     "example_fr": "J'ai un merveilleux mois de mars.",
-    "exampleFr": "J'ai un merveilleux mois de mars."
+    "exampleFr": "J'ai un merveilleux mois de mars.",
+    "meaning_ja": "行進",
+    "example_ja": "私の誕生日は3月です。",
+    "meaning_vi": "Bước đều",
+    "example_vi": "Sinh nhật của tôi là vào tháng Ba.",
+    "meaning_hi": "मार्च",
+    "example_hi": "मेरा जन्मदिन मार्च में हैं।"
   },
   {
     "id": 607,
@@ -11531,7 +15167,13 @@ const wordList500 = [
     "meaning_fr": "avril",
     "meaningFr": "avril",
     "example_fr": "J'ai un merveilleux mois d'avril.",
-    "exampleFr": "J'ai un merveilleux mois d'avril."
+    "exampleFr": "J'ai un merveilleux mois d'avril.",
+    "meaning_ja": "4月",
+    "example_ja": "私の誕生日は4月です。",
+    "meaning_vi": "Tháng tư",
+    "example_vi": "Sinh nhật của tôi là vào tháng Tư.",
+    "meaning_hi": "अप्रैल",
+    "example_hi": "मेरा जन्मदिन अप्रैल में है."
   },
   {
     "id": 608,
@@ -11550,7 +15192,13 @@ const wordList500 = [
     "meaning_fr": "mai",
     "meaningFr": "mai",
     "example_fr": "J'ai un merveilleux mois de mai.",
-    "exampleFr": "J'ai un merveilleux mois de mai."
+    "exampleFr": "J'ai un merveilleux mois de mai.",
+    "meaning_ja": "5月",
+    "example_ja": "私の誕生日は5月です。",
+    "meaning_vi": "Có thể",
+    "example_vi": "Sinh nhật của tôi là vào tháng Năm.",
+    "meaning_hi": "मई",
+    "example_hi": "मेरा जन्मदिन मई में है।"
   },
   {
     "id": 609,
@@ -11569,7 +15217,13 @@ const wordList500 = [
     "meaning_fr": "juin",
     "meaningFr": "juin",
     "example_fr": "J'ai un merveilleux mois de juin.",
-    "exampleFr": "J'ai un merveilleux mois de juin."
+    "exampleFr": "J'ai un merveilleux mois de juin.",
+    "meaning_ja": "6月",
+    "example_ja": "私の誕生日は6月です。",
+    "meaning_vi": "Tháng sáu",
+    "example_vi": "Sinh nhật của tôi là vào tháng Sáu.",
+    "meaning_hi": "जून",
+    "example_hi": "मेरा जन्मदिन जून में है."
   },
   {
     "id": 610,
@@ -11588,7 +15242,13 @@ const wordList500 = [
     "meaning_fr": "juillet",
     "meaningFr": "juillet",
     "example_fr": "J'ai un merveilleux mois de juillet.",
-    "exampleFr": "J'ai un merveilleux mois de juillet."
+    "exampleFr": "J'ai un merveilleux mois de juillet.",
+    "meaning_ja": "7月",
+    "example_ja": "私の誕生日は7月です。",
+    "meaning_vi": "Tháng bảy",
+    "example_vi": "Sinh nhật của tôi là vào tháng Bảy.",
+    "meaning_hi": "जुलाई",
+    "example_hi": "मेरा जन्मदिन जुलाई में है."
   },
   {
     "id": 611,
@@ -11607,7 +15267,13 @@ const wordList500 = [
     "meaning_fr": "août",
     "meaningFr": "août",
     "example_fr": "J'ai un merveilleux mois d'août.",
-    "exampleFr": "J'ai un merveilleux mois d'août."
+    "exampleFr": "J'ai un merveilleux mois d'août.",
+    "meaning_ja": "8月",
+    "example_ja": "私の誕生日は8月です。",
+    "meaning_vi": "Tháng tám",
+    "example_vi": "Sinh nhật của tôi là vào tháng Tám.",
+    "meaning_hi": "अगस्त",
+    "example_hi": "मेरा जन्मदिन अगस्त में है."
   },
   {
     "id": 612,
@@ -11626,7 +15292,13 @@ const wordList500 = [
     "meaning_fr": "septembre",
     "meaningFr": "septembre",
     "example_fr": "J'ai un merveilleux mois de septembre.",
-    "exampleFr": "J'ai un merveilleux mois de septembre."
+    "exampleFr": "J'ai un merveilleux mois de septembre.",
+    "meaning_ja": "9月",
+    "example_ja": "私の誕生日は9月です。",
+    "meaning_vi": "Tháng 9",
+    "example_vi": "Sinh nhật của tôi là vào tháng Chín.",
+    "meaning_hi": "सितम्बर",
+    "example_hi": "मेरा जन्मदिन सितंबर में है।"
   },
   {
     "id": 613,
@@ -11645,7 +15317,13 @@ const wordList500 = [
     "meaning_fr": "octobre",
     "meaningFr": "octobre",
     "example_fr": "J'ai un merveilleux mois d'octobre.",
-    "exampleFr": "J'ai un merveilleux mois d'octobre."
+    "exampleFr": "J'ai un merveilleux mois d'octobre.",
+    "meaning_ja": "10月",
+    "example_ja": "私の誕生日は10月です。",
+    "meaning_vi": "tháng mười",
+    "example_vi": "Sinh nhật của tôi là vào tháng Mười.",
+    "meaning_hi": "अक्टूबर",
+    "example_hi": "मेरा जन्मदिन अक्टूबर में है."
   },
   {
     "id": 614,
@@ -11664,7 +15342,13 @@ const wordList500 = [
     "meaning_fr": "novembre",
     "meaningFr": "novembre",
     "example_fr": "J'ai un merveilleux mois de novembre.",
-    "exampleFr": "J'ai un merveilleux mois de novembre."
+    "exampleFr": "J'ai un merveilleux mois de novembre.",
+    "meaning_ja": "11月",
+    "example_ja": "私の誕生日は11月です。",
+    "meaning_vi": "Tháng mười một",
+    "example_vi": "Sinh nhật của tôi là vào tháng 11.",
+    "meaning_hi": "नवंबर",
+    "example_hi": "मेरा जन्मदिन नवंबर में है।"
   },
   {
     "id": 615,
@@ -11683,7 +15367,13 @@ const wordList500 = [
     "meaning_fr": "décembre",
     "meaningFr": "décembre",
     "example_fr": "J'ai un merveilleux mois de décembre.",
-    "exampleFr": "J'ai un merveilleux mois de décembre."
+    "exampleFr": "J'ai un merveilleux mois de décembre.",
+    "meaning_ja": "12月",
+    "example_ja": "私の誕生日は12月です。",
+    "meaning_vi": "Tháng 12",
+    "example_vi": "Sinh nhật của tôi là vào tháng 12.",
+    "meaning_hi": "दिसंबर",
+    "example_hi": "मेरा जन्मदिन दिसंबर में है।"
   },
   {
     "id": 616,
@@ -11702,7 +15392,13 @@ const wordList500 = [
     "meaning_fr": "vacances",
     "meaningFr": "vacances",
     "example_fr": "J'ai de merveilleuses vacances.",
-    "exampleFr": "J'ai de merveilleuses vacances."
+    "exampleFr": "J'ai de merveilleuses vacances.",
+    "meaning_ja": "休日",
+    "example_ja": "休日はピアノのレッスンがあります。",
+    "meaning_vi": "Ngày lễ",
+    "example_vi": "Tôi có một bài học piano vào ngày lễ.",
+    "meaning_hi": "छुट्टी",
+    "example_hi": "हॉलिडे पर मुझे पियानो सीखना है।"
   },
   {
     "id": 617,
@@ -11721,7 +15417,13 @@ const wordList500 = [
     "meaning_fr": "vacances",
     "meaningFr": "vacances",
     "example_fr": "J'ai de merveilleuses vacances.",
-    "exampleFr": "J'ai de merveilleuses vacances."
+    "exampleFr": "J'ai de merveilleuses vacances.",
+    "meaning_ja": "休暇",
+    "example_ja": "ここで素晴らしい休暇が見られます。",
+    "meaning_vi": "Kì nghỉ",
+    "example_vi": "Tôi thấy một kỳ nghỉ tuyệt vời ở đây.",
+    "meaning_hi": "छुट्टी",
+    "example_hi": "मैं यहाँ एक अद्भुत छुट्टियाँ देख रहा हूँ।"
   },
   {
     "id": 618,
@@ -11740,7 +15442,13 @@ const wordList500 = [
     "meaning_fr": "siècle, cent ans",
     "meaningFr": "siècle, cent ans",
     "example_fr": "Un siècle, c'est cent ans.",
-    "exampleFr": "Un siècle, c'est cent ans."
+    "exampleFr": "Un siècle, c'est cent ans.",
+    "meaning_ja": "世紀",
+    "example_ja": "私はここに素晴らしい世紀を見ます。",
+    "meaning_vi": "Thế kỷ",
+    "example_vi": "Tôi thấy một thế kỷ tuyệt vời ở đây.",
+    "meaning_hi": "शतक",
+    "example_hi": "मैं यहाँ एक अद्भुत शतक देख रहा हूँ।"
   },
   {
     "id": 619,
@@ -11759,7 +15467,13 @@ const wordList500 = [
     "meaning_fr": "dix ans",
     "meaningFr": "dix ans",
     "example_fr": "Dix ans, c'est dix ans.",
-    "exampleFr": "Dix ans, c'est dix ans."
+    "exampleFr": "Dix ans, c'est dix ans.",
+    "meaning_ja": "十年",
+    "example_ja": "ここに素晴らしい10年があったと思います。",
+    "meaning_vi": "Thập kỷ",
+    "example_vi": "Tôi thấy một thập kỷ tuyệt vời ở đây.",
+    "meaning_hi": "दशक",
+    "example_hi": "मैं यहां एक अद्भुत दशक देख रहा हूं।"
   },
   {
     "id": 620,
@@ -11778,7 +15492,13 @@ const wordList500 = [
     "meaning_fr": "week-end",
     "meaningFr": "week-end",
     "example_fr": "Je me repose le week-end.",
-    "exampleFr": "Je me repose le week-end."
+    "exampleFr": "Je me repose le week-end.",
+    "meaning_ja": "週末",
+    "example_ja": "ここで素晴らしい週末を見ることができます。",
+    "meaning_vi": "Ngày cuối tuần",
+    "example_vi": "Tôi thấy một ngày cuối tuần tuyệt vời ở đây.",
+    "meaning_hi": "सप्ताहांत",
+    "example_hi": "मैं यहां एक अद्भुत सप्ताहांत देख रहा हूं।"
   },
   {
     "id": 621,
@@ -11797,7 +15517,13 @@ const wordList500 = [
     "meaning_fr": "en semaine",
     "meaningFr": "en semaine",
     "example_fr": "Nous allons à l'école en semaine.",
-    "exampleFr": "Nous allons à l'école en semaine."
+    "exampleFr": "Nous allons à l'école en semaine.",
+    "meaning_ja": "平日",
+    "example_ja": "平日はピアノのレッスンをしています。",
+    "meaning_vi": "Ngày trong tuần",
+    "example_vi": "Tôi có một bài học piano vào các ngày trong tuần.",
+    "meaning_hi": "काम करने के दिन",
+    "example_hi": "मुझे सप्ताह के दिन पियानो का पाठ करना है।"
   },
   {
     "id": 622,
@@ -11816,7 +15542,13 @@ const wordList500 = [
     "meaning_fr": "anniversaire",
     "meaningFr": "anniversaire",
     "example_fr": "Mon anniversaire est en mai.",
-    "exampleFr": "Mon anniversaire est en mai."
+    "exampleFr": "Mon anniversaire est en mai.",
+    "meaning_ja": "誕生日",
+    "example_ja": "誕生日にピアノのレッスンがあります。",
+    "meaning_vi": "Sinh nhật",
+    "example_vi": "Tôi có một bài học piano vào ngày sinh nhật.",
+    "meaning_hi": "जन्मदिन",
+    "example_hi": "मेरे जन्मदिन पर पियानो का पाठ है।"
   },
   {
     "id": 623,
@@ -11835,7 +15567,13 @@ const wordList500 = [
     "meaning_fr": "anniversaire",
     "meaningFr": "anniversaire",
     "example_fr": "Aujourd'hui, c'est notre anniversaire scolaire.",
-    "exampleFr": "Aujourd'hui, c'est notre anniversaire scolaire."
+    "exampleFr": "Aujourd'hui, c'est notre anniversaire scolaire.",
+    "meaning_ja": "周年",
+    "example_ja": "ここで素晴らしい記念日を見ることができます。",
+    "meaning_vi": "Dịp kỉ niệm",
+    "example_vi": "Tôi thấy một ngày kỷ niệm tuyệt vời ở đây.",
+    "meaning_hi": "सालगिरह",
+    "example_hi": "मैं यहां एक अद्भुत वर्षगाँठ देख रहा हूँ।"
   },
   {
     "id": 624,
@@ -11854,7 +15592,13 @@ const wordList500 = [
     "meaning_fr": "minuit",
     "meaningFr": "minuit",
     "example_fr": "L'horloge sonna minuit.",
-    "exampleFr": "L'horloge sonna minuit."
+    "exampleFr": "L'horloge sonna minuit.",
+    "meaning_ja": "夜中",
+    "example_ja": "私はここで素晴らしい真夜中を見ます。",
+    "meaning_vi": "Nửa đêm",
+    "example_vi": "Tôi thấy một nửa đêm tuyệt vời ở đây.",
+    "meaning_hi": "मध्यरात्रि",
+    "example_hi": "मुझे यहाँ एक अद्भुत आधी रात दिखाई देती है।"
   },
   {
     "id": 625,
@@ -11873,7 +15617,13 @@ const wordList500 = [
     "meaning_fr": "midi",
     "meaningFr": "midi",
     "example_fr": "Nous déjeunons à midi.",
-    "exampleFr": "Nous déjeunons à midi."
+    "exampleFr": "Nous déjeunons à midi.",
+    "meaning_ja": "正午",
+    "example_ja": "私はここで素晴らしい正午を見ます。",
+    "meaning_vi": "Buổi trưa",
+    "example_vi": "Tôi thấy một buổi trưa tuyệt vời ở đây.",
+    "meaning_hi": "दोपहर",
+    "example_hi": "मैं यहां एक अद्भुत दोपहर देख रहा हूं।"
   },
   {
     "id": 626,
@@ -11892,7 +15642,13 @@ const wordList500 = [
     "meaning_fr": "temps",
     "meaningFr": "temps",
     "example_fr": "Une heure équivaut à soixante minutes.",
-    "exampleFr": "Une heure équivaut à soixante minutes."
+    "exampleFr": "Une heure équivaut à soixante minutes.",
+    "meaning_ja": "時間",
+    "example_ja": "ここで素晴らしい時間が見られます。",
+    "meaning_vi": "Giờ",
+    "example_vi": "Tôi thấy một giờ tuyệt vời ở đây.",
+    "meaning_hi": "घंटा",
+    "example_hi": "मैं यहां एक अद्भुत घंटा देख रहा हूं।"
   },
   {
     "id": 627,
@@ -11911,7 +15667,13 @@ const wordList500 = [
     "meaning_fr": "minutes",
     "meaningFr": "minutes",
     "example_fr": "Veuillez patienter 5 minutes.",
-    "exampleFr": "Veuillez patienter 5 minutes."
+    "exampleFr": "Veuillez patienter 5 minutes.",
+    "meaning_ja": "分",
+    "example_ja": "ここで素晴らしい瞬間を見ました。",
+    "meaning_vi": "Phút",
+    "example_vi": "Tôi thấy một phút tuyệt vời ở đây.",
+    "meaning_hi": "मिनट",
+    "example_hi": "मैं यहाँ एक अद्भुत क्षण देख रहा हूँ।"
   },
   {
     "id": 628,
@@ -11930,7 +15692,13 @@ const wordList500 = [
     "meaning_fr": "rouge",
     "meaningFr": "rouge",
     "example_fr": "Les pommes sont rouges.",
-    "exampleFr": "Les pommes sont rouges."
+    "exampleFr": "Les pommes sont rouges.",
+    "meaning_ja": "赤",
+    "example_ja": "ここに素晴らしい赤が見えます。",
+    "meaning_vi": "Màu đỏ",
+    "example_vi": "Tôi thấy một màu đỏ tuyệt vời ở đây.",
+    "meaning_hi": "लाल",
+    "example_hi": "मुझे यहां एक अद्भुत लाल रंग दिखाई दे रहा है।"
   },
   {
     "id": 629,
@@ -11949,7 +15717,13 @@ const wordList500 = [
     "meaning_fr": "bleu",
     "meaningFr": "bleu",
     "example_fr": "Le ciel est bleu.",
-    "exampleFr": "Le ciel est bleu."
+    "exampleFr": "Le ciel est bleu.",
+    "meaning_ja": "青",
+    "example_ja": "ここで素晴らしい青が見えます。",
+    "meaning_vi": "Màu xanh da trời",
+    "example_vi": "Tôi thấy ở đây một màu xanh tuyệt vời.",
+    "meaning_hi": "नीला",
+    "example_hi": "मुझे यहां एक अद्भुत नीला रंग दिखाई देता है।"
   },
   {
     "id": 630,
@@ -11968,7 +15742,13 @@ const wordList500 = [
     "meaning_fr": "jaune",
     "meaningFr": "jaune",
     "example_fr": "Les bananes sont jaunes.",
-    "exampleFr": "Les bananes sont jaunes."
+    "exampleFr": "Les bananes sont jaunes.",
+    "meaning_ja": "黄色",
+    "example_ja": "ここで素晴らしい黄色が見えます。",
+    "meaning_vi": "Màu vàng",
+    "example_vi": "Tôi thấy một màu vàng tuyệt vời ở đây.",
+    "meaning_hi": "पीला",
+    "example_hi": "मुझे यहां एक अद्भुत पीला रंग दिखाई देता है।"
   },
   {
     "id": 631,
@@ -11987,7 +15767,13 @@ const wordList500 = [
     "meaning_fr": "vert",
     "meaningFr": "vert",
     "example_fr": "Les feuilles sont vertes.",
-    "exampleFr": "Les feuilles sont vertes."
+    "exampleFr": "Les feuilles sont vertes.",
+    "meaning_ja": "緑",
+    "example_ja": "ここには素晴らしい緑が見えます。",
+    "meaning_vi": "Màu xanh lá",
+    "example_vi": "Tôi thấy ở đây một màu xanh tuyệt vời.",
+    "meaning_hi": "हरा",
+    "example_hi": "मुझे यहां अद्भुत हरियाली दिखाई देती है।"
   },
   {
     "id": 632,
@@ -12006,7 +15792,13 @@ const wordList500 = [
     "meaning_fr": "noir",
     "meaningFr": "noir",
     "example_fr": "Le chat est noir.",
-    "exampleFr": "Le chat est noir."
+    "exampleFr": "Le chat est noir.",
+    "meaning_ja": "黒",
+    "example_ja": "ここに素晴らしい黒が見えます。",
+    "meaning_vi": "Đen",
+    "example_vi": "Tôi thấy một màu đen tuyệt vời ở đây.",
+    "meaning_hi": "काला",
+    "example_hi": "मुझे यहाँ एक अद्भुत काला दिखाई देता है।"
   },
   {
     "id": 633,
@@ -12025,7 +15817,13 @@ const wordList500 = [
     "meaning_fr": "blanc",
     "meaningFr": "blanc",
     "example_fr": "Les yeux sont blancs.",
-    "exampleFr": "Les yeux sont blancs."
+    "exampleFr": "Les yeux sont blancs.",
+    "meaning_ja": "白",
+    "example_ja": "ここに素晴らしい白が見えます。",
+    "meaning_vi": "Trắng",
+    "example_vi": "Tôi thấy một màu trắng tuyệt vời ở đây.",
+    "meaning_hi": "सफ़ेद",
+    "example_hi": "मुझे यहां एक अद्भुत सफेद रंग दिखाई देता है।"
   },
   {
     "id": 634,
@@ -12044,7 +15842,13 @@ const wordList500 = [
     "meaning_fr": "rose",
     "meaningFr": "rose",
     "example_fr": "Les fleurs sont roses.",
-    "exampleFr": "Les fleurs sont roses."
+    "exampleFr": "Les fleurs sont roses.",
+    "meaning_ja": "ピンク",
+    "example_ja": "ここで素晴らしいピンクが見えます。",
+    "meaning_vi": "Hồng",
+    "example_vi": "Tôi thấy một màu hồng tuyệt vời ở đây.",
+    "meaning_hi": "गुलाबी",
+    "example_hi": "मुझे यहां एक अद्भुत गुलाबी रंग दिखाई दे रहा है।"
   },
   {
     "id": 635,
@@ -12063,7 +15867,13 @@ const wordList500 = [
     "meaning_fr": "violet",
     "meaningFr": "violet",
     "example_fr": "Les raisins sont violets.",
-    "exampleFr": "Les raisins sont violets."
+    "exampleFr": "Les raisins sont violets.",
+    "meaning_ja": "紫",
+    "example_ja": "ここで素晴らしい紫が見えます。",
+    "meaning_vi": "Màu tím",
+    "example_vi": "Tôi thấy ở đây một màu tím tuyệt vời.",
+    "meaning_hi": "बैंगनी",
+    "example_hi": "मुझे यहां एक अद्भुत बैंगनी रंग दिखाई देता है।"
   },
   {
     "id": 636,
@@ -12082,7 +15892,13 @@ const wordList500 = [
     "meaning_fr": "un / 1",
     "meaningFr": "un / 1",
     "example_fr": "J'ai un livre.",
-    "exampleFr": "J'ai un livre."
+    "exampleFr": "J'ai un livre.",
+    "meaning_ja": "1つ",
+    "example_ja": "ここで素晴らしいものを見ました。",
+    "meaning_vi": "Một",
+    "example_vi": "Tôi thấy một điều tuyệt vời ở đây.",
+    "meaning_hi": "एक",
+    "example_hi": "मैं यहाँ एक अद्भुत चीज़ देख रहा हूँ।"
   },
   {
     "id": 637,
@@ -12101,7 +15917,13 @@ const wordList500 = [
     "meaning_fr": "deux / 2",
     "meaningFr": "deux / 2",
     "example_fr": "Je vois deux chats.",
-    "exampleFr": "Je vois deux chats."
+    "exampleFr": "Je vois deux chats.",
+    "meaning_ja": "二",
+    "example_ja": "ここで素晴らしい二人を見ました。",
+    "meaning_vi": "Hai",
+    "example_vi": "Tôi thấy có hai điều tuyệt vời ở đây.",
+    "meaning_hi": "दो",
+    "example_hi": "मुझे यहां दो अद्भुत चीजें दिख रही हैं।"
   },
   {
     "id": 638,
@@ -12120,7 +15942,13 @@ const wordList500 = [
     "meaning_fr": "trois / 3",
     "meaningFr": "trois / 3",
     "example_fr": "Il y a trois pommes.",
-    "exampleFr": "Il y a trois pommes."
+    "exampleFr": "Il y a trois pommes.",
+    "meaning_ja": "三つ",
+    "example_ja": "ここには素晴らしい3人がいます。",
+    "meaning_vi": "Ba",
+    "example_vi": "Tôi thấy bộ ba tuyệt vời ở đây.",
+    "meaning_hi": "तीन",
+    "example_hi": "मैं यहाँ एक अद्भुत तीन देख रहा हूँ।"
   },
   {
     "id": 639,
@@ -12139,7 +15967,13 @@ const wordList500 = [
     "meaning_fr": "quatre / 4",
     "meaningFr": "quatre / 4",
     "example_fr": "Les chiens ont quatre pattes.",
-    "exampleFr": "Les chiens ont quatre pattes."
+    "exampleFr": "Les chiens ont quatre pattes.",
+    "meaning_ja": "4",
+    "example_ja": "ここには素晴らしい4人がいます。",
+    "meaning_vi": "bốn",
+    "example_vi": "Tôi thấy bốn người tuyệt vời ở đây.",
+    "meaning_hi": "चार",
+    "example_hi": "मुझे यहां एक अद्भुत चार दिख रहा है।"
   },
   {
     "id": 640,
@@ -12158,7 +15992,13 @@ const wordList500 = [
     "meaning_fr": "cinq / 5",
     "meaningFr": "cinq / 5",
     "example_fr": "J'ai cinq doigts.",
-    "exampleFr": "J'ai cinq doigts."
+    "exampleFr": "J'ai cinq doigts.",
+    "meaning_ja": "五",
+    "example_ja": "ここには素晴らしい5が見えます。",
+    "meaning_vi": "Năm",
+    "example_vi": "Tôi thấy số 5 tuyệt vời ở đây.",
+    "meaning_hi": "पाँच",
+    "example_hi": "मुझे यहां एक अद्भुत पांच दिख रहा है।"
   },
   {
     "id": 641,
@@ -12177,7 +16017,13 @@ const wordList500 = [
     "meaning_fr": "chaleur / 10",
     "meaningFr": "chaleur / 10",
     "example_fr": "Comptez jusqu'à dix.",
-    "exampleFr": "Comptez jusqu'à dix."
+    "exampleFr": "Comptez jusqu'à dix.",
+    "meaning_ja": "10",
+    "example_ja": "ここには素晴らしい10が見えます。",
+    "meaning_vi": "mười",
+    "example_vi": "Tôi thấy một con số mười tuyệt vời ở đây.",
+    "meaning_hi": "दस",
+    "example_hi": "मैं यहाँ एक अद्भुत दस देख रहा हूँ।"
   },
   {
     "id": 642,
@@ -12196,7 +16042,13 @@ const wordList500 = [
     "meaning_fr": "chiffres",
     "meaningFr": "chiffres",
     "example_fr": "Écrivez le numéro ici.",
-    "exampleFr": "Écrivez le numéro ici."
+    "exampleFr": "Écrivez le numéro ici.",
+    "meaning_ja": "番号",
+    "example_ja": "ここで素晴らしい数字を目にしました。",
+    "meaning_vi": "Con số",
+    "example_vi": "Tôi thấy một con số tuyệt vời ở đây.",
+    "meaning_hi": "संख्या",
+    "example_hi": "मुझे यहां एक अद्भुत संख्या दिखाई दे रही है।"
   },
   {
     "id": 643,
@@ -12215,7 +16067,13 @@ const wordList500 = [
     "meaning_fr": "marron",
     "meaningFr": "marron",
     "example_fr": "Je vois une jolie couleur marron.",
-    "exampleFr": "Je vois une jolie couleur marron."
+    "exampleFr": "Je vois une jolie couleur marron.",
+    "meaning_ja": "茶色",
+    "example_ja": "ここに素晴らしい茶色が見えます。",
+    "meaning_vi": "Màu nâu",
+    "example_vi": "Tôi thấy một màu nâu tuyệt vời ở đây.",
+    "meaning_hi": "भूरा",
+    "example_hi": "मुझे यहां एक अद्भुत भूरा रंग दिख रहा है।"
   },
   {
     "id": 644,
@@ -12234,7 +16092,13 @@ const wordList500 = [
     "meaning_fr": "gris",
     "meaningFr": "gris",
     "example_fr": "Je vois une belle couleur grise.",
-    "exampleFr": "Je vois une belle couleur grise."
+    "exampleFr": "Je vois une belle couleur grise.",
+    "meaning_ja": "グレー",
+    "example_ja": "ここには素晴らしい灰色が見えます。",
+    "meaning_vi": "Xám",
+    "example_vi": "Tôi thấy một màu xám tuyệt vời ở đây.",
+    "meaning_hi": "स्लेटी",
+    "example_hi": "मुझे यहां एक अद्भुत ग्रे रंग दिखाई दे रहा है।"
   },
   {
     "id": 645,
@@ -12253,7 +16117,13 @@ const wordList500 = [
     "meaning_fr": "six",
     "meaningFr": "six",
     "example_fr": "Je regarde les six merveilleux.",
-    "exampleFr": "Je regarde les six merveilleux."
+    "exampleFr": "Je regarde les six merveilleux.",
+    "meaning_ja": "六",
+    "example_ja": "ここに素晴らしい6が見えます。",
+    "meaning_vi": "Sáu",
+    "example_vi": "Tôi thấy số sáu tuyệt vời ở đây.",
+    "meaning_hi": "छह",
+    "example_hi": "मुझे यहां एक अद्भुत छक्का दिख रहा है."
   },
   {
     "id": 646,
@@ -12272,7 +16142,13 @@ const wordList500 = [
     "meaning_fr": "sept",
     "meaningFr": "sept",
     "example_fr": "Je regarde Les Sept Fabuleux.",
-    "exampleFr": "Je regarde Les Sept Fabuleux."
+    "exampleFr": "Je regarde Les Sept Fabuleux.",
+    "meaning_ja": "セブン",
+    "example_ja": "ここに素晴らしいセブンが見えます。",
+    "meaning_vi": "bảy",
+    "example_vi": "Tôi thấy số bảy tuyệt vời ở đây.",
+    "meaning_hi": "सात",
+    "example_hi": "मुझे यहां एक अद्भुत सात दिख रहा है।"
   },
   {
     "id": 647,
@@ -12291,7 +16167,13 @@ const wordList500 = [
     "meaning_fr": "huit",
     "meaningFr": "huit",
     "example_fr": "Je regarde Fabulous Eight.",
-    "exampleFr": "Je regarde Fabulous Eight."
+    "exampleFr": "Je regarde Fabulous Eight.",
+    "meaning_ja": "八",
+    "example_ja": "ここには素晴らしい8が見えます。",
+    "meaning_vi": "Tám",
+    "example_vi": "Tôi thấy số tám tuyệt vời ở đây.",
+    "meaning_hi": "आठ",
+    "example_hi": "मुझे यहां एक अद्भुत आठ दिख रहा है।"
   },
   {
     "id": 648,
@@ -12310,7 +16192,13 @@ const wordList500 = [
     "meaning_fr": "neuf",
     "meaningFr": "neuf",
     "example_fr": "Je regarde le merveilleux neuf.",
-    "exampleFr": "Je regarde le merveilleux neuf."
+    "exampleFr": "Je regarde le merveilleux neuf.",
+    "meaning_ja": "九",
+    "example_ja": "ここに素晴らしいナインが見えます。",
+    "meaning_vi": "Chín",
+    "example_vi": "Tôi thấy số chín tuyệt vời ở đây.",
+    "meaning_hi": "नौ",
+    "example_hi": "मैं यहां एक अद्भुत नौ देख रहा हूं।"
   },
   {
     "id": 649,
@@ -12329,7 +16217,13 @@ const wordList500 = [
     "meaning_fr": "bleu marine",
     "meaningFr": "bleu marine",
     "example_fr": "Mon uniforme scolaire est bleu marine.",
-    "exampleFr": "Mon uniforme scolaire est bleu marine."
+    "exampleFr": "Mon uniforme scolaire est bleu marine.",
+    "meaning_ja": "海軍",
+    "example_ja": "ここで素晴らしい海軍を見ました。",
+    "meaning_vi": "hải quân",
+    "example_vi": "Tôi thấy một lực lượng hải quân tuyệt vời ở đây.",
+    "meaning_hi": "नौसेना",
+    "example_hi": "मैं यहाँ एक अद्भुत नौसेना देखता हूँ।"
   },
   {
     "id": 650,
@@ -12348,7 +16242,13 @@ const wordList500 = [
     "meaning_fr": "beige",
     "meaningFr": "beige",
     "example_fr": "Les murs sont beiges.",
-    "exampleFr": "Les murs sont beiges."
+    "exampleFr": "Les murs sont beiges.",
+    "meaning_ja": "ベージュ",
+    "example_ja": "ここに素晴らしいベージュが見えます。",
+    "meaning_vi": "Be",
+    "example_vi": "Tôi thấy một màu be tuyệt vời ở đây.",
+    "meaning_hi": "बेज",
+    "example_hi": "मुझे यहां एक अद्भुत बेज रंग दिखाई देता है।"
   },
   {
     "id": 651,
@@ -12367,7 +16267,13 @@ const wordList500 = [
     "meaning_fr": "douze",
     "meaningFr": "douze",
     "example_fr": "Nous avons acheté une douzaine d'œufs.",
-    "exampleFr": "Nous avons acheté une douzaine d'œufs."
+    "exampleFr": "Nous avons acheté une douzaine d'œufs.",
+    "meaning_ja": "ダース",
+    "example_ja": "ここには素晴らしいダースが見えます。",
+    "meaning_vi": "chục",
+    "example_vi": "Tôi thấy có hàng tá điều tuyệt vời ở đây.",
+    "meaning_hi": "दर्जन",
+    "example_hi": "मैं यहाँ एक अद्भुत दर्जन देख रहा हूँ।"
   },
   {
     "id": 652,
@@ -12386,7 +16292,13 @@ const wordList500 = [
     "meaning_fr": "la moitié",
     "meaningFr": "la moitié",
     "example_fr": "J'ai mangé la moitié de la pizza.",
-    "exampleFr": "J'ai mangé la moitié de la pizza."
+    "exampleFr": "J'ai mangé la moitié de la pizza.",
+    "meaning_ja": "半分",
+    "example_ja": "ここには素晴らしい半分が見えます。",
+    "meaning_vi": "Một nửa",
+    "example_vi": "Tôi thấy một nửa tuyệt vời ở đây.",
+    "meaning_hi": "आधा",
+    "example_hi": "मुझे यहां एक अद्भुत आधा भाग दिखाई देता है।"
   },
   {
     "id": 653,
@@ -12405,7 +16317,13 @@ const wordList500 = [
     "meaning_fr": "un quart",
     "meaningFr": "un quart",
     "example_fr": "Coupez la pomme en quatre morceaux.",
-    "exampleFr": "Coupez la pomme en quatre morceaux."
+    "exampleFr": "Coupez la pomme en quatre morceaux.",
+    "meaning_ja": "四半期",
+    "example_ja": "ここに素晴らしい地区が見えます。",
+    "meaning_vi": "Một phần tư",
+    "example_vi": "Tôi thấy một phần tư tuyệt vời ở đây.",
+    "meaning_hi": "तिमाही",
+    "example_hi": "मुझे यहां एक अद्भुत क्वार्टर दिखाई देता है।"
   },
   {
     "id": 654,
@@ -12424,7 +16342,13 @@ const wordList500 = [
     "meaning_fr": "trois fois",
     "meaningFr": "trois fois",
     "example_fr": "Le prix est désormais trois fois plus élevé.",
-    "exampleFr": "Le prix est désormais trois fois plus élevé."
+    "exampleFr": "Le prix est désormais trois fois plus élevé.",
+    "meaning_ja": "トリプル",
+    "example_ja": "ここに素晴らしいトリプルが見えます。",
+    "meaning_vi": "gấp ba",
+    "example_vi": "Tôi thấy một bộ ba tuyệt vời ở đây.",
+    "meaning_hi": "ट्रिपल",
+    "example_hi": "मुझे यहां एक अद्भुत त्रिक दिखाई देता है।"
   },
   {
     "id": 655,
@@ -12443,7 +16367,13 @@ const wordList500 = [
     "meaning_fr": "millions",
     "meaningFr": "millions",
     "example_fr": "D'innombrables étoiles brillent la nuit.",
-    "exampleFr": "D'innombrables étoiles brillent la nuit."
+    "exampleFr": "D'innombrables étoiles brillent la nuit.",
+    "meaning_ja": "百万",
+    "example_ja": "ここには素晴らしい百万が見えます。",
+    "meaning_vi": "Triệu",
+    "example_vi": "Tôi thấy một triệu tuyệt vời ở đây.",
+    "meaning_hi": "दस लाख",
+    "example_hi": "मुझे यहां एक अद्भुत मिलियन दिखाई दे रहा है।"
   },
   {
     "id": 656,
@@ -12462,7 +16392,13 @@ const wordList500 = [
     "meaning_fr": "milliards",
     "meaningFr": "milliards",
     "example_fr": "La Terre a des milliards d'années.",
-    "exampleFr": "La Terre a des milliards d'années."
+    "exampleFr": "La Terre a des milliards d'années.",
+    "meaning_ja": "十億",
+    "example_ja": "ここには素晴らしい10億ドルが見えます。",
+    "meaning_vi": "tỷ",
+    "example_vi": "Tôi thấy một tỷ tuyệt vời ở đây.",
+    "meaning_hi": "एक अरब",
+    "example_hi": "मुझे यहां एक अद्भुत अरब दिखाई दे रहा है।"
   },
   {
     "id": 657,
@@ -12481,7 +16417,13 @@ const wordList500 = [
     "meaning_fr": "une paire",
     "meaningFr": "une paire",
     "example_fr": "J'ai besoin d'une nouvelle paire de chaussures.",
-    "exampleFr": "J'ai besoin d'une nouvelle paire de chaussures."
+    "exampleFr": "J'ai besoin d'une nouvelle paire de chaussures.",
+    "meaning_ja": "ペア",
+    "example_ja": "ここで素晴らしいペアを見ました。",
+    "meaning_vi": "Đôi",
+    "example_vi": "Tôi thấy một cặp tuyệt vời ở đây.",
+    "meaning_hi": "जोड़ा",
+    "example_hi": "मुझे यहां एक अद्भुत जोड़ी दिख रही है."
   },
   {
     "id": 658,
@@ -12500,7 +16442,13 @@ const wordList500 = [
     "meaning_fr": "pointe",
     "meaningFr": "pointe",
     "example_fr": "Mettez un point ici.",
-    "exampleFr": "Mettez un point ici."
+    "exampleFr": "Mettez un point ici.",
+    "meaning_ja": "ドット",
+    "example_ja": "ここに素晴らしい点が見えます。",
+    "meaning_vi": "chấm",
+    "example_vi": "Tôi thấy một dấu chấm tuyệt vời ở đây.",
+    "meaning_hi": "डॉट",
+    "example_hi": "मुझे यहां एक अद्भुत बिंदु दिखाई देता है।"
   },
   {
     "id": 659,
@@ -12519,7 +16467,13 @@ const wordList500 = [
     "meaning_fr": "grand",
     "meaningFr": "grand",
     "example_fr": "J'en vois un beau et gros.",
-    "exampleFr": "J'en vois un beau et gros."
+    "exampleFr": "J'en vois un beau et gros.",
+    "meaning_ja": "大きい",
+    "example_ja": "ここに素晴らしい大きなものが見えます。",
+    "meaning_vi": "To lớn",
+    "example_vi": "Tôi thấy ở đây có một điều tuyệt vời.",
+    "meaning_hi": "बड़ा",
+    "example_hi": "मुझे यहां एक अद्भुत विशाल वस्तु दिखाई दे रही है।"
   },
   {
     "id": 660,
@@ -12538,7 +16492,13 @@ const wordList500 = [
     "meaning_fr": "petit",
     "meaningFr": "petit",
     "example_fr": "Je vois un gentil petit.",
-    "exampleFr": "Je vois un gentil petit."
+    "exampleFr": "Je vois un gentil petit.",
+    "meaning_ja": "小さい",
+    "example_ja": "ここで素晴らしい小さなものを見ました。",
+    "meaning_vi": "Bé nhỏ",
+    "example_vi": "Tôi thấy một điều nhỏ tuyệt vời ở đây.",
+    "meaning_hi": "छोटा",
+    "example_hi": "मुझे यहां एक अद्भुत छोटा सा दृश्य दिखाई देता है।"
   },
   {
     "id": 661,
@@ -12557,7 +16517,13 @@ const wordList500 = [
     "meaning_fr": "haut",
     "meaningFr": "haut",
     "example_fr": "Je vois un joli high.",
-    "exampleFr": "Je vois un joli high."
+    "exampleFr": "Je vois un joli high.",
+    "meaning_ja": "高い",
+    "example_ja": "ここで素晴らしい高みが見えます。",
+    "meaning_vi": "Cao",
+    "example_vi": "Tôi thấy một mức cao tuyệt vời ở đây.",
+    "meaning_hi": "उच्च",
+    "example_hi": "मुझे यहां एक अद्भुत ऊंचाई दिखाई देती है।"
   },
   {
     "id": 662,
@@ -12576,7 +16542,13 @@ const wordList500 = [
     "meaning_fr": "faible",
     "meaningFr": "faible",
     "example_fr": "Je vois un joli creux.",
-    "exampleFr": "Je vois un joli creux."
+    "exampleFr": "Je vois un joli creux.",
+    "meaning_ja": "低い",
+    "example_ja": "ここで素晴らしい低気圧が見えます。",
+    "meaning_vi": "Thấp",
+    "example_vi": "Tôi thấy một mức thấp tuyệt vời ở đây.",
+    "meaning_hi": "कम",
+    "example_hi": "मुझे यहाँ एक अद्भुत निचला भाग दिखाई देता है।"
   },
   {
     "id": 663,
@@ -12595,7 +16567,13 @@ const wordList500 = [
     "meaning_fr": "rapide",
     "meaningFr": "rapide",
     "example_fr": "Je regarde bien vite.",
-    "exampleFr": "Je regarde bien vite."
+    "exampleFr": "Je regarde bien vite.",
+    "meaning_ja": "速い",
+    "example_ja": "ここで素晴らしい速さを見ました。",
+    "meaning_vi": "Nhanh",
+    "example_vi": "Tôi thấy ở đây có một sự kiêng ăn tuyệt vời.",
+    "meaning_hi": "तेज़",
+    "example_hi": "मुझे यहां एक अद्भुत व्रत दिख रहा है."
   },
   {
     "id": 664,
@@ -12614,7 +16592,13 @@ const wordList500 = [
     "meaning_fr": "lent",
     "meaningFr": "lent",
     "example_fr": "Je regarde bien lentement.",
-    "exampleFr": "Je regarde bien lentement."
+    "exampleFr": "Je regarde bien lentement.",
+    "meaning_ja": "遅い",
+    "example_ja": "ここで素晴らしいスローを見ます。",
+    "meaning_vi": "Chậm",
+    "example_vi": "Tôi thấy một sự chậm rãi tuyệt vời ở đây.",
+    "meaning_hi": "धीमा",
+    "example_hi": "मैं यहां एक अद्भुत धीमी गति देख रहा हूं।"
   },
   {
     "id": 665,
@@ -12633,7 +16617,13 @@ const wordList500 = [
     "meaning_fr": "chaud",
     "meaningFr": "chaud",
     "example_fr": "Je regarde merveilleusement chaud.",
-    "exampleFr": "Je regarde merveilleusement chaud."
+    "exampleFr": "Je regarde merveilleusement chaud.",
+    "meaning_ja": "熱い",
+    "example_ja": "ここで素晴らしいホットを見ます。",
+    "meaning_vi": "Nóng",
+    "example_vi": "Tôi thấy ở đây nóng tuyệt vời.",
+    "meaning_hi": "गर्म",
+    "example_hi": "मुझे यहाँ एक अद्भुत हॉट चीज़ दिख रही है।"
   },
   {
     "id": 666,
@@ -12652,7 +16642,13 @@ const wordList500 = [
     "meaning_fr": "froid",
     "meaningFr": "froid",
     "example_fr": "Je regarde le froid froid.",
-    "exampleFr": "Je regarde le froid froid."
+    "exampleFr": "Je regarde le froid froid.",
+    "meaning_ja": "寒い",
+    "example_ja": "ここで素晴らしい風邪が見られます。",
+    "meaning_vi": "Lạnh lẽo",
+    "example_vi": "Tôi thấy ở đây cái lạnh tuyệt vời.",
+    "meaning_hi": "ठंडा",
+    "example_hi": "मुझे यहां अद्भुत ठंड दिख रही है."
   },
   {
     "id": 667,
@@ -12671,7 +16667,13 @@ const wordList500 = [
     "meaning_fr": "chaud",
     "meaningFr": "chaud",
     "example_fr": "Je vois bien chaud.",
-    "exampleFr": "Je vois bien chaud."
+    "exampleFr": "Je vois bien chaud.",
+    "meaning_ja": "暖かい",
+    "example_ja": "ここで素晴らしい暖かさを目にします。",
+    "meaning_vi": "Ấm",
+    "example_vi": "Tôi thấy ở đây có sự ấm áp tuyệt vời.",
+    "meaning_hi": "गरम",
+    "example_hi": "मुझे यहां अद्भुत गर्मी दिख रही है।"
   },
   {
     "id": 668,
@@ -12690,7 +16692,13 @@ const wordList500 = [
     "meaning_fr": "cool",
     "meaningFr": "cool",
     "example_fr": "Je regarde cool cool.",
-    "exampleFr": "Je regarde cool cool."
+    "exampleFr": "Je regarde cool cool.",
+    "meaning_ja": "いいね",
+    "example_ja": "ここに素晴らしい涼しさを感じます。",
+    "meaning_vi": "Mát mẻ",
+    "example_vi": "Tôi thấy ở đây có một sự mát mẻ tuyệt vời.",
+    "meaning_hi": "ठंडा",
+    "example_hi": "मुझे यहाँ एक अद्भुत शीतलता दिखाई देती है।"
   },
   {
     "id": 669,
@@ -12709,7 +16717,13 @@ const wordList500 = [
     "meaning_fr": "bien",
     "meaningFr": "bien",
     "example_fr": "Je vois un bien merveilleux.",
-    "exampleFr": "Je vois un bien merveilleux."
+    "exampleFr": "Je vois un bien merveilleux.",
+    "meaning_ja": "良い",
+    "example_ja": "私はここに素晴らしいものを見ました。",
+    "meaning_vi": "Tốt",
+    "example_vi": "Tôi thấy ở đây có một điều tốt đẹp tuyệt vời.",
+    "meaning_hi": "अच्छा",
+    "example_hi": "मुझे यहाँ एक अद्भुत वस्तु दिखाई देती है।"
   },
   {
     "id": 670,
@@ -12728,7 +16742,13 @@ const wordList500 = [
     "meaning_fr": "mauvais",
     "meaningFr": "mauvais",
     "example_fr": "Je regarde Awesome Bad.",
-    "exampleFr": "Je regarde Awesome Bad."
+    "exampleFr": "Je regarde Awesome Bad.",
+    "meaning_ja": "悪い",
+    "example_ja": "私はここに素晴らしい悪いものを見ました。",
+    "meaning_vi": "Xấu",
+    "example_vi": "Tôi thấy một điều tồi tệ tuyệt vời ở đây.",
+    "meaning_hi": "खराब",
+    "example_hi": "मैं यहां एक अद्भुत बुराई देख रहा हूं।"
   },
   {
     "id": 671,
@@ -12747,7 +16767,13 @@ const wordList500 = [
     "meaning_fr": "nouveau",
     "meaningFr": "nouveau",
     "example_fr": "J'en vois un nouveau sympa.",
-    "exampleFr": "J'en vois un nouveau sympa."
+    "exampleFr": "J'en vois un nouveau sympa.",
+    "meaning_ja": "新しい",
+    "example_ja": "ここで素晴らしい新しいものを見ました。",
+    "meaning_vi": "Mới",
+    "example_vi": "Tôi thấy một điều mới tuyệt vời ở đây.",
+    "meaning_hi": "नया",
+    "example_hi": "मैं यहां एक अद्भुत नई चीज़ देख रहा हूं।"
   },
   {
     "id": 672,
@@ -12766,7 +16792,13 @@ const wordList500 = [
     "meaning_fr": "vieux",
     "meaningFr": "vieux",
     "example_fr": "Je regarde le vieux cool.",
-    "exampleFr": "Je regarde le vieux cool."
+    "exampleFr": "Je regarde le vieux cool.",
+    "meaning_ja": "古い",
+    "example_ja": "私はここに素晴らしい老人を見ました。",
+    "meaning_vi": "Cũ",
+    "example_vi": "Tôi thấy một người già tuyệt vời ở đây.",
+    "meaning_hi": "पुराना",
+    "example_hi": "मुझे यहां एक अद्भुत पुराना दृश्य दिखाई देता है।"
   },
   {
     "id": 673,
@@ -12785,7 +16817,13 @@ const wordList500 = [
     "meaning_fr": "jeune",
     "meaningFr": "jeune",
     "example_fr": "Je vois un jeune homme merveilleux.",
-    "exampleFr": "Je vois un jeune homme merveilleux."
+    "exampleFr": "Je vois un jeune homme merveilleux.",
+    "meaning_ja": "若い",
+    "example_ja": "ここで素晴らしい若者を見かけました。",
+    "meaning_vi": "Trẻ",
+    "example_vi": "Tôi thấy một người trẻ tuyệt vời ở đây.",
+    "meaning_hi": "युवा",
+    "example_hi": "मैं यहां एक अद्भुत युवा को देख रहा हूं।"
   },
   {
     "id": 674,
@@ -12804,7 +16842,13 @@ const wordList500 = [
     "meaning_fr": "mignon",
     "meaningFr": "mignon",
     "example_fr": "J'ai l'air cool et mignon.",
-    "exampleFr": "J'ai l'air cool et mignon."
+    "exampleFr": "J'ai l'air cool et mignon.",
+    "meaning_ja": "かわいい",
+    "example_ja": "私はここで素晴らしいかわいいものを見ます。",
+    "meaning_vi": "Dễ thương",
+    "example_vi": "Tôi thấy một sự dễ thương tuyệt vời ở đây.",
+    "meaning_hi": "प्यारा",
+    "example_hi": "मैं यहाँ एक अद्भुत प्यारा देख रहा हूँ।"
   },
   {
     "id": 675,
@@ -12823,7 +16867,13 @@ const wordList500 = [
     "meaning_fr": "cool",
     "meaningFr": "cool",
     "example_fr": "Je regarde génial génial.",
-    "exampleFr": "Je regarde génial génial."
+    "exampleFr": "Je regarde génial génial.",
+    "meaning_ja": "ニース",
+    "example_ja": "ここに素晴らしい素敵なものが見えます。",
+    "meaning_vi": "Đẹp",
+    "example_vi": "Tôi thấy ở đây có một điều tuyệt vời.",
+    "meaning_hi": "अच्छा",
+    "example_hi": "मैं यहाँ एक अद्भुत वस्तु देख रहा हूँ।"
   },
   {
     "id": 676,
@@ -12842,7 +16892,13 @@ const wordList500 = [
     "meaning_fr": "prix",
     "meaningFr": "prix",
     "example_fr": "Je vois un bon prix.",
-    "exampleFr": "Je vois un bon prix."
+    "exampleFr": "Je vois un bon prix.",
+    "meaning_ja": "価格",
+    "example_ja": "ここで素晴らしい価格を見つけました。",
+    "meaning_vi": "Giá",
+    "example_vi": "Tôi thấy một mức giá tuyệt vời ở đây.",
+    "meaning_hi": "कीमत",
+    "example_hi": "मुझे यहां एक अद्भुत कीमत दिख रही है।"
   },
   {
     "id": 677,
@@ -12861,7 +16917,13 @@ const wordList500 = [
     "meaning_fr": "coût",
     "meaningFr": "coût",
     "example_fr": "Je vois un coût merveilleux.",
-    "exampleFr": "Je vois un coût merveilleux."
+    "exampleFr": "Je vois un coût merveilleux.",
+    "meaning_ja": "料金",
+    "example_ja": "ここで素晴らしいコストが発生していることがわかります。",
+    "meaning_vi": "Trị giá",
+    "example_vi": "Tôi thấy một chi phí tuyệt vời ở đây.",
+    "meaning_hi": "लागत",
+    "example_hi": "मुझे यहां एक अद्भुत लागत दिख रही है।"
   },
   {
     "id": 678,
@@ -12880,7 +16942,13 @@ const wordList500 = [
     "meaning_fr": "peu profond",
     "meaningFr": "peu profond",
     "example_fr": "Cette eau est peu profonde.",
-    "exampleFr": "Cette eau est peu profonde."
+    "exampleFr": "Cette eau est peu profonde.",
+    "meaning_ja": "浅い",
+    "example_ja": "ここには素晴らしい浅瀬が見えます。",
+    "meaning_vi": "Nông",
+    "example_vi": "Tôi thấy ở đây có một vùng nước nông tuyệt vời.",
+    "meaning_hi": "उथला",
+    "example_hi": "मुझे यहां एक अद्भुत उथलापन दिखाई देता है।"
   },
   {
     "id": 679,
@@ -12899,7 +16967,13 @@ const wordList500 = [
     "meaning_fr": "droit, droit",
     "meaningFr": "droit, droit",
     "example_fr": "Tracez une ligne droite.",
-    "exampleFr": "Tracez une ligne droite."
+    "exampleFr": "Tracez une ligne droite.",
+    "meaning_ja": "真っ直ぐ",
+    "example_ja": "ここに素晴らしいストレートが見えます。",
+    "meaning_vi": "Thẳng",
+    "example_vi": "Tôi thấy một điều tuyệt vời ở đây.",
+    "meaning_hi": "सीधा",
+    "example_hi": "मैं यहाँ एक अद्भुत सीधी रेखा देखता हूँ।"
   },
   {
     "id": 680,
@@ -12918,7 +16992,13 @@ const wordList500 = [
     "meaning_fr": "plié",
     "meaningFr": "plié",
     "example_fr": "La route est courbe.",
-    "exampleFr": "La route est courbe."
+    "exampleFr": "La route est courbe.",
+    "meaning_ja": "湾曲した",
+    "example_ja": "ここに素晴らしい曲線が見えます。",
+    "meaning_vi": "cong",
+    "example_vi": "Tôi thấy một đường cong tuyệt vời ở đây.",
+    "meaning_hi": "मुड़ा हुआ",
+    "example_hi": "मुझे यहाँ एक अद्भुत वक्र दिखाई देता है।"
   },
   {
     "id": 681,
@@ -12937,7 +17017,13 @@ const wordList500 = [
     "meaning_fr": "carré",
     "meaningFr": "carré",
     "example_fr": "La boîte est carrée.",
-    "exampleFr": "La boîte est carrée."
+    "exampleFr": "La boîte est carrée.",
+    "meaning_ja": "四角",
+    "example_ja": "ここに素晴らしい広場が見えます。",
+    "meaning_vi": "Quảng trường",
+    "example_vi": "Tôi thấy một quảng trường tuyệt vời ở đây.",
+    "meaning_hi": "वर्ग",
+    "example_hi": "मुझे यहाँ एक अद्भुत चौराहा दिखाई देता है।"
   },
   {
     "id": 682,
@@ -12956,7 +17042,13 @@ const wordList500 = [
     "meaning_fr": "rond",
     "meaningFr": "rond",
     "example_fr": "Le ballon est rond.",
-    "exampleFr": "Le ballon est rond."
+    "exampleFr": "Le ballon est rond.",
+    "meaning_ja": "ラウンド",
+    "example_ja": "ここで素晴らしいラウンドが見られます。",
+    "meaning_vi": "Tròn",
+    "example_vi": "Tôi thấy một vòng tuyệt vời ở đây.",
+    "meaning_hi": "गोल",
+    "example_hi": "मैं यहां एक अद्भुत दौर देख रहा हूं।"
   },
   {
     "id": 683,
@@ -12975,7 +17067,13 @@ const wordList500 = [
     "meaning_fr": "faible",
     "meaningFr": "faible",
     "example_fr": "Le chaton est encore faible.",
-    "exampleFr": "Le chaton est encore faible."
+    "exampleFr": "Le chaton est encore faible.",
+    "meaning_ja": "弱い",
+    "example_ja": "私はここに素晴らしい弱者を見ました。",
+    "meaning_vi": "Yếu đuối",
+    "example_vi": "Tôi thấy một điểm yếu tuyệt vời ở đây.",
+    "meaning_hi": "कमज़ोर",
+    "example_hi": "मैं यहाँ एक अद्भुत कमज़ोर व्यक्ति को देखता हूँ।"
   },
   {
     "id": 684,
@@ -12994,7 +17092,13 @@ const wordList500 = [
     "meaning_fr": "fermé",
     "meaningFr": "fermé",
     "example_fr": "Le magasin est fermé aujourd'hui.",
-    "exampleFr": "Le magasin est fermé aujourd'hui."
+    "exampleFr": "Le magasin est fermé aujourd'hui.",
+    "meaning_ja": "閉店",
+    "example_ja": "ここで素晴らしい閉店が見られます。",
+    "meaning_vi": "Đã đóng",
+    "example_vi": "Tôi thấy một sự đóng cửa tuyệt vời ở đây.",
+    "meaning_hi": "बंद किया हुआ",
+    "example_hi": "मैं यहाँ एक अद्भुत बंद देखता हूँ।"
   },
   {
     "id": 685,
@@ -13013,7 +17117,13 @@ const wordList500 = [
     "meaning_fr": "collant",
     "meaningFr": "collant",
     "example_fr": "Mes mains sont collantes.",
-    "exampleFr": "Mes mains sont collantes."
+    "exampleFr": "Mes mains sont collantes.",
+    "meaning_ja": "粘着質",
+    "example_ja": "ここに素晴らしいスティッキーが見えます。",
+    "meaning_vi": "dính",
+    "example_vi": "Tôi thấy một chất dính tuyệt vời ở đây.",
+    "meaning_hi": "चिपचिपा",
+    "example_hi": "मुझे यहां एक अद्भुत चिपचिपाहट दिख रही है।"
   },
   {
     "id": 686,
@@ -13032,7 +17142,13 @@ const wordList500 = [
     "meaning_fr": "moelleux, moelleux",
     "meaningFr": "moelleux, moelleux",
     "example_fr": "Le chiot est moelleux.",
-    "exampleFr": "Le chiot est moelleux."
+    "exampleFr": "Le chiot est moelleux.",
+    "meaning_ja": "ふわふわ",
+    "example_ja": "ここで素晴らしいふわふわを見ます。",
+    "meaning_vi": "mịn màng",
+    "example_vi": "Tôi thấy ở đây có một lớp lông tơ tuyệt vời.",
+    "meaning_hi": "रोएँदार",
+    "example_hi": "मुझे यहां एक अद्भुत शराबी दिख रही है।"
   },
   {
     "id": 687,
@@ -13051,7 +17167,13 @@ const wordList500 = [
     "meaning_fr": "croustillant",
     "meaningFr": "croustillant",
     "example_fr": "Le poulet est croustillant.",
-    "exampleFr": "Le poulet est croustillant."
+    "exampleFr": "Le poulet est croustillant.",
+    "meaning_ja": "サクサク",
+    "example_ja": "ここに素晴らしいクリスピーが見えます。",
+    "meaning_vi": "giòn",
+    "example_vi": "Tôi thấy ở đây giòn tuyệt vời.",
+    "meaning_hi": "खस्ता",
+    "example_hi": "मैं यहाँ एक अद्भुत कुरकुरा देख रहा हूँ।"
   },
   {
     "id": 688,
@@ -13070,7 +17192,13 @@ const wordList500 = [
     "meaning_fr": "salé",
     "meaningFr": "salé",
     "example_fr": "La soupe est trop salée.",
-    "exampleFr": "La soupe est trop salée."
+    "exampleFr": "La soupe est trop salée.",
+    "meaning_ja": "しょっぱい",
+    "example_ja": "ここで素晴らしい塩味を見ました。",
+    "meaning_vi": "mặn",
+    "example_vi": "Tôi thấy ở đây có vị mặn tuyệt vời.",
+    "meaning_hi": "नमकीन",
+    "example_hi": "मुझे यहां एक अद्भुत नमकीन दिख रही है."
   },
   {
     "id": 689,
@@ -13089,7 +17217,13 @@ const wordList500 = [
     "meaning_fr": "épicé",
     "meaningFr": "épicé",
     "example_fr": "Cette soupe est très épicée.",
-    "exampleFr": "Cette soupe est très épicée."
+    "exampleFr": "Cette soupe est très épicée.",
+    "meaning_ja": "辛い",
+    "example_ja": "ここに素晴らしい辛さが見られます。",
+    "meaning_vi": "Cay",
+    "example_vi": "Tôi thấy ở đây có vị cay tuyệt vời.",
+    "meaning_hi": "मसालेदार",
+    "example_hi": "मुझे यहाँ एक अद्भुत मसालेदार चीज़ दिख रही है।"
   },
   {
     "id": 690,
@@ -13108,7 +17242,13 @@ const wordList500 = [
     "meaning_fr": "amer",
     "meaningFr": "amer",
     "example_fr": "J'utilise du café noir.",
-    "exampleFr": "J'utilise du café noir."
+    "exampleFr": "J'utilise du café noir.",
+    "meaning_ja": "苦い",
+    "example_ja": "ここに素晴らしい苦味が見られます。",
+    "meaning_vi": "Vị đắng",
+    "example_vi": "Tôi thấy ở đây có một vị đắng tuyệt vời.",
+    "meaning_hi": "कड़वा",
+    "example_hi": "मैं यहां एक अद्भुत कड़वाहट देख रहा हूं।"
   },
   {
     "id": 691,
@@ -13127,7 +17267,13 @@ const wordList500 = [
     "meaning_fr": "succulente",
     "meaningFr": "succulente",
     "example_fr": "Ces pêches sont juteuses.",
-    "exampleFr": "Ces pêches sont juteuses."
+    "exampleFr": "Ces pêches sont juteuses.",
+    "meaning_ja": "ジューシー",
+    "example_ja": "ここで素晴らしいジューシーが見えます。",
+    "meaning_vi": "Mọng nước",
+    "example_vi": "Tôi thấy nước ngọt tuyệt vời ở đây.",
+    "meaning_hi": "रसदार",
+    "example_hi": "मुझे यहाँ एक अद्भुत रस दिखाई देता है।"
   },
   {
     "id": 692,
@@ -13146,7 +17292,13 @@ const wordList500 = [
     "meaning_fr": "soigné",
     "meaningFr": "soigné",
     "example_fr": "Sa chambre est toujours soignée.",
-    "exampleFr": "Sa chambre est toujours soignée."
+    "exampleFr": "Sa chambre est toujours soignée.",
+    "meaning_ja": "きちんとした",
+    "example_ja": "ここで素晴らしい整理整頓が見られます。",
+    "meaning_vi": "Ngăn nắp",
+    "example_vi": "Tôi thấy ở đây có sự ngăn nắp tuyệt vời.",
+    "meaning_hi": "साफ",
+    "example_hi": "मैं यहां अद्भुत साफ-सफाई देखता हूं।"
   },
   {
     "id": 693,
@@ -13165,7 +17317,13 @@ const wordList500 = [
     "meaning_fr": "désordonné",
     "meaningFr": "désordonné",
     "example_fr": "Mon bureau est en désordre.",
-    "exampleFr": "Mon bureau est en désordre."
+    "exampleFr": "Mon bureau est en désordre.",
+    "meaning_ja": "乱雑な",
+    "example_ja": "ここで素晴らしい混乱が見られます。",
+    "meaning_vi": "Lộn xộn",
+    "example_vi": "Tôi thấy ở đây có một sự lộn xộn tuyệt vời.",
+    "meaning_hi": "अस्तव्यस्त",
+    "example_hi": "मुझे यहां एक अद्भुत गंदगी दिख रही है।"
   },
   {
     "id": 694,
@@ -13184,7 +17342,13 @@ const wordList500 = [
     "meaning_fr": "bruyant",
     "meaningFr": "bruyant",
     "example_fr": "La salle de classe est bruyante.",
-    "exampleFr": "La salle de classe est bruyante."
+    "exampleFr": "La salle de classe est bruyante.",
+    "meaning_ja": "うるさい",
+    "example_ja": "ここで素晴らしいノイズが見えます。",
+    "meaning_vi": "Ồn ào",
+    "example_vi": "Tôi thấy ở đây có một sự ồn ào tuyệt vời.",
+    "meaning_hi": "कोलाहलयुक्त",
+    "example_hi": "मुझे यहाँ एक अद्भुत शोर दिखाई देता है।"
   },
   {
     "id": 695,
@@ -13203,7 +17367,13 @@ const wordList500 = [
     "meaning_fr": "ridicule",
     "meaningFr": "ridicule",
     "example_fr": "C'est un drôle de chapeau.",
-    "exampleFr": "C'est un drôle de chapeau."
+    "exampleFr": "C'est un drôle de chapeau.",
+    "meaning_ja": "馬鹿な",
+    "example_ja": "私はここに素晴らしい愚かさを見た。",
+    "meaning_vi": "Ngớ ngẩn",
+    "example_vi": "Tôi thấy một điều ngớ ngẩn tuyệt vời ở đây.",
+    "meaning_hi": "नासमझ",
+    "example_hi": "मैं यहाँ एक अद्भुत मूर्खतापूर्ण चीज़ देख रहा हूँ।"
   },
   {
     "id": 696,
@@ -13222,7 +17392,13 @@ const wordList500 = [
     "meaning_fr": "heureux",
     "meaningFr": "heureux",
     "example_fr": "Je suis heureux aujourd'hui.",
-    "exampleFr": "Je suis heureux aujourd'hui."
+    "exampleFr": "Je suis heureux aujourd'hui.",
+    "meaning_ja": "ハッピー",
+    "example_ja": "私はここに素晴らしい幸せを見ます。",
+    "meaning_vi": "Vui mừng",
+    "example_vi": "Tôi thấy ở đây một niềm hạnh phúc tuyệt vời.",
+    "meaning_hi": "खुश",
+    "example_hi": "मैं यहाँ एक अद्भुत ख़ुशी देख रहा हूँ।"
   },
   {
     "id": 697,
@@ -13241,7 +17417,13 @@ const wordList500 = [
     "meaning_fr": "triste",
     "meaningFr": "triste",
     "example_fr": "Ne sois pas triste.",
-    "exampleFr": "Ne sois pas triste."
+    "exampleFr": "Ne sois pas triste.",
+    "meaning_ja": "悲しい",
+    "example_ja": "私はここに素晴らしい悲しみを見ます。",
+    "meaning_vi": "Buồn",
+    "example_vi": "Tôi thấy ở đây một nỗi buồn tuyệt vời.",
+    "meaning_hi": "दुखद",
+    "example_hi": "मैं यहाँ एक अद्भुत दुःख देख रहा हूँ।"
   },
   {
     "id": 698,
@@ -13260,7 +17442,13 @@ const wordList500 = [
     "meaning_fr": "en colère",
     "meaningFr": "en colère",
     "example_fr": "Il a l'air en colère.",
-    "exampleFr": "Il a l'air en colère."
+    "exampleFr": "Il a l'air en colère.",
+    "meaning_ja": "怒り",
+    "example_ja": "私はここで素晴らしい怒りを見ました。",
+    "meaning_vi": "Tức giận",
+    "example_vi": "Tôi thấy một sự tức giận tuyệt vời ở đây.",
+    "meaning_hi": "गुस्सा",
+    "example_hi": "मैं यहाँ एक अद्भुत क्रोध देखता हूँ।"
   },
   {
     "id": 699,
@@ -13279,7 +17467,13 @@ const wordList500 = [
     "meaning_fr": "fatigué",
     "meaningFr": "fatigué",
     "example_fr": "Je suis très fatigué.",
-    "exampleFr": "Je suis très fatigué."
+    "exampleFr": "Je suis très fatigué.",
+    "meaning_ja": "疲れた",
+    "example_ja": "ここで素晴らしい疲れが見られます。",
+    "meaning_vi": "Mệt",
+    "example_vi": "Tôi thấy ở đây có một sự mệt mỏi tuyệt vời.",
+    "meaning_hi": "थका हुआ",
+    "example_hi": "मैं यहाँ एक अद्भुत थका हुआ देख रहा हूँ।"
   },
   {
     "id": 700,
@@ -13298,7 +17492,13 @@ const wordList500 = [
     "meaning_fr": "faim",
     "meaningFr": "faim",
     "example_fr": "J'ai faim.",
-    "exampleFr": "J'ai faim."
+    "exampleFr": "J'ai faim.",
+    "meaning_ja": "お腹がすいた",
+    "example_ja": "私はここで素晴らしい空腹を見ました。",
+    "meaning_vi": "Đói bụng",
+    "example_vi": "Tôi thấy một người đói tuyệt vời ở đây.",
+    "meaning_hi": "भूखा",
+    "example_hi": "मैं यहाँ एक अद्भुत भूखा देखता हूँ।"
   },
   {
     "id": 701,
@@ -13317,7 +17517,13 @@ const wordList500 = [
     "meaning_fr": "soif",
     "meaningFr": "soif",
     "example_fr": "J'ai soif.",
-    "exampleFr": "J'ai soif."
+    "exampleFr": "J'ai soif.",
+    "meaning_ja": "喉が渇いた",
+    "example_ja": "私はここで素晴らしいのどが渇いているのを見ます。",
+    "meaning_vi": "Khát",
+    "example_vi": "Tôi thấy một cơn khát tuyệt vời ở đây.",
+    "meaning_hi": "प्यासा",
+    "example_hi": "मुझे यहाँ एक अद्भुत प्यास दिखाई देती है।"
   },
   {
     "id": 702,
@@ -13336,7 +17542,13 @@ const wordList500 = [
     "meaning_fr": "somnolent",
     "meaningFr": "somnolent",
     "example_fr": "Le bébé a sommeil.",
-    "exampleFr": "Le bébé a sommeil."
+    "exampleFr": "Le bébé a sommeil.",
+    "meaning_ja": "眠い",
+    "example_ja": "ここで素晴らしい眠気が見えます。",
+    "meaning_vi": "Buồn ngủ",
+    "example_vi": "Tôi thấy một cơn buồn ngủ tuyệt vời ở đây.",
+    "meaning_hi": "नींद",
+    "example_hi": "मैं यहाँ एक अद्भुत नींद देख रहा हूँ।"
   },
   {
     "id": 703,
@@ -13355,7 +17567,13 @@ const wordList500 = [
     "meaning_fr": "malade",
     "meaningFr": "malade",
     "example_fr": "Elle est malade aujourd'hui.",
-    "exampleFr": "Elle est malade aujourd'hui."
+    "exampleFr": "Elle est malade aujourd'hui.",
+    "meaning_ja": "病気",
+    "example_ja": "ここに素晴らしい病気の人がいます。",
+    "meaning_vi": "Đau ốm",
+    "example_vi": "Tôi thấy một người bệnh tuyệt vời ở đây.",
+    "meaning_hi": "बीमार",
+    "example_hi": "मैं यहां एक अद्भुत बीमार को देख रहा हूं।"
   },
   {
     "id": 704,
@@ -13374,7 +17592,13 @@ const wordList500 = [
     "meaning_fr": "effrayant",
     "meaningFr": "effrayant",
     "example_fr": "J'ai peur du noir.",
-    "exampleFr": "J'ai peur du noir."
+    "exampleFr": "J'ai peur du noir.",
+    "meaning_ja": "怖がった",
+    "example_ja": "私はここで素晴らしい恐怖を見ます。",
+    "meaning_vi": "Sợ hãi",
+    "example_vi": "Tôi thấy một nỗi sợ hãi tuyệt vời ở đây.",
+    "meaning_hi": "डरा हुआ",
+    "example_hi": "मैं यहाँ एक अद्भुत डरा हुआ देख रहा हूँ।"
   },
   {
     "id": 705,
@@ -13393,7 +17617,13 @@ const wordList500 = [
     "meaning_fr": "excité",
     "meaningFr": "excité",
     "example_fr": "Je suis excité!",
-    "exampleFr": "Je suis excité!"
+    "exampleFr": "Je suis excité!",
+    "meaning_ja": "興奮した",
+    "example_ja": "ここで素晴らしい興奮が見られます。",
+    "meaning_vi": "Hào hứng",
+    "example_vi": "Tôi thấy ở đây có một sự phấn khích tuyệt vời.",
+    "meaning_hi": "उत्साहित",
+    "example_hi": "मैं यहाँ एक अद्भुत उत्साह देख रहा हूँ।"
   },
   {
     "id": 706,
@@ -13412,7 +17642,13 @@ const wordList500 = [
     "meaning_fr": "surpris",
     "meaningFr": "surpris",
     "example_fr": "Il fut surpris.",
-    "exampleFr": "Il fut surpris."
+    "exampleFr": "Il fut surpris.",
+    "meaning_ja": "驚いた",
+    "example_ja": "ここで驚くべき素晴らしいことに気づきました。",
+    "meaning_vi": "Ngạc nhiên",
+    "example_vi": "Tôi thấy một sự ngạc nhiên tuyệt vời ở đây.",
+    "meaning_hi": "हैरान",
+    "example_hi": "मैं यहां एक अद्भुत आश्चर्य देख रहा हूं।"
   },
   {
     "id": 707,
@@ -13431,7 +17667,13 @@ const wordList500 = [
     "meaning_fr": "amour",
     "meaningFr": "amour",
     "example_fr": "J'aime ma famille.",
-    "exampleFr": "J'aime ma famille."
+    "exampleFr": "J'aime ma famille.",
+    "meaning_ja": "愛",
+    "example_ja": "私はここに素晴らしい愛を見ます。",
+    "meaning_vi": "Yêu",
+    "example_vi": "Tôi thấy ở đây một tình yêu tuyệt vời.",
+    "meaning_hi": "प्यार",
+    "example_hi": "मुझे यहाँ एक अद्भुत प्रेम दिखाई देता है।"
   },
   {
     "id": 708,
@@ -13450,7 +17692,13 @@ const wordList500 = [
     "meaning_fr": "coeur",
     "meaningFr": "coeur",
     "example_fr": "Je vois un cœur merveilleux.",
-    "exampleFr": "Je vois un cœur merveilleux."
+    "exampleFr": "Je vois un cœur merveilleux.",
+    "meaning_ja": "心臓",
+    "example_ja": "ここに素晴らしい心が見えます。",
+    "meaning_vi": "Trái tim",
+    "example_vi": "Tôi thấy một trái tim tuyệt vời ở đây.",
+    "meaning_hi": "दिल",
+    "example_hi": "मुझे यहां एक अद्भुत हृदय दिखाई देता है।"
   },
   {
     "id": 709,
@@ -13469,7 +17717,13 @@ const wordList500 = [
     "meaning_fr": "désolé",
     "meaningFr": "désolé",
     "example_fr": "Désolé d'être en retard.",
-    "exampleFr": "Désolé d'être en retard."
+    "exampleFr": "Désolé d'être en retard.",
+    "meaning_ja": "ごめん",
+    "example_ja": "ここで素晴らしいごめんなさいが見られます。",
+    "meaning_vi": "Lấy làm tiếc",
+    "example_vi": "Tôi thấy một lời xin lỗi tuyệt vời ở đây.",
+    "meaning_hi": "क्षमा मांगना",
+    "example_hi": "मुझे यहां एक अद्भुत सॉरी दिख रहा है."
   },
   {
     "id": 710,
@@ -13488,7 +17742,13 @@ const wordList500 = [
     "meaning_fr": "décent",
     "meaningFr": "décent",
     "example_fr": "Je vais bien, merci.",
-    "exampleFr": "Je vais bien, merci."
+    "exampleFr": "Je vais bien, merci.",
+    "meaning_ja": "大丈夫",
+    "example_ja": "ここに素晴らしい罰金が見られます。",
+    "meaning_vi": "Khỏe",
+    "example_vi": "Tôi thấy ở đây có một mức phạt tuyệt vời.",
+    "meaning_hi": "अच्छा",
+    "example_hi": "मैं यहाँ एक अद्भुत जुर्माना देखता हूँ।"
   },
   {
     "id": 711,
@@ -13507,7 +17767,13 @@ const wordList500 = [
     "meaning_fr": "blessé, malade",
     "meaningFr": "blessé, malade",
     "example_fr": "Mes genoux me faisaient mal.",
-    "exampleFr": "Mes genoux me faisaient mal."
+    "exampleFr": "Mes genoux me faisaient mal.",
+    "meaning_ja": "傷つく",
+    "example_ja": "ここに素晴らしい傷が見えます。",
+    "meaning_vi": "Đau",
+    "example_vi": "Tôi thấy ở đây có một sự tổn thương tuyệt vời.",
+    "meaning_hi": "आहत",
+    "example_hi": "मैं यहाँ एक अद्भुत चोट देख रहा हूँ।"
   },
   {
     "id": 712,
@@ -13526,7 +17792,13 @@ const wordList500 = [
     "meaning_fr": "en bonne santé, bien",
     "meaningFr": "en bonne santé, bien",
     "example_fr": "Je me sens bien aujourd'hui.",
-    "exampleFr": "Je me sens bien aujourd'hui."
+    "exampleFr": "Je me sens bien aujourd'hui.",
+    "meaning_ja": "良い",
+    "example_ja": "ここに素晴らしい井戸が見えます。",
+    "meaning_vi": "Tốt",
+    "example_vi": "Tôi thấy một cái giếng tuyệt vời ở đây.",
+    "meaning_hi": "कुंआ",
+    "example_hi": "मुझे यहाँ एक अद्भुत कुआँ दिखाई देता है।"
   },
   {
     "id": 713,
@@ -13545,7 +17817,13 @@ const wordList500 = [
     "meaning_fr": "intelligent",
     "meaningFr": "intelligent",
     "example_fr": "C'est une enfant intelligente.",
-    "exampleFr": "C'est une enfant intelligente."
+    "exampleFr": "C'est une enfant intelligente.",
+    "meaning_ja": "頭いい",
+    "example_ja": "私はここで素晴らしい賢さを目にしました。",
+    "meaning_vi": "Thông minh",
+    "example_vi": "Tôi thấy một sự thông minh tuyệt vời ở đây.",
+    "meaning_hi": "बुद्धिमान",
+    "example_hi": "मुझे यहां एक अद्भुत स्मार्ट दिख रहा है।"
   },
   {
     "id": 714,
@@ -13564,7 +17842,13 @@ const wordList500 = [
     "meaning_fr": "drôle, drôle",
     "meaningFr": "drôle, drôle",
     "example_fr": "Cette histoire est drôle.",
-    "exampleFr": "Cette histoire est drôle."
+    "exampleFr": "Cette histoire est drôle.",
+    "meaning_ja": "面白い",
+    "example_ja": "私はここに素晴らしい面白さを見た。",
+    "meaning_vi": "Buồn cười",
+    "example_vi": "Tôi thấy một điều buồn cười tuyệt vời ở đây.",
+    "meaning_hi": "मज़ेदार",
+    "example_hi": "मुझे यहां एक अद्भुत मज़ाक दिख रहा है।"
   },
   {
     "id": 715,
@@ -13583,7 +17867,13 @@ const wordList500 = [
     "meaning_fr": "amical",
     "meaningFr": "amical",
     "example_fr": "Notre professeur est gentil.",
-    "exampleFr": "Notre professeur est gentil."
+    "exampleFr": "Notre professeur est gentil.",
+    "meaning_ja": "フレンドリー",
+    "example_ja": "ここで素晴らしいフレンドリーを見ました。",
+    "meaning_vi": "Thân thiện",
+    "example_vi": "Tôi thấy ở đây có một sự thân thiện tuyệt vời.",
+    "meaning_hi": "दोस्ताना",
+    "example_hi": "मैं यहाँ एक अद्भुत मित्रता देख रहा हूँ।"
   },
   {
     "id": 716,
@@ -13602,7 +17892,13 @@ const wordList500 = [
     "meaning_fr": "amical",
     "meaningFr": "amical",
     "example_fr": "Il est gentil avec tout le monde.",
-    "exampleFr": "Il est gentil avec tout le monde."
+    "exampleFr": "Il est gentil avec tout le monde.",
+    "meaning_ja": "親切",
+    "example_ja": "ここで素晴らしい種類を見ました。",
+    "meaning_vi": "Loại",
+    "example_vi": "Tôi thấy một loại tuyệt vời ở đây.",
+    "meaning_hi": "दयालु",
+    "example_hi": "मैं यहाँ एक अद्भुत प्रकार देखता हूँ।"
   },
   {
     "id": 717,
@@ -13621,7 +17917,13 @@ const wordList500 = [
     "meaning_fr": "agréable",
     "meaningFr": "agréable",
     "example_fr": "Joyeux Noël !",
-    "exampleFr": "Joyeux Noël !"
+    "exampleFr": "Joyeux Noël !",
+    "meaning_ja": "陽気な",
+    "example_ja": "ここで素晴らしいメリーが見えます。",
+    "meaning_vi": "Vui",
+    "example_vi": "Tôi thấy ở đây có một niềm vui tuyệt vời.",
+    "meaning_hi": "प्रमुदित",
+    "example_hi": "मैं यहां एक अद्भुत आनंद देख रहा हूं।"
   },
   {
     "id": 718,
@@ -13640,7 +17942,13 @@ const wordList500 = [
     "meaning_fr": "courageux, audacieux",
     "meaningFr": "courageux, audacieux",
     "example_fr": "C’était une décision audacieuse.",
-    "exampleFr": "C’était une décision audacieuse."
+    "exampleFr": "C’était une décision audacieuse.",
+    "meaning_ja": "大胆な",
+    "example_ja": "ここに素晴らしい大胆さが見られます。",
+    "meaning_vi": "In đậm",
+    "example_vi": "Tôi thấy một sự táo bạo tuyệt vời ở đây.",
+    "meaning_hi": "बोल्ड",
+    "example_hi": "मैं यहां एक अद्भुत बोल्ड देख रहा हूं।"
   },
   {
     "id": 719,
@@ -13659,7 +17967,13 @@ const wordList500 = [
     "meaning_fr": "en sécurité",
     "meaningFr": "en sécurité",
     "example_fr": "C'est en sécurité ici.",
-    "exampleFr": "C'est en sécurité ici."
+    "exampleFr": "C'est en sécurité ici.",
+    "meaning_ja": "安全",
+    "example_ja": "ここに素晴らしい金庫があります。",
+    "meaning_vi": "An toàn",
+    "example_vi": "Tôi thấy một chiếc két sắt tuyệt vời ở đây.",
+    "meaning_hi": "सुरक्षित",
+    "example_hi": "मुझे यहाँ एक अद्भुत तिजोरी दिखाई देती है।"
   },
   {
     "id": 720,
@@ -13678,7 +17992,13 @@ const wordList500 = [
     "meaning_fr": "bien sûr",
     "meaningFr": "bien sûr",
     "example_fr": "Je suis sûr de la réponse.",
-    "exampleFr": "Je suis sûr de la réponse."
+    "exampleFr": "Je suis sûr de la réponse.",
+    "meaning_ja": "もちろん",
+    "example_ja": "私はここで素晴らしいものを見ます。",
+    "meaning_vi": "Chắc chắn",
+    "example_vi": "Tôi thấy ở đây có một sự chắc chắn tuyệt vời.",
+    "meaning_hi": "ज़रूर",
+    "example_hi": "मुझे यहां एक अद्भुत श्योर दिख रहा है।"
   },
   {
     "id": 721,
@@ -13697,7 +18017,13 @@ const wordList500 = [
     "meaning_fr": "courir",
     "meaningFr": "courir",
     "example_fr": "Je cours vite.",
-    "exampleFr": "Je cours vite."
+    "exampleFr": "Je cours vite.",
+    "meaning_ja": "走る",
+    "example_ja": "ここで素晴らしい走りが見られます。",
+    "meaning_vi": "Chạy",
+    "example_vi": "Tôi thấy một hoạt động tuyệt vời ở đây.",
+    "meaning_hi": "दौड़ना",
+    "example_hi": "मैं यहां एक अद्भुत दौड़ देख रहा हूं।"
   },
   {
     "id": 722,
@@ -13716,7 +18042,13 @@ const wordList500 = [
     "meaning_fr": "courir",
     "meaningFr": "courir",
     "example_fr": "Sautez haut !",
-    "exampleFr": "Sautez haut !"
+    "exampleFr": "Sautez haut !",
+    "meaning_ja": "ジャンプ",
+    "example_ja": "ここで素晴らしいジャンプが見られます。",
+    "meaning_vi": "Nhảy",
+    "example_vi": "Tôi thấy một bước nhảy tuyệt vời ở đây.",
+    "meaning_hi": "कूदना",
+    "example_hi": "मैं यहां एक अद्भुत छलांग देख रहा हूं।"
   },
   {
     "id": 723,
@@ -13735,7 +18067,13 @@ const wordList500 = [
     "meaning_fr": "marcher",
     "meaningFr": "marcher",
     "example_fr": "Marchons ensemble.",
-    "exampleFr": "Marchons ensemble."
+    "exampleFr": "Marchons ensemble.",
+    "meaning_ja": "歩く",
+    "example_ja": "ここで素晴らしい散歩が見られます。",
+    "meaning_vi": "Đi bộ",
+    "example_vi": "Tôi thấy một cuộc đi bộ tuyệt vời ở đây.",
+    "meaning_hi": "टहलना",
+    "example_hi": "मैं यहाँ एक अद्भुत सैर देख रहा हूँ।"
   },
   {
     "id": 724,
@@ -13754,7 +18092,13 @@ const wordList500 = [
     "meaning_fr": "manger",
     "meaningFr": "manger",
     "example_fr": "Je prends le petit déjeuner.",
-    "exampleFr": "Je prends le petit déjeuner."
+    "exampleFr": "Je prends le petit déjeuner.",
+    "meaning_ja": "食べる",
+    "example_ja": "ここで素晴らしい食事を見つけました。",
+    "meaning_vi": "Ăn",
+    "example_vi": "Tôi thấy một món ăn tuyệt vời ở đây.",
+    "meaning_hi": "खाओ",
+    "example_hi": "मैं यहाँ एक अद्भुत भोजन देखता हूँ।"
   },
   {
     "id": 725,
@@ -13773,7 +18117,13 @@ const wordList500 = [
     "meaning_fr": "boire",
     "meaningFr": "boire",
     "example_fr": "Buvez de l'eau.",
-    "exampleFr": "Buvez de l'eau."
+    "exampleFr": "Buvez de l'eau.",
+    "meaning_ja": "飲む",
+    "example_ja": "ここで素晴らしい飲み物を見ました。",
+    "meaning_vi": "Uống",
+    "example_vi": "Tôi thấy ở đây có đồ uống tuyệt vời.",
+    "meaning_hi": "पीना",
+    "example_hi": "मुझे यहाँ एक अद्भुत पेय दिखाई देता है।"
   },
   {
     "id": 726,
@@ -13792,7 +18142,13 @@ const wordList500 = [
     "meaning_fr": "dormir",
     "meaningFr": "dormir",
     "example_fr": "Je me couche à neuf heures.",
-    "exampleFr": "Je me couche à neuf heures."
+    "exampleFr": "Je me couche à neuf heures.",
+    "meaning_ja": "寝る",
+    "example_ja": "ここで素晴らしい眠りを見ることができます。",
+    "meaning_vi": "Ngủ",
+    "example_vi": "Tôi thấy một giấc ngủ tuyệt vời ở đây.",
+    "meaning_hi": "नींद",
+    "example_hi": "मुझे यहाँ एक अद्भुत नींद दिखाई दे रही है।"
   },
   {
     "id": 727,
@@ -13811,7 +18167,13 @@ const wordList500 = [
     "meaning_fr": "lire",
     "meaningFr": "lire",
     "example_fr": "Je lis tous les jours.",
-    "exampleFr": "Je lis tous les jours."
+    "exampleFr": "Je lis tous les jours.",
+    "meaning_ja": "読む",
+    "example_ja": "ここで素晴らしい読書を目にしました。",
+    "meaning_vi": "Đọc",
+    "example_vi": "Tôi thấy một bài đọc tuyệt vời ở đây.",
+    "meaning_hi": "पढ़ना",
+    "example_hi": "मैं यहाँ एक अद्भुत पाठ देखता हूँ।"
   },
   {
     "id": 728,
@@ -13830,7 +18192,13 @@ const wordList500 = [
     "meaning_fr": "écrire",
     "meaningFr": "écrire",
     "example_fr": "Veuillez écrire votre nom.",
-    "exampleFr": "Veuillez écrire votre nom."
+    "exampleFr": "Veuillez écrire votre nom.",
+    "meaning_ja": "書く",
+    "example_ja": "ここに素晴らしい書き込みがありました。",
+    "meaning_vi": "Viết",
+    "example_vi": "Tôi thấy một bài viết tuyệt vời ở đây.",
+    "meaning_hi": "लिखना",
+    "example_hi": "मैं यहाँ एक अद्भुत लेखन देख रहा हूँ।"
   },
   {
     "id": 729,
@@ -13849,7 +18217,13 @@ const wordList500 = [
     "meaning_fr": "chanter",
     "meaningFr": "chanter",
     "example_fr": "nous chantons une chanson",
-    "exampleFr": "nous chantons une chanson"
+    "exampleFr": "nous chantons une chanson",
+    "meaning_ja": "歌う",
+    "example_ja": "ここで素晴らしい歌声を見ました。",
+    "meaning_vi": "Hát",
+    "example_vi": "Tôi thấy một bài hát tuyệt vời ở đây.",
+    "meaning_hi": "गाओ",
+    "example_hi": "मैं यहां एक अद्भुत गायन देख रहा हूं।"
   },
   {
     "id": 730,
@@ -13868,7 +18242,13 @@ const wordList500 = [
     "meaning_fr": "danse",
     "meaningFr": "danse",
     "example_fr": "Elle danse bien.",
-    "exampleFr": "Elle danse bien."
+    "exampleFr": "Elle danse bien.",
+    "meaning_ja": "ダンス",
+    "example_ja": "ここで素晴らしいダンスを見ました。",
+    "meaning_vi": "Nhảy",
+    "example_vi": "Tôi thấy một điệu nhảy tuyệt vời ở đây.",
+    "meaning_hi": "नृत्य",
+    "example_hi": "मैं यहाँ एक अद्भुत नृत्य देखता हूँ।"
   },
   {
     "id": 731,
@@ -13887,7 +18267,13 @@ const wordList500 = [
     "meaning_fr": "jouer",
     "meaningFr": "jouer",
     "example_fr": "Jouons dehors.",
-    "exampleFr": "Jouons dehors."
+    "exampleFr": "Jouons dehors.",
+    "meaning_ja": "遊ぶ",
+    "example_ja": "ここで素晴らしい劇を見ました。",
+    "meaning_vi": "Chơi",
+    "example_vi": "Tôi thấy một vở kịch tuyệt vời ở đây.",
+    "meaning_hi": "खेल",
+    "example_hi": "मैं यहाँ एक अद्भुत नाटक देख रहा हूँ।"
   },
   {
     "id": 732,
@@ -13906,7 +18292,13 @@ const wordList500 = [
     "meaning_fr": "étudier",
     "meaningFr": "étudier",
     "example_fr": "J'étudie l'anglais.",
-    "exampleFr": "J'étudie l'anglais."
+    "exampleFr": "J'étudie l'anglais.",
+    "meaning_ja": "勉強",
+    "example_ja": "ここで素晴らしい研究を見ました。",
+    "meaning_vi": "Học",
+    "example_vi": "Tôi thấy một nghiên cứu tuyệt vời ở đây.",
+    "meaning_hi": "अध्ययन",
+    "example_hi": "मैं यहाँ एक अद्भुत अध्ययन देखता हूँ।"
   },
   {
     "id": 733,
@@ -13925,7 +18317,13 @@ const wordList500 = [
     "meaning_fr": "nager",
     "meaningFr": "nager",
     "example_fr": "Je sais nager.",
-    "exampleFr": "Je sais nager."
+    "exampleFr": "Je sais nager.",
+    "meaning_ja": "泳ぐ",
+    "example_ja": "ここで素晴らしい泳ぎが見られます。",
+    "meaning_vi": "Bơi",
+    "example_vi": "Tôi thấy một cuộc bơi lội tuyệt vời ở đây.",
+    "meaning_hi": "तैरना",
+    "example_hi": "मुझे यहाँ एक अद्भुत तैराकी दिखाई देती है।"
   },
   {
     "id": 734,
@@ -13944,7 +18342,13 @@ const wordList500 = [
     "meaning_fr": "voler",
     "meaningFr": "voler",
     "example_fr": "Je regarde A Wonderful Fly.",
-    "exampleFr": "Je regarde A Wonderful Fly."
+    "exampleFr": "Je regarde A Wonderful Fly.",
+    "meaning_ja": "飛ぶ",
+    "example_ja": "ここで素晴らしいハエを見ました。",
+    "meaning_vi": "Bay",
+    "example_vi": "Tôi thấy một con ruồi tuyệt vời ở đây.",
+    "meaning_hi": "उड़ना",
+    "example_hi": "मुझे यहाँ एक अद्भुत मक्खी दिखाई दे रही है।"
   },
   {
     "id": 735,
@@ -13963,7 +18367,13 @@ const wordList500 = [
     "meaning_fr": "nettoyer",
     "meaningFr": "nettoyer",
     "example_fr": "Je regarde Super Nettoyage.",
-    "exampleFr": "Je regarde Super Nettoyage."
+    "exampleFr": "Je regarde Super Nettoyage.",
+    "meaning_ja": "クリーン",
+    "example_ja": "ここで素晴らしいクリーンを見ます。",
+    "meaning_vi": "Lau dọn",
+    "example_vi": "Tôi thấy ở đây sạch sẽ tuyệt vời.",
+    "meaning_hi": "साफ",
+    "example_hi": "मुझे यहाँ अद्भुत सफ़ाई दिखाई देती है।"
   },
   {
     "id": 736,
@@ -13982,7 +18392,13 @@ const wordList500 = [
     "meaning_fr": "laver",
     "meaningFr": "laver",
     "example_fr": "Je regarde le merveilleux Swashda.",
-    "exampleFr": "Je regarde le merveilleux Swashda."
+    "exampleFr": "Je regarde le merveilleux Swashda.",
+    "meaning_ja": "ウォッシュ",
+    "example_ja": "ここで素晴らしい洗濯物を見ます。",
+    "meaning_vi": "Rửa",
+    "example_vi": "Tôi thấy ở đây có một sự giặt giũ tuyệt vời.",
+    "meaning_hi": "धोना",
+    "example_hi": "मुझे यहाँ एक अद्भुत धुलाई दिखाई देती है।"
   },
   {
     "id": 737,
@@ -14001,7 +18417,13 @@ const wordList500 = [
     "meaning_fr": "ouvert",
     "meaningFr": "ouvert",
     "example_fr": "Je regarde la merveilleuse Yeolda.",
-    "exampleFr": "Je regarde la merveilleuse Yeolda."
+    "exampleFr": "Je regarde la merveilleuse Yeolda.",
+    "meaning_ja": "開ける",
+    "example_ja": "ここに素晴らしいオープンが見えます。",
+    "meaning_vi": "Mở",
+    "example_vi": "Tôi thấy một sự mở cửa tuyệt vời ở đây.",
+    "meaning_hi": "खुला",
+    "example_hi": "मुझे यहाँ एक अद्भुत खुलापन दिखाई देता है।"
   },
   {
     "id": 738,
@@ -14020,7 +18442,13 @@ const wordList500 = [
     "meaning_fr": "gros plan",
     "meaningFr": "gros plan",
     "example_fr": "Je vois un joli gros plan.",
-    "exampleFr": "Je vois un joli gros plan."
+    "exampleFr": "Je vois un joli gros plan.",
+    "meaning_ja": "近い",
+    "example_ja": "ここで素晴らしい終わりが見えます。",
+    "meaning_vi": "Đóng",
+    "example_vi": "Tôi thấy một sự gần gũi tuyệt vời ở đây.",
+    "meaning_hi": "बंद करना",
+    "example_hi": "मैं यहाँ एक अद्भुत नज़दीकी देख रहा हूँ।"
   },
   {
     "id": 739,
@@ -14039,7 +18467,13 @@ const wordList500 = [
     "meaning_fr": "pousser",
     "meaningFr": "pousser",
     "example_fr": "Je regarde la merveilleuse Milda.",
-    "exampleFr": "Je regarde la merveilleuse Milda."
+    "exampleFr": "Je regarde la merveilleuse Milda.",
+    "meaning_ja": "押す",
+    "example_ja": "ここで素晴らしいプッシュが見られます。",
+    "meaning_vi": "Xô",
+    "example_vi": "Tôi thấy một sự thúc đẩy tuyệt vời ở đây.",
+    "meaning_hi": "धकेलना",
+    "example_hi": "मैं यहाँ एक अद्भुत धक्का देख रहा हूँ।"
   },
   {
     "id": 740,
@@ -14058,7 +18492,13 @@ const wordList500 = [
     "meaning_fr": "tirer",
     "meaningFr": "tirer",
     "example_fr": "Je regarde le merveilleux Dangda.",
-    "exampleFr": "Je regarde le merveilleux Dangda."
+    "exampleFr": "Je regarde le merveilleux Dangda.",
+    "meaning_ja": "引く",
+    "example_ja": "ここで素晴らしい引きが見られます。",
+    "meaning_vi": "Sự lôi kéo",
+    "example_vi": "Tôi thấy một sức hút tuyệt vời ở đây.",
+    "meaning_hi": "खींचो",
+    "example_hi": "मैं यहां एक अद्भुत खिंचाव देख रहा हूं।"
   },
   {
     "id": 741,
@@ -14077,7 +18517,13 @@ const wordList500 = [
     "meaning_fr": "voyage",
     "meaningFr": "voyage",
     "example_fr": "Je regarde J'ai un merveilleux voyage.",
-    "exampleFr": "Je regarde J'ai un merveilleux voyage."
+    "exampleFr": "Je regarde J'ai un merveilleux voyage.",
+    "meaning_ja": "旅行",
+    "example_ja": "ここで素晴らしい旅を見ることができます。",
+    "meaning_vi": "Du lịch",
+    "example_vi": "Tôi thấy một chuyến du lịch tuyệt vời ở đây.",
+    "meaning_hi": "यात्रा",
+    "example_hi": "मैं यहाँ एक अद्भुत यात्रा देख रहा हूँ।"
   },
   {
     "id": 742,
@@ -14096,7 +18542,13 @@ const wordList500 = [
     "meaning_fr": "payer",
     "meaningFr": "payer",
     "example_fr": "Je regarde Wonderful Pay.",
-    "exampleFr": "Je regarde Wonderful Pay."
+    "exampleFr": "Je regarde Wonderful Pay.",
+    "meaning_ja": "支払う",
+    "example_ja": "ここでは素晴らしい給料をもらっています。",
+    "meaning_vi": "Chi trả",
+    "example_vi": "Tôi thấy mức lương tuyệt vời ở đây.",
+    "meaning_hi": "वेतन",
+    "example_hi": "मुझे यहां अद्भुत वेतन दिख रहा है।"
   },
   {
     "id": 743,
@@ -14115,7 +18567,13 @@ const wordList500 = [
     "meaning_fr": "acheter",
     "meaningFr": "acheter",
     "example_fr": "Je vois un merveilleux Sada.",
-    "exampleFr": "Je vois un merveilleux Sada."
+    "exampleFr": "Je vois un merveilleux Sada.",
+    "meaning_ja": "買う",
+    "example_ja": "ここで素晴らしい買い物を見つけました。",
+    "meaning_vi": "Mua",
+    "example_vi": "Tôi thấy mua hàng tuyệt vời ở đây.",
+    "meaning_hi": "खरीदना",
+    "example_hi": "मुझे यहां एक अद्भुत खरीदारी दिख रही है।"
   },
   {
     "id": 744,
@@ -14134,7 +18592,13 @@ const wordList500 = [
     "meaning_fr": "vendre",
     "meaningFr": "vendre",
     "example_fr": "Je regarde la merveilleuse Palda.",
-    "exampleFr": "Je regarde la merveilleuse Palda."
+    "exampleFr": "Je regarde la merveilleuse Palda.",
+    "meaning_ja": "売る",
+    "example_ja": "ここで素晴らしい売り物を見ました。",
+    "meaning_vi": "Bán",
+    "example_vi": "Tôi thấy bán hàng tuyệt vời ở đây.",
+    "meaning_hi": "बेचना",
+    "example_hi": "मैं यहाँ एक अद्भुत बिक्री देख रहा हूँ।"
   },
   {
     "id": 745,
@@ -14153,7 +18617,13 @@ const wordList500 = [
     "meaning_fr": "asseoir",
     "meaningFr": "asseoir",
     "example_fr": "Asseyez-vous sur cette chaise.",
-    "exampleFr": "Asseyez-vous sur cette chaise."
+    "exampleFr": "Asseyez-vous sur cette chaise.",
+    "meaning_ja": "座る",
+    "example_ja": "ここに素晴らしい座り方があります。",
+    "meaning_vi": "Ngồi",
+    "example_vi": "Tôi thấy chỗ ngồi tuyệt vời ở đây.",
+    "meaning_hi": "बैठना",
+    "example_hi": "मैं यहाँ एक अद्भुत स्थान देखता हूँ।"
   },
   {
     "id": 746,
@@ -14172,7 +18642,13 @@ const wordList500 = [
     "meaning_fr": "se tenir debout",
     "meaningFr": "se tenir debout",
     "example_fr": "Tenez-vous sur une seule ligne.",
-    "exampleFr": "Tenez-vous sur une seule ligne."
+    "exampleFr": "Tenez-vous sur une seule ligne.",
+    "meaning_ja": "立つ",
+    "example_ja": "ここに素晴らしいスタンドが見えます。",
+    "meaning_vi": "Đứng",
+    "example_vi": "Tôi thấy một chỗ đứng tuyệt vời ở đây.",
+    "meaning_hi": "खड़ा होना",
+    "example_hi": "मुझे यहां एक अद्भुत स्टैंड दिखाई देता है।"
   },
   {
     "id": 747,
@@ -14191,7 +18667,13 @@ const wordList500 = [
     "meaning_fr": "attraper, soulever",
     "meaningFr": "attraper, soulever",
     "example_fr": "Prends ma main.",
-    "exampleFr": "Prends ma main."
+    "exampleFr": "Prends ma main.",
+    "meaning_ja": "所有",
+    "example_ja": "ここに素晴らしいホールドが見えます。",
+    "meaning_vi": "Giữ",
+    "example_vi": "Tôi thấy một sự nắm giữ tuyệt vời ở đây.",
+    "meaning_hi": "पकड़ना",
+    "example_hi": "मुझे यहाँ एक अद्भुत पकड़ दिखाई देती है।"
   },
   {
     "id": 748,
@@ -14210,7 +18692,13 @@ const wordList500 = [
     "meaning_fr": "peigne, peigne",
     "meaningFr": "peigne, peigne",
     "example_fr": "Je me peigne les cheveux tous les matins.",
-    "exampleFr": "Je me peigne les cheveux tous les matins."
+    "exampleFr": "Je me peigne les cheveux tous les matins.",
+    "meaning_ja": "櫛",
+    "example_ja": "ここで素晴らしい櫛を見ました。",
+    "meaning_vi": "Cái lược",
+    "example_vi": "Tôi thấy một chiếc lược tuyệt vời ở đây.",
+    "meaning_hi": "कंघा",
+    "example_hi": "मुझे यहाँ एक अद्भुत कंघी दिखाई देती है।"
   },
   {
     "id": 749,
@@ -14229,7 +18717,13 @@ const wordList500 = [
     "meaning_fr": "cuire au four",
     "meaningFr": "cuire au four",
     "example_fr": "Nous préparons des biscuits ensemble.",
-    "exampleFr": "Nous préparons des biscuits ensemble."
+    "exampleFr": "Nous préparons des biscuits ensemble.",
+    "meaning_ja": "焼く",
+    "example_ja": "ここで素晴らしい焼き物を見ました。",
+    "meaning_vi": "Nướng",
+    "example_vi": "Tôi thấy ở đây có món nướng tuyệt vời.",
+    "meaning_hi": "सेंकना",
+    "example_hi": "मैं यहाँ एक अद्भुत बेक देखता हूँ।"
   },
   {
     "id": 750,
@@ -14248,7 +18742,13 @@ const wordList500 = [
     "meaning_fr": "goûte-le",
     "meaningFr": "goûte-le",
     "example_fr": "S'il vous plaît, goûtez la soupe.",
-    "exampleFr": "S'il vous plaît, goûtez la soupe."
+    "exampleFr": "S'il vous plaît, goûtez la soupe.",
+    "meaning_ja": "味",
+    "example_ja": "ここに素晴らしい味が見えます。",
+    "meaning_vi": "Nếm",
+    "example_vi": "Tôi thấy hương vị tuyệt vời ở đây.",
+    "meaning_hi": "स्वाद",
+    "example_hi": "मुझे यहाँ एक अद्भुत स्वाद दिखाई देता है।"
   },
   {
     "id": 751,
@@ -14267,7 +18767,13 @@ const wordList500 = [
     "meaning_fr": "odeur",
     "meaningFr": "odeur",
     "example_fr": "Sentez cette fleur.",
-    "exampleFr": "Sentez cette fleur."
+    "exampleFr": "Sentez cette fleur.",
+    "meaning_ja": "匂い",
+    "example_ja": "ここで素晴らしい匂いがします。",
+    "meaning_vi": "Mùi",
+    "example_vi": "Tôi thấy ở đây có mùi thơm tuyệt vời.",
+    "meaning_hi": "गंध",
+    "example_hi": "मुझे यहाँ एक अद्भुत गंध दिखाई देती है।"
   },
   {
     "id": 752,
@@ -14286,7 +18792,13 @@ const wordList500 = [
     "meaning_fr": "écoute, entends",
     "meaningFr": "écoute, entends",
     "example_fr": "J'entends les oiseaux gazouiller dehors.",
-    "exampleFr": "J'entends les oiseaux gazouiller dehors."
+    "exampleFr": "J'entends les oiseaux gazouiller dehors.",
+    "meaning_ja": "聞く",
+    "example_ja": "ここで素晴らしい話を聞きました。",
+    "meaning_vi": "Nghe",
+    "example_vi": "Tôi thấy một điều tuyệt vời ở đây.",
+    "meaning_hi": "सुनो",
+    "example_hi": "मुझे यहाँ एक अद्भुत श्रवण दिखाई देता है।"
   },
   {
     "id": 753,
@@ -14305,7 +18817,13 @@ const wordList500 = [
     "meaning_fr": "écoute attentivement",
     "meaningFr": "écoute attentivement",
     "example_fr": "Écoutez attentivement ce que dit le professeur.",
-    "exampleFr": "Écoutez attentivement ce que dit le professeur."
+    "exampleFr": "Écoutez attentivement ce que dit le professeur.",
+    "meaning_ja": "聞く",
+    "example_ja": "ここで素晴らしい聴き方をしました。",
+    "meaning_vi": "Nghe",
+    "example_vi": "Tôi thấy một sự lắng nghe tuyệt vời ở đây.",
+    "meaning_hi": "सुनना",
+    "example_hi": "मैं यहाँ एक अद्भुत श्रवण देख रहा हूँ।"
   },
   {
     "id": 754,
@@ -14324,7 +18842,13 @@ const wordList500 = [
     "meaning_fr": "dessiner",
     "meaningFr": "dessiner",
     "example_fr": "Je fais un dessin de mon chien.",
-    "exampleFr": "Je fais un dessin de mon chien."
+    "exampleFr": "Je fais un dessin de mon chien.",
+    "meaning_ja": "描く",
+    "example_ja": "ここで素晴らしい引き分けを見ました。",
+    "meaning_vi": "Vẽ tranh",
+    "example_vi": "Tôi thấy một trận hòa tuyệt vời ở đây.",
+    "meaning_hi": "खींचना",
+    "example_hi": "मैं यहां एक अद्भुत ड्रा देख रहा हूं।"
   },
   {
     "id": 755,
@@ -14343,7 +18867,13 @@ const wordList500 = [
     "meaning_fr": "applaudir",
     "meaningFr": "applaudir",
     "example_fr": "Tout le monde l'a applaudie.",
-    "exampleFr": "Tout le monde l'a applaudie."
+    "exampleFr": "Tout le monde l'a applaudie.",
+    "meaning_ja": "クラップ",
+    "example_ja": "ここで素晴らしい拍手が見られます。",
+    "meaning_vi": "Vỗ tay",
+    "example_vi": "Tôi thấy một tiếng vỗ tay tuyệt vời ở đây.",
+    "meaning_hi": "ताली बजाओ",
+    "example_hi": "मैं यहां एक अद्भुत ताली देख रहा हूं।"
   },
   {
     "id": 756,
@@ -14362,7 +18892,13 @@ const wordList500 = [
     "meaning_fr": "sais, câlin",
     "meaningFr": "sais, câlin",
     "example_fr": "Maman me serre dans ses bras tous les jours.",
-    "exampleFr": "Maman me serre dans ses bras tous les jours."
+    "exampleFr": "Maman me serre dans ses bras tous les jours.",
+    "meaning_ja": "ハグ",
+    "example_ja": "ここで素晴らしい抱擁を見ます。",
+    "meaning_vi": "Ôm",
+    "example_vi": "Tôi thấy một cái ôm tuyệt vời ở đây.",
+    "meaning_hi": "आलिंगन",
+    "example_hi": "मुझे यहां एक अद्भुत आलिंगन दिखाई दे रहा है।"
   },
   {
     "id": 757,
@@ -14381,7 +18917,13 @@ const wordList500 = [
     "meaning_fr": "bague",
     "meaningFr": "bague",
     "example_fr": "Le téléphone sonne.",
-    "exampleFr": "Le téléphone sonne."
+    "exampleFr": "Le téléphone sonne.",
+    "meaning_ja": "指輪",
+    "example_ja": "ここで素晴らしい指輪を見ました。",
+    "meaning_vi": "Nhẫn",
+    "example_vi": "Tôi thấy một chiếc nhẫn tuyệt vời ở đây.",
+    "meaning_hi": "अँगूठी",
+    "example_hi": "मुझे यहां एक अद्भुत अंगूठी दिखाई देती है।"
   },
   {
     "id": 758,
@@ -14400,7 +18942,13 @@ const wordList500 = [
     "meaning_fr": "coup",
     "meaningFr": "coup",
     "example_fr": "Éteignez la bougie.",
-    "exampleFr": "Éteignez la bougie."
+    "exampleFr": "Éteignez la bougie.",
+    "meaning_ja": "吹く",
+    "example_ja": "ここで素晴らしい打撃が見られます。",
+    "meaning_vi": "Thổi",
+    "example_vi": "Tôi thấy một cú đánh tuyệt vời ở đây.",
+    "meaning_hi": "फूँक मारना",
+    "example_hi": "मैं यहाँ एक अद्भुत झटका देख रहा हूँ।"
   },
   {
     "id": 759,
@@ -14419,7 +18967,13 @@ const wordList500 = [
     "meaning_fr": "mordre, mordre",
     "meaningFr": "mordre, mordre",
     "example_fr": "Ne vous rongez pas les ongles.",
-    "exampleFr": "Ne vous rongez pas les ongles."
+    "exampleFr": "Ne vous rongez pas les ongles.",
+    "meaning_ja": "噛む",
+    "example_ja": "ここで素晴らしい一口を見ました。",
+    "meaning_vi": "Cắn",
+    "example_vi": "Tôi thấy một miếng cắn tuyệt vời ở đây.",
+    "meaning_hi": "काटना",
+    "example_hi": "मैं यहाँ एक अद्भुत दंश देख रहा हूँ।"
   },
   {
     "id": 760,
@@ -14438,7 +18992,13 @@ const wordList500 = [
     "meaning_fr": "mâcher",
     "meaningFr": "mâcher",
     "example_fr": "Mâchez lentement votre nourriture.",
-    "exampleFr": "Mâchez lentement votre nourriture."
+    "exampleFr": "Mâchez lentement votre nourriture.",
+    "meaning_ja": "噛む",
+    "example_ja": "ここで素晴らしいチューを見ました。",
+    "meaning_vi": "Nhai",
+    "example_vi": "Tôi thấy một nhai tuyệt vời ở đây.",
+    "meaning_hi": "चबाना",
+    "example_hi": "मुझे यहां एक अद्भुत चबाना दिख रहा है।"
   },
   {
     "id": 761,
@@ -14457,7 +19017,13 @@ const wordList500 = [
     "meaning_fr": "lécher",
     "meaningFr": "lécher",
     "example_fr": "Le chien m'a léché la main.",
-    "exampleFr": "Le chien m'a léché la main."
+    "exampleFr": "Le chien m'a léché la main.",
+    "meaning_ja": "なめる",
+    "example_ja": "ここに素晴らしいなめりが見られます。",
+    "meaning_vi": "Liếm",
+    "example_vi": "Tôi thấy một cú liếm tuyệt vời ở đây.",
+    "meaning_hi": "चाटना",
+    "example_hi": "मुझे यहां एक अद्भुत चाट दिखाई दे रही है।"
   },
   {
     "id": 762,
@@ -14476,7 +19042,13 @@ const wordList500 = [
     "meaning_fr": "conduire",
     "meaningFr": "conduire",
     "example_fr": "Mon père conduit sa voiture pour aller au travail.",
-    "exampleFr": "Mon père conduit sa voiture pour aller au travail."
+    "exampleFr": "Mon père conduit sa voiture pour aller au travail.",
+    "meaning_ja": "ドライブ",
+    "example_ja": "ここで素晴らしいドライブが見られます。",
+    "meaning_vi": "Lái xe",
+    "example_vi": "Tôi thấy một chuyến đi tuyệt vời ở đây.",
+    "meaning_hi": "गाड़ी चलाना",
+    "example_hi": "मैं यहां एक अद्भुत ड्राइव देख रहा हूं।"
   },
   {
     "id": 763,
@@ -14495,7 +19067,13 @@ const wordList500 = [
     "meaning_fr": "glisser",
     "meaningFr": "glisser",
     "example_fr": "J'ai glissé sur le sol mouillé.",
-    "exampleFr": "J'ai glissé sur le sol mouillé."
+    "exampleFr": "J'ai glissé sur le sol mouillé.",
+    "meaning_ja": "スリップ",
+    "example_ja": "ここで素晴らしいスリップを見ました。",
+    "meaning_vi": "Trượt",
+    "example_vi": "Tôi thấy một cú trượt tuyệt vời ở đây.",
+    "meaning_hi": "फिसलना",
+    "example_hi": "मुझे यहां एक अद्भुत पर्ची दिखाई दे रही है।"
   },
   {
     "id": 764,
@@ -14514,7 +19092,13 @@ const wordList500 = [
     "meaning_fr": "saut",
     "meaningFr": "saut",
     "example_fr": "La fille a couru en sautillant dans la rue.",
-    "exampleFr": "La fille a couru en sautillant dans la rue."
+    "exampleFr": "La fille a couru en sautillant dans la rue.",
+    "meaning_ja": "スキップ",
+    "example_ja": "ここに素晴らしいスキップが見られます。",
+    "meaning_vi": "Nhảy",
+    "example_vi": "Tôi thấy một sự bỏ qua tuyệt vời ở đây.",
+    "meaning_hi": "छोडना",
+    "example_hi": "मैं यहां एक अद्भुत स्किप देख रहा हूं।"
   },
   {
     "id": 765,
@@ -14533,7 +19117,13 @@ const wordList500 = [
     "meaning_fr": "sauter",
     "meaningFr": "sauter",
     "example_fr": "Le lapin saute de haut en bas.",
-    "exampleFr": "Le lapin saute de haut en bas."
+    "exampleFr": "Le lapin saute de haut en bas.",
+    "meaning_ja": "ホップ",
+    "example_ja": "ここに素晴らしいホップが見えます。",
+    "meaning_vi": "Nhảy lò cò",
+    "example_vi": "Tôi thấy một bước nhảy tuyệt vời ở đây.",
+    "meaning_hi": "कूदना",
+    "example_hi": "मैं यहां एक अद्भुत हॉप देख रहा हूं।"
   },
   {
     "id": 766,
@@ -14552,7 +19142,13 @@ const wordList500 = [
     "meaning_fr": "s'agenouiller",
     "meaningFr": "s'agenouiller",
     "example_fr": "Il s'agenouilla pour attacher ses lacets.",
-    "exampleFr": "Il s'agenouilla pour attacher ses lacets."
+    "exampleFr": "Il s'agenouilla pour attacher ses lacets.",
+    "meaning_ja": "ひざまずく",
+    "example_ja": "ここで素晴らしいひざまずきを見ます。",
+    "meaning_vi": "Quỳ xuống",
+    "example_vi": "Tôi thấy một màn quỳ gối tuyệt vời ở đây.",
+    "meaning_hi": "घुटने",
+    "example_hi": "मैं यहाँ एक अद्भुत घुटना देखता हूँ।"
   },
   {
     "id": 767,
@@ -14571,7 +19167,13 @@ const wordList500 = [
     "meaning_fr": "accident vasculaire cérébral",
     "meaningFr": "accident vasculaire cérébral",
     "example_fr": "Elle caressa doucement le chat.",
-    "exampleFr": "Elle caressa doucement le chat."
+    "exampleFr": "Elle caressa doucement le chat.",
+    "meaning_ja": "パット",
+    "example_ja": "ここで素晴らしいパットを見ました。",
+    "meaning_vi": "Pat",
+    "example_vi": "Tôi thấy một sự vỗ về tuyệt vời ở đây.",
+    "meaning_hi": "थपथपाना",
+    "example_hi": "मुझे यहां एक अद्भुत थपथपाहट दिख रही है।"
   },
   {
     "id": 768,
@@ -14590,7 +19192,13 @@ const wordList500 = [
     "meaning_fr": "frotter",
     "meaningFr": "frotter",
     "example_fr": "Frottez-vous les mains chaudement.",
-    "exampleFr": "Frottez-vous les mains chaudement."
+    "exampleFr": "Frottez-vous les mains chaudement.",
+    "meaning_ja": "こする",
+    "example_ja": "ここに素晴らしい摩擦が見られます。",
+    "meaning_vi": "Chà",
+    "example_vi": "Tôi thấy một sự chà xát tuyệt vời ở đây.",
+    "meaning_hi": "रगड़ना",
+    "example_hi": "मुझे यहां एक अद्भुत रगड़ दिखाई देती है।"
   },
   {
     "id": 769,
@@ -14609,7 +19217,13 @@ const wordList500 = [
     "meaning_fr": "balle",
     "meaningFr": "balle",
     "example_fr": "Lancez la balle.",
-    "exampleFr": "Lancez la balle."
+    "exampleFr": "Lancez la balle.",
+    "meaning_ja": "ボール",
+    "example_ja": "ここで素晴らしいボールを見ました。",
+    "meaning_vi": "Quả bóng",
+    "example_vi": "Tôi thấy một quả bóng tuyệt vời ở đây.",
+    "meaning_hi": "गेंद",
+    "example_hi": "मुझे यहाँ एक अद्भुत गेंद दिखाई देती है।"
   },
   {
     "id": 770,
@@ -14628,7 +19242,13 @@ const wordList500 = [
     "meaning_fr": "jeu",
     "meaningFr": "jeu",
     "example_fr": "Je regarde un super match.",
-    "exampleFr": "Je regarde un super match."
+    "exampleFr": "Je regarde un super match.",
+    "meaning_ja": "ゲーム",
+    "example_ja": "ここで素晴らしい試合を見ました。",
+    "meaning_vi": "Trò chơi",
+    "example_vi": "Tôi thấy một trò chơi tuyệt vời ở đây.",
+    "meaning_hi": "खेल",
+    "example_hi": "मैं यहाँ एक अद्भुत खेल देख रहा हूँ।"
   },
   {
     "id": 771,
@@ -14647,7 +19267,13 @@ const wordList500 = [
     "meaning_fr": "chanson",
     "meaningFr": "chanson",
     "example_fr": "Je vois une super chanson.",
-    "exampleFr": "Je vois une super chanson."
+    "exampleFr": "Je vois une super chanson.",
+    "meaning_ja": "歌",
+    "example_ja": "ここで素晴らしい曲を見ました。",
+    "meaning_vi": "Bài hát",
+    "example_vi": "Tôi thấy một bài hát tuyệt vời ở đây.",
+    "meaning_hi": "गाना",
+    "example_hi": "मुझे यहां एक अद्भुत गाना दिख रहा है."
   },
   {
     "id": 772,
@@ -14666,7 +19292,13 @@ const wordList500 = [
     "meaning_fr": "équipe",
     "meaningFr": "équipe",
     "example_fr": "Je vois une grande équipe.",
-    "exampleFr": "Je vois une grande équipe."
+    "exampleFr": "Je vois une grande équipe.",
+    "meaning_ja": "チーム",
+    "example_ja": "ここで素晴らしいチームを見ました。",
+    "meaning_vi": "Đội",
+    "example_vi": "Tôi thấy ở đây có một đội tuyệt vời.",
+    "meaning_hi": "टीम",
+    "example_hi": "मैं यहां एक अद्भुत टीम देखता हूं।"
   },
   {
     "id": 773,
@@ -14685,7 +19317,13 @@ const wordList500 = [
     "meaning_fr": "performances",
     "meaningFr": "performances",
     "example_fr": "Je vois un grand spectacle.",
-    "exampleFr": "Je vois un grand spectacle."
+    "exampleFr": "Je vois un grand spectacle.",
+    "meaning_ja": "見せる",
+    "example_ja": "ここで素晴らしいショーを見ました。",
+    "meaning_vi": "Trình diễn",
+    "example_vi": "Tôi thấy một màn trình diễn tuyệt vời ở đây.",
+    "meaning_hi": "दिखाओ",
+    "example_hi": "मैं यहां एक अद्भुत शो देख रहा हूं।"
   },
   {
     "id": 774,
@@ -14704,7 +19342,13 @@ const wordList500 = [
     "meaning_fr": "violon",
     "meaningFr": "violon",
     "example_fr": "Je vois un joli violon.",
-    "exampleFr": "Je vois un joli violon."
+    "exampleFr": "Je vois un joli violon.",
+    "meaning_ja": "バイオリン",
+    "example_ja": "ここで素晴らしいヴァイオリンを見ました。",
+    "meaning_vi": "vĩ cầm",
+    "example_vi": "Tôi thấy một cây vĩ cầm tuyệt vời ở đây.",
+    "meaning_hi": "वायलिन",
+    "example_hi": "मुझे यहाँ एक अद्भुत वायलिन दिखाई देता है।"
   },
   {
     "id": 775,
@@ -14723,7 +19367,13 @@ const wordList500 = [
     "meaning_fr": "flûte",
     "meaningFr": "flûte",
     "example_fr": "Je vois une jolie flûte.",
-    "exampleFr": "Je vois une jolie flûte."
+    "exampleFr": "Je vois une jolie flûte.",
+    "meaning_ja": "フルート",
+    "example_ja": "ここで素晴らしいフルートを見ました。",
+    "meaning_vi": "Sáo",
+    "example_vi": "Tôi thấy một cây sáo tuyệt vời ở đây.",
+    "meaning_hi": "बांसुरी",
+    "example_hi": "मुझे यहां एक अद्भुत बांसुरी दिख रही है."
   },
   {
     "id": 776,
@@ -14742,7 +19392,13 @@ const wordList500 = [
     "meaning_fr": "trompette",
     "meaningFr": "trompette",
     "example_fr": "Je vois une belle trompette.",
-    "exampleFr": "Je vois une belle trompette."
+    "exampleFr": "Je vois une belle trompette.",
+    "meaning_ja": "トランペット",
+    "example_ja": "ここで素晴らしいトランペットを見ました。",
+    "meaning_vi": "kèn",
+    "example_vi": "Tôi thấy một chiếc kèn tuyệt vời ở đây.",
+    "meaning_hi": "तुरही",
+    "example_hi": "मुझे यहां एक अद्भुत तुरही दिखाई दे रही है।"
   },
   {
     "id": 777,
@@ -14761,7 +19417,13 @@ const wordList500 = [
     "meaning_fr": "exercice",
     "meaningFr": "exercice",
     "example_fr": "Je vois un excellent entraînement.",
-    "exampleFr": "Je vois un excellent entraînement."
+    "exampleFr": "Je vois un excellent entraînement.",
+    "meaning_ja": "スポーツ",
+    "example_ja": "ここで素晴らしいスポーツを見ることができます。",
+    "meaning_vi": "Thể thao",
+    "example_vi": "Tôi thấy một môn thể thao tuyệt vời ở đây.",
+    "meaning_hi": "खेल",
+    "example_hi": "मैं यहाँ एक अद्भुत खेल देखता हूँ।"
   },
   {
     "id": 778,
@@ -14780,7 +19442,13 @@ const wordList500 = [
     "meaning_fr": "football",
     "meaningFr": "football",
     "example_fr": "Je regarde du bon football.",
-    "exampleFr": "Je regarde du bon football."
+    "exampleFr": "Je regarde du bon football.",
+    "meaning_ja": "サッカー",
+    "example_ja": "ここで素晴らしいサッカーを見ることができます。",
+    "meaning_vi": "Bóng đá",
+    "example_vi": "Tôi thấy một nền bóng đá tuyệt vời ở đây.",
+    "meaning_hi": "फुटबॉल",
+    "example_hi": "मैं यहां एक अद्भुत फुटबॉल देख रहा हूं।"
   },
   {
     "id": 779,
@@ -14799,7 +19467,13 @@ const wordList500 = [
     "meaning_fr": "base-ball",
     "meaningFr": "base-ball",
     "example_fr": "Je regarde du bon baseball.",
-    "exampleFr": "Je regarde du bon baseball."
+    "exampleFr": "Je regarde du bon baseball.",
+    "meaning_ja": "野球",
+    "example_ja": "ここで素晴らしい野球を見ることができます。",
+    "meaning_vi": "Bóng chày",
+    "example_vi": "Tôi thấy một trận bóng chày tuyệt vời ở đây.",
+    "meaning_hi": "बेसबॉल",
+    "example_hi": "मैं यहां एक अद्भुत बेसबॉल देखता हूं।"
   },
   {
     "id": 780,
@@ -14818,7 +19492,13 @@ const wordList500 = [
     "meaning_fr": "basket-ball",
     "meaningFr": "basket-ball",
     "example_fr": "Je regarde du bon basket.",
-    "exampleFr": "Je regarde du bon basket."
+    "exampleFr": "Je regarde du bon basket.",
+    "meaning_ja": "バスケットボール",
+    "example_ja": "ここで素晴らしいバスケットボールを見ることができます。",
+    "meaning_vi": "Bóng rổ",
+    "example_vi": "Tôi thấy một trận bóng rổ tuyệt vời ở đây.",
+    "meaning_hi": "बास्केटबाल",
+    "example_hi": "मैं यहां एक अद्भुत बास्केटबॉल देखता हूं।"
   },
   {
     "id": 781,
@@ -14837,7 +19517,13 @@ const wordList500 = [
     "meaning_fr": "volley-ball",
     "meaningFr": "volley-ball",
     "example_fr": "Je regarde du bon volley-ball.",
-    "exampleFr": "Je regarde du bon volley-ball."
+    "exampleFr": "Je regarde du bon volley-ball.",
+    "meaning_ja": "バレーボール",
+    "example_ja": "ここで素晴らしいバレーボールを見ることができます。",
+    "meaning_vi": "Bóng chuyền",
+    "example_vi": "Tôi thấy ở đây có một trận bóng chuyền tuyệt vời.",
+    "meaning_hi": "वालीबाल",
+    "example_hi": "मैं यहाँ एक अद्भुत वॉलीबॉल देखता हूँ।"
   },
   {
     "id": 782,
@@ -14856,7 +19542,13 @@ const wordList500 = [
     "meaning_fr": "tennis",
     "meaningFr": "tennis",
     "example_fr": "Je regarde du bon tennis.",
-    "exampleFr": "Je regarde du bon tennis."
+    "exampleFr": "Je regarde du bon tennis.",
+    "meaning_ja": "テニス",
+    "example_ja": "ここで素晴らしいテニスを見ることができます。",
+    "meaning_vi": "quần vợt",
+    "example_vi": "Tôi thấy một môn quần vợt tuyệt vời ở đây.",
+    "meaning_hi": "टेनिस",
+    "example_hi": "मैं यहाँ एक अद्भुत टेनिस देखता हूँ।"
   },
   {
     "id": 783,
@@ -14875,7 +19567,13 @@ const wordList500 = [
     "meaning_fr": "golfer",
     "meaningFr": "golfer",
     "example_fr": "Je regarde du bon golf.",
-    "exampleFr": "Je regarde du bon golf."
+    "exampleFr": "Je regarde du bon golf.",
+    "meaning_ja": "ゴルフ",
+    "example_ja": "ここで素晴らしいゴルフを見ることができます。",
+    "meaning_vi": "Golf",
+    "example_vi": "Tôi thấy một sân golf tuyệt vời ở đây.",
+    "meaning_hi": "गोल्फ़",
+    "example_hi": "मुझे यहां एक अद्भुत गोल्फ दिखाई देता है।"
   },
   {
     "id": 784,
@@ -14894,7 +19592,13 @@ const wordList500 = [
     "meaning_fr": "skier",
     "meaningFr": "skier",
     "example_fr": "Je vois du bon ski.",
-    "exampleFr": "Je vois du bon ski."
+    "exampleFr": "Je vois du bon ski.",
+    "meaning_ja": "スキー",
+    "example_ja": "ここで素晴らしいスキーを見ます。",
+    "meaning_vi": "Trượt tuyết",
+    "example_vi": "Tôi thấy một khu trượt tuyết tuyệt vời ở đây.",
+    "meaning_hi": "स्की",
+    "example_hi": "मुझे यहां एक अद्भुत स्की दिखाई देती है।"
   },
   {
     "id": 785,
@@ -14913,7 +19617,13 @@ const wordList500 = [
     "meaning_fr": "patiner",
     "meaningFr": "patiner",
     "example_fr": "Je vois de superbes patins.",
-    "exampleFr": "Je vois de superbes patins."
+    "exampleFr": "Je vois de superbes patins.",
+    "meaning_ja": "スケート",
+    "example_ja": "ここで素晴らしいスケートを見ることができます。",
+    "meaning_vi": "Trượt băng",
+    "example_vi": "Tôi thấy một ván trượt tuyệt vời ở đây.",
+    "meaning_hi": "स्केट",
+    "example_hi": "मुझे यहाँ एक अद्भुत स्केट दिखाई देती है।"
   },
   {
     "id": 786,
@@ -14932,7 +19642,13 @@ const wordList500 = [
     "meaning_fr": "disque",
     "meaningFr": "disque",
     "example_fr": "Je vois un joli frisbee.",
-    "exampleFr": "Je vois un joli frisbee."
+    "exampleFr": "Je vois un joli frisbee.",
+    "meaning_ja": "ディスク",
+    "example_ja": "ここで素晴らしいディスクを見ました。",
+    "meaning_vi": "đĩa",
+    "example_vi": "Tôi thấy một chiếc đĩa tuyệt vời ở đây.",
+    "meaning_hi": "डिस्क",
+    "example_hi": "मुझे यहां एक अद्भुत डिस्क दिखाई दे रही है।"
   },
   {
     "id": 787,
@@ -14951,7 +19667,13 @@ const wordList500 = [
     "meaning_fr": "feux d'artifice",
     "meaningFr": "feux d'artifice",
     "example_fr": "Je vois de jolis feux d'artifice.",
-    "exampleFr": "Je vois de jolis feux d'artifice."
+    "exampleFr": "Je vois de jolis feux d'artifice.",
+    "meaning_ja": "花火",
+    "example_ja": "ここで素晴らしい花火が見られます。",
+    "meaning_vi": "Pháo hoa",
+    "example_vi": "Tôi thấy pháo hoa tuyệt vời ở đây.",
+    "meaning_hi": "आतशबाज़ी",
+    "example_hi": "मुझे यहाँ एक अद्भुत आतिशबाज़ी दिखाई देती है।"
   },
   {
     "id": 788,
@@ -14970,7 +19692,13 @@ const wordList500 = [
     "meaning_fr": "cerf-volant",
     "meaningFr": "cerf-volant",
     "example_fr": "Je vois un merveilleux cerf-volant.",
-    "exampleFr": "Je vois un merveilleux cerf-volant."
+    "exampleFr": "Je vois un merveilleux cerf-volant.",
+    "meaning_ja": "凧",
+    "example_ja": "ここで素晴らしい凧を見ました。",
+    "meaning_vi": "Diều",
+    "example_vi": "Tôi thấy một con diều tuyệt vời ở đây.",
+    "meaning_hi": "पतंग",
+    "example_hi": "मुझे यहाँ एक अद्भुत पतंग दिखाई देती है।"
   },
   {
     "id": 789,
@@ -14989,7 +19717,13 @@ const wordList500 = [
     "meaning_fr": "badminton",
     "meaningFr": "badminton",
     "example_fr": "Nous jouons au badminton dans le parc.",
-    "exampleFr": "Nous jouons au badminton dans le parc."
+    "exampleFr": "Nous jouons au badminton dans le parc.",
+    "meaning_ja": "バドミントン",
+    "example_ja": "ここで素晴らしいバドミントンを見ます。",
+    "meaning_vi": "Cầu lông",
+    "example_vi": "Tôi thấy một trận cầu lông tuyệt vời ở đây.",
+    "meaning_hi": "बैडमिंटन",
+    "example_hi": "मैं यहाँ एक अद्भुत बैडमिंटन देखता हूँ।"
   },
   {
     "id": 790,
@@ -15008,7 +19742,13 @@ const wordList500 = [
     "meaning_fr": "natation",
     "meaningFr": "natation",
     "example_fr": "La natation est un bon exercice.",
-    "exampleFr": "La natation est un bon exercice."
+    "exampleFr": "La natation est un bon exercice.",
+    "meaning_ja": "水泳",
+    "example_ja": "ここで素晴らしい泳ぎが見られます。",
+    "meaning_vi": "Bơi lội",
+    "example_vi": "Tôi thấy bơi lội tuyệt vời ở đây.",
+    "meaning_hi": "तैरना",
+    "example_hi": "मुझे यहाँ एक अद्भुत तैराकी दिखाई देती है।"
   },
   {
     "id": 791,
@@ -15027,7 +19767,13 @@ const wordList500 = [
     "meaning_fr": "patinage",
     "meaningFr": "patinage",
     "example_fr": "Patiner sur glace est amusant.",
-    "exampleFr": "Patiner sur glace est amusant."
+    "exampleFr": "Patiner sur glace est amusant.",
+    "meaning_ja": "スケート",
+    "example_ja": "ここで素晴らしいスケートを見ることができます。",
+    "meaning_vi": "Trượt băng",
+    "example_vi": "Tôi thấy một màn trượt băng tuyệt vời ở đây.",
+    "meaning_hi": "स्केटिंग",
+    "example_hi": "मैं यहाँ एक अद्भुत स्केटिंग देखता हूँ।"
   },
   {
     "id": 792,
@@ -15046,7 +19792,13 @@ const wordList500 = [
     "meaning_fr": "skier",
     "meaningFr": "skier",
     "example_fr": "Nous allons skier en hiver.",
-    "exampleFr": "Nous allons skier en hiver."
+    "exampleFr": "Nous allons skier en hiver.",
+    "meaning_ja": "スキー",
+    "example_ja": "ここで素晴らしいスキーが見られます。",
+    "meaning_vi": "Trượt tuyết",
+    "example_vi": "Tôi thấy một cuộc trượt tuyết tuyệt vời ở đây.",
+    "meaning_hi": "स्कीइंग",
+    "example_hi": "मैं यहां अद्भुत स्कीइंग देखता हूं।"
   },
   {
     "id": 793,
@@ -15065,7 +19817,13 @@ const wordList500 = [
     "meaning_fr": "boxe",
     "meaningFr": "boxe",
     "example_fr": "La boxe nécessite de la force dans les bras.",
-    "exampleFr": "La boxe nécessite de la force dans les bras."
+    "exampleFr": "La boxe nécessite de la force dans les bras.",
+    "meaning_ja": "ボクシング",
+    "example_ja": "ここで素晴らしいボクシングを見ることができます。",
+    "meaning_vi": "quyền anh",
+    "example_vi": "Tôi thấy một trận đấm bốc tuyệt vời ở đây.",
+    "meaning_hi": "मुक्केबाज़ी",
+    "example_hi": "मैं यहाँ एक अद्भुत मुक्केबाजी देखता हूँ।"
   },
   {
     "id": 794,
@@ -15084,7 +19842,13 @@ const wordList500 = [
     "meaning_fr": "taekwondo",
     "meaningFr": "taekwondo",
     "example_fr": "J'apprends le Taekwondo après l'école.",
-    "exampleFr": "J'apprends le Taekwondo après l'école."
+    "exampleFr": "J'apprends le Taekwondo après l'école.",
+    "meaning_ja": "テコンドー",
+    "example_ja": "ここで素晴らしいテコンドーを見ました。",
+    "meaning_vi": "Taekwondo",
+    "example_vi": "Tôi thấy một môn taekwondo tuyệt vời ở đây.",
+    "meaning_hi": "तायक्वोंडो",
+    "example_hi": "मैं यहां एक अद्भुत तायक्वोंडो देखता हूं।"
   },
   {
     "id": 795,
@@ -15103,7 +19867,13 @@ const wordList500 = [
     "meaning_fr": "escalade",
     "meaningFr": "escalade",
     "example_fr": "La randonnée est difficile mais agréable.",
-    "exampleFr": "La randonnée est difficile mais agréable."
+    "exampleFr": "La randonnée est difficile mais agréable.",
+    "meaning_ja": "ハイキング",
+    "example_ja": "ここで素晴らしいハイキングが見られます。",
+    "meaning_vi": "Đi bộ đường dài",
+    "example_vi": "Tôi thấy một chuyến đi bộ đường dài tuyệt vời ở đây.",
+    "meaning_hi": "लंबी पैदल यात्रा",
+    "example_hi": "मैं यहाँ एक अद्भुत पदयात्रा देख रहा हूँ।"
   },
   {
     "id": 796,
@@ -15122,7 +19892,13 @@ const wordList500 = [
     "meaning_fr": "camper",
     "meaningFr": "camper",
     "example_fr": "Nous sommes allés camper au bord de la rivière.",
-    "exampleFr": "Nous sommes allés camper au bord de la rivière."
+    "exampleFr": "Nous sommes allés camper au bord de la rivière.",
+    "meaning_ja": "キャンプ",
+    "example_ja": "ここで素晴らしいキャンプを見ます。",
+    "meaning_vi": "Cắm trại",
+    "example_vi": "Tôi thấy một buổi cắm trại tuyệt vời ở đây.",
+    "meaning_hi": "डेरा डालना",
+    "example_hi": "मुझे यहां एक अद्भुत कैम्पिंग दिख रही है।"
   },
   {
     "id": 797,
@@ -15141,7 +19917,13 @@ const wordList500 = [
     "meaning_fr": "pêche",
     "meaningFr": "pêche",
     "example_fr": "Mon grand-père aime la pêche.",
-    "exampleFr": "Mon grand-père aime la pêche."
+    "exampleFr": "Mon grand-père aime la pêche.",
+    "meaning_ja": "釣り",
+    "example_ja": "ここで素晴らしい釣りが見られます。",
+    "meaning_vi": "Câu cá",
+    "example_vi": "Tôi thấy một cuộc câu cá tuyệt vời ở đây.",
+    "meaning_hi": "मछली पकड़ने",
+    "example_hi": "मुझे यहाँ अद्भुत मछली पकड़ने का दृश्य दिखाई देता है।"
   },
   {
     "id": 798,
@@ -15160,7 +19942,13 @@ const wordList500 = [
     "meaning_fr": "dessiner une image",
     "meaningFr": "dessiner une image",
     "example_fr": "Le dessin est mon passe-temps.",
-    "exampleFr": "Le dessin est mon passe-temps."
+    "exampleFr": "Le dessin est mon passe-temps.",
+    "meaning_ja": "描画",
+    "example_ja": "ここで素晴らしい絵を見ました。",
+    "meaning_vi": "Vẽ",
+    "example_vi": "Tôi thấy một bức vẽ tuyệt vời ở đây.",
+    "meaning_hi": "चित्रकला",
+    "example_hi": "मुझे यहाँ एक अद्भुत रेखाचित्र दिखाई देता है।"
   },
   {
     "id": 799,
@@ -15179,7 +19967,13 @@ const wordList500 = [
     "meaning_fr": "cuisine",
     "meaningFr": "cuisine",
     "example_fr": "Cuisiner avec maman est amusant.",
-    "exampleFr": "Cuisiner avec maman est amusant."
+    "exampleFr": "Cuisiner avec maman est amusant.",
+    "meaning_ja": "料理",
+    "example_ja": "ここで素晴らしい料理を見ることができます。",
+    "meaning_vi": "nấu ăn",
+    "example_vi": "Tôi thấy cách nấu ăn tuyệt vời ở đây.",
+    "meaning_hi": "खाना बनाना",
+    "example_hi": "मैं यहां अद्भुत खाना पकाते हुए देखता हूं।"
   },
   {
     "id": 800,
@@ -15198,7 +19992,13 @@ const wordList500 = [
     "meaning_fr": "casse-tête",
     "meaningFr": "casse-tête",
     "example_fr": "Ce puzzle comporte 100 pièces.",
-    "exampleFr": "Ce puzzle comporte 100 pièces."
+    "exampleFr": "Ce puzzle comporte 100 pièces.",
+    "meaning_ja": "パズル",
+    "example_ja": "ここで素晴らしいパズルを見ました。",
+    "meaning_vi": "Câu đố",
+    "example_vi": "Tôi thấy một câu đố tuyệt vời ở đây.",
+    "meaning_hi": "पहेली",
+    "example_hi": "मुझे यहाँ एक अद्भुत पहेली दिखाई देती है।"
   }
 ];
 
