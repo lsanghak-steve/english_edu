@@ -585,21 +585,21 @@ export default function Home() {
 
       if (storedQuiz.includes(2)) {
         // 이미 2단계 스펠링 퀴즈 완수
-        setResumeNotice(`🎉 [학습 완수] [${dateForMission}] 출석 도장(💮) 수여 완료! 이어서 복습하거나 다음 세트를 공부하세요.`);
+        setResumeNotice({ type: 'completed', date: dateForMission });
       } else if (storedQuiz.includes(1)) {
         // 1단계 소리 퀴즈 완료 ➔ 2단계 스펠링 퀴즈로 자동 이동
         setMainTab('quiz');
         setInitialQuizLevel(2);
-        setResumeNotice(`▶ [이어서 학습] 1단계 소리 퀴즈 완료! 2단계 스펠링 선택 퀴즈(필수)로 자동 연결되었습니다. 🧩`);
+        setResumeNotice({ type: 'level2_quiz' });
       } else if (savedProgress.mainTab === 'quiz' || savedIdx >= userDailyCount - 1) {
         // 퀴즈 탭 또는 카드 학습 완료 ➔ 1단계 소리 퀴즈로 자동 이동
         setMainTab('quiz');
         setInitialQuizLevel(1);
-        setResumeNotice(`▶ [이어서 학습] 1단계 소리 퀴즈부터 이어서 학습합니다. 🔊`);
+        setResumeNotice({ type: 'level1_quiz' });
       } else {
         // 플래시카드 진행 중
         if (savedProgress.mainTab) setMainTab(savedProgress.mainTab);
-        setResumeNotice(`▶ [이어서 학습] 이전 학습 위치 (단어 #${savedIdx + 1})부터 이어서 학습합니다! 🎴`);
+        setResumeNotice({ type: 'resume_word', index: savedIdx + 1 });
       }
     } else {
       setResumeNotice(null);
@@ -738,6 +738,55 @@ export default function Home() {
   const matchedDictWord = Array.isArray(wordList500Fallback)
     ? wordList500Fallback.find(w => (w.word || '').toLowerCase().replace(/\.png/gi, '').trim() === cleanWordStr.toLowerCase())
     : null;
+
+  // 🌐 이어서 학습 알림 6개 국어 다국어 변환 헬퍼
+  const getResumeNoticeText = (notice, lang, curIdx, totalCount) => {
+    if (!notice) {
+      if (lang === 'zh') return `▶ 当前位置: 单词 #${curIdx + 1} / ${totalCount}`;
+      if (lang === 'fr') return `▶ Position: Mot #${curIdx + 1} / ${totalCount}`;
+      if (lang === 'ja') return `▶ 現在の学習位置: 単語 #${curIdx + 1} / ${totalCount}`;
+      if (lang === 'vi') return `▶ Vị trí học: Từ #${curIdx + 1} / ${totalCount}`;
+      if (lang === 'hi') return `▶ वर्तमान स्थान: शब्द #${curIdx + 1} / ${totalCount}`;
+      return `▶ 현재 학습 위치: 단어 #${curIdx + 1} / ${totalCount}`;
+    }
+
+    if (typeof notice === 'object') {
+      if (notice.type === 'completed') {
+        if (lang === 'zh') return `🎉 [学习完成] 已颁发出勤印章(💮)！可继续复习或学习下一组。`;
+        if (lang === 'fr') return `🎉 [Session terminée] Tampon de présence (💮) attribué ! Continuez à réviser ou passez au set suivant.`;
+        if (lang === 'ja') return `🎉 [学習完了] 出席スタンプ(💮) 授与完了！復習するか次のセットを学習してください。`;
+        if (lang === 'vi') return `🎉 [Hoàn thành] Đã cấp con dấu chuyên cần (💮)! Hãy ôn tập hoặc học bộ tiếp theo.`;
+        if (lang === 'hi') return `🎉 [अध्ययन पूरा हुआ] उपस्थिति मुहर (💮) प्रदान की गई! समीक्षा जारी रखें या अगला सेट सीखें।`;
+        return `🎉 [학습 완수] [${notice.date || ''}] 출석 도장(💮) 수여 완료! 이어서 복습하거나 다음 세트를 공부하세요.`;
+      }
+      if (notice.type === 'level2_quiz') {
+        if (lang === 'zh') return `▶ [继续学习] 第1关声音测验已完成！已自动连接到第2关拼写选择测验(必修)。🧩`;
+        if (lang === 'fr') return `▶ [Reprendre] Niveau 1 terminé ! Redirection automatique vers le Quiz Orthographe Niveau 2. 🧩`;
+        if (lang === 'ja') return `▶ [続きから学習] 第1段階音声クイズ完了！第2段階スペル選択クイズ(必須)へ自動接続されました。🧩`;
+        if (lang === 'vi') return `▶ [Tiếp tục học] Hoàn thành cấp 1! Đã tự động chuyển đến Trắc nghiệm chính tả Cấp 2. 🧩`;
+        if (lang === 'hi') return `▶ [अध्ययन जारी रखें] स्तर 1 ध्वनि क्विज पूरा हुआ! स्तर 2 वर्तनी चयन क्विज से स्वचालित रूप से जुड़ा हुआ है। 🧩`;
+        return `▶ [이어서 학습] 1단계 소리 퀴즈 완료! 2단계 스펠링 선택 퀴즈(필수)로 자동 연결되었습니다. 🧩`;
+      }
+      if (notice.type === 'level1_quiz') {
+        if (lang === 'zh') return `▶ [继续学习] 从第1关声音测验继续学习。🔊`;
+        if (lang === 'fr') return `▶ [Reprendre] Reprise à partir du Niveau 1 Quiz Audio. 🔊`;
+        if (lang === 'ja') return `▶ [続きから学習] 第1段階音声クイズから続きを学習します。🔊`;
+        if (lang === 'vi') return `▶ [Tiếp tục học] Tiếp tục học từ Trắc nghiệm âm thanh Cấp 1. 🔊`;
+        if (lang === 'hi') return `▶ [अध्ययन जारी रखें] स्तर 1 ध्वनि क्विज से सीखना जारी रखें。 🔊`;
+        return `▶ [이어서 학습] 1단계 소리 퀴즈부터 이어서 학습합니다. 🔊`;
+      }
+      if (notice.type === 'resume_word') {
+        const num = notice.index || (curIdx + 1);
+        if (lang === 'zh') return `▶ [继续学习] 从上次学习位置 (单词 #${num}) 继续学习！🎴`;
+        if (lang === 'fr') return `▶ [Reprendre] Reprise depuis la position précédente (Mot #${num}) ! 🎴`;
+        if (lang === 'ja') return `▶ [続きから学習] 前回の学習位置 (単語 #${num}) から続きを学習します！🎴`;
+        if (lang === 'vi') return `▶ [Tiếp tục học] Tiếp tục từ vị trí trước (Từ #${num})! 🎴`;
+        if (lang === 'hi') return `▶ [अध्ययन जारी रखें] पिछले स्थान (शब्द #${num}) से सीखना जारी रखें! 🎴`;
+        return `▶ [이어서 학습] 이전 학습 위치 (단어 #${num})부터 이어서 학습합니다! 🎴`;
+      }
+    }
+    return notice;
+  };
 
   // 🌐 언어 세팅(currentLang: 'ko', 'zh', 'fr', 'ja', 'vi', 'hi')에 따른 6개 국어 동적 매칭
   const cleanMeaningStr = 
@@ -1347,7 +1396,7 @@ export default function Home() {
         }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
             <span style={{ fontSize: '12px', fontWeight: 'bold', color: '#E67E22', background: '#FEF5E7', padding: '4px 10px', borderRadius: '10px', border: '1px solid #FADBD8' }}>
-              📅 [{targetStudyDate}] {currentLang === 'zh' ? '学习进行中' : (currentLang === 'fr' ? 'Étude en cours' : '학습 진행 중')}
+              📅 [{targetStudyDate}] {currentLang === 'zh' ? '学习进行中' : (currentLang === 'fr' ? 'Étude en cours' : (currentLang === 'ja' ? '学習進行中' : (currentLang === 'vi' ? 'Đang học' : (currentLang === 'hi' ? 'अध्ययन जारी' : '학습 진행 중'))))}
             </span>
 
             <button
@@ -1384,7 +1433,9 @@ export default function Home() {
               gap: '6px'
             }}
           >
-            {hasRecorded ? (currentLang === 'zh' ? '✅ 录音任务完成 🎙️' : (currentLang === 'fr' ? '✅ Enregistrement fait 🎙️' : '✅ 1차 녹음 완료 🎙️')) : (currentLang === 'zh' ? '🎙️ 发音录音任务 ➔' : (currentLang === 'fr' ? '🎙️ Mission Enreg. ➔' : '🎙️ 1차 녹음 미션 ➔'))}
+            {hasRecorded
+              ? (currentLang === 'zh' ? '✅ 录音任务完成 🎙️' : (currentLang === 'fr' ? '✅ Enregistrement fait 🎙️' : (currentLang === 'ja' ? '✅ 録音完了 🎙️' : (currentLang === 'vi' ? '✅ Đã ghi âm 🎙️' : (currentLang === 'hi' ? '✅ रिकॉर्डिंग पूर्ण 🎙️' : '✅ 1차 녹음 완료 🎙️')))))
+              : (currentLang === 'zh' ? '🎙️ 发音录音任务 ➔' : (currentLang === 'fr' ? '🎙️ Mission Enreg. ➔' : (currentLang === 'ja' ? '🎙️ 発音録音ミッション ➔' : (currentLang === 'vi' ? '🎙️ Ghi âm phát âm ➔' : (currentLang === 'hi' ? '🎙️ उच्चारण रिकॉर्डिंग ➔' : '🎙️ 1차 녹음 미션 ➔')))))}
           </button>
 
           <button
@@ -1406,7 +1457,9 @@ export default function Home() {
               gap: '6px'
             }}
           >
-            {isQuizL2Done ? (currentLang === 'zh' ? '✅ 测验过关 (签到印章💮)' : (currentLang === 'fr' ? '✅ Quiz validé (Tampon💮)' : '✅ 퀴즈 완수 (출석도장💮)')) : (currentLang === 'zh' ? '🧩 2关拼写测验 ➔' : (currentLang === 'fr' ? '🧩 Niveau 2 Quiz ➔' : '🧩 2단계 스펠링 퀴즈 ➔'))}
+            {isQuizL2Done
+              ? (currentLang === 'zh' ? '✅ 测验过关 (签到印章💮)' : (currentLang === 'fr' ? '✅ Quiz validé (Tampon💮)' : (currentLang === 'ja' ? '✅ クイズ合格 (出席スタンプ💮)' : (currentLang === 'vi' ? '✅ Đã hoàn thành (Con dấu💮)' : (currentLang === 'hi' ? '✅ क्विज सफल (उपस्थिति मुहर💮)' : '✅ 퀴즈 완수 (출석도장💮)')))))
+              : (currentLang === 'zh' ? '🧩 2关拼写测验 ➔' : (currentLang === 'fr' ? '🧩 Niveau 2 Quiz ➔' : (currentLang === 'ja' ? '🧩 第2段階スペルクイズ ➔' : (currentLang === 'vi' ? '🧩 Trắc nghiệm Cấp 2 ➔' : (currentLang === 'hi' ? '🧩 स्तर 2 वर्तनी क्विज ➔' : '🧩 2단계 스펠링 퀴즈 ➔')))))}
           </button>
 
           <button
@@ -1429,7 +1482,7 @@ export default function Home() {
               boxShadow: '0 2px 6px rgba(230,126,34,0.2)'
             }}
           >
-            🚀 {currentLang === 'zh' ? '加载下一组单词 ➔' : (currentLang === 'fr' ? 'Charger mots suivants ➔' : '다음 단어 학습 ➔')}
+            🚀 {currentLang === 'zh' ? '加载下一组单词 ➔' : (currentLang === 'fr' ? 'Charger mots suivants ➔' : (currentLang === 'ja' ? '次の単語セットを学習 ➔' : (currentLang === 'vi' ? 'Học bộ từ tiếp theo ➔' : (currentLang === 'hi' ? 'अगला शब्द सेट लोड करें ➔' : '다음 단어 학습 ➔'))))}
           </button>
         </div>
       )}
@@ -1444,7 +1497,7 @@ export default function Home() {
                   📖 [{targetStudyDate}] {t('today_all_modal_title', currentLang)}
                 </h3>
                 <span style={{ fontSize: '12px', color: '#27AE60', fontWeight: 'bold' }}>
-                  🔥 {currentLang === 'zh' ? `共 ${todayAllLearnedWords.length || safeActiveWords.length} 个单词在学中！` : (currentLang === 'fr' ? `Total ${todayAllLearnedWords.length || safeActiveWords.length} mots en cours !` : `총 ${todayAllLearnedWords.length || safeActiveWords.length}개 단어 수강 중!`)}
+                  🔥 {currentLang === 'zh' ? `共 ${todayAllLearnedWords.length || safeActiveWords.length} 个单词在学中！` : (currentLang === 'fr' ? `Total ${todayAllLearnedWords.length || safeActiveWords.length} mots en cours !` : (currentLang === 'ja' ? `合計 ${todayAllLearnedWords.length || safeActiveWords.length} 個の単語を学習中！` : (currentLang === 'vi' ? `Tổng cộng ${todayAllLearnedWords.length || safeActiveWords.length} từ đang học!` : (currentLang === 'hi' ? `कुल ${todayAllLearnedWords.length || safeActiveWords.length} शब्द अध्ययन में!` : `총 ${todayAllLearnedWords.length || safeActiveWords.length}개 단어 수강 중!`))))}
                 </span>
               </div>
               <button onClick={() => setShowTodayAllModal(false)} style={{ background: '#F8F9FA', border: '1px solid #BDC3C7', padding: '4px 10px', borderRadius: '8px', fontWeight: 'bold', cursor: 'pointer' }}>
@@ -1457,7 +1510,15 @@ export default function Home() {
                 const wordStr = (item.word || item).replace(/\.png/gi, '').trim();
                 const meaningDisplay = currentLang === 'fr'
                   ? (item.meaning_fr || item.meaningFr || item.meaning)
-                  : (currentLang === 'zh' ? (item.meaning_zh || item.meaningZh || item.meaning) : item.meaning);
+                  : (currentLang === 'zh'
+                  ? (item.meaning_zh || item.meaningZh || item.meaning)
+                  : (currentLang === 'ja'
+                  ? (item.meaning_ja || item.meaningJa || item.meaning)
+                  : (currentLang === 'vi'
+                  ? (item.meaning_vi || item.meaningVi || item.meaning)
+                  : (currentLang === 'hi'
+                  ? (item.meaning_hi || item.meaningHi || item.meaning)
+                  : item.meaning))));
                 return (
                   <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 14px', background: '#F8F9FA', borderRadius: '12px', border: '1px solid #E9ECEF' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -2130,13 +2191,23 @@ export default function Home() {
                 {currentIndex + 1} / {safeActiveWords.length}
               </span>
               <button className="btn-nav" onClick={handleNext}>
-                {currentIndex + 1 === safeActiveWords.length ? (currentLang === 'zh' ? '进入第1关测验 ➔' : (currentLang === 'fr' ? 'Quiz Niveau 1 ➔' : '1단계 퀴즈로 ➔')) : t('btn_next', currentLang)}
+                {currentIndex + 1 === safeActiveWords.length ? (currentLang === 'zh' ? '进入第1关测验 ➔' : (currentLang === 'fr' ? 'Quiz Niveau 1 ➔' : (currentLang === 'ja' ? '第1段階クイズへ ➔' : (currentLang === 'vi' ? 'Đến trắc nghiệm Cấp 1 ➔' : (currentLang === 'hi' ? 'स्तर 1 क्विज पर जाएं ➔' : '1단계 퀴즈로 ➔'))))) : t('btn_next', currentLang)}
               </button>
             </div>
 
             <div id="record-mission-section" className="voice-recorder-card" style={{ marginTop: '16px', background: '#FFFFFF', borderRadius: '20px', padding: '16px', border: '1px solid #E9ECEF', textAlign: 'center' }}>
               <h4 style={{ margin: '0 0 8px 0', fontSize: '14px', color: '#2C3E50' }}>
-                🎙️ {currentLang === 'zh' ? `发音录音与波形图 (${cleanWordStr})` : (currentLang === 'fr' ? `Enregistrement vocal (${cleanWordStr})` : `내 발음 녹음 & 음성 높낮이 그래프 (${cleanWordStr})`)}
+                🎙️ {currentLang === 'zh'
+                  ? `录音与声调波形图 (${cleanWordStr})`
+                  : (currentLang === 'fr'
+                  ? `Mon enregistrement & Courbe vocale (${cleanWordStr})`
+                  : (currentLang === 'ja'
+                  ? `自分の録音＆音声ピッチ波形グラフ (${cleanWordStr})`
+                  : (currentLang === 'vi'
+                  ? `Ghi âm & Biểu đồ cao độ giọng nói (${cleanWordStr})`
+                  : (currentLang === 'hi'
+                  ? `मेरी रिकॉर्डिंग और पिच ग्राफ (${cleanWordStr})`
+                  : `내 발음 녹음 & 음성 높낮이 그래프 (${cleanWordStr})`))))}
               </h4>
 
               <div style={{ margin: '8px 0', background: '#2C3E50', borderRadius: '14px', padding: '6px', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
