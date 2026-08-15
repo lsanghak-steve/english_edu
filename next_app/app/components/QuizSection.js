@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback, useRef } from 'react';
 import supabase from '../../lib/supabaseClient.js';
+import wordList500Fallback from '../../data/wordsData.js';
 
 export default function QuizSection({ currentUser, activeWords, onQuizLevelComplete, onLoadNextWordSet, initialQuizLevel = 1, currentLang = 'ko' }) {
   const [quizLevel, setQuizLevel] = useState(initialQuizLevel || 1); // 1: 소리, 2: 선택, 3: 발음 녹음(75점+), 4: 직접 입력
@@ -25,16 +26,36 @@ export default function QuizSection({ currentUser, activeWords, onQuizLevelCompl
   const currentQuiz = safeWords[currentIndex] || safeWords[0];
   const cleanWordStr = (currentQuiz?.word || '').replace(/\.png/gi, '').trim();
 
-  // 🌐 언어별 단어 뜻 추출 헬퍼
+  // 🌐 언어별 단어 뜻 추출 헬퍼 (로컬 fallback 사전 연동으로 100% 보장)
   const getOptionMeaning = (item, lang) => {
     if (!item) return '';
-    if (typeof item === 'string') return item.replace(/\.png/gi, '').trim();
-    if (lang === 'zh') return item.meaning_zh || item.meaningZh || item.meaning || item.word || '';
-    if (lang === 'fr') return item.meaning_fr || item.meaningFr || item.meaning || item.word || '';
-    if (lang === 'ja') return item.meaning_ja || item.meaningJa || item.meaning || item.word || '';
-    if (lang === 'vi') return item.meaning_vi || item.meaningVi || item.meaning || item.word || '';
-    if (lang === 'hi') return item.meaning_hi || item.meaningHi || item.meaning || item.word || '';
-    return item.meaning || item.word || '';
+    const wordKey = typeof item === 'string' ? item.replace(/\.png/gi, '').trim() : (item.word || '').replace(/\.png/gi, '').trim();
+
+    // 1) item 객체 자체에서 조회
+    if (typeof item === 'object') {
+      if (lang === 'zh' && (item.meaning_zh || item.meaningZh)) return item.meaning_zh || item.meaningZh;
+      if (lang === 'fr' && (item.meaning_fr || item.meaningFr)) return item.meaning_fr || item.meaningFr;
+      if (lang === 'ja' && (item.meaning_ja || item.meaningJa)) return item.meaning_ja || item.meaningJa;
+      if (lang === 'vi' && (item.meaning_vi || item.meaningVi)) return item.meaning_vi || item.meaningVi;
+      if (lang === 'hi' && (item.meaning_hi || item.meaningHi)) return item.meaning_hi || item.meaningHi;
+      if (lang === 'ko' && item.meaning) return item.meaning;
+    }
+
+    // 2) fallback 로컬 사전에서 매칭 조회
+    const matched = wordList500Fallback.find(w => (w.word || '').toLowerCase().trim() === wordKey.toLowerCase());
+    if (matched) {
+      if (lang === 'zh' && (matched.meaning_zh || matched.meaningZh)) return matched.meaning_zh || matched.meaningZh;
+      if (lang === 'fr' && (matched.meaning_fr || matched.meaningFr)) return matched.meaning_fr || matched.meaningFr;
+      if (lang === 'ja' && (matched.meaning_ja || matched.meaningJa)) return matched.meaning_ja || matched.meaningJa;
+      if (lang === 'vi' && (matched.meaning_vi || matched.meaningVi)) return matched.meaning_vi || matched.meaningVi;
+      if (lang === 'hi' && (matched.meaning_hi || matched.meaningHi)) return matched.meaning_hi || matched.meaningHi;
+      if (lang === 'ko' && matched.meaning) return matched.meaning;
+    }
+
+    if (typeof item === 'object') {
+      return item.meaning || item.word || '';
+    }
+    return item;
   };
 
   useEffect(() => {
@@ -89,8 +110,8 @@ export default function QuizSection({ currentUser, activeWords, onQuizLevelCompl
     return Math.max(0, Math.min(100, scoreVal));
   };
 
-  // 🤖 AI 발음 교정 가이드 팁 분석 엔진
-  const getAIPronunciationGuideTip = (targetWordStr, score) => {
+  // 🤖 AI 발음 교정 가이드 팁 분석 엔진 (6개 국어 다국어 지원)
+  const getAIPronunciationGuideTip = (targetWordStr, score, lang = 'ko') => {
     if (!targetWordStr) return null;
     const cleanWord = targetWordStr.toLowerCase().trim();
 
@@ -98,8 +119,18 @@ export default function QuizSection({ currentUser, activeWords, onQuizLevelCompl
       if (score >= 90) {
         return {
           icon: '🎉',
-          title: '🤖 AI 발음 완벽 칭찬!',
-          text: `[${targetWordStr}] 원어민 수준의 완벽한 혀 위치와 입모양입니다! 억양과 발음이 아주 부드럽고 훌륭합니다. 👏`,
+          title: lang === 'zh' ? '🤖 AI 发音完美赞赏！' : (lang === 'fr' ? '🤖 Félicitations IA !' : (lang === 'ja' ? '🤖 AI 発音パーフェクト称賛！' : (lang === 'vi' ? '🤖 AI Khen ngợi phát âm hoàn hảo!' : (lang === 'hi' ? '🤖 AI उत्कृष्ट उच्चारण प्रशंसा!' : '🤖 AI 발음 완벽 칭찬!')))),
+          text: lang === 'zh'
+            ? `[${targetWordStr}] 母语级完美的舌位与唇形！语调与发音极其自然标准。👏`
+            : (lang === 'fr'
+            ? `[${targetWordStr}] Position de la langue et des lèvres digne d'un locuteur natif ! 👏`
+            : (lang === 'ja'
+            ? `[${targetWordStr}] ネイティブレベルの完璧な舌の位置と口の形です！👏`
+            : (lang === 'vi'
+            ? `[${targetWordStr}] Vị trí lưỡi và khẩu hình miệng chuẩn như người bản xứ! 👏`
+            : (lang === 'hi'
+            ? `[${targetWordStr}] मूल वक्ता स्तर की सही जीभ स्थिति और मुंह का आकार! 👏`
+            : `[${targetWordStr}] 원어민 수준의 완벽한 혀 위치와 입모양입니다! 억양과 발음이 아주 부드럽고 훌륭합니다. 👏`)))),
           color: '#27AE60',
           bg: '#E8F8F5',
           border: '#A3E4D7'
@@ -110,8 +141,18 @@ export default function QuizSection({ currentUser, activeWords, onQuizLevelCompl
     if (cleanWord.includes('r')) {
       return {
         icon: '👅',
-        title: '🤖 AI 혀 위치 교정 팁 [R 발음]',
-        text: `R 발음 시 혀끝을 입천장에 대지 않고 입 안쪽으로 살짝 구부려 '우-' 소리를 입안에서 웅얼거리듯 굴려보세요!`,
+        title: lang === 'zh' ? '🤖 AI 舌位纠正贴士 [R 发音]' : (lang === 'fr' ? '🤖 Conseil IA langue [Son R]' : (lang === 'ja' ? '🤖 AI 舌の位置アドバイス [R 発音]' : (lang === 'vi' ? '🤖 Mẹo vị trí lưỡi AI [Âm R]' : (lang === 'hi' ? '🤖 AI जीभ स्थिति सुझाव [R]' : '🤖 AI 혀 위치 교정 팁 [R 발음]')))),
+        text: lang === 'zh'
+          ? '发 R 音时舌尖切勿触碰上颚，舌头向口腔内轻微卷起，发出圆润卷舌音！'
+          : (lang === 'fr'
+          ? 'Pour le son R, ne touchez pas le palais avec la langue, reculez-la légèrement !'
+          : (lang === 'ja'
+          ? 'Rの発音時、舌先を口蓋につけず、奥に少し丸めて「ウー」と響かせましょう！'
+          : (lang === 'vi'
+          ? 'Khi phát âm R, không chạm đầu lưỡi vào vòm miệng mà uốn nhẹ vào trong!'
+          : (lang === 'hi'
+          ? 'R बोलते समय जीभ की नोक को तालू से न छुएं, बल्कि मुंह के अंदर हल्का मोड़ें!'
+          : 'R 발음 시 혀끝을 입천장에 대지 않고 입 안쪽으로 살짝 구부려 \'우-\' 소리를 굴려보세요!')))),
         color: '#D35400',
         bg: '#FEF9E7',
         border: '#F9E79F'
@@ -121,8 +162,18 @@ export default function QuizSection({ currentUser, activeWords, onQuizLevelCompl
     if (cleanWord.includes('l')) {
       return {
         icon: '👅',
-        title: '🤖 AI 혀 위치 교정 팁 [L 발음]',
-        text: `L 발음 시 혀끝을 윗니 바로 뒤 입천장에 꾹 대었다가 '얼-' 소리를 내며 상큼하게 떼어보세요!`,
+        title: lang === 'zh' ? '🤖 AI 舌位纠正贴士 [L 发音]' : (lang === 'fr' ? '🤖 Conseil IA langue [Son L]' : (lang === 'ja' ? '🤖 AI 舌の位置アドバイス [L 発音]' : (lang === 'vi' ? '🤖 Mẹo vị trí lưỡi AI [Âm L]' : (lang === 'hi' ? '🤖 AI जीभ स्थिति सुझाव [L]' : '🤖 AI 혀 위치 교정 팁 [L 발음]')))),
+        text: lang === 'zh'
+          ? '发 L 音时，将舌尖顶住上门牙正后方的齿龈，发出清脆“el-”音并利落地弹开！'
+          : (lang === 'fr'
+          ? 'Pour le son L, appuyez la pointe de la langue derrière les dents du haut puis relâchez !'
+          : (lang === 'ja'
+          ? 'Lの発音時、舌先を上の前歯の裏側にしっかりつけてからパッと離しましょう！'
+          : (lang === 'vi'
+          ? 'Khi phát âm L, hãy đặt đầu lưỡi chạm vào chân răng hàm trên rồi bật nhẹ ra!'
+          : (lang === 'hi'
+          ? 'L बोलते समय जीभ की नोक को ऊपरी दांतों के पीछे तालू पर दबाएं और अलग करें!'
+          : 'L 발음 시 혀끝을 윗니 바로 뒤 입천장에 꾹 대었다가 \'얼-\' 소리를 내며 상큼하게 떼어보세요!')))),
         color: '#2980B9',
         bg: '#EBF5FB',
         border: '#AED6F1'
@@ -132,8 +183,18 @@ export default function QuizSection({ currentUser, activeWords, onQuizLevelCompl
     if (cleanWord.includes('th')) {
       return {
         icon: '👄',
-        title: '🤖 AI 입모양 교정 팁 [TH 발음]',
-        text: `혀끝을 윗니와 아랫니 사이에 살짝 물었다가 바람을 뿜어내며 '쓰-' 또는 '뜨-' 소리를 내보세요!`,
+        title: lang === 'zh' ? '🤖 AI 唇齿纠正贴士 [TH 发音]' : (lang === 'fr' ? '🤖 Conseil IA lèvres [Son TH]' : (lang === 'ja' ? '🤖 AI 口の形アドバイス [TH 発音]' : (lang === 'vi' ? '🤖 Mẹo khẩu hình AI [Âm TH]' : (lang === 'hi' ? '🤖 AI मुख मुद्रा सुझाव [TH]' : '🤖 AI 입모양 교정 팁 [TH 발음]')))),
+        text: lang === 'zh'
+          ? '将舌尖轻咬在上下门牙之间，呼气摩擦发出清脆的气流音！'
+          : (lang === 'fr'
+          ? 'Placez le bout de la langue entre les dents du haut et du bas et soufflez !'
+          : (lang === 'ja'
+          ? '舌先を上下の前歯で軽く挟み、空気を吹き出しながら摩擦音を出しましょう！'
+          : (lang === 'vi'
+          ? 'Đặt đầu lưỡi nhẹ nhàng giữa hai hàm răng và đẩy luồng hơi ra ngoài!'
+          : (lang === 'hi'
+          ? 'जीभ की नोक को ऊपरी और निचले दांतों के बीच थोड़ा दबाएं और हवा बाहर निकालें!'
+          : '혀끝을 윗니와 아랫니 사이에 살짝 물었다가 바람을 뿜어내며 소리를 내보세요!')))),
         color: '#8E44AD',
         bg: '#F5EEF8',
         border: '#D7BDE2'
@@ -143,8 +204,18 @@ export default function QuizSection({ currentUser, activeWords, onQuizLevelCompl
     if (cleanWord.includes('v') || cleanWord.includes('f')) {
       return {
         icon: '👄',
-        title: '🤖 AI 입모양 교정 팁 [V / F 발음]',
-        text: `윗니로 아랫입술을 가볍게 지그시 누르고 공기를 스치듯이 '쁘-' 또는 '프-' 바람 소리를 불어내보세요!`,
+        title: lang === 'zh' ? '🤖 AI 唇齿纠正贴士 [V / F 发音]' : (lang === 'fr' ? '🤖 Conseil IA lèvres [Son V / F]' : (lang === 'ja' ? '🤖 AI 口の形アドバイス [V / F 発音]' : (lang === 'vi' ? '🤖 Mẹo khẩu hình AI [Âm V / F]' : (lang === 'hi' ? '🤖 AI मुख मुद्रा सुझाव [V / F]' : '🤖 AI 입모양 교정 팁 [V / F 발음]')))),
+        text: lang === 'zh'
+          ? '用上门牙轻轻咬住下嘴唇内侧，缓缓送出摩擦气流！'
+          : (lang === 'fr'
+          ? 'Posez les dents supérieures sur la lèvre inférieure et soufflez doucement !'
+          : (lang === 'ja'
+          ? '上の前歯で下唇を軽く押さえ、すき間から息をこするように音を出しましょう！'
+          : (lang === 'vi'
+          ? 'Dùng răng cửa trên chạm nhẹ vào môi dưới và thổi luồng hơi ra!'
+          : (lang === 'hi'
+          ? 'ऊपरी दांतों से निचले होंठ को हल्का दबाएं और हवा को बाहर निकालें!'
+          : '윗니로 아랫입술을 가볍게 지그시 누르고 공기를 스치듯이 바람 소리를 불어내보세요!')))),
         color: '#C0392B',
         bg: '#FADBD8',
         border: '#F5B7B1'
@@ -154,8 +225,18 @@ export default function QuizSection({ currentUser, activeWords, onQuizLevelCompl
     if (cleanWord.includes('sh') || cleanWord.includes('ch')) {
       return {
         icon: '👄',
-        title: '🤖 AI 입모양 교정 팁 [SH / CH 발음]',
-        text: `입술을 앞으로 동그랗게 모으고 공기를 밀어내며 '쉬-' 또는 '치-' 소리를 강하게 만들어보세요!`,
+        title: lang === 'zh' ? '🤖 AI 唇形纠正贴士 [SH / CH 发音]' : (lang === 'fr' ? '🤖 Conseil IA lèvres [Son SH / CH]' : (lang === 'ja' ? '🤖 AI 口の形アドバイス [SH / CH 発音]' : (lang === 'vi' ? '🤖 Mẹo khẩu hình AI [Âm SH / CH]' : (lang === 'hi' ? '🤖 AI मुख मुद्रा सुझाव [SH / CH]' : '🤖 AI 입모양 교정 팁 [SH / CH 발음]')))),
+        text: lang === 'zh'
+          ? '双唇向前微微嘟起呈圆形，有力地推出气流！'
+          : (lang === 'fr'
+          ? 'Avancez les lèvres en rond et expulsez l\'air avec force !'
+          : (lang === 'ja'
+          ? '唇を前に丸く突き出し、息を勢いよく押し出して発音しましょう！'
+          : (lang === 'vi'
+          ? 'Chu môi tròn về phía trước và đẩy mạnh luồng khí ra ngoài!'
+          : (lang === 'hi'
+          ? 'होंठों को आगे गोल करें और हवा को ज़ोर से बाहर धकेलें!'
+          : '입술을 앞으로 동그랗게 모으고 공기를 밀어내며 소리를 강하게 만들어보세요!')))),
         color: '#16A085',
         bg: '#E8F8F5',
         border: '#A3E4D7'
@@ -164,8 +245,18 @@ export default function QuizSection({ currentUser, activeWords, onQuizLevelCompl
 
     return {
       icon: '💡',
-      title: '🤖 AI 원어민 억양 교정 팁',
-      text: `상단의 🐢 0.7x 슬로우 배속으로 원어민 발음을 들으면서 강세(Accent)가 들어가는 음절을 높여 읽어보세요!`,
+      title: lang === 'zh' ? '🤖 AI 原声语调贴士' : (lang === 'fr' ? '🤖 Conseil IA intonation native' : (lang === 'ja' ? '🤖 AI ネイティブイントネーション' : (lang === 'vi' ? '🤖 Mẹo ngữ điệu bản xứ AI' : (lang === 'hi' ? '🤖 AI मूल वक्ता लय सुझाव' : '🤖 AI 원어민 억양 교정 팁')))),
+      text: lang === 'zh'
+        ? '可使用上方 🐢 0.7x 慢速播放试听，并注意提高带有重音（Accent）的音节！'
+        : (lang === 'fr'
+        ? 'Écoutez avec le bouton ralenti 🐢 0.7x ci-dessus et accentuez la syllabe tonique !'
+        : (lang === 'ja'
+        ? '上部の 🐢 0.7x スロー再生を聞きながら、アクセントが入る音節を強調して読んでみましょう！'
+        : (lang === 'vi'
+        ? 'Nghe ở tốc độ chậm 🐢 0.7x và nhấn mạnh vào âm tiết có trọng âm (Accent)!'
+        : (lang === 'hi'
+        ? 'ऊपर दिए गए 🐢 0.7x धीमी गति से सुनें और बलाघात (Accent) वाले शब्दांश पर जोर दें!'
+        : '상단의 🐢 0.7x 슬로우 배속으로 원어민 발음을 들으면서 강세(Accent)가 들어가는 음절을 높여 읽어보세요!')))),
       color: '#2980B9',
       bg: '#EBF5FB',
       border: '#AED6F1'
@@ -662,7 +753,7 @@ export default function QuizSection({ currentUser, activeWords, onQuizLevelCompl
 
               {/* 🤖 AI 발음 교정 가이드 팁 카드 */}
               {(() => {
-                const aiTip = getAIPronunciationGuideTip(cleanWordStr, pronunciationScore);
+                const aiTip = getAIPronunciationGuideTip(cleanWordStr, pronunciationScore, currentLang);
                 if (!aiTip) return null;
                 return (
                   <div
@@ -693,18 +784,20 @@ export default function QuizSection({ currentUser, activeWords, onQuizLevelCompl
           {/* 레벨 4: 스펠링 직접 입력 퀴즈 */}
           {quizLevel === 4 && (
             <div style={{ textAlign: 'center', padding: '20px 10px', background: '#F5EEF8', borderRadius: '20px', marginBottom: '20px', border: '2px solid #E8DAEF' }}>
-              <span style={{ fontSize: '12px', color: '#8E44AD', fontWeight: '900', background: '#E8DAEF', padding: '2px 10px', borderRadius: '8px' }}>✍️ 4단계 주관식 스펠링 직접 쓰기</span>
+              <span style={{ fontSize: '12px', color: '#8E44AD', fontWeight: '900', background: '#E8DAEF', padding: '2px 10px', borderRadius: '8px' }}>
+                ✍️ {currentLang === 'zh' ? '第4关 英文拼写主观题' : (currentLang === 'fr' ? 'Niveau 4 Dictée & Écriture' : (currentLang === 'ja' ? '第4段階 記述式スペルテスト' : (currentLang === 'vi' ? 'Cấp 4 Viết chính tả' : (currentLang === 'hi' ? 'स्तर 4 वर्तनी लेखन' : '4단계 주관식 스펠링 직접 쓰기'))))}
+              </span>
               <h2 style={{ margin: '8px 0', fontSize: '28px', color: '#2C3E50', fontWeight: '900' }}>
-                {currentLang === 'fr' ? (currentQuiz.meaning_fr || currentQuiz.meaningFr || currentQuiz.meaning) : (currentLang === 'zh' ? (currentQuiz.meaning_zh || currentQuiz.meaningZh || currentQuiz.meaning) : currentQuiz.meaning)}
+                {getOptionMeaning(currentQuiz, currentLang)}
               </h2>
               <p style={{ margin: '0 0 14px 0', fontSize: '13px', color: '#8E44AD', fontWeight: 'bold' }}>
-                💡 {currentLang === 'zh' ? '请在下方输入框直接输入英语单词拼写！' : (currentLang === 'fr' ? 'Saisissez l\'orthographe du mot anglais dans le champ ci-dessous !' : '영어 단어 스펠링을 아래 입력란에 직접 입력하세요!')}
+                💡 {currentLang === 'zh' ? '请在下方输入框直接输入英语单词拼写！' : (currentLang === 'fr' ? 'Saisissez l\'orthographe du mot anglais dans le champ ci-dessous !' : (currentLang === 'ja' ? '下の入力欄に英単語のスペルを直接入力してください！' : (currentLang === 'vi' ? 'Nhập chính tả từ tiếng Anh vào ô dưới đây!' : (currentLang === 'hi' ? 'नीचे दिए गए इनपुट बॉक्स में अंग्रेजी वर्तनी दर्ज करें!' : '영어 단어 스펠링을 아래 입력란에 직접 입력하세요!'))))}
               </p>
 
               <form onSubmit={handleTypedSubmit} style={{ display: 'flex', gap: '8px', maxWidth: '320px', margin: '0 auto' }}>
                 <input
                   type="text"
-                  placeholder={currentLang === 'zh' ? '例: flashlight' : (currentLang === 'fr' ? 'Ex: flashlight' : '예: flashlight')}
+                  placeholder={currentLang === 'zh' ? '例: apple' : (currentLang === 'fr' ? 'Ex: apple' : (currentLang === 'ja' ? '例: apple' : (currentLang === 'vi' ? 'VD: apple' : (currentLang === 'hi' ? 'उदा: apple' : '예: apple'))))}
                   value={typedInput}
                   onChange={(e) => setTypedInput(e.target.value)}
                   disabled={selectedAnswer !== null}
@@ -716,7 +809,7 @@ export default function QuizSection({ currentUser, activeWords, onQuizLevelCompl
                   disabled={selectedAnswer !== null || !typedInput.trim()}
                   style={{ background: '#CE82FF', color: 'white', border: 'none', borderBottom: '4px solid #8E44AD', padding: '12px 18px', borderRadius: '14px', fontWeight: '900', cursor: 'pointer' }}
                 >
-                  {currentLang === 'zh' ? '提交' : (currentLang === 'fr' ? 'Soumettre' : '제출')}
+                  {currentLang === 'zh' ? '提交' : (currentLang === 'fr' ? 'Soumettre' : (currentLang === 'ja' ? '提出' : (currentLang === 'vi' ? 'Nộp bài' : (currentLang === 'hi' ? 'जमा करें' : '제출'))))}
                 </button>
               </form>
             </div>
