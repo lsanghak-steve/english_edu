@@ -77,20 +77,60 @@ export default function QuizSection({ currentUser, activeWords, onQuizLevelCompl
     }
   }, [initialQuizLevel]);
 
-  // 🔊 TTS 음성 재생
+  // 🔊 100% 무조건 들리는 듀얼 엔진 원어민 영어 발음 재생기 (고음질 MP3 스트림 + Web Speech API 2중 보증)
+  const currentAudioRef = useRef(null);
+
   const playAudio = useCallback((textToPlay) => {
-    const text = textToPlay || cleanWordStr;
-    if (typeof window !== 'undefined' && 'speechSynthesis' in window && text) {
-      window.speechSynthesis.cancel();
-      const utterance = new SpeechSynthesisUtterance(text);
-      utterance.lang = 'en-US';
-      let speed = 0.9;
-      try {
-        const saved = localStorage.getItem('steve_voca_tts_speed');
-        if (saved) speed = parseFloat(saved) || 0.9;
-      } catch (e) {}
-      utterance.rate = speed;
-      window.speechSynthesis.speak(utterance);
+    const text = (textToPlay || cleanWordStr || '').replace(/\.png/gi, '').trim();
+    if (!text || typeof window === 'undefined') return;
+
+    let speed = 0.9;
+    try {
+      const saved = localStorage.getItem('steve_voca_tts_speed');
+      if (saved) speed = parseFloat(saved) || 0.9;
+    } catch (e) {}
+
+    // 1순위: 스튜디오급 고음질 원어민 미국식 발음 즉시 재생 (가장 맑고 자연스러움)
+    try {
+      if (currentAudioRef.current) {
+        currentAudioRef.current.pause();
+        currentAudioRef.current.currentTime = 0;
+      }
+      const audioUrl = `https://dict.youdao.com/dictvoice?audio=${encodeURIComponent(text)}&type=2`;
+      const audio = new Audio(audioUrl);
+      audio.playbackRate = speed;
+      currentAudioRef.current = audio;
+
+      const playPromise = audio.play();
+      if (playPromise !== undefined) {
+        playPromise.catch(() => {
+          // 브라우저 예외 시 브라우저 내장 TTS로 즉시 대체
+          speakWebSpeech(text, speed);
+        });
+      }
+    } catch (e) {
+      speakWebSpeech(text, speed);
+    }
+
+    // 2순위: 브라우저 내장 Web Speech API 음성 합성기
+    function speakWebSpeech(wordText, wordSpeed) {
+      if ('speechSynthesis' in window) {
+        try {
+          window.speechSynthesis.cancel();
+          window.speechSynthesis.resume();
+          const utterance = new SpeechSynthesisUtterance(wordText);
+          utterance.lang = 'en-US';
+          utterance.rate = wordSpeed;
+
+          const voices = window.speechSynthesis.getVoices();
+          if (voices && voices.length > 0) {
+            const enVoice = voices.find(v => v.lang.startsWith('en') && (v.name.includes('Google') || v.name.includes('Natural') || v.name.includes('Zira') || v.name.includes('Samantha') || v.name.includes('US'))) || voices.find(v => v.lang.startsWith('en'));
+            if (enVoice) utterance.voice = enVoice;
+          }
+
+          window.speechSynthesis.speak(utterance);
+        } catch (err) {}
+      }
     }
   }, [cleanWordStr]);
 
@@ -422,7 +462,7 @@ export default function QuizSection({ currentUser, activeWords, onQuizLevelCompl
     if (timerRef.current) clearTimeout(timerRef.current);
     timerRef.current = setTimeout(() => {
       handleNextQuestion();
-    }, 1400);
+    }, 1800);
   };
 
   // 🎙️ 3단계 마이크 발음 녹음 시작 / 종료 및 75점+ 심사
@@ -941,6 +981,21 @@ export default function QuizSection({ currentUser, activeWords, onQuizLevelCompl
                   </span>
                 </div>
               )}
+
+              {/* 🔊 실시간 영어 단어 발음 청취 상태 안내 뱃지 */}
+              <div style={{ marginTop: '10px', display: 'inline-flex', alignItems: 'center', gap: '8px', background: '#EBF5FB', border: '1px solid #AED6F1', padding: '6px 16px', borderRadius: '20px' }}>
+                <span style={{ fontSize: '16px' }}>🔊</span>
+                <span style={{ fontSize: '13px', fontWeight: '900', color: '#2980B9' }}>
+                  {cleanWordStr} {currentQuiz.phonics ? `[${currentQuiz.phonics}]` : ''} {currentLang === 'zh' ? '正在朗读发音...' : (currentLang === 'fr' ? 'Lecture audio en cours...' : (currentLang === 'ja' ? 'ネイティブ発音再生中...' : (currentLang === 'vi' ? 'Đang phát âm...' : (currentLang === 'hi' ? 'उच्चारण बज रहा है...' : '원어민 발음 재생 중...'))))}
+                </span>
+                <button
+                  type="button"
+                  onClick={() => playAudio(cleanWordStr)}
+                  style={{ background: '#2980B9', color: 'white', border: 'none', borderRadius: '8px', padding: '3px 10px', fontSize: '11px', fontWeight: 'bold', cursor: 'pointer' }}
+                >
+                  🔊 {currentLang === 'zh' ? '重播' : (currentLang === 'fr' ? 'Réécouter' : (currentLang === 'ja' ? '再再生' : (currentLang === 'vi' ? 'Nghe lại' : (currentLang === 'hi' ? 'पुनः सुनें' : '다시듣기'))))}
+                </button>
+              </div>
 
               <button
                 onClick={handleNextQuestion}

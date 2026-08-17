@@ -876,25 +876,65 @@ export default function Home() {
             : (isRealSentenceKo ? rawExampleKo : `나는 멋진 ${cleanMeaningStr}을(를) 본다.`)))));
 
 
+  const globalAudioRef = useRef(null);
+
   const playWordAudio = useCallback((wordText) => {
-    if ('speechSynthesis' in window) {
-      const text = wordText || cleanWordStr;
-      window.speechSynthesis.cancel();
-      const utterance = new SpeechSynthesisUtterance(text);
-      utterance.lang = 'en-US';
-      utterance.rate = ttsSpeed;
-      window.speechSynthesis.speak(utterance);
+    const text = (wordText || cleanWordStr || '').replace(/\.png/gi, '').trim();
+    if (!text || typeof window === 'undefined') return;
+
+    // 1순위: 고음질 스튜디오 원어민 MP3 음원 즉시 재생
+    try {
+      if (globalAudioRef.current) {
+        globalAudioRef.current.pause();
+        globalAudioRef.current.currentTime = 0;
+      }
+      const audioUrl = `https://dict.youdao.com/dictvoice?audio=${encodeURIComponent(text)}&type=2`;
+      const audio = new Audio(audioUrl);
+      audio.playbackRate = ttsSpeed;
+      globalAudioRef.current = audio;
+
+      const playPromise = audio.play();
+      if (playPromise !== undefined) {
+        playPromise.catch(() => {
+          speakWebSpeech(text, ttsSpeed);
+        });
+      }
+    } catch (e) {
+      speakWebSpeech(text, ttsSpeed);
+    }
+
+    function speakWebSpeech(speechText, speechSpeed) {
+      if ('speechSynthesis' in window) {
+        try {
+          window.speechSynthesis.cancel();
+          window.speechSynthesis.resume();
+          const utterance = new SpeechSynthesisUtterance(speechText);
+          utterance.lang = 'en-US';
+          utterance.rate = speechSpeed;
+
+          const voices = window.speechSynthesis.getVoices();
+          if (voices && voices.length > 0) {
+            const enVoice = voices.find(v => v.lang.startsWith('en') && (v.name.includes('Google') || v.name.includes('Natural') || v.name.includes('Zira') || v.name.includes('Samantha') || v.name.includes('US'))) || voices.find(v => v.lang.startsWith('en'));
+            if (enVoice) utterance.voice = enVoice;
+          }
+
+          window.speechSynthesis.speak(utterance);
+        } catch (err) {}
+      }
     }
   }, [cleanWordStr, ttsSpeed]);
 
   const playSentenceAudio = useCallback((sentenceText) => {
-    if ('speechSynthesis' in window) {
-      const textToSpeak = sentenceText || displayExampleEn;
-      window.speechSynthesis.cancel();
-      const utterance = new SpeechSynthesisUtterance(textToSpeak);
-      utterance.lang = 'en-US';
-      utterance.rate = ttsSpeed;
-      window.speechSynthesis.speak(utterance);
+    const textToSpeak = sentenceText || displayExampleEn;
+    if (typeof window !== 'undefined' && 'speechSynthesis' in window && textToSpeak) {
+      try {
+        window.speechSynthesis.cancel();
+        window.speechSynthesis.resume();
+        const utterance = new SpeechSynthesisUtterance(textToSpeak);
+        utterance.lang = 'en-US';
+        utterance.rate = ttsSpeed;
+        window.speechSynthesis.speak(utterance);
+      } catch (err) {}
     }
   }, [displayExampleEn, ttsSpeed]);
 
