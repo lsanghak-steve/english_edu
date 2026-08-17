@@ -21,8 +21,9 @@ export default function CalendarSection({ currentUser, onSelectDateToStudy, curr
 
   const studentName = currentUser ? removeEmoji(currentUser.name) : (currentLang === 'zh' ? '学生' : (currentLang === 'fr' ? 'Élève' : '학생'));
   const userId = currentUser ? currentUser.id : 'guest';
+  const studentCode = currentUser ? (currentUser.student_id || currentUser.id || '') : '';
 
-  // 💮 이상학(8/3, 8/5), 이승현(8/3, 8/4, 8/5), 이수민(8/4, 8/5) 클라우드 DB 완벽 통합 로드
+  // 💮 출석 도장 클라우드 DB & localStorage 실시간 연동 로드
   useEffect(() => {
     async function loadAttendanceStamps() {
       let defaultDates = [];
@@ -73,7 +74,15 @@ export default function CalendarSection({ currentUser, onSelectDateToStudy, curr
     }
 
     loadAttendanceStamps();
-  }, [userId, studentName]);
+
+    const handleUpdate = () => { loadAttendanceStamps(); };
+    window.addEventListener('study_data_updated', handleUpdate);
+    window.addEventListener('storage', handleUpdate);
+    return () => {
+      window.removeEventListener('study_data_updated', handleUpdate);
+      window.removeEventListener('storage', handleUpdate);
+    };
+  }, [userId, studentName, studentCode]);
 
   // 달력 날짜 생성
   const firstDayOfMonth = new Date(currentYear, currentMonth, 1).getDay();

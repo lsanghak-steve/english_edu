@@ -439,6 +439,34 @@ export default function QuizSection({ currentUser, activeWords, onQuizLevelCompl
     }
   };
 
+  // 📚 정답 맞춘 단어 Supabase DB student_learned_words 및 LocalStorage 실시간 영구 기록
+  const saveLearnedWord = async (wordObj) => {
+    if (!currentUser || !wordObj) return;
+    const wordStr = (wordObj.word || wordObj).replace(/\.png/gi, '').trim();
+    const meaningStr = wordObj.meaning || '';
+    if (!wordStr) return;
+
+    const studentIdToUse = currentUser.student_id || currentUser.id || 'guest';
+    const studentNameClean = (currentUser.name || '').replace(/[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{1F1E0}-\u{1F1FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{1F900}-\u{1F9FF}\u{1F300}-\u{1F5FF}\u{1F004}\u{1F0CF}\u{1F170}-\u{1F251}]/gu, '').trim();
+
+    try {
+      const payload = [{ student_id: studentIdToUse, word: wordStr, meaning: meaningStr, learned_at: new Date().toISOString() }];
+      if (studentNameClean && studentNameClean !== studentIdToUse) {
+        payload.push({ student_id: studentNameClean, word: wordStr, meaning: meaningStr, learned_at: new Date().toISOString() });
+      }
+      await supabase.from('student_learned_words').insert(payload);
+    } catch (e) {}
+
+    try {
+      const localKey = `learned_words_${currentUser.id}`;
+      const existingLocal = JSON.parse(localStorage.getItem(localKey) || '[]');
+      if (!existingLocal.some(item => (typeof item === 'string' ? item : item.word) === wordStr)) {
+        existingLocal.push({ word: wordStr, meaning: meaningStr, learned_at: new Date().toISOString() });
+        localStorage.setItem(localKey, JSON.stringify(existingLocal));
+      }
+    } catch (e) {}
+  };
+
   const timerRef = useRef(null);
   const isMovingRef = useRef(false);
 
@@ -451,6 +479,7 @@ export default function QuizSection({ currentUser, activeWords, onQuizLevelCompl
     if (optionStr === cleanWordStr) {
       setIsCorrect(true);
       setScore(prev => prev + 1);
+      saveLearnedWord(currentQuiz);
     } else {
       setIsCorrect(false);
       saveWrongAnswer(currentQuiz);
@@ -508,6 +537,7 @@ export default function QuizSection({ currentUser, activeWords, onQuizLevelCompl
           setIsCorrect(true);
           setSelectedAnswer('recorded_pass');
           setScore(prev => prev + 1);
+          saveLearnedWord(currentQuiz);
 
           if (timerRef.current) clearTimeout(timerRef.current);
           timerRef.current = setTimeout(() => {
@@ -548,6 +578,7 @@ export default function QuizSection({ currentUser, activeWords, onQuizLevelCompl
     if (userInput === targetWordLower) {
       setIsCorrect(true);
       setScore(prev => prev + 1);
+      saveLearnedWord(currentQuiz);
     } else {
       setIsCorrect(false);
       saveWrongAnswer(currentQuiz);

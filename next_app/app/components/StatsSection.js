@@ -123,7 +123,16 @@ export default function StatsSection({ currentUser, totalWordCount = 500, onNavi
     const timer = setTimeout(() => {
       loadRealtimeCloudStats();
     }, 500);
-    return () => clearTimeout(timer);
+
+    const handleUpdate = () => { loadRealtimeCloudStats(); };
+    window.addEventListener('study_data_updated', handleUpdate);
+    window.addEventListener('storage', handleUpdate);
+
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener('study_data_updated', handleUpdate);
+      window.removeEventListener('storage', handleUpdate);
+    };
   }, [currentUser]);
 
   // 📅 주간 목표 학습량 계산

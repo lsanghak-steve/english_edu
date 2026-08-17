@@ -141,15 +141,24 @@ export default function Home() {
 
     try {
       const studentIdToUse = currentUser.student_id || currentUser.id || 'guest';
-      supabase.from('study_records').upsert({
-        student_id: studentIdToUse,
-        study_date: dateForMission,
-        last_index: currentProgress.currentIndex,
-        last_tab: currentProgress.mainTab,
-        quiz_levels: currentProgress.completedQuizLevels,
-        detail_stage: detailStageText
-      }, { onConflict: 'student_id,study_date' }).then(() => {}).catch(() => {});
-    } catch (e) {}
+      const studentNameClean = (currentUser.name || '').replace(/[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{1F1E0}-\u{1F1FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{1F900}-\u{1F9FF}\u{1F300}-\u{1F5FF}\u{1F004}\u{1F0CF}\u{1F170}-\u{1F251}]/gu, '').trim();
+
+      const syncStudyRecord = async (sid) => {
+        if (!sid) return;
+        const { data: existing } = await supabase.from('study_records').select('id').eq('student_id', sid).eq('study_date', dateForMission).limit(1);
+        if (existing && existing.length > 0) {
+          await supabase.from('study_records').update({ is_stamped: true }).eq('id', existing[0].id);
+        } else {
+          await supabase.from('study_records').insert([{ student_id: sid, study_date: dateForMission, is_stamped: true }]);
+        }
+      };
+      syncStudyRecord(studentIdToUse);
+      if (studentNameClean && studentNameClean !== studentIdToUse) {
+        syncStudyRecord(studentNameClean);
+      }
+    } catch (e) {
+      console.log('Study record sync error', e);
+    }
   }, [currentUser, isLoggedIn, targetStudyDate, todayStr, currentIndex, mainTab, completedQuizLevels, hasRecorded, initialQuizLevel]);
 
 
@@ -947,6 +956,35 @@ export default function Home() {
     }
   }, [isLoggedIn, mainTab, currentIndex, currentWord, playWordAudio, cleanWordStr]);
 
+  // 📚 단어 학습 실시간 Supabase DB & LocalStorage 영구 기록 함수
+  const saveSingleLearnedWord = useCallback(async (wordObj) => {
+    if (!currentUser || !wordObj) return;
+    const wordStr = typeof wordObj === 'string' ? wordObj.replace(/\.png/gi, '').trim() : (wordObj.word || '').replace(/\.png/gi, '').trim();
+    const meaningStr = typeof wordObj === 'object' ? (wordObj.meaning || '') : '';
+    if (!wordStr) return;
+
+    const studentIdToUse = currentUser.student_id || currentUser.id || 'guest';
+    const studentNameClean = (currentUser.name || '').replace(/[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{1F1E0}-\u{1F1FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{1F900}-\u{1F9FF}\u{1F300}-\u{1F5FF}\u{1F004}\u{1F0CF}\u{1F170}-\u{1F251}]/gu, '').trim();
+
+    try {
+      const payload = [{ student_id: studentIdToUse, word: wordStr, meaning: meaningStr, learned_at: new Date().toISOString() }];
+      if (studentNameClean && studentNameClean !== studentIdToUse) {
+        payload.push({ student_id: studentNameClean, word: wordStr, meaning: meaningStr, learned_at: new Date().toISOString() });
+      }
+      await supabase.from('student_learned_words').insert(payload);
+    } catch (e) {}
+
+    // localStorage 동기화
+    try {
+      const localKey = `learned_words_${currentUser.id}`;
+      const existingLocal = JSON.parse(localStorage.getItem(localKey) || '[]');
+      if (!existingLocal.some(item => (typeof item === 'string' ? item : item.word) === wordStr)) {
+        existingLocal.push({ word: wordStr, meaning: meaningStr, learned_at: new Date().toISOString() });
+        localStorage.setItem(localKey, JSON.stringify(existingLocal));
+      }
+    } catch (e) {}
+  }, [currentUser]);
+
   const handleCardClick = (e) => {
     if (e.target.closest('button') || e.target.closest('.audio-btn') || e.target.closest('.record-btn')) {
       return;
@@ -966,7 +1004,14 @@ export default function Home() {
     setIsFlipped(false);
     setRecordedAudioUrl(null);
 
+    // 📚 방금 본 단어 DB에 실시간 외운 단어로 저장
+    if (currentWord) {
+      saveSingleLearnedWord(currentWord);
+    }
+
     if (currentIndex + 1 >= safeActiveWords.length) {
+      // 모든 세트 단어 일괄 저장
+      safeActiveWords.forEach(w => saveSingleLearnedWord(w));
       alert('🎉 선택한 세트 단어를 모두 보았습니다! 1단계 소리 퀴즈로 자동 이동합니다!');
       setMainTab('quiz');
       setInitialQuizLevel(1);
@@ -1361,40 +1406,56 @@ export default function Home() {
     const studentIdToUse = currentUser.student_id || currentUser.id || 'guest';
     const studentNameClean = (currentUser.name || '').replace(/[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{1F1E0}-\u{1F1FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{1F900}-\u{1F9FF}\u{1F300}-\u{1F5FF}\u{1F004}\u{1F0CF}\u{1F170}-\u{1F251}]/gu, '').trim();
 
-    // 2. Supabase 클라우드 DB study_records 및 student_learned_words 보관함에 100% 즉시 정밀 전송
+    // 2. Supabase 클라우드 DB student_learned_words 및 study_records 보관함에 100% 즉시 정밀 전송
     try {
-      const dbLearnedMap = new Map();
+      const learnedPayload = [];
       wordsToSave.forEach(w => {
         const wordVal = typeof w === 'string' ? w : (w.word || '');
         const meaningVal = typeof w === 'string' ? '' : (w.meaning || '');
         if (wordVal) {
-          const key1 = `${studentIdToUse}_${wordVal.toLowerCase()}`;
-          dbLearnedMap.set(key1, { student_id: studentIdToUse, word: wordVal, meaning: meaningVal });
+          learnedPayload.push({
+            student_id: studentIdToUse,
+            word: wordVal,
+            meaning: meaningVal,
+            learned_at: new Date().toISOString()
+          });
           if (studentNameClean && studentNameClean !== studentIdToUse) {
-            const key2 = `${studentNameClean}_${wordVal.toLowerCase()}`;
-            dbLearnedMap.set(key2, { student_id: studentNameClean, word: wordVal, meaning: meaningVal });
+            learnedPayload.push({
+              student_id: studentNameClean,
+              word: wordVal,
+              meaning: meaningVal,
+              learned_at: new Date().toISOString()
+            });
           }
         }
       });
 
-      const studyRecordsMap = new Map();
-      studyRecordsMap.set(studentIdToUse, { student_id: studentIdToUse, study_date: stampDateKey, is_stamped: true, stamped_words: wordsToSave });
-      if (studentNameClean && studentNameClean !== studentIdToUse) {
-        studyRecordsMap.set(studentNameClean, { student_id: studentNameClean, study_date: stampDateKey, is_stamped: true, stamped_words: wordsToSave });
+      if (learnedPayload.length > 0) {
+        await supabase.from('student_learned_words').insert(learnedPayload);
       }
 
-      console.log('🚀 DB 학습 단어 및 출석 도장 정밀 전송:', Array.from(dbLearnedMap.values()).length);
+      // 출석 테이블(study_records)에 안전하게 단일 날짜 도장 저장
+      const syncStudyRecord = async (sid) => {
+        if (!sid) return;
+        const { data: existing } = await supabase.from('study_records').select('id').eq('student_id', sid).eq('study_date', stampDateKey).limit(1);
+        if (existing && existing.length > 0) {
+          await supabase.from('study_records').update({ is_stamped: true }).eq('id', existing[0].id);
+        } else {
+          await supabase.from('study_records').insert([{ student_id: sid, study_date: stampDateKey, is_stamped: true }]);
+        }
+      };
 
-      await Promise.allSettled([
-        supabase.from('study_records').upsert(Array.from(studyRecordsMap.values()), { onConflict: 'student_id,study_date' }),
-        supabase.from('student_learned_words').insert(Array.from(dbLearnedMap.values()))
-      ]);
-      console.log('✅ DB 학습 데이터 전송 완벽 성공!');
+      await syncStudyRecord(studentIdToUse);
+      if (studentNameClean && studentNameClean !== studentIdToUse) {
+        await syncStudyRecord(studentNameClean);
+      }
+
+      console.log('✅ DB 학습 데이터 및 출석 도장 전송 완벽 성공!');
     } catch (e) {
       console.error('Cloud attendance and learned words save error:', e);
     }
 
-    // 3. localStorage 백업 저장
+    // 3. localStorage 백업 저장 & 실시간 갱신 이벤트 발행
     let stamps = [];
     try {
       stamps = JSON.parse(localStorage.getItem(stampKey) || '[]');
@@ -1407,6 +1468,11 @@ export default function Home() {
     }
 
     localStorage.setItem(stampedWordsKey, JSON.stringify(wordsToSave));
+
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new Event('study_data_updated'));
+      window.dispatchEvent(new Event('storage'));
+    }
   }, [currentUser, targetStudyDate, todayStr, todayAllLearnedWords, safeActiveWords, dailyRandomWords]);
 
   // 💡 2단계 퀴즈 완수 시 출석 도장 찍기 수행!

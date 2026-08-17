@@ -176,6 +176,14 @@ export default function ParentDashboard({ currentUser, onLogout, currentLang = '
     }
 
     fetchChildRealtimeStats();
+
+    const handleUpdate = () => { fetchChildRealtimeStats(); };
+    window.addEventListener('study_data_updated', handleUpdate);
+    window.addEventListener('storage', handleUpdate);
+    return () => {
+      window.removeEventListener('study_data_updated', handleUpdate);
+      window.removeEventListener('storage', handleUpdate);
+    };
   }, [studentName, childId, childDbId]);
 
   // 🔊 TTS 음성 재생 헬퍼
