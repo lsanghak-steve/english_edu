@@ -153,27 +153,50 @@ export default function Home() {
   }, [currentUser, isLoggedIn, targetStudyDate, todayStr, currentIndex, mainTab, completedQuizLevels, hasRecorded, initialQuizLevel]);
 
 
-  // 🎯 발음 유사도(일치율 %) 정밀 계산 알고리즘 (가짜 보정 제거)
+  // 🎯 학생 친화적 발음 유사도 점수(0~100점) 완화 알고리즘 (어린이 및 초보자 친화적 관용 매칭)
   const calculateMatchScore = (targetStr, spokenStr) => {
     if (!targetStr) return 0;
     const cleanTarget = targetStr.toLowerCase().replace(/[^a-z]/g, '');
     const cleanSpoken = (spokenStr || '').toLowerCase().replace(/[^a-z]/g, '');
 
-    // 1. 발음이 들리지 않거나 음성 인식이 실패한 경우 0점~10점 처리
+    // 1. 발음 인식이 아예 안 되거나 마이크 입력이 약한 경우 (기본 격려 점수)
     if (!cleanSpoken || cleanSpoken.trim() === '') {
-      return 15; // 마이크 소리가 거의 안 들리거나 발음 미인식 시 낮은 점수
+      return 40;
     }
 
     // 2. 완전히 일치하는 경우 100점
     if (cleanTarget === cleanSpoken) return 100;
 
-    // 3. 포함 관계인 경우 부분 점수
+    // 3. 포함 관계이거나 문장 속에 단어가 포함된 경우 (예: "a cat", "the apple", "banana please") 95점 부여
     if (cleanSpoken.includes(cleanTarget) || cleanTarget.includes(cleanSpoken)) {
-      const ratio = Math.min(cleanTarget.length, cleanSpoken.length) / Math.max(cleanTarget.length, cleanSpoken.length);
-      return Math.round(ratio * 90);
+      return 95;
     }
 
-    // 4. 레벤슈타인 거리 기반 알파벳 정밀 유사도 산출
+    // 4. 발음 유사 음운 정규화 매칭 (c/k, ph/f, z/s, v/b, r/l, 모음 변이 관용 인정)
+    const normalizePhonetics = (s) => {
+      return s
+        .replace(/ph/g, 'f')
+        .replace(/ck/g, 'k')
+        .replace(/c(?=[eiy])/g, 's')
+        .replace(/c/g, 'k')
+        .replace(/q/g, 'k')
+        .replace(/z/g, 's')
+        .replace(/x/g, 'ks')
+        .replace(/th/g, 't')
+        .replace(/[aeiouy]+/g, 'a');
+    };
+
+    const normTarget = normalizePhonetics(cleanTarget);
+    const normSpoken = normalizePhonetics(cleanSpoken);
+
+    if (normTarget === normSpoken) {
+      return 92;
+    }
+    if (normSpoken.includes(normTarget) || normTarget.includes(normSpoken)) {
+      return 88;
+    }
+
+    // 5. 레벤슈타인 편집 거리 기반 관대한 점수 산출
     let m = cleanTarget.length, n = cleanSpoken.length;
     let dp = Array.from({ length: m + 1 }, () => Array(n + 1).fill(0));
     for (let i = 0; i <= m; i++) dp[i][0] = i;
@@ -186,9 +209,16 @@ export default function Home() {
       }
     }
     const dist = dp[m][n];
-    const maxLen = Math.max(m, n);
-    const score = Math.round(((maxLen - dist) / maxLen) * 100);
-    return Math.max(0, Math.min(100, score));
+
+    // 1~2글자 가벼운 발음 차이에 대해 넉넉한 점수 부여
+    if (dist === 1) return 88;
+    if (dist === 2) return 78;
+    if (dist === 3 && Math.max(m, n) >= 5) return 70;
+
+    const maxLen = Math.max(m, n, 1);
+    const rawRatio = Math.max(0, (maxLen - dist) / maxLen);
+    const boostedScore = Math.round(45 + (rawRatio * 55));
+    return Math.max(40, Math.min(100, boostedScore));
   };
 
 
@@ -2246,24 +2276,24 @@ export default function Home() {
                     margin: '12px 0 6px 0',
                     padding: '12px',
                     borderRadius: '16px',
-                    background: pronunciationScore >= 90 ? '#E8F8F5' : (pronunciationScore >= 75 ? '#FEF9E7' : '#FDEDEC'),
-                    border: `2px solid ${pronunciationScore >= 90 ? '#2ECC71' : (pronunciationScore >= 75 ? '#F1C40F' : '#E74C3C')}`,
+                    background: pronunciationScore >= 85 ? '#E8F8F5' : (pronunciationScore >= 65 ? '#FEF9E7' : '#FDEDEC'),
+                    border: `2px solid ${pronunciationScore >= 85 ? '#2ECC71' : (pronunciationScore >= 65 ? '#F1C40F' : '#E74C3C')}`,
                     animation: 'fadeIn 0.5s ease',
                   }}
                 >
-                  <div style={{ fontSize: '15px', fontWeight: '900', color: pronunciationScore >= 90 ? '#27AE60' : (pronunciationScore >= 75 ? '#D4AC0D' : '#C0392B') }}>
+                  <div style={{ fontSize: '15px', fontWeight: '900', color: pronunciationScore >= 85 ? '#27AE60' : (pronunciationScore >= 65 ? '#D4AC0D' : '#C0392B') }}>
                     {(() => {
-                      if (pronunciationScore >= 90) {
-                        if (currentLang === 'zh') return '🎯 发音匹配率 100% 完美！⭐⭐⭐';
-                        if (currentLang === 'fr') return '🎯 Précision 100% Parfait ! ⭐⭐⭐';
-                        if (currentLang === 'ja') return '🎯 発音一致率 100% 完璧です！⭐⭐⭐';
-                        if (currentLang === 'vi') return '🎯 Độ chính xác 100% Hoàn hảo! ⭐⭐⭐';
-                        if (currentLang === 'hi') return '🎯 उच्चारण सटीकता 100% उत्कृष्ट! ⭐⭐⭐';
-                        return '🎯 발음 일치율 100% 완벽해요! ⭐⭐⭐';
+                      if (pronunciationScore >= 85) {
+                        if (currentLang === 'zh') return `🎯 发音匹配率 ${pronunciationScore}% 完美！⭐⭐⭐`;
+                        if (currentLang === 'fr') return `🎯 Précision ${pronunciationScore}% Parfait ! ⭐⭐⭐`;
+                        if (currentLang === 'ja') return `🎯 発音一致率 ${pronunciationScore}% 完璧です！⭐⭐⭐`;
+                        if (currentLang === 'vi') return `🎯 Độ chính xác ${pronunciationScore}% Hoàn hảo! ⭐⭐⭐`;
+                        if (currentLang === 'hi') return `🎯 उच्चारण सटीकता ${pronunciationScore}% उत्कृष्ट! ⭐⭐⭐`;
+                        return `🎯 발음 일치율 ${pronunciationScore}% 완벽해요! ⭐⭐⭐`;
                       }
-                      if (pronunciationScore >= 75) {
-                        if (currentLang === 'zh') return `👍 发音匹配率 ${pronunciationScore}% 很棒！⭐⭐`;
-                        if (currentLang === 'fr') return `👍 Précision ${pronunciationScore}% Excellent ! ⭐⭐`;
+                      if (pronunciationScore >= 65) {
+                        if (currentLang === 'zh') return `👍 发音匹配率 ${pronunciationScore}% 아주 좋아요！⭐⭐`;
+                        if (currentLang === 'fr') return `👍 Précision ${pronunciationScore}% Très bien ! ⭐⭐`;
                         if (currentLang === 'ja') return `👍 発音一致率 ${pronunciationScore}% 素晴らしいです！⭐⭐`;
                         if (currentLang === 'vi') return `👍 Độ chính xác ${pronunciationScore}% Rất tốt! ⭐⭐`;
                         if (currentLang === 'hi') return `👍 उच्चारण सटीकता ${pronunciationScore}% बहुत बढ़िया! ⭐⭐`;
@@ -2274,7 +2304,7 @@ export default function Home() {
                       if (currentLang === 'ja') return `🌱 発音一致率 ${pronunciationScore}% 頑張りましょう！⭐`;
                       if (currentLang === 'vi') return `🌱 Độ chính xác ${pronunciationScore}% Cố lên! ⭐`;
                       if (currentLang === 'hi') return `🌱 उच्चारण सटीकता ${pronunciationScore}% अभ्यास जारी रखें! ⭐`;
-                      return `🌱 발음 일치율 ${pronunciationScore}% 힘내세요! ⭐`;
+                      return `🌱 발음 일치율 ${pronunciationScore}% 조금만 더 힘내세요! ⭐`;
                     })()}
                   </div>
                   <div style={{ fontSize: '12px', color: '#555', marginTop: '4px', fontWeight: 'bold' }}>

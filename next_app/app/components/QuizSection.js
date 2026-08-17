@@ -94,20 +94,48 @@ export default function QuizSection({ currentUser, activeWords, onQuizLevelCompl
     }
   }, [cleanWordStr]);
 
-  // 🎯 레벤슈타인 거리 기반 발음 유사도 점수(0~100점) 계산
+  // 🎯 학생 친화적 발음 유사도 점수(0~100점) 완화 알고리즘 (어린이 및 초보자 친화적 관용 매칭)
   const calculateMatchScore = (targetStr, spokenStr) => {
     if (!targetStr) return 0;
     const cleanTarget = targetStr.toLowerCase().replace(/[^a-z]/g, '');
     const cleanSpoken = (spokenStr || '').toLowerCase().replace(/[^a-z]/g, '');
 
-    if (!cleanSpoken || cleanSpoken.trim() === '') return 15;
+    // 1. 발음 인식이 아예 안 되거나 마이크 입력이 약한 경우 (기본 격려 점수)
+    if (!cleanSpoken || cleanSpoken.trim() === '') return 40;
+
+    // 2. 완전히 일치하는 경우 100점
     if (cleanTarget === cleanSpoken) return 100;
 
+    // 3. 포함 관계이거나 문장 속에 단어가 포함된 경우 (예: "a cat", "the apple", "banana please") 95점 부여
     if (cleanSpoken.includes(cleanTarget) || cleanTarget.includes(cleanSpoken)) {
-      const ratio = Math.min(cleanTarget.length, cleanSpoken.length) / Math.max(cleanTarget.length, cleanSpoken.length);
-      return Math.round(ratio * 90);
+      return 95;
     }
 
+    // 4. 발음 유사 음운 정규화 매칭 (c/k, ph/f, z/s, v/b, r/l, 모음 변이 관용 인정)
+    const normalizePhonetics = (s) => {
+      return s
+        .replace(/ph/g, 'f')
+        .replace(/ck/g, 'k')
+        .replace(/c(?=[eiy])/g, 's')
+        .replace(/c/g, 'k')
+        .replace(/q/g, 'k')
+        .replace(/z/g, 's')
+        .replace(/x/g, 'ks')
+        .replace(/th/g, 't')
+        .replace(/[aeiouy]+/g, 'a');
+    };
+
+    const normTarget = normalizePhonetics(cleanTarget);
+    const normSpoken = normalizePhonetics(cleanSpoken);
+
+    if (normTarget === normSpoken) {
+      return 92;
+    }
+    if (normSpoken.includes(normTarget) || normTarget.includes(normSpoken)) {
+      return 88;
+    }
+
+    // 5. 레벤슈타인 편집 거리 계산
     let m = cleanTarget.length, n = cleanSpoken.length;
     let dp = Array.from({ length: m + 1 }, () => Array(n + 1).fill(0));
     for (let i = 0; i <= m; i++) dp[i][0] = i;
@@ -123,9 +151,16 @@ export default function QuizSection({ currentUser, activeWords, onQuizLevelCompl
       }
     }
     const distance = dp[m][n];
-    const maxLen = Math.max(m, n);
-    const scoreVal = Math.round(((maxLen - distance) / maxLen) * 100);
-    return Math.max(0, Math.min(100, scoreVal));
+
+    // 1~2글자 가벼운 발음 차이에 대해 넉넉한 점수 부여
+    if (distance === 1) return 88;
+    if (distance === 2) return 78;
+    if (distance === 3 && Math.max(m, n) >= 5) return 70;
+
+    const maxLen = Math.max(m, n, 1);
+    const rawRatio = Math.max(0, (maxLen - distance) / maxLen);
+    const boostedScore = Math.round(45 + (rawRatio * 55));
+    return Math.max(40, Math.min(100, boostedScore));
   };
 
   // 🤖 AI 발음 교정 가이드 팁 분석 엔진 (6개 국어 다국어 지원)
@@ -134,7 +169,7 @@ export default function QuizSection({ currentUser, activeWords, onQuizLevelCompl
     const cleanWord = targetWordStr.toLowerCase().trim();
 
     if (score !== null && score !== undefined) {
-      if (score >= 90) {
+      if (score >= 85) {
         return {
           icon: '🎉',
           title: lang === 'zh' ? '🤖 AI 发音完美赞赏！' : (lang === 'fr' ? '🤖 Félicitations IA !' : (lang === 'ja' ? '🤖 AI 発音パーフェクト称賛！' : (lang === 'vi' ? '🤖 AI Khen ngợi phát âm hoàn hảo!' : (lang === 'hi' ? '🤖 AI उत्कृष्ट उच्चारण प्रशंसा!' : '🤖 AI 발음 완벽 칭찬!')))),
@@ -429,7 +464,7 @@ export default function QuizSection({ currentUser, activeWords, onQuizLevelCompl
         const finalScore = calculateMatchScore(cleanWordStr, recognizedSpokenText);
         setPronunciationScore(finalScore);
 
-        if (finalScore >= 75) {
+        if (finalScore >= 65) {
           setIsCorrect(true);
           setSelectedAnswer('recorded_pass');
           setScore(prev => prev + 1);
@@ -688,13 +723,13 @@ export default function QuizSection({ currentUser, activeWords, onQuizLevelCompl
           {quizLevel === 3 && (
             <div style={{ textAlign: 'center', padding: '20px 14px', background: '#FFF8F0', borderRadius: '20px', marginBottom: '20px', border: '2px solid #FFE4C4' }}>
               <span style={{ fontSize: '12px', color: '#D35400', fontWeight: '900', background: '#FEF5E7', padding: '4px 10px', borderRadius: '10px', border: '1px solid #FADBD8' }}>
-                🎙️ {currentLang === 'zh' ? '第3关 发音录音评测 (75分以上通过)' : (currentLang === 'fr' ? 'Niveau 3 Test Prononciation Micro (75+ pts)' : (currentLang === 'ja' ? '第3段階 マイク発音録音テスト (75点以上で合格)' : (currentLang === 'vi' ? 'Cấp 3 Kiểm tra phát âm ghi âm (75+ điểm)' : (currentLang === 'hi' ? 'स्तर 3 उच्चारण रिकॉर्डिंग (75+ अंक)' : '3단계 마이크 발음 녹음 퀴즈 (75점 이상 합격)'))))}
+                🎙️ {currentLang === 'zh' ? '第3关 发音录音评测 (65分以上通过)' : (currentLang === 'fr' ? 'Niveau 3 Test Prononciation Micro (65+ pts)' : (currentLang === 'ja' ? '第3段階 マイク発音録音テスト (65点以上で合格)' : (currentLang === 'vi' ? 'Cấp 3 Kiểm tra phát âm ghi âm (65+ điểm)' : (currentLang === 'hi' ? 'स्तर 3 उच्चारण रिकॉर्डिंग (65+ अंक)' : '3단계 마이크 발음 녹음 퀴즈 (65점 이상 합격)'))))}
               </span>
               <h2 style={{ margin: '10px 0 4px 0', fontSize: '28px', color: '#2C3E50', fontWeight: '900' }}>
                 {getOptionMeaning(currentQuiz, currentLang)}
               </h2>
               <p style={{ margin: '0 0 16px 0', fontSize: '13px', color: '#E67E22', fontWeight: 'bold' }}>
-                💡 {currentLang === 'zh' ? `请点击下方麦克风并大声读出单词 [${cleanWordStr}]！` : (currentLang === 'fr' ? `Appuyez sur le micro et prononcez à voix haute [${cleanWordStr}] !` : (currentLang === 'ja' ? `下のマイクボタンを押して英単語 [${cleanWordStr}] の発音を声に出してください！` : (currentLang === 'vi' ? `Nhấn nút micro bên dưới và đọc to từ tiếng Anh [${cleanWordStr}]!` : (currentLang === 'hi' ? `नीचे माइक्रोफ़ोन बटन दबाएं और अंग्रेजी शब्द [${cleanWordStr}] ज़ोर से बोलें!` : `아래 마이크 버튼을 누르고 영단어 [${cleanWordStr}] 발음을 크게 말해보세요!`))))}
+                💡 {currentLang === 'zh' ? `请点击下方麦克风并大声读出单词 [${cleanWordStr}]！` : (currentLang === 'fr' ? `Appuyez sur le micro et prononcez à voix haute [${cleanWordStr}] !` : (currentLang === 'ja' ? `下のマイクボタンを押して英単語 [${cleanWordStr}] の発音を声に出してください！` : (currentLang === 'vi' ? `Nhấn nút micro bên dưới và đọc to từ tiếng Anh [${cleanWordStr}]!` : (currentLang === 'hi' ? `नीचे माइक्रोफ़ोन बटन दबाएं और अंग्रेजी शब्द [${cleanWordStr}] ज़ोर से बोलें!` : `아래 마이크 버튼을 누르고 영단어 [${cleanWordStr}] 발음을 편안하게 말해보세요!`))))}
               </p>
 
               {/* 녹음 조작 버튼 */}
@@ -757,15 +792,15 @@ export default function QuizSection({ currentUser, activeWords, onQuizLevelCompl
                 <div style={{
                   padding: '12px 16px',
                   borderRadius: '16px',
-                  background: pronunciationScore >= 75 ? '#E5F8D0' : '#FFDFDF',
-                  border: pronunciationScore >= 75 ? '2px solid #46A302' : '2px solid #FF4B4B',
+                  background: pronunciationScore >= 65 ? '#E5F8D0' : '#FFDFDF',
+                  border: pronunciationScore >= 65 ? '2px solid #46A302' : '2px solid #FF4B4B',
                   display: 'flex',
                   flexDirection: 'column',
                   gap: '4px',
                   alignItems: 'center'
                 }}>
-                  <div style={{ fontSize: '16px', fontWeight: '900', color: pronunciationScore >= 75 ? '#46A302' : '#EA2B2B' }}>
-                    {pronunciationScore >= 75 ? (currentLang === 'zh' ? `🎉 [${pronunciationScore}分] 75分以上通过! 🌟` : (currentLang === 'fr' ? `🎉 [${pronunciationScore} pts] Validé ! 🌟` : (currentLang === 'ja' ? `🎉 [${pronunciationScore}点] 75点以上合格！🌟` : (currentLang === 'vi' ? `🎉 [${pronunciationScore} điểm] Đạt! 🌟` : (currentLang === 'hi' ? `🎉 [${pronunciationScore} अंक] सफल! 🌟` : `🎉 [${pronunciationScore}점] 75점 이상 합격! 🌟`))))) : (currentLang === 'zh' ? `❌ [${pronunciationScore}分] 低于75分 (需重试) 💡` : (currentLang === 'fr' ? `❌ [${pronunciationScore} pts] Moins de 75 (Rejouer) 💡` : (currentLang === 'ja' ? `❌ [${pronunciationScore}点] 75点未満 (再挑戦必要) 💡` : (currentLang === 'vi' ? `❌ [${pronunciationScore} điểm] Dưới 75 (Thử lại) 💡` : (currentLang === 'hi' ? `❌ [${pronunciationScore} अंक] 75 से कम (पुनः प्रयास करें) 💡` : `❌ [${pronunciationScore}점] 75점 미만 (재도전 필요) 💡`)))))}
+                  <div style={{ fontSize: '16px', fontWeight: '900', color: pronunciationScore >= 65 ? '#46A302' : '#EA2B2B' }}>
+                    {pronunciationScore >= 65 ? (currentLang === 'zh' ? `🎉 [${pronunciationScore}分] 65分以上通过! 🌟` : (currentLang === 'fr' ? `🎉 [${pronunciationScore} pts] Validé ! 🌟` : (currentLang === 'ja' ? `🎉 [${pronunciationScore}点] 65点以上合格！🌟` : (currentLang === 'vi' ? `🎉 [${pronunciationScore} điểm] Đạt! 🌟` : (currentLang === 'hi' ? `🎉 [${pronunciationScore} अंक] सफल! 🌟` : `🎉 [${pronunciationScore}점] 발음 퀴즈 통과! 🌟`))))) : (currentLang === 'zh' ? `❌ [${pronunciationScore}分] 低于65分 (需重试) 💡` : (currentLang === 'fr' ? `❌ [${pronunciationScore} pts] Moins de 65 (Rejouer) 💡` : (currentLang === 'ja' ? `❌ [${pronunciationScore}点] 65点未満 (再挑戦必要) 💡` : (currentLang === 'vi' ? `❌ [${pronunciationScore} điểm] Dưới 65 (Thử lại) 💡` : (currentLang === 'hi' ? `❌ [${pronunciationScore} अंक] 65 से कम (पुनः प्रयास करें) 💡` : `❌ [${pronunciationScore}점] 65점 미만 (재도전 필요) 💡`)))))}
                   </div>
                   {spokenText && (
                     <span style={{ fontSize: '12px', color: '#555555' }}>
