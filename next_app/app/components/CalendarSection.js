@@ -119,20 +119,49 @@ export default function CalendarSection({ currentUser, onSelectDateToStudy, curr
       return;
     }
 
-    // 이미 도장이 찍힌 날짜 단어 데이터 로드
+    // 🎯 이미 도장이 찍힌 날짜에 실제 공부한 단어 데이터 정밀 로드
     let savedWords = [];
     try {
-      savedWords = JSON.parse(localStorage.getItem(`stamped_words_${userId}_${fullDateStr}`) || '[]');
+      savedWords = JSON.parse(localStorage.getItem(`stamped_words_${userId}_${fullDateStr}`) || localStorage.getItem(`stamped_words_${studentCode}_${fullDateStr}`) || localStorage.getItem(`daily_random_words_${userId}_${fullDateStr}`) || localStorage.getItem(`daily_random_words_${studentCode}_${fullDateStr}`) || '[]');
     } catch (e) {
       savedWords = [];
     }
 
+    // Supabase DB에서 해당 날짜에 저장된 학습 단어 비동기 보정 로드
     if (!savedWords || savedWords.length === 0) {
-      savedWords = wordList500Fallback.slice(0, studentName === '이승현' || studentName === '이수민' || studentName === '이상학' ? 30 : 10);
+      const loadDbDateWords = async () => {
+        try {
+          const queryIds = [userId, studentCode, studentName].filter(Boolean);
+          const { data: dbLearned } = await supabase
+            .from('student_learned_words')
+            .select('word, meaning, learned_at')
+            .or(queryIds.map(id => `student_id.eq.${id}`).join(','))
+            .gte('learned_at', `${fullDateStr}T00:00:00`)
+            .lte('learned_at', `${fullDateStr}T23:59:59`);
+
+          if (dbLearned && dbLearned.length > 0) {
+            const map = new Map();
+            dbLearned.forEach(item => {
+              if (item.word && !map.has(item.word.toLowerCase())) {
+                map.set(item.word.toLowerCase(), { word: item.word, meaning: item.meaning || '' });
+              }
+            });
+            const actualList = Array.from(map.values());
+            if (actualList.length > 0) {
+              setSelectedStampWords(actualList);
+              try {
+                localStorage.setItem(`stamped_words_${userId}_${fullDateStr}`, JSON.stringify(actualList));
+              } catch (e) {}
+              return;
+            }
+          }
+        } catch (err) {}
+      };
+      loadDbDateWords();
     }
 
     setSelectedDateStr(fullDateStr);
-    setSelectedStampWords(savedWords);
+    setSelectedStampWords(savedWords && savedWords.length > 0 ? savedWords : []);
   };
 
   // TTS 발음 듣기

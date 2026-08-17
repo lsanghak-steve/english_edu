@@ -85,19 +85,18 @@ export default function StatsSection({ currentUser, totalWordCount = 500, onNavi
           learnedRes.value.data.forEach(item => {
             const isMatch = cleanIds.some(idStr => 
               item.student_id === idStr || 
-              (item.student_id && item.student_id.toLowerCase().includes(userName.toLowerCase())) ||
-              (item.student_id && item.student_id.includes('lsh_'))
-            ) || (userName.includes('상학') || userId.includes('sh'));
+              (item.student_id && item.student_id === userName)
+            );
 
             if (isMatch && item.word) {
-              learnedItemsMap.set(item.word, { word: item.word, meaning: item.meaning || '' });
+              learnedItemsMap.set(item.word.toLowerCase(), { word: item.word, meaning: item.meaning || '' });
             }
           });
         }
 
         if (wrongRes.status === 'fulfilled' && Array.isArray(wrongRes.value.data)) {
           const matchedWrong = wrongRes.value.data.filter(item => 
-            cleanIds.some(idStr => item.student_id === idStr || (item.student_id && item.student_id.includes(userName)))
+            cleanIds.some(idStr => item.student_id === idStr || (item.student_id && item.student_id === userName))
           );
           cloudWrongCount = Math.max(localWrong.length, matchedWrong.length);
         }
@@ -106,9 +105,8 @@ export default function StatsSection({ currentUser, totalWordCount = 500, onNavi
       }
 
       const finalLearnedArray = Array.from(learnedItemsMap.values());
-      const defaultLearnedBonus = (userName.includes('상학') || userId.includes('sh')) ? 60 : 20;
-      const finalLearnedCount = Math.max(finalLearnedArray.length, defaultLearnedBonus);
-      const finalAttendanceCount = Math.max(cloudAttendanceCount, (userName.includes('상학') || userId.includes('sh')) ? 2 : 1);
+      const finalLearnedCount = finalLearnedArray.length;
+      const finalAttendanceCount = cloudAttendanceCount;
 
       setLearnedWordList(finalLearnedArray);
       setStats({

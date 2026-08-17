@@ -158,16 +158,8 @@ export default function ParentDashboard({ currentUser, onLogout, currentLang = '
         const finalDates = Array.from(datesSet);
         const finalLearnedList = Array.from(learnedItemsMap.values());
 
-        if (studentName.includes('승현') || studentName.includes('상학')) {
-          if (finalLearnedList.length === 0) setLearnedWordsList(wordList500Fallback.slice(0, 96));
-          else setLearnedWordsList(finalLearnedList);
-
-          if (finalDates.length === 0) setStampedDates(['2026-08-05', '2026-08-06', '2026-08-07', '2026-08-08', '2026-08-09', '2026-08-10', '2026-08-11', '2026-08-12', '2026-08-13']);
-          else setStampedDates(finalDates);
-        } else {
-          setLearnedWordsList(finalLearnedList);
-          setStampedDates(finalDates);
-        }
+        setLearnedWordsList(finalLearnedList);
+        setStampedDates(finalDates);
 
         setWrongAnswers(matchedWrong);
       } catch (e) {

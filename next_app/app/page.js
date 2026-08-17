@@ -1398,10 +1398,20 @@ export default function Home() {
     const stampDateKey = targetStudyDate || todayStr;
     const stampKey = `english_stamps_${currentUser.id}`;
     const stampedWordsKey = `stamped_words_${currentUser.id}_${stampDateKey}`;
+    const stampedWordsCodeKey = currentUser.student_id ? `stamped_words_${currentUser.student_id}_${stampDateKey}` : null;
     
-    // 1. 단어 목록 2중 3중 안전 정제 (절대 빈 값이 되지 않도록 보장)
-    const rawWords = todayAllLearnedWords.length > 0 ? todayAllLearnedWords : (safeActiveWords.length > 0 ? safeActiveWords : dailyRandomWords);
-    const wordsToSave = (rawWords && rawWords.length > 0) ? rawWords : [{ word: 'Apple', meaning: '사과' }];
+    // 🎯 1. 실제 화면에서 공부한 단어(safeActiveWords)를 1순위로 확정 정제
+    const currentStudiedWords = (safeActiveWords && safeActiveWords.length > 0) ? safeActiveWords : (dailyRandomWords || []);
+    const wordMap = new Map();
+    currentStudiedWords.forEach(w => {
+      const key = (typeof w === 'string' ? w : (w.word || '')).toLowerCase();
+      if (key) wordMap.set(key, w);
+    });
+    (todayAllLearnedWords || []).forEach(w => {
+      const key = (typeof w === 'string' ? w : (w.word || '')).toLowerCase();
+      if (key && !wordMap.has(key)) wordMap.set(key, w);
+    });
+    const wordsToSave = Array.from(wordMap.values());
     
     const studentIdToUse = currentUser.student_id || currentUser.id || 'guest';
     const studentNameClean = (currentUser.name || '').replace(/[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{1F1E0}-\u{1F1FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{1F900}-\u{1F9FF}\u{1F300}-\u{1F5FF}\u{1F004}\u{1F0CF}\u{1F170}-\u{1F251}]/gu, '').trim();
@@ -1465,9 +1475,21 @@ export default function Home() {
     if (!stamps.includes(stampDateKey)) {
       stamps.push(stampDateKey);
       localStorage.setItem(stampKey, JSON.stringify(stamps));
+      if (currentUser.student_id) {
+        localStorage.setItem(`english_stamps_${currentUser.student_id}`, JSON.stringify(stamps));
+      }
     }
 
     localStorage.setItem(stampedWordsKey, JSON.stringify(wordsToSave));
+    if (stampedWordsCodeKey) {
+      localStorage.setItem(stampedWordsCodeKey, JSON.stringify(wordsToSave));
+    }
+    localStorage.setItem(`today_all_learned_${currentUser.id}_${stampDateKey}`, JSON.stringify(wordsToSave));
+    if (currentUser.student_id) {
+      localStorage.setItem(`today_all_learned_${currentUser.student_id}_${stampDateKey}`, JSON.stringify(wordsToSave));
+    }
+
+    setTodayAllLearnedWords(wordsToSave);
 
     if (typeof window !== 'undefined') {
       window.dispatchEvent(new Event('study_data_updated'));
