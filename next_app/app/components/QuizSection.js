@@ -22,9 +22,22 @@ export default function QuizSection({ currentUser, activeWords, onQuizLevelCompl
   const audioChunksRef = useRef([]);
   const recognitionRef = useRef(null);
 
-  const safeWords = activeWords && activeWords.length > 0 ? activeWords : [];
-  const currentQuiz = safeWords[currentIndex] || safeWords[0];
-  const cleanWordStr = (currentQuiz?.word || '').replace(/\.png/gi, '').trim();
+  const fallbackList = Array.isArray(wordList500Fallback) && wordList500Fallback.length > 0
+    ? wordList500Fallback
+    : [{ id: 1, word: 'Apple', meaning: '사과', phonics: '/ˈæpəl/', category: '기초' }];
+
+  const safeWords = activeWords && activeWords.length > 0 ? activeWords : fallbackList;
+
+  // 🛡️ 퀴즈 단어 목록 변경 시 인덱스 범위 초과 방지
+  useEffect(() => {
+    if (safeWords.length > 0 && currentIndex >= safeWords.length) {
+      setCurrentIndex(0);
+    }
+  }, [safeWords.length, currentIndex]);
+
+  const safeIndex = (currentIndex >= 0 && currentIndex < safeWords.length) ? currentIndex : 0;
+  const currentQuiz = safeWords[safeIndex] || safeWords[0] || fallbackList[0];
+  const cleanWordStr = (typeof currentQuiz === 'string' ? currentQuiz : (currentQuiz?.word || 'Word')).replace(/\.png/gi, '').trim();
 
   // 🌐 언어별 단어 뜻 추출 헬퍼 (로컬 fallback 사전 연동으로 100% 보장)
   const getOptionMeaning = (item, lang) => {
@@ -67,11 +80,16 @@ export default function QuizSection({ currentUser, activeWords, onQuizLevelCompl
   // 🔊 TTS 음성 재생
   const playAudio = useCallback((textToPlay) => {
     const text = textToPlay || cleanWordStr;
-    if ('speechSynthesis' in window && text) {
+    if (typeof window !== 'undefined' && 'speechSynthesis' in window && text) {
       window.speechSynthesis.cancel();
       const utterance = new SpeechSynthesisUtterance(text);
       utterance.lang = 'en-US';
-      utterance.rate = 0.85;
+      let speed = 0.9;
+      try {
+        const saved = localStorage.getItem('steve_voca_tts_speed');
+        if (saved) speed = parseFloat(saved) || 0.9;
+      } catch (e) {}
+      utterance.rate = speed;
       window.speechSynthesis.speak(utterance);
     }
   }, [cleanWordStr]);
@@ -363,10 +381,13 @@ export default function QuizSection({ currentUser, activeWords, onQuizLevelCompl
       saveWrongAnswer(currentQuiz);
     }
 
+    // 🔊 2단계(및 1단계) 시험 시 답을 클릭하면 다음 단어가 나오기 전에 단어를 영어로 즉시 또박또박 발음 재생!
+    playAudio(cleanWordStr);
+
     if (timerRef.current) clearTimeout(timerRef.current);
     timerRef.current = setTimeout(() => {
       handleNextQuestion();
-    }, 1000);
+    }, 1400);
   };
 
   // 🎙️ 3단계 마이크 발음 녹음 시작 / 종료 및 75점+ 심사
@@ -457,10 +478,13 @@ export default function QuizSection({ currentUser, activeWords, onQuizLevelCompl
       saveWrongAnswer(currentQuiz);
     }
 
+    // 🔊 주관식 답안 제출 시에도 단어를 영어로 즉시 또박또박 발음 재생
+    playAudio(cleanWordStr);
+
     if (timerRef.current) clearTimeout(timerRef.current);
     timerRef.current = setTimeout(() => {
       handleNextQuestion();
-    }, 1200);
+    }, 1400);
   };
 
   const handleNextQuestion = () => {
@@ -655,7 +679,7 @@ export default function QuizSection({ currentUser, activeWords, onQuizLevelCompl
                 {getOptionMeaning(currentQuiz, currentLang)}
               </h2>
               <p style={{ margin: 0, fontSize: '13px', color: '#777777', fontWeight: 'bold' }}>
-                💡 {currentLang === 'zh' ? '请在下列选项中选择正确的英语单词！' : (currentLang === 'fr' ? 'Choisissez le bon mot anglais ci-dessous !' : (currentLang === 'ja' ? '下記から正しい英単語を選択してください！' : (currentLang === 'vi' ? 'Chọn từ tiếng Anh đúng dưới đây!' : (currentLang === 'hi' ? 'नीचे सही अंग्रेजी शब्द चुनें!' : '아래 보기에서 올바른 영어 단어를 선택하세요!'))))}
+                💡 {currentLang === 'zh' ? '请在下列选项中选择正确的英语单词！(点击选项即朗读单词发音 🔊)' : (currentLang === 'fr' ? 'Choisissez le bon mot anglais ci-dessous ! (Lecture audio au clic 🔊)' : (currentLang === 'ja' ? '下記から正しい英単語を選択してください！(選択時に発音を再生 🔊)' : (currentLang === 'vi' ? 'Chọn từ tiếng Anh đúng dưới đây! (Phát âm khi chọn 🔊)' : (currentLang === 'hi' ? 'नीचे सही अंग्रेजी शब्द चुनें! (क्लिक पर उच्चारण 🔊)' : '아래 보기에서 올바른 영어 단어를 선택하세요! (답을 누르면 단어 소리가 자동 재생됩니다 🔊)'))))}
               </p>
             </div>
           )}

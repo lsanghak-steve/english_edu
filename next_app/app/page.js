@@ -472,7 +472,7 @@ export default function Home() {
   }, []);
 
 
-  // ⚡ [관리자-학생 화면 실시간 레벨 & 단어수 동기화 Engine]
+  // ⚡ [관리자-학생 화면 실시간 레벨, 학년 & 단어수 동기화 Engine]
   useEffect(() => {
     if (!currentUser || !isLoggedIn) return;
 
@@ -502,20 +502,24 @@ export default function Home() {
         }
 
         if (dbUser) {
+          const cloudGrade = dbUser.avatar || dbUser.grade || currentUser.grade || '초등 3학년';
           const cloudLevel = dbUser.study_grade_level || '초등단어';
           const cloudCount = String(dbUser.daily_word_count || '10');
 
+          const curGrade = currentUser.grade || currentUser.avatar || '초등 3학년';
           const curLevel = currentUser.studyGradeLevel || currentUser.study_grade_level || '초등단어';
           const curCount = String(currentUser.dailyWordCount || currentUser.daily_word_count || '10');
 
-          if (cloudLevel !== curLevel || cloudCount !== curCount) {
-            console.log(`🔄 [실시간 프로필 동기화] 레벨: ${curLevel} -> ${cloudLevel}, 목표: ${curCount} -> ${cloudCount}`);
+          if (cloudLevel !== curLevel || cloudCount !== curCount || (dbUser.avatar && dbUser.avatar !== curGrade)) {
+            console.log(`🔄 [실시간 프로필 동기화] 레벨: ${curLevel} -> ${cloudLevel}, 목표: ${curCount} -> ${cloudCount}, 학년: ${curGrade} -> ${cloudGrade}`);
             const updatedUser = {
               ...currentUser,
+              grade: cloudGrade,
+              avatar: cloudGrade,
               studyGradeLevel: cloudLevel,
               study_grade_level: cloudLevel,
               dailyWordCount: cloudCount,
-              daily_word_count: cloudCount
+              daily_word_count: parseInt(cloudCount, 10)
             };
             setCurrentUser(updatedUser);
             sessionStorage.setItem('english_edu_logged_user', JSON.stringify(updatedUser));
@@ -524,7 +528,7 @@ export default function Home() {
             const newRandoms = await loadDailyRandomWordsFromDB(updatedUser);
             if (newRandoms && newRandoms.length > 0) {
               setDailyRandomWords(newRandoms);
-              setWordList(newRandoms);
+              setCurrentIndex(0);
             }
           }
         }
@@ -532,7 +536,7 @@ export default function Home() {
     };
 
     checkAndSyncProfile();
-    const interval = setInterval(checkAndSyncProfile, 2000);
+    const interval = setInterval(checkAndSyncProfile, 3000);
     window.addEventListener('user_profile_updated', checkAndSyncProfile);
     window.addEventListener('storage', checkAndSyncProfile);
 
@@ -582,7 +586,7 @@ export default function Home() {
 
     if (savedProgress) {
       const savedIdx = typeof savedProgress.currentIndex === 'number' ? savedProgress.currentIndex : 0;
-      setCurrentIndex(savedIdx);
+      setCurrentIndex(Math.min(savedIdx, Math.max(0, userDailyCount - 1)));
 
       if (storedQuiz.includes(2)) {
         // 이미 2단계 스펠링 퀴즈 완수
@@ -621,12 +625,10 @@ export default function Home() {
       // 로컬 세트의 개수가 현재 학생의 목표 수량(예: 20개)과 정확히 일치할 때만 캐시 사용, 다르면 DB 라이브 로드!
       if (savedDailySet && savedDailySet.length === targetCount && savedDailySet.length > 0) {
         setDailyRandomWords(savedDailySet);
-        setWordList(savedDailySet);
       } else {
         const newRandomSet = await loadDailyRandomWordsFromDB(currentUser);
         if (newRandomSet && newRandomSet.length > 0) {
           setDailyRandomWords(newRandomSet);
-          setWordList(newRandomSet);
           localStorage.setItem(dailySetKey, JSON.stringify(newRandomSet));
           setTodayAllLearnedWords(newRandomSet);
           localStorage.setItem(todayAllKey, JSON.stringify(newRandomSet));
@@ -727,6 +729,13 @@ export default function Home() {
   const safeActiveWords = (baseWordsList && baseWordsList.length > 0)
     ? baseWordsList.slice(0, userDailyCount)
     : fallbackWords.slice(0, userDailyCount);
+
+  // 🛡️ 단어 수 변경 시 인덱스 범위 초과 방지 및 안전 클램핑
+  useEffect(() => {
+    if (safeActiveWords.length > 0 && currentIndex >= safeActiveWords.length) {
+      setCurrentIndex(0);
+    }
+  }, [safeActiveWords.length, currentIndex]);
 
   const currentWord = safeActiveWords[currentIndex] || safeActiveWords[0] || fallbackWords[0];
 

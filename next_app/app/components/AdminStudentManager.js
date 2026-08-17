@@ -69,10 +69,12 @@ export default function AdminStudentManager() {
       if (!error && data && data.length > 0) {
         const formatted = data.map(s => ({
           id: s.id,
+          db_id: s.id,
           student_id: s.student_id || s.id,
           name: removeEmoji(s.name),
-          grade: s.grade || '초등 3학년',
-          studyGradeLevel: s.study_grade_level || s.studyGradeLevel || (s.grade && s.grade.includes('중등') ? '중등단어' : '초등단어'),
+          grade: s.avatar || s.grade || '초등 3학년',
+          avatar: s.avatar || s.grade || '초등 3학년',
+          studyGradeLevel: s.study_grade_level || s.studyGradeLevel || (s.avatar && s.avatar.includes('중등') ? '중등단어' : (s.avatar && s.avatar.includes('고등') ? '고등단어' : '초등단어')),
           dailyWordCount: String(s.daily_word_count || s.dailyWordCount || '10'),
           studentPin: s.pin || s.studentPin || '1234',
           parentName: removeEmoji(s.parent_name || s.name),
@@ -97,6 +99,7 @@ export default function AdminStudentManager() {
         if (Array.isArray(parsed) && parsed.length > 0) {
           const formatted = parsed.map(u => ({
             ...u,
+            grade: u.grade || u.avatar || '초등 3학년',
             studyGradeLevel: u.studyGradeLevel || u.study_grade_level || '초등단어'
           }));
           setStudents(formatted);
@@ -204,18 +207,24 @@ export default function AdminStudentManager() {
     setStudents(updatedList);
     localStorage.setItem('english_edu_users', JSON.stringify(updatedList));
 
-    // Supabase DB `users` 테이블에 학습 레벨(study_grade_level) 및 목표 수량 정밀 저장 (신규 insert / 기존 update 100% 분기 처리)
+    // Supabase DB `users` 테이블에 학습 레벨(study_grade_level), 학년(avatar) 및 목표 수량 정밀 저장
     try {
       const payload = {
         name: cleanName,
         pin: studentPin,
         daily_word_count: wordCountInt,
-        study_grade_level: studyGradeLevel
+        study_grade_level: studyGradeLevel,
+        avatar: grade
       };
 
       let existingRow = null;
       if (editingStudent?.id && String(editingStudent.id).includes('-')) {
         const { data } = await supabase.from('users').select('*').eq('id', editingStudent.id).limit(1);
+        if (data && data[0]) existingRow = data[0];
+      }
+      if (!existingRow && (editingStudent?.student_id || studentIdToUse)) {
+        const sid = editingStudent?.student_id || studentIdToUse;
+        const { data } = await supabase.from('users').select('*').eq('student_id', sid).limit(1);
         if (data && data[0]) existingRow = data[0];
       }
       if (!existingRow) {
@@ -225,9 +234,9 @@ export default function AdminStudentManager() {
 
       if (existingRow) {
         await supabase.from('users').update(payload).eq('id', existingRow.id);
-        console.log('☁️ DB 기존 학생 정보 수정 완수:', cleanName);
+        console.log('☁️ DB 기존 학생 정보 수정 완수:', cleanName, grade, studyGradeLevel);
       } else {
-        payload.student_id = editingStudent?.student_id || `user_${Date.now()}`;
+        payload.student_id = editingStudent?.student_id || studentIdToUse;
         await supabase.from('users').insert(payload);
         console.log('☁️ DB 신규 학생 등록 완수:', cleanName);
       }
@@ -242,9 +251,11 @@ export default function AdminStudentManager() {
         const sessionActive = JSON.parse(sessionStr);
         if (sessionActive) {
           const activeNameClean = removeEmoji(sessionActive.name || '');
-          if (activeNameClean === cleanName || sessionActive.id === studentIdToUse) {
+          if (activeNameClean === cleanName || sessionActive.id === studentIdToUse || sessionActive.student_id === studentIdToUse) {
             const updatedActive = {
               ...sessionActive,
+              grade: grade,
+              avatar: grade,
               studyGradeLevel: studyGradeLevel,
               study_grade_level: studyGradeLevel,
               dailyWordCount: String(wordCountInt),
@@ -255,7 +266,7 @@ export default function AdminStudentManager() {
             localStorage.setItem('english_edu_current_user', JSON.stringify(updatedActive));
             window.dispatchEvent(new Event('storage'));
             window.dispatchEvent(new Event('user_profile_updated'));
-            console.log('⚡ 활성 학생 세션 실시간 레벨 갱신 완수:', updatedActive);
+            console.log('⚡ 활성 학생 세션 실시간 레벨/학년 갱신 완수:', updatedActive);
           }
         }
       }
@@ -285,21 +296,42 @@ export default function AdminStudentManager() {
     setLoading(true);
     try {
       for (const student of students) {
-        await supabase.from('users').upsert({
-          id: student.id,
-          name: removeEmoji(student.name),
-          grade: student.grade,
-          study_grade_level: student.studyGradeLevel || '초등단어',
-          daily_word_count: parseInt(student.dailyWordCount) || 10,
-          pin: student.studentPin
-        });
+        const cleanName = removeEmoji(student.name);
+        const payload = {
+          name: cleanName,
+          avatar: student.grade || '초등 3학년',
+          study_grade_level: student.studyGradeLevel || student.study_grade_level || '초등단어',
+          daily_word_count: parseInt(student.dailyWordCount || student.daily_word_count || 10, 10),
+          pin: student.studentPin || student.pin || '1234'
+        };
+
+        let existingRow = null;
+        if (student.id && String(student.id).includes('-')) {
+          const { data } = await supabase.from('users').select('*').eq('id', student.id).limit(1);
+          if (data && data[0]) existingRow = data[0];
+        }
+        if (!existingRow && student.student_id) {
+          const { data } = await supabase.from('users').select('*').eq('student_id', student.student_id).limit(1);
+          if (data && data[0]) existingRow = data[0];
+        }
+        if (!existingRow && cleanName) {
+          const { data } = await supabase.from('users').select('*').ilike('name', `%${cleanName}%`).limit(1);
+          if (data && data[0]) existingRow = data[0];
+        }
+
+        if (existingRow) {
+          await supabase.from('users').update(payload).eq('id', existingRow.id);
+        } else {
+          payload.student_id = student.student_id || student.id || `user_${Date.now()}`;
+          await supabase.from('users').insert(payload);
+        }
       }
-      alert('☁️ Supabase 클라우드 DB에 모든 학생의 학습 레벨 데이터가 성공적으로 강제 동기화되었습니다!');
+      alert('☁️ Supabase 클라우드 DB에 모든 학생의 학년 및 학습 레벨 데이터가 성공적으로 강제 동기화되었습니다!');
       await loadStudents();
     } catch (e) {
       alert('동기화 중 오류가 발생했습니다.');
-      setLoading(false);
     }
+    setLoading(false);
   };
 
   // 💌 학부모 칭찬 알림장 전송

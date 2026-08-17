@@ -50,25 +50,38 @@ export default function StudentLoginPage({ onLoginSuccess, onParentLoginSuccess,
       try {
         const { data: dbData } = await supabase.from('users').select('*').order('created_at', { ascending: true });
         if (dbData && dbData.length > 0) {
-          const cloudUsers = dbData.map(item => ({
-            id: item.student_id || item.id,
-            db_id: item.id,
-            student_id: item.student_id || item.id,
-            name: removeEmoji(item.name),
-            grade: item.grade || item.avatar || '초등 3학년',
-            studyGradeLevel: item.study_grade_level || '초등단어',
-            study_grade_level: item.study_grade_level || '초등단어',
-            dailyWordCount: String(item.daily_word_count || 10),
-            daily_word_count: item.daily_word_count || 10,
-            studentPin: item.pin || '1111',
-            parentName: removeEmoji(item.name) + '학부모',
-            parentPhone: '',
-            parentPin: '5678'
-          }));
+          const savedUsers = JSON.parse(localStorage.getItem('english_edu_users') || '[]');
+          const savedMap = new Map();
+          savedUsers.forEach(u => { if (u.name) savedMap.set(u.name, u); });
+
+          const cloudUsers = dbData.map(item => {
+            const cleanN = removeEmoji(item.name);
+            const cachedUser = savedMap.get(cleanN);
+            return {
+              id: item.student_id || item.id,
+              db_id: item.id,
+              student_id: item.student_id || item.id,
+              name: cleanN,
+              grade: item.avatar || item.grade || cachedUser?.grade || '초등 3학년',
+              avatar: item.avatar || item.grade || cachedUser?.grade || '초등 3학년',
+              studyGradeLevel: item.study_grade_level || cachedUser?.studyGradeLevel || '초등단어',
+              study_grade_level: item.study_grade_level || cachedUser?.study_grade_level || '초등단어',
+              dailyWordCount: String(item.daily_word_count || cachedUser?.dailyWordCount || 10),
+              daily_word_count: item.daily_word_count || (cachedUser ? parseInt(cachedUser.dailyWordCount, 10) : 10),
+              studentPin: item.pin || cachedUser?.studentPin || '1234',
+              parentName: cachedUser?.parentName || (cleanN + '학부모'),
+              parentPhone: cachedUser?.parentPhone || '',
+              parentPin: cachedUser?.parentPin || '5678'
+            };
+          });
 
           const userMap = new Map();
           cloudUsers.forEach(u => { if (u.name) userMap.set(u.name, u); });
-          defaultStudents.forEach(d => { if (!userMap.has(d.name)) userMap.set(d.name, d); });
+          defaultStudents.forEach(d => {
+            if (!userMap.has(d.name)) {
+              userMap.set(d.name, d);
+            }
+          });
 
           const mergedList = Array.from(userMap.values());
           setUsers(mergedList);
