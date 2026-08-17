@@ -1013,7 +1013,7 @@ export default function Home() {
     const cleanWord = targetWordStr.toLowerCase().trim();
 
     if (score !== null && score !== undefined) {
-      if (score >= 90) {
+      if (score >= 85) {
         return {
           icon: '🎉',
           title: lang === 'zh' ? '🤖 AI 发音完美赞赏！' : (lang === 'fr' ? '🤖 Félicitations IA !' : (lang === 'ja' ? '🤖 AI 発音パーフェクト称賛！' : (lang === 'vi' ? '🤖 AI Khen ngợi phát âm hoàn hảo!' : (lang === 'hi' ? '🤖 AI उत्कृष्ट उच्चारण प्रशंसा!' : '🤖 AI 발음 완벽 칭찬!')))),
@@ -1031,6 +1031,26 @@ export default function Home() {
           color: '#27AE60',
           bg: '#E8F8F5',
           border: '#A3E4D7'
+        };
+      }
+      if (score >= 65) {
+        return {
+          icon: '👍',
+          title: lang === 'zh' ? '🤖 AI 发音合格赞赏！' : (lang === 'fr' ? '🤖 Bravo, validé !' : (lang === 'ja' ? '🤖 AI 合格称賛！' : (lang === 'vi' ? '🤖 AI Khen ngợi đạt chuẩn!' : (lang === 'hi' ? '🤖 AI सफल उच्चारण प्रशंसा!' : '🤖 AI 발음 통과 칭찬!')))),
+          text: lang === 'zh'
+            ? `[${targetWordStr}] 恭喜达到65分以上合格标准！发音清晰响亮，继续保持！🌟`
+            : (lang === 'fr'
+            ? `[${targetWordStr}] Félicitations pour avoir dépassé 65 points ! Prononciation claire et nette ! 🌟`
+            : (lang === 'ja'
+            ? `[${targetWordStr}] 65点以上の合格基準達成おめでとうございます！発音も明瞭で素晴らしいです！🌟`
+            : (lang === 'vi'
+            ? `[${targetWordStr}] Chúc mừng đạt trên 65 điểm! Phát âm rõ ràng và tự tin! 🌟`
+            : (lang === 'hi'
+            ? `[${targetWordStr}] 65 से अधिक अंक प्राप्त करने पर बधाई! स्पष्ट और अच्छा उच्चारण! 🌟`
+            : `[${targetWordStr}] 65점 이상 합격 기준을 멋지게 달성했어요! 자신감 있는 또박또박한 발음이 아주 훌륭합니다. 🌟`)))),
+          color: '#2ECC71',
+          bg: '#E5F8D0',
+          border: '#46A302'
         };
       }
     }
@@ -2316,40 +2336,43 @@ export default function Home() {
                     margin: '12px 0 6px 0',
                     padding: '12px',
                     borderRadius: '16px',
-                    background: pronunciationScore >= 85 ? '#E8F8F5' : (pronunciationScore >= 65 ? '#FEF9E7' : '#FDEDEC'),
-                    border: `2px solid ${pronunciationScore >= 85 ? '#2ECC71' : (pronunciationScore >= 65 ? '#F1C40F' : '#E74C3C')}`,
+                    background: pronunciationScore >= 85 ? '#E8F8F5' : (pronunciationScore >= 65 ? '#E5F8D0' : '#FDEDEC'),
+                    border: `2px solid ${pronunciationScore >= 85 ? '#2ECC71' : (pronunciationScore >= 65 ? '#46A302' : '#E74C3C')}`,
                     animation: 'fadeIn 0.5s ease',
                   }}
                 >
-                  <div style={{ fontSize: '15px', fontWeight: '900', color: pronunciationScore >= 85 ? '#27AE60' : (pronunciationScore >= 65 ? '#D4AC0D' : '#C0392B') }}>
+                  <div style={{ fontSize: '15px', fontWeight: '900', color: pronunciationScore >= 85 ? '#27AE60' : (pronunciationScore >= 65 ? '#46A302' : '#C0392B') }}>
                     {(() => {
                       if (pronunciationScore >= 85) {
-                        if (currentLang === 'zh') return `🎯 发音匹配率 ${pronunciationScore}% 完美！⭐⭐⭐`;
-                        if (currentLang === 'fr') return `🎯 Précision ${pronunciationScore}% Parfait ! ⭐⭐⭐`;
-                        if (currentLang === 'ja') return `🎯 発音一致率 ${pronunciationScore}% 完璧です！⭐⭐⭐`;
-                        if (currentLang === 'vi') return `🎯 Độ chính xác ${pronunciationScore}% Hoàn hảo! ⭐⭐⭐`;
-                        if (currentLang === 'hi') return `🎯 उच्चारण सटीकता ${pronunciationScore}% उत्कृष्ट! ⭐⭐⭐`;
-                        return `🎯 발음 일치율 ${pronunciationScore}% 완벽해요! ⭐⭐⭐`;
+                        if (currentLang === 'zh') return `🎉 [${pronunciationScore}分] 完美发音达成！⭐⭐⭐`;
+                        if (currentLang === 'fr') return `🎉 [${pronunciationScore} pts] Prononciation Parfaite ! ⭐⭐⭐`;
+                        if (currentLang === 'ja') return `🎉 [${pronunciationScore}点] 完璧な発音達成！⭐⭐⭐`;
+                        if (currentLang === 'vi') return `🎉 [${pronunciationScore} điểm] Phát âm hoàn hảo! ⭐⭐⭐`;
+                        if (currentLang === 'hi') return `🎉 [${pronunciationScore} अंक] उत्कृष्ट उच्चारण! ⭐⭐⭐`;
+                        return `🎉 [${pronunciationScore}점] 완벽한 원어민 발음! ⭐⭐⭐`;
                       }
                       if (pronunciationScore >= 65) {
-                        if (currentLang === 'zh') return `👍 发音匹配率 ${pronunciationScore}% 아주 좋아요！⭐⭐`;
-                        if (currentLang === 'fr') return `👍 Précision ${pronunciationScore}% Très bien ! ⭐⭐`;
-                        if (currentLang === 'ja') return `👍 発音一致率 ${pronunciationScore}% 素晴らしいです！⭐⭐`;
-                        if (currentLang === 'vi') return `👍 Độ chính xác ${pronunciationScore}% Rất tốt! ⭐⭐`;
-                        if (currentLang === 'hi') return `👍 उच्चारण सटीकता ${pronunciationScore}% बहुत बढ़िया! ⭐⭐`;
-                        return `👍 발음 일치율 ${pronunciationScore}% 훌륭해요! ⭐⭐`;
+                        if (currentLang === 'zh') return `👍 [${pronunciationScore}分] 65分以上通过！录音任务完成 ⭐⭐`;
+                        if (currentLang === 'fr') return `👍 [${pronunciationScore} pts] Validé (65+ pts) ! Bravo ⭐⭐`;
+                        if (currentLang === 'ja') return `👍 [${pronunciationScore}点] 65点以上合格！録音完了 ⭐⭐`;
+                        if (currentLang === 'vi') return `👍 [${pronunciationScore} điểm] Đạt trên 65 điểm! Xuất sắc ⭐⭐`;
+                        if (currentLang === 'hi') return `👍 [${pronunciationScore} अंक] 65 से अधिक सफल! ⭐⭐`;
+                        return `👍 [${pronunciationScore}점] 발음 통과 (65점 이상 합격)! 훌륭해요 ⭐⭐`;
                       }
-                      if (currentLang === 'zh') return `🌱 发音匹配率 ${pronunciationScore}% 加油！⭐`;
-                      if (currentLang === 'fr') return `🌱 Précision ${pronunciationScore}% Continuez ! ⭐`;
-                      if (currentLang === 'ja') return `🌱 発音一致率 ${pronunciationScore}% 頑張りましょう！⭐`;
-                      if (currentLang === 'vi') return `🌱 Độ chính xác ${pronunciationScore}% Cố lên! ⭐`;
-                      if (currentLang === 'hi') return `🌱 उच्चारण सटीकता ${pronunciationScore}% अभ्यास जारी रखें! ⭐`;
-                      return `🌱 발음 일치율 ${pronunciationScore}% 조금만 더 힘내세요! ⭐`;
+                      if (currentLang === 'zh') return `🌱 [${pronunciationScore}分] 低于65分，请再试一次！⭐`;
+                      if (currentLang === 'fr') return `🌱 [${pronunciationScore} pts] Moins de 65, réessayez ! ⭐`;
+                      if (currentLang === 'ja') return `🌱 [${pronunciationScore}点] 65点未満、もう一度挑戦してみましょう！⭐`;
+                      if (currentLang === 'vi') return `🌱 [${pronunciationScore} điểm] Dưới 65 điểm, hãy thử lại nhé! ⭐`;
+                      if (currentLang === 'hi') return `🌱 [${pronunciationScore} अंक] 65 से कम, पुनः प्रयास करें! ⭐`;
+                      return `🌱 [${pronunciationScore}점] 조금만 더 크게 읽어보아요! (65점 이상 합격) ⭐`;
                     })()}
                   </div>
                   <div style={{ fontSize: '12px', color: '#555', marginTop: '4px', fontWeight: 'bold' }}>
                     {cleanWordStr} {currentLang === 'zh' ? '发音测评分数:' : (currentLang === 'fr' ? 'Score de prononciation:' : (currentLang === 'ja' ? '発音測定スコア:' : (currentLang === 'vi' ? 'Điểm phát âm:' : (currentLang === 'hi' ? 'उच्चारण स्कोर:' : '발음 측정 점수:'))))}{' '}
-                    <span style={{ fontSize: '14px', color: '#2980B9' }}>{pronunciationScore}{currentLang === 'zh' ? '分' : (currentLang === 'fr' ? ' pts' : (currentLang === 'ja' ? '点' : (currentLang === 'vi' ? ' điểm' : (currentLang === 'hi' ? ' अंक' : '점'))))}</span>
+                    <span style={{ fontSize: '14px', color: pronunciationScore >= 65 ? '#46A302' : '#C0392B', fontWeight: '900' }}>
+                      {pronunciationScore}{currentLang === 'zh' ? '分' : (currentLang === 'fr' ? ' pts' : (currentLang === 'ja' ? '点' : (currentLang === 'vi' ? ' điểm' : (currentLang === 'hi' ? ' अंक' : '점'))))}
+                      {pronunciationScore >= 65 ? ' (합격 💮)' : ' (재도전 필요 💡)'}
+                    </span>
                   </div>
                 </div>
               )}
