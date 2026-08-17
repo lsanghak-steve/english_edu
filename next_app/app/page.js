@@ -1753,7 +1753,7 @@ export default function Home() {
                   ⚡ {t('progress_status_text', currentLang)}
                 </span>
                 <span style={{ fontSize: '14px', fontWeight: '800', color: '#3C3C3C' }}>
-                  {resumeNotice || `▶ ${currentLang === 'zh' ? `当前位置: 单词 #${currentIndex + 1} / ${safeActiveWords.length}` : (currentLang === 'fr' ? `Position: Mot #${currentIndex + 1} / ${safeActiveWords.length}` : `현재 학습 위치: 단어 #${currentIndex + 1} / ${safeActiveWords.length}`)}`}
+                  {getResumeNoticeText(resumeNotice, currentLang, currentIndex, safeActiveWords.length)}
                 </span>
               </div>
 
