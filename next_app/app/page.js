@@ -2567,7 +2567,12 @@ export default function Home() {
         <Day6ReviewSection
           currentUser={currentUser}
           safeActiveWords={safeActiveWords}
-          onQuizComplete={fetchStudyRecordsFromDB}
+          onQuizComplete={() => {
+            if (typeof window !== 'undefined') {
+              window.dispatchEvent(new Event('study_data_updated'));
+              window.dispatchEvent(new Event('storage'));
+            }
+          }}
           currentLang={currentLang}
         />
       )}

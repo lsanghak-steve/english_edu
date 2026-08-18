@@ -63,11 +63,18 @@ export default function Day6ReviewSection({ currentUser, safeActiveWords, onQuiz
       try {
         const timeoutPromise = new Promise(resolve => setTimeout(() => resolve({ timeout: true }), 1500));
 
+        const queryIds = [studentCode, currentUser?.id, studentName].filter(Boolean);
         const fetchPromise = (async () => {
-          const [wrongRes, recordsRes] = await Promise.allSettled([
-            supabase.from('wrong_words').select('*').eq('student_id', studentCode),
-            supabase.from('study_records').select('*').eq('student_id', studentCode)
-          ]);
+          let wrongQ = supabase.from('wrong_words').select('*');
+          let recQ = supabase.from('study_records').select('*');
+          if (queryIds.length > 1) {
+            wrongQ = wrongQ.or(queryIds.map(id => `student_id.eq.${id}`).join(','));
+            recQ = recQ.or(queryIds.map(id => `student_id.eq.${id}`).join(','));
+          } else if (queryIds.length === 1) {
+            wrongQ = wrongQ.eq('student_id', queryIds[0]);
+            recQ = recQ.eq('student_id', queryIds[0]);
+          }
+          const [wrongRes, recordsRes] = await Promise.allSettled([wrongQ, recQ]);
           return { wrongRes, recordsRes };
         })();
 
@@ -216,12 +223,32 @@ export default function Day6ReviewSection({ currentUser, safeActiveWords, onQuiz
       // Supabase DB study_records에 주간 종합 복습 왕도장(🏵️) 기록 저장
       try {
         const todayStr = new Date().toISOString().split('T')[0];
-        await supabase.from('study_records').upsert({
-          student_id: studentCode,
-          study_date: todayStr,
-          detail_stage: `🗓️ Day 6 주간 종합 오답 복습 완수 (🏵️ 주간 왕도장 획득 - ${finalScorePct}점)`,
-          score: finalScorePct
-        }, { onConflict: 'student_id,study_date' });
+        const syncDay6Record = async (sid) => {
+          if (!sid) return;
+          const { data: existing } = await supabase.from('study_records').select('id').eq('student_id', sid).eq('study_date', todayStr).limit(1);
+          if (existing && existing.length > 0) {
+            await supabase.from('study_records').update({ is_stamped: true }).eq('id', existing[0].id);
+          } else {
+            await supabase.from('study_records').insert([{ student_id: sid, study_date: todayStr, is_stamped: true }]);
+          }
+        };
+        await syncDay6Record(studentCode);
+        if (studentName && studentName !== studentCode) {
+          await syncDay6Record(studentName);
+        }
+
+        // localStorage 동기화
+        const stampKey = `english_stamps_${currentUser?.id || studentCode}`;
+        let localStamps = JSON.parse(localStorage.getItem(stampKey) || '[]');
+        if (!localStamps.includes(todayStr)) {
+          localStamps.push(todayStr);
+          localStorage.setItem(stampKey, JSON.stringify(localStamps));
+        }
+
+        if (typeof window !== 'undefined') {
+          window.dispatchEvent(new Event('study_data_updated'));
+          window.dispatchEvent(new Event('storage'));
+        }
       } catch (e) {}
 
       if (onQuizComplete) {
