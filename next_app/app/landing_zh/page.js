@@ -2,8 +2,12 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import ChinaPaymentModal from '../components/ChinaPaymentModal.js';
 
 export default function LandingZhPage() {
+  // VIP 支付弹窗状态
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
+
   // 角色弹窗状态 (学生/家长/机构校长)
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [selectedRole, setSelectedRole] = useState('student');
@@ -154,12 +158,31 @@ export default function LandingZhPage() {
             </div>
           </div>
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-            <Link href="/" style={{ fontSize: '14px', fontWeight: 'bold', color: '#475569', textDecoration: 'none', padding: '8px 14px' }}>
-              🇰🇷 한국어 판
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <button
+              onClick={() => setShowPaymentModal(true)}
+              style={{
+                background: 'linear-gradient(135deg, #FEF08A 0%, #FDE047 100%)',
+                color: '#854D0E',
+                border: '1px solid #EAB308',
+                padding: '8px 16px',
+                borderRadius: '12px',
+                fontWeight: '900',
+                fontSize: '13px',
+                cursor: 'pointer',
+                boxShadow: '0 2px 6px rgba(234,179,8,0.3)',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '4px'
+              }}
+            >
+              💎 会员套餐
+            </button>
+            <Link href="/" style={{ fontSize: '13px', fontWeight: 'bold', color: '#475569', textDecoration: 'none', padding: '8px 10px' }}>
+              🇰🇷 한국어
             </Link>
-            <Link href="/" style={{ background: '#58CC02', color: 'white', padding: '10px 20px', borderRadius: '12px', fontWeight: '900', fontSize: '14px', textDecoration: 'none', boxShadow: '0 4px 0 #46A302' }}>
-              🚀 立即进入学习 ➔
+            <Link href="/" style={{ background: '#58CC02', color: 'white', padding: '9px 18px', borderRadius: '12px', fontWeight: '900', fontSize: '14px', textDecoration: 'none', boxShadow: '0 4px 0 #46A302' }}>
+              🚀 立即学习 ➔
             </Link>
           </div>
         </div>
@@ -506,6 +529,16 @@ export default function LandingZhPage() {
           小学 · 初中 · 高中 5,000 核心英语词汇智能评测平台 (支持微信与手机号极速体验)
         </p>
       </footer>
+
+      {/* 💳 微信/支付宝 VIP 支付弹窗 */}
+      <ChinaPaymentModal
+        isOpen={showPaymentModal}
+        onClose={() => setShowPaymentModal(false)}
+        currentLang="zh"
+        onPaymentSuccess={(data) => {
+          alert(`🎉 恭喜！您已成功开通 【${data.planName}】！`);
+        }}
+      />
     </div>
   );
 }

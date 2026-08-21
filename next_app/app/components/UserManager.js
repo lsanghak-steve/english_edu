@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import supabase from '../../lib/supabaseClient.js';
 import { translateStudentGrade, translateGradeLevel } from '../../lib/i18n.js';
+import ChinaPaymentModal from './ChinaPaymentModal.js';
 
 // 학생 이름 이모지 자동 제거 헬퍼 함수
 const removeEmoji = (str) => {
@@ -15,6 +16,7 @@ const removeEmoji = (str) => {
 export default function UserManager({ currentUser, setCurrentUser, onLogout, currentLang = 'ko' }) {
   const [users, setUsers] = useState([]);
   const [showAddEditModal, setShowAddEditModal] = useState(false);
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
   const [editingUserId, setEditingUserId] = useState(null);
 
@@ -216,6 +218,26 @@ export default function UserManager({ currentUser, setCurrentUser, onLogout, cur
 
       {/* 버튼 액션 그룹 (수정 및 로그아웃) */}
       <div className="user-actions-group">
+        <button
+          type="button"
+          onClick={() => setShowPaymentModal(true)}
+          style={{
+            background: 'linear-gradient(135deg, #FEF08A 0%, #FDE047 100%)',
+            color: '#854D0E',
+            border: '1px solid #EAB308',
+            padding: '9px 14px',
+            borderRadius: 'var(--radius-medium)',
+            fontWeight: '900',
+            fontSize: '13px',
+            cursor: 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '4px',
+            boxShadow: '0 2px 6px rgba(234,179,8,0.25)'
+          }}
+        >
+          💎 {currentLang === 'zh' ? 'VIP 套餐' : 'VIP 멤버십'}
+        </button>
         <button className="btn-user-edit" onClick={handleOpenEditModal}>
           {editBtnText}
         </button>
@@ -388,6 +410,17 @@ export default function UserManager({ currentUser, setCurrentUser, onLogout, cur
           </div>
         </div>
       )}
+
+      {/* 💳 微信/支付宝 VIP 支付弹窗 */}
+      <ChinaPaymentModal
+        isOpen={showPaymentModal}
+        onClose={() => setShowPaymentModal(false)}
+        currentLang={currentLang}
+        user={currentUser}
+        onPaymentSuccess={(data) => {
+          alert(`🎉 恭喜！您已成功开通 【${data.planName}】！`);
+        }}
+      />
     </div>
   );
 }
