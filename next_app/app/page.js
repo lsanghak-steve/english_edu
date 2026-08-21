@@ -725,7 +725,9 @@ export default function Home() {
     setMainTab('flashcard');
     setCurrentIndex(0);
     setIsFlipped(false);
-    alert(`📅 [${selectedDateStr}] 날짜의 단어 학습을 시작합니다!\n\n플래시카드 단어를 확인하고 2단계 퀴즈를 완수하면 이 날짜에 출석 도장(💮)이 찍힙니다! 🚀`);
+    alert(currentLang === 'zh'
+      ? `📅 已开启 [${selectedDateStr}] 的单词学习！\n\n掌握单词卡片并通过测验后，该日期将盖上出勤印章(💮)！🚀`
+      : `📅 [${selectedDateStr}] 날짜의 단어 학습을 시작합니다!\n\n플래시카드 단어를 확인하고 2단계 퀴즈를 완수하면 이 날짜에 출석 도장(💮)이 찍힙니다! 🚀`);
   };
 
   const handleLoadNextWordSet = () => {
@@ -780,7 +782,9 @@ export default function Home() {
       window.speechSynthesis.speak(utterance);
     }
 
-    alert(`🎉 🚀 다음 단어 세트(제 ${nextRound}회차 - ${nextSet.length}개 단어)를 로딩했습니다!\n\n오늘 연속 마스터한 총 ${updatedTodayAll.length}개 단어는 상단 [📖 오늘 누적 학습 단어]에서 언제든 복습 가능합니다! 👏`);
+    alert(currentLang === 'zh'
+      ? `🎉 🚀 已加载下一组单词（第 ${nextRound} 轮 - ${nextSet.length} 个单词）！\n\n今日累计掌握的 ${updatedTodayAll.length} 个单词可在顶部随时复习！👏`
+      : `🎉 🚀 다음 단어 세트(제 ${nextRound}회차 - ${nextSet.length}개 단어)를 로딩했습니다!\n\n오늘 연속 마스터한 총 ${updatedTodayAll.length}개 단어는 상단 [📖 오늘 누적 학습 단어]에서 언제든 복습 가능합니다! 👏`);
   };
 
   const userDailyCount = currentUser ? parseInt(currentUser.dailyWordCount || currentUser.daily_word_count || 10, 10) : 10;
@@ -1034,7 +1038,11 @@ export default function Home() {
     if (currentIndex + 1 >= safeActiveWords.length) {
       // 모든 세트 단어 일괄 저장
       safeActiveWords.forEach(w => saveSingleLearnedWord(w));
-      alert('🎉 선택한 세트 단어를 모두 보았습니다! 1단계 소리 퀴즈로 자동 이동합니다!');
+      alert(currentLang === 'zh'
+        ? '🎉 这一组单词已全部学完！即将自动进入第 1 阶听力选词测验！'
+        : (currentLang === 'fr'
+        ? '🎉 Vous avez vu tous les mots de cette série ! Passage au quiz audio !'
+        : '🎉 선택한 세트 단어를 모두 보았습니다! 1단계 소리 퀴즈로 자동 이동합니다!'));
       setMainTab('quiz');
       setInitialQuizLevel(1);
       setCurrentIndex(0);
@@ -1367,7 +1375,7 @@ export default function Home() {
 
       drawAudioVisualizer();
     } catch (err) {
-      alert('마이크 접근 권한이 필요합니다.');
+      alert(currentLang === 'zh' ? '请允许浏览器使用麦克风权限。' : '마이크 접근 권한이 필요합니다.');
     }
   };
 
@@ -1396,7 +1404,7 @@ export default function Home() {
   // 💾 내 컴퓨터 다운로드 폴더에 음성 파일(.webm) 안전 저장
   const downloadRecordedAudio = () => {
     if (!recordedAudioUrl) {
-      alert('저장할 녹음 파일이 없습니다. 먼저 녹음을 진행해 주세요!');
+      alert(currentLang === 'zh' ? '没有可保存的录音文件，请先进行发音录音！' : '저장할 녹음 파일이 없습니다. 먼저 녹음을 진행해 주세요!');
       return;
     }
     const studentIdToUse = currentUser ? (currentUser.student_id || currentUser.id || 'guest') : 'guest';
@@ -1410,7 +1418,9 @@ export default function Home() {
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
-    alert(`💾 [${fileName}] 음성 녹음 파일이 내 컴퓨터 다운로드 폴더에 안전하게 저장되었습니다! 📁`);
+    alert(currentLang === 'zh'
+      ? `💾 [${fileName}] 发音录音文件已成功下载到电脑下载文件夹！📁`
+      : `💾 [${fileName}] 음성 녹음 파일이 내 컴퓨터 다운로드 폴더에 안전하게 저장되었습니다! 📁`);
   };
 
 

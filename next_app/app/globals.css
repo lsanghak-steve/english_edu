@@ -708,17 +708,38 @@ body {
   color: var(--duo-text-dark);
 }
 
-/* 모바일 대응 */
+/* 모바일 및 위챗 내장 브라우저 대응 */
 @media (max-width: 768px) {
   body {
-    padding: 14px 10px;
+    padding: 12px 8px;
+    -webkit-text-size-adjust: 100%;
+  }
+  .app-container {
+    padding: 0 4px;
   }
   .user-manager-header-bar {
     flex-direction: column;
     align-items: stretch;
     gap: 10px;
+    padding: 12px 14px;
+  }
+  .word-en {
+    font-size: 34px !important;
+  }
+  .word-ko {
+    font-size: 20px !important;
+    line-height: 1.35 !important;
+  }
+  .flashcard, .card-face {
+    min-height: 320px;
+    padding: 24px 16px;
   }
   .options-grid {
     grid-template-columns: 1fr;
+    gap: 10px;
+  }
+  .category-nav-group {
+    flex-wrap: wrap;
+    justify-content: center;
   }
 }
