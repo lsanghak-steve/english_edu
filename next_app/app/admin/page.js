@@ -56,7 +56,7 @@ export default function AdminPage() {
   }
 
   return (
-    <main style={{ maxWidth: '1000px', margin: '20px auto', padding: '20px' }}>
+    <main style={{ maxWidth: '1200px', margin: '20px auto', padding: '20px' }}>
       <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px', background: 'white', padding: '16px 24px', borderRadius: '20px', boxShadow: '0 4px 12px rgba(0,0,0,0.03)' }}>
         <div>
           <h1 style={{ margin: 0, fontSize: '24px', color: '#2C3E50' }}>🏫 센터 관리자 페이지</h1>

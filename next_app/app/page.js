@@ -2157,7 +2157,7 @@ export default function Home() {
             border: '2px solid #E2E8F0',
             boxShadow: '0 4px 12px rgba(0,0,0,0.03)',
             margin: '14px auto 16px auto',
-            maxWidth: '680px',
+            maxWidth: '820px',
             flexWrap: 'wrap'
           }}>
             {/* 🌐 6개 국어 학습 언어 스위처 */}
