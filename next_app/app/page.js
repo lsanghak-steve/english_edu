@@ -238,6 +238,14 @@ export default function Home() {
       const savedTab = sessionStorage.getItem('english_edu_main_tab');
       if (savedSession) {
         const parsed = JSON.parse(savedSession);
+        const dailySetKey = `daily_random_set_${parsed.id}_${todayStr}`;
+        try {
+          const cached = JSON.parse(localStorage.getItem(dailySetKey) || '[]');
+          const targetCount = parseInt(parsed.dailyWordCount || parsed.daily_word_count || 10, 10);
+          if (cached && cached.length === targetCount && cached.length > 0) {
+            setDailyRandomWords(cached);
+          }
+        } catch (e) {}
         setCurrentUser(parsed);
         setIsLoggedIn(true);
         if (savedTab) setMainTab(savedTab);
@@ -245,9 +253,17 @@ export default function Home() {
     } catch (e) {
       console.log('Session parse error', e);
     }
-  }, []);
+  }, [todayStr]);
 
   const handleLoginSuccess = (studentObj) => {
+    const dailySetKey = `daily_random_set_${studentObj.id}_${todayStr}`;
+    try {
+      const cached = JSON.parse(localStorage.getItem(dailySetKey) || '[]');
+      const targetCount = parseInt(studentObj.dailyWordCount || studentObj.daily_word_count || 10, 10);
+      if (cached && cached.length === targetCount && cached.length > 0) {
+        setDailyRandomWords(cached);
+      }
+    } catch (e) {}
     setCurrentUser(studentObj);
     setIsLoggedIn(true);
     setMainTab('flashcard');
@@ -756,18 +772,11 @@ export default function Home() {
     alert(`🎉 🚀 다음 단어 세트(제 ${nextRound}회차 - ${nextSet.length}개 단어)를 로딩했습니다!\n\n오늘 연속 마스터한 총 ${updatedTodayAll.length}개 단어는 상단 [📖 오늘 누적 학습 단어]에서 언제든 복습 가능합니다! 👏`);
   };
 
-  const userDailyCount = currentUser ? parseInt(currentUser.dailyWordCount || 10, 10) : 10;
-  const fallbackWords = Array.isArray(wordList500Fallback) && wordList500Fallback.length > 0
-    ? wordList500Fallback
-    : [{ id: 1, word: 'Apple', phonics: '/ˈæpəl/', meaning: '사과', category: '과일/음식 🍎', gradeLevel: '초등단어' }];
+  const userDailyCount = currentUser ? parseInt(currentUser.dailyWordCount || currentUser.daily_word_count || 10, 10) : 10;
 
-  const baseWordsList = (dailyRandomWords && dailyRandomWords.length > 0)
-    ? dailyRandomWords
-    : ((wordList && wordList.length > 0) ? wordList : fallbackWords);
-
-  const safeActiveWords = (baseWordsList && baseWordsList.length > 0)
-    ? baseWordsList.slice(0, userDailyCount)
-    : fallbackWords.slice(0, userDailyCount);
+  const safeActiveWords = (dailyRandomWords && dailyRandomWords.length > 0)
+    ? dailyRandomWords.slice(0, userDailyCount)
+    : ((wordList && wordList.length > 0) ? wordList.slice(0, userDailyCount) : []);
 
   // 🛡️ 단어 수 변경 시 인덱스 범위 초과 방지 및 안전 클램핑
   useEffect(() => {
@@ -776,7 +785,9 @@ export default function Home() {
     }
   }, [safeActiveWords.length, currentIndex]);
 
-  const currentWord = safeActiveWords[currentIndex] || safeActiveWords[0] || fallbackWords[0];
+  const currentWord = (safeActiveWords && safeActiveWords.length > 0)
+    ? (safeActiveWords[currentIndex] || safeActiveWords[0])
+    : null;
 
 
   const cleanWordStr = typeof currentWord === 'string'
@@ -2317,6 +2328,20 @@ export default function Home() {
             </button>
           </div>
 
+          {(!currentWord || safeActiveWords.length === 0) ? (
+            <div className="flashcard-wrapper">
+              <div className="flashcard" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '380px', background: '#FFFFFF', borderRadius: '32px', border: '3px solid #E2E8F0', boxShadow: '0 12px 30px rgba(0,0,0,0.06)', padding: '30px 20px', textAlign: 'center' }}>
+                <div style={{ fontSize: '48px', marginBottom: '14px' }}>📖</div>
+                <h3 style={{ margin: '0 0 8px 0', color: '#2C3E50', fontSize: '20px', fontWeight: 'bold' }}>
+                  {currentUser?.name ? `${currentUser.name} 님의` : ''} {translateGradeLevel(currentUser?.studyGradeLevel || currentUser?.study_grade_level || '맞춤', currentLang)} 단어장 준비 중...
+                </h3>
+                <p style={{ margin: '0 0 16px 0', color: '#7F8C8D', fontSize: '14px' }}>
+                  오늘 학습할 {userDailyCount}개 단어를 안전하게 불러오고 있습니다. ⚡
+                </p>
+                <div style={{ width: '36px', height: '36px', border: '4px solid #E2E8F0', borderTop: '4px solid #3498DB', borderRadius: '50%' }} />
+              </div>
+            </div>
+          ) : (
           <div className="flashcard-wrapper">
             <div className={`flashcard ${isFlipped ? 'flipped' : ''}`} onClick={handleCardClick}>
               {/* 앞면: 그림 + 영단어 + 발음기호 + 번역 뜻 */}
@@ -2516,6 +2541,7 @@ export default function Home() {
               </div>
             </div>
           </div>
+          )}
         </>
       )}
 
