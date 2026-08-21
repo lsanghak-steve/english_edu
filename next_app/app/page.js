@@ -1546,6 +1546,10 @@ export default function Home() {
 
   const getWordImgSrc = (wordObj) => {
     if (!wordObj) return '/word_img/apple.png';
+    const rawFile = (wordObj.image_url || wordObj.imageUrl || '').split('/').pop().trim();
+    if (rawFile && rawFile.endsWith('.png')) {
+      return `/word_img/${rawFile.toLowerCase()}`;
+    }
     const wordClean = (wordObj.word || '').replace(/\.png/gi, '').trim();
     if (!wordClean) return '/word_img/apple.png';
     const wordLower = wordClean.toLowerCase();
