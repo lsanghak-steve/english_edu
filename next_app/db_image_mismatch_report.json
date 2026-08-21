@@ -1,0 +1,1874 @@
+{
+  "totalWords": 5000,
+  "issues": [
+    {
+      "id": 1,
+      "type": "대문자 포함",
+      "word": "Apple",
+      "expected": "apple"
+    },
+    {
+      "id": 5,
+      "type": "대문자 포함",
+      "word": "Strawberry",
+      "expected": "strawberry"
+    },
+    {
+      "id": 27,
+      "type": "대문자 포함",
+      "word": "Meat",
+      "expected": "meat"
+    },
+    {
+      "id": 81,
+      "type": "대문자 포함",
+      "word": "Pepper",
+      "expected": "pepper"
+    },
+    {
+      "id": 101,
+      "type": "대문자 포함",
+      "word": "Fox",
+      "expected": "fox"
+    },
+    {
+      "id": 102,
+      "type": "대문자 포함",
+      "word": "Frog",
+      "expected": "frog"
+    },
+    {
+      "id": 115,
+      "type": "대문자 포함",
+      "word": "Wolf",
+      "expected": "wolf"
+    },
+    {
+      "id": 121,
+      "type": "대문자 포함",
+      "word": "Bat",
+      "expected": "bat"
+    },
+    {
+      "id": 133,
+      "type": "대문자 포함",
+      "word": "Kangaroo",
+      "expected": "kangaroo"
+    },
+    {
+      "id": 135,
+      "type": "대문자 포함",
+      "word": "Lizard",
+      "expected": "lizard"
+    },
+    {
+      "id": 144,
+      "type": "대문자 포함",
+      "word": "Sparrow",
+      "expected": "sparrow"
+    },
+    {
+      "id": 160,
+      "type": "대문자 포함",
+      "word": "Ladybug",
+      "expected": "ladybug"
+    },
+    {
+      "id": 173,
+      "type": "대문자 포함",
+      "word": "Student",
+      "expected": "student"
+    },
+    {
+      "id": 174,
+      "type": "대문자 포함",
+      "word": "Boy",
+      "expected": "boy"
+    },
+    {
+      "id": 179,
+      "type": "대문자 포함",
+      "word": "Parent",
+      "expected": "parent"
+    },
+    {
+      "id": 201,
+      "type": "대문자 포함",
+      "word": "Neighborhood",
+      "expected": "neighborhood"
+    },
+    {
+      "id": 202,
+      "type": "대문자 포함",
+      "word": "Teacher",
+      "expected": "teacher"
+    },
+    {
+      "id": 209,
+      "type": "대문자 포함",
+      "word": "Singer",
+      "expected": "singer"
+    },
+    {
+      "id": 216,
+      "type": "대문자 포함",
+      "word": "Artist",
+      "expected": "artist"
+    },
+    {
+      "id": 217,
+      "type": "대문자 포함",
+      "word": "Barber",
+      "expected": "barber"
+    },
+    {
+      "id": 218,
+      "type": "대문자 포함",
+      "word": "Chef",
+      "expected": "chef"
+    },
+    {
+      "id": 227,
+      "type": "대문자 포함",
+      "word": "Photographer",
+      "expected": "photographer"
+    },
+    {
+      "id": 229,
+      "type": "대문자 포함",
+      "word": "Mechanic",
+      "expected": "mechanic"
+    },
+    {
+      "id": 261,
+      "type": "대문자 포함",
+      "word": "Throat",
+      "expected": "throat"
+    },
+    {
+      "id": 263,
+      "type": "대문자 포함",
+      "word": "Wrist",
+      "expected": "wrist"
+    },
+    {
+      "id": 281,
+      "type": "대문자 포함",
+      "word": "Crown",
+      "expected": "crown"
+    },
+    {
+      "id": 303,
+      "type": "대문자 포함",
+      "word": "Scissors",
+      "expected": "scissors"
+    },
+    {
+      "id": 304,
+      "type": "대문자 포함",
+      "word": "Glue",
+      "expected": "glue"
+    },
+    {
+      "id": 305,
+      "type": "대문자 포함",
+      "word": "Notebook",
+      "expected": "notebook"
+    },
+    {
+      "id": 306,
+      "type": "대문자 포함",
+      "word": "Bag",
+      "expected": "bag"
+    },
+    {
+      "id": 307,
+      "type": "대문자 포함",
+      "word": "Desk",
+      "expected": "desk"
+    },
+    {
+      "id": 308,
+      "type": "대문자 포함",
+      "word": "Chair",
+      "expected": "chair"
+    },
+    {
+      "id": 310,
+      "type": "대문자 포함",
+      "word": "Blackboard",
+      "expected": "blackboard"
+    },
+    {
+      "id": 312,
+      "type": "대문자 포함",
+      "word": "Paper",
+      "expected": "paper"
+    },
+    {
+      "id": 313,
+      "type": "대문자 포함",
+      "word": "Board",
+      "expected": "board"
+    },
+    {
+      "id": 316,
+      "type": "대문자 포함",
+      "word": "Science",
+      "expected": "science"
+    },
+    {
+      "id": 317,
+      "type": "대문자 포함",
+      "word": "History",
+      "expected": "history"
+    },
+    {
+      "id": 321,
+      "type": "대문자 포함",
+      "word": "Grade",
+      "expected": "grade"
+    },
+    {
+      "id": 326,
+      "type": "대문자 포함",
+      "word": "Cube",
+      "expected": "cube"
+    },
+    {
+      "id": 327,
+      "type": "대문자 포함",
+      "word": "Diary",
+      "expected": "diary"
+    },
+    {
+      "id": 330,
+      "type": "대문자 포함",
+      "word": "Grammar",
+      "expected": "grammar"
+    },
+    {
+      "id": 331,
+      "type": "대문자 포함",
+      "word": "Magnet",
+      "expected": "magnet"
+    },
+    {
+      "id": 333,
+      "type": "대문자 포함",
+      "word": "Gym",
+      "expected": "gym"
+    },
+    {
+      "id": 338,
+      "type": "대문자 포함",
+      "word": "Marker",
+      "expected": "marker"
+    },
+    {
+      "id": 340,
+      "type": "대문자 포함",
+      "word": "Whiteboard",
+      "expected": "whiteboard"
+    },
+    {
+      "id": 342,
+      "type": "대문자 포함",
+      "word": "Sharpener",
+      "expected": "sharpener"
+    },
+    {
+      "id": 346,
+      "type": "대문자 포함",
+      "word": "Model",
+      "expected": "model"
+    },
+    {
+      "id": 351,
+      "type": "대문자 포함",
+      "word": "Door",
+      "expected": "door"
+    },
+    {
+      "id": 352,
+      "type": "대문자 포함",
+      "word": "Window",
+      "expected": "window"
+    },
+    {
+      "id": 353,
+      "type": "대문자 포함",
+      "word": "Room",
+      "expected": "room"
+    },
+    {
+      "id": 357,
+      "type": "대문자 포함",
+      "word": "Spoon",
+      "expected": "spoon"
+    },
+    {
+      "id": 358,
+      "type": "대문자 포함",
+      "word": "Fork",
+      "expected": "fork"
+    },
+    {
+      "id": 360,
+      "type": "대문자 포함",
+      "word": "Towel",
+      "expected": "towel"
+    },
+    {
+      "id": 361,
+      "type": "대문자 포함",
+      "word": "Soap",
+      "expected": "soap"
+    },
+    {
+      "id": 362,
+      "type": "대문자 포함",
+      "word": "Key",
+      "expected": "key"
+    },
+    {
+      "id": 364,
+      "type": "대문자 포함",
+      "word": "Television",
+      "expected": "television"
+    },
+    {
+      "id": 374,
+      "type": "대문자 포함",
+      "word": "Mirror",
+      "expected": "mirror"
+    },
+    {
+      "id": 378,
+      "type": "대문자 포함",
+      "word": "Gift",
+      "expected": "gift"
+    },
+    {
+      "id": 380,
+      "type": "대문자 포함",
+      "word": "Basket",
+      "expected": "basket"
+    },
+    {
+      "id": 384,
+      "type": "대문자 포함",
+      "word": "News",
+      "expected": "news"
+    },
+    {
+      "id": 389,
+      "type": "대문자 포함",
+      "word": "Photo",
+      "expected": "photo"
+    },
+    {
+      "id": 392,
+      "type": "대문자 포함",
+      "word": "Antenna",
+      "expected": "antenna"
+    },
+    {
+      "id": 394,
+      "type": "대문자 포함",
+      "word": "Axe",
+      "expected": "axe"
+    },
+    {
+      "id": 398,
+      "type": "대문자 포함",
+      "word": "Barrel",
+      "expected": "barrel"
+    },
+    {
+      "id": 399,
+      "type": "대문자 포함",
+      "word": "Basement",
+      "expected": "basement"
+    },
+    {
+      "id": 400,
+      "type": "대문자 포함",
+      "word": "Battery",
+      "expected": "battery"
+    },
+    {
+      "id": 404,
+      "type": "대문자 포함",
+      "word": "Brick",
+      "expected": "brick"
+    },
+    {
+      "id": 408,
+      "type": "대문자 포함",
+      "word": "Cable",
+      "expected": "cable"
+    },
+    {
+      "id": 409,
+      "type": "대문자 포함",
+      "word": "Cage",
+      "expected": "cage"
+    },
+    {
+      "id": 410,
+      "type": "대문자 포함",
+      "word": "Candle",
+      "expected": "candle"
+    },
+    {
+      "id": 411,
+      "type": "대문자 포함",
+      "word": "Chimney",
+      "expected": "chimney"
+    },
+    {
+      "id": 413,
+      "type": "대문자 포함",
+      "word": "Cottage",
+      "expected": "cottage"
+    },
+    {
+      "id": 414,
+      "type": "대문자 포함",
+      "word": "Curtain",
+      "expected": "curtain"
+    },
+    {
+      "id": 416,
+      "type": "대문자 포함",
+      "word": "Drawer",
+      "expected": "drawer"
+    },
+    {
+      "id": 420,
+      "type": "대문자 포함",
+      "word": "Flashlight",
+      "expected": "flashlight"
+    },
+    {
+      "id": 433,
+      "type": "대문자 포함",
+      "word": "Faucet",
+      "expected": "faucet"
+    },
+    {
+      "id": 434,
+      "type": "대문자 포함",
+      "word": "Bathtub",
+      "expected": "bathtub"
+    },
+    {
+      "id": 437,
+      "type": "대문자 포함",
+      "word": "Closet",
+      "expected": "closet"
+    },
+    {
+      "id": 441,
+      "type": "대문자 포함",
+      "word": "Stove",
+      "expected": "stove"
+    },
+    {
+      "id": 442,
+      "type": "대문자 포함",
+      "word": "Oven",
+      "expected": "oven"
+    },
+    {
+      "id": 448,
+      "type": "대문자 포함",
+      "word": "Chopsticks",
+      "expected": "chopsticks"
+    },
+    {
+      "id": 449,
+      "type": "대문자 포함",
+      "word": "Thermos",
+      "expected": "thermos"
+    },
+    {
+      "id": 452,
+      "type": "대문자 포함",
+      "word": "Park",
+      "expected": "park"
+    },
+    {
+      "id": 453,
+      "type": "대문자 포함",
+      "word": "Zoo",
+      "expected": "zoo"
+    },
+    {
+      "id": 515,
+      "type": "대문자 포함",
+      "word": "Sun",
+      "expected": "sun"
+    },
+    {
+      "id": 516,
+      "type": "대문자 포함",
+      "word": "Moon",
+      "expected": "moon"
+    },
+    {
+      "id": 523,
+      "type": "대문자 포함",
+      "word": "Rainbow",
+      "expected": "rainbow"
+    },
+    {
+      "id": 524,
+      "type": "대문자 포함",
+      "word": "Tree",
+      "expected": "tree"
+    },
+    {
+      "id": 525,
+      "type": "대문자 포함",
+      "word": "Flower",
+      "expected": "flower"
+    },
+    {
+      "id": 526,
+      "type": "대문자 포함",
+      "word": "Grass",
+      "expected": "grass"
+    },
+    {
+      "id": 527,
+      "type": "대문자 포함",
+      "word": "Leaf",
+      "expected": "leaf"
+    },
+    {
+      "id": 529,
+      "type": "대문자 포함",
+      "word": "River",
+      "expected": "river"
+    },
+    {
+      "id": 530,
+      "type": "대문자 포함",
+      "word": "Sea",
+      "expected": "sea"
+    },
+    {
+      "id": 531,
+      "type": "대문자 포함",
+      "word": "Beach",
+      "expected": "beach"
+    },
+    {
+      "id": 532,
+      "type": "대문자 포함",
+      "word": "Stone",
+      "expected": "stone"
+    },
+    {
+      "id": 533,
+      "type": "대문자 포함",
+      "word": "Fire",
+      "expected": "fire"
+    },
+    {
+      "id": 534,
+      "type": "대문자 포함",
+      "word": "Sand",
+      "expected": "sand"
+    },
+    {
+      "id": 535,
+      "type": "대문자 포함",
+      "word": "Ice",
+      "expected": "ice"
+    },
+    {
+      "id": 536,
+      "type": "대문자 포함",
+      "word": "Forest",
+      "expected": "forest"
+    },
+    {
+      "id": 537,
+      "type": "대문자 포함",
+      "word": "Ocean",
+      "expected": "ocean"
+    },
+    {
+      "id": 539,
+      "type": "대문자 포함",
+      "word": "Gold",
+      "expected": "gold"
+    },
+    {
+      "id": 540,
+      "type": "대문자 포함",
+      "word": "Silver",
+      "expected": "silver"
+    },
+    {
+      "id": 541,
+      "type": "대문자 포함",
+      "word": "Iron",
+      "expected": "iron"
+    },
+    {
+      "id": 542,
+      "type": "대문자 포함",
+      "word": "Lake",
+      "expected": "lake"
+    },
+    {
+      "id": 543,
+      "type": "대문자 포함",
+      "word": "Pond",
+      "expected": "pond"
+    },
+    {
+      "id": 544,
+      "type": "대문자 포함",
+      "word": "Hill",
+      "expected": "hill"
+    },
+    {
+      "id": 545,
+      "type": "대문자 포함",
+      "word": "Field",
+      "expected": "field"
+    },
+    {
+      "id": 546,
+      "type": "대문자 포함",
+      "word": "Island",
+      "expected": "island"
+    },
+    {
+      "id": 547,
+      "type": "대문자 포함",
+      "word": "Air",
+      "expected": "air"
+    },
+    {
+      "id": 548,
+      "type": "대문자 포함",
+      "word": "Smoke",
+      "expected": "smoke"
+    },
+    {
+      "id": 549,
+      "type": "대문자 포함",
+      "word": "Light",
+      "expected": "light"
+    },
+    {
+      "id": 550,
+      "type": "대문자 포함",
+      "word": "Shadow",
+      "expected": "shadow"
+    },
+    {
+      "id": 551,
+      "type": "대문자 포함",
+      "word": "Sound",
+      "expected": "sound"
+    },
+    {
+      "id": 552,
+      "type": "대문자 포함",
+      "word": "Jungle",
+      "expected": "jungle"
+    },
+    {
+      "id": 554,
+      "type": "대문자 포함",
+      "word": "Bamboo",
+      "expected": "bamboo"
+    },
+    {
+      "id": 556,
+      "type": "대문자 포함",
+      "word": "Bush",
+      "expected": "bush"
+    },
+    {
+      "id": 558,
+      "type": "대문자 포함",
+      "word": "Canyon",
+      "expected": "canyon"
+    },
+    {
+      "id": 559,
+      "type": "대문자 포함",
+      "word": "Cave",
+      "expected": "cave"
+    },
+    {
+      "id": 560,
+      "type": "대문자 포함",
+      "word": "Cliff",
+      "expected": "cliff"
+    },
+    {
+      "id": 561,
+      "type": "대문자 포함",
+      "word": "Cotton",
+      "expected": "cotton"
+    },
+    {
+      "id": 562,
+      "type": "대문자 포함",
+      "word": "Diamond",
+      "expected": "diamond"
+    },
+    {
+      "id": 565,
+      "type": "대문자 포함",
+      "word": "Typhoon",
+      "expected": "typhoon"
+    },
+    {
+      "id": 566,
+      "type": "대문자 포함",
+      "word": "Tornado",
+      "expected": "tornado"
+    },
+    {
+      "id": 567,
+      "type": "대문자 포함",
+      "word": "Hail",
+      "expected": "hail"
+    },
+    {
+      "id": 568,
+      "type": "대문자 포함",
+      "word": "Puddle",
+      "expected": "puddle"
+    },
+    {
+      "id": 569,
+      "type": "대문자 포함",
+      "word": "Icicle",
+      "expected": "icicle"
+    },
+    {
+      "id": 570,
+      "type": "대문자 포함",
+      "word": "Sunrise",
+      "expected": "sunrise"
+    },
+    {
+      "id": 571,
+      "type": "대문자 포함",
+      "word": "Sunset",
+      "expected": "sunset"
+    },
+    {
+      "id": 572,
+      "type": "대문자 포함",
+      "word": "Dawn",
+      "expected": "dawn"
+    },
+    {
+      "id": 575,
+      "type": "대문자 포함",
+      "word": "Waterfall",
+      "expected": "waterfall"
+    },
+    {
+      "id": 576,
+      "type": "대문자 포함",
+      "word": "Pebble",
+      "expected": "pebble"
+    },
+    {
+      "id": 577,
+      "type": "대문자 포함",
+      "word": "Trunk",
+      "expected": "trunk"
+    },
+    {
+      "id": 579,
+      "type": "대문자 포함",
+      "word": "Mist",
+      "expected": "mist"
+    },
+    {
+      "id": 580,
+      "type": "대문자 포함",
+      "word": "Blossom",
+      "expected": "blossom"
+    },
+    {
+      "id": 581,
+      "type": "대문자 포함",
+      "word": "Petal",
+      "expected": "petal"
+    },
+    {
+      "id": 582,
+      "type": "대문자 포함",
+      "word": "Vine",
+      "expected": "vine"
+    },
+    {
+      "id": 583,
+      "type": "대문자 포함",
+      "word": "Spring",
+      "expected": "spring"
+    },
+    {
+      "id": 584,
+      "type": "대문자 포함",
+      "word": "Summer",
+      "expected": "summer"
+    },
+    {
+      "id": 585,
+      "type": "대문자 포함",
+      "word": "Fall",
+      "expected": "fall"
+    },
+    {
+      "id": 586,
+      "type": "대문자 포함",
+      "word": "Winter",
+      "expected": "winter"
+    },
+    {
+      "id": 587,
+      "type": "대문자 포함",
+      "word": "Morning",
+      "expected": "morning"
+    },
+    {
+      "id": 588,
+      "type": "대문자 포함",
+      "word": "Afternoon",
+      "expected": "afternoon"
+    },
+    {
+      "id": 589,
+      "type": "대문자 포함",
+      "word": "Evening",
+      "expected": "evening"
+    },
+    {
+      "id": 590,
+      "type": "대문자 포함",
+      "word": "Night",
+      "expected": "night"
+    },
+    {
+      "id": 591,
+      "type": "대문자 포함",
+      "word": "Today",
+      "expected": "today"
+    },
+    {
+      "id": 592,
+      "type": "대문자 포함",
+      "word": "Tomorrow",
+      "expected": "tomorrow"
+    },
+    {
+      "id": 593,
+      "type": "대문자 포함",
+      "word": "Yesterday",
+      "expected": "yesterday"
+    },
+    {
+      "id": 594,
+      "type": "대문자 포함",
+      "word": "Week",
+      "expected": "week"
+    },
+    {
+      "id": 595,
+      "type": "대문자 포함",
+      "word": "Month",
+      "expected": "month"
+    },
+    {
+      "id": 596,
+      "type": "대문자 포함",
+      "word": "Year",
+      "expected": "year"
+    },
+    {
+      "id": 597,
+      "type": "대문자 포함",
+      "word": "Monday",
+      "expected": "monday"
+    },
+    {
+      "id": 598,
+      "type": "대문자 포함",
+      "word": "Tuesday",
+      "expected": "tuesday"
+    },
+    {
+      "id": 599,
+      "type": "대문자 포함",
+      "word": "Wednesday",
+      "expected": "wednesday"
+    },
+    {
+      "id": 602,
+      "type": "대문자 포함",
+      "word": "Saturday",
+      "expected": "saturday"
+    },
+    {
+      "id": 603,
+      "type": "대문자 포함",
+      "word": "Sunday",
+      "expected": "sunday"
+    },
+    {
+      "id": 604,
+      "type": "대문자 포함",
+      "word": "January",
+      "expected": "january"
+    },
+    {
+      "id": 605,
+      "type": "대문자 포함",
+      "word": "February",
+      "expected": "february"
+    },
+    {
+      "id": 606,
+      "type": "대문자 포함",
+      "word": "March",
+      "expected": "march"
+    },
+    {
+      "id": 607,
+      "type": "대문자 포함",
+      "word": "April",
+      "expected": "april"
+    },
+    {
+      "id": 608,
+      "type": "대문자 포함",
+      "word": "May",
+      "expected": "may"
+    },
+    {
+      "id": 609,
+      "type": "대문자 포함",
+      "word": "June",
+      "expected": "june"
+    },
+    {
+      "id": 611,
+      "type": "대문자 포함",
+      "word": "August",
+      "expected": "august"
+    },
+    {
+      "id": 612,
+      "type": "대문자 포함",
+      "word": "September",
+      "expected": "september"
+    },
+    {
+      "id": 613,
+      "type": "대문자 포함",
+      "word": "October",
+      "expected": "october"
+    },
+    {
+      "id": 614,
+      "type": "대문자 포함",
+      "word": "November",
+      "expected": "november"
+    },
+    {
+      "id": 616,
+      "type": "대문자 포함",
+      "word": "Holiday",
+      "expected": "holiday"
+    },
+    {
+      "id": 618,
+      "type": "대문자 포함",
+      "word": "Century",
+      "expected": "century"
+    },
+    {
+      "id": 619,
+      "type": "대문자 포함",
+      "word": "Decade",
+      "expected": "decade"
+    },
+    {
+      "id": 620,
+      "type": "대문자 포함",
+      "word": "Weekend",
+      "expected": "weekend"
+    },
+    {
+      "id": 621,
+      "type": "대문자 포함",
+      "word": "Weekday",
+      "expected": "weekday"
+    },
+    {
+      "id": 622,
+      "type": "대문자 포함",
+      "word": "Birthday",
+      "expected": "birthday"
+    },
+    {
+      "id": 623,
+      "type": "대문자 포함",
+      "word": "Anniversary",
+      "expected": "anniversary"
+    },
+    {
+      "id": 624,
+      "type": "대문자 포함",
+      "word": "Midnight",
+      "expected": "midnight"
+    },
+    {
+      "id": 625,
+      "type": "대문자 포함",
+      "word": "Noon",
+      "expected": "noon"
+    },
+    {
+      "id": 626,
+      "type": "대문자 포함",
+      "word": "Hour",
+      "expected": "hour"
+    },
+    {
+      "id": 629,
+      "type": "대문자 포함",
+      "word": "Blue",
+      "expected": "blue"
+    },
+    {
+      "id": 630,
+      "type": "대문자 포함",
+      "word": "Yellow",
+      "expected": "yellow"
+    },
+    {
+      "id": 631,
+      "type": "대문자 포함",
+      "word": "Green",
+      "expected": "green"
+    },
+    {
+      "id": 632,
+      "type": "대문자 포함",
+      "word": "Black",
+      "expected": "black"
+    },
+    {
+      "id": 633,
+      "type": "대문자 포함",
+      "word": "White",
+      "expected": "white"
+    },
+    {
+      "id": 634,
+      "type": "대문자 포함",
+      "word": "Pink",
+      "expected": "pink"
+    },
+    {
+      "id": 635,
+      "type": "대문자 포함",
+      "word": "Purple",
+      "expected": "purple"
+    },
+    {
+      "id": 636,
+      "type": "대문자 포함",
+      "word": "One",
+      "expected": "one"
+    },
+    {
+      "id": 637,
+      "type": "대문자 포함",
+      "word": "Two",
+      "expected": "two"
+    },
+    {
+      "id": 638,
+      "type": "대문자 포함",
+      "word": "Three",
+      "expected": "three"
+    },
+    {
+      "id": 640,
+      "type": "대문자 포함",
+      "word": "Five",
+      "expected": "five"
+    },
+    {
+      "id": 641,
+      "type": "대문자 포함",
+      "word": "Ten",
+      "expected": "ten"
+    },
+    {
+      "id": 642,
+      "type": "대문자 포함",
+      "word": "Number",
+      "expected": "number"
+    },
+    {
+      "id": 643,
+      "type": "대문자 포함",
+      "word": "Brown",
+      "expected": "brown"
+    },
+    {
+      "id": 644,
+      "type": "대문자 포함",
+      "word": "Gray",
+      "expected": "gray"
+    },
+    {
+      "id": 645,
+      "type": "대문자 포함",
+      "word": "Six",
+      "expected": "six"
+    },
+    {
+      "id": 646,
+      "type": "대문자 포함",
+      "word": "Seven",
+      "expected": "seven"
+    },
+    {
+      "id": 648,
+      "type": "대문자 포함",
+      "word": "Nine",
+      "expected": "nine"
+    },
+    {
+      "id": 649,
+      "type": "대문자 포함",
+      "word": "Navy",
+      "expected": "navy"
+    },
+    {
+      "id": 650,
+      "type": "대문자 포함",
+      "word": "Beige",
+      "expected": "beige"
+    },
+    {
+      "id": 651,
+      "type": "대문자 포함",
+      "word": "Dozen",
+      "expected": "dozen"
+    },
+    {
+      "id": 652,
+      "type": "대문자 포함",
+      "word": "Half",
+      "expected": "half"
+    },
+    {
+      "id": 653,
+      "type": "대문자 포함",
+      "word": "Quarter",
+      "expected": "quarter"
+    },
+    {
+      "id": 654,
+      "type": "대문자 포함",
+      "word": "Triple",
+      "expected": "triple"
+    },
+    {
+      "id": 655,
+      "type": "대문자 포함",
+      "word": "Million",
+      "expected": "million"
+    },
+    {
+      "id": 657,
+      "type": "대문자 포함",
+      "word": "Pair",
+      "expected": "pair"
+    },
+    {
+      "id": 659,
+      "type": "대문자 포함",
+      "word": "Big",
+      "expected": "big"
+    },
+    {
+      "id": 660,
+      "type": "대문자 포함",
+      "word": "Small",
+      "expected": "small"
+    },
+    {
+      "id": 661,
+      "type": "대문자 포함",
+      "word": "High",
+      "expected": "high"
+    },
+    {
+      "id": 662,
+      "type": "대문자 포함",
+      "word": "Low",
+      "expected": "low"
+    },
+    {
+      "id": 663,
+      "type": "대문자 포함",
+      "word": "Fast",
+      "expected": "fast"
+    },
+    {
+      "id": 664,
+      "type": "대문자 포함",
+      "word": "Slow",
+      "expected": "slow"
+    },
+    {
+      "id": 665,
+      "type": "대문자 포함",
+      "word": "Hot",
+      "expected": "hot"
+    },
+    {
+      "id": 666,
+      "type": "대문자 포함",
+      "word": "Cold",
+      "expected": "cold"
+    },
+    {
+      "id": 667,
+      "type": "대문자 포함",
+      "word": "Warm",
+      "expected": "warm"
+    },
+    {
+      "id": 668,
+      "type": "대문자 포함",
+      "word": "Cool",
+      "expected": "cool"
+    },
+    {
+      "id": 669,
+      "type": "대문자 포함",
+      "word": "Good",
+      "expected": "good"
+    },
+    {
+      "id": 670,
+      "type": "대문자 포함",
+      "word": "Bad",
+      "expected": "bad"
+    },
+    {
+      "id": 671,
+      "type": "대문자 포함",
+      "word": "New",
+      "expected": "new"
+    },
+    {
+      "id": 672,
+      "type": "대문자 포함",
+      "word": "Old",
+      "expected": "old"
+    },
+    {
+      "id": 674,
+      "type": "대문자 포함",
+      "word": "Cute",
+      "expected": "cute"
+    },
+    {
+      "id": 675,
+      "type": "대문자 포함",
+      "word": "Nice",
+      "expected": "nice"
+    },
+    {
+      "id": 676,
+      "type": "대문자 포함",
+      "word": "Price",
+      "expected": "price"
+    },
+    {
+      "id": 681,
+      "type": "대문자 포함",
+      "word": "Square",
+      "expected": "square"
+    },
+    {
+      "id": 682,
+      "type": "대문자 포함",
+      "word": "Round",
+      "expected": "round"
+    },
+    {
+      "id": 683,
+      "type": "대문자 포함",
+      "word": "Weak",
+      "expected": "weak"
+    },
+    {
+      "id": 684,
+      "type": "대문자 포함",
+      "word": "Closed",
+      "expected": "closed"
+    },
+    {
+      "id": 685,
+      "type": "대문자 포함",
+      "word": "Sticky",
+      "expected": "sticky"
+    },
+    {
+      "id": 686,
+      "type": "대문자 포함",
+      "word": "Fluffy",
+      "expected": "fluffy"
+    },
+    {
+      "id": 687,
+      "type": "대문자 포함",
+      "word": "Crispy",
+      "expected": "crispy"
+    },
+    {
+      "id": 688,
+      "type": "대문자 포함",
+      "word": "Salty",
+      "expected": "salty"
+    },
+    {
+      "id": 689,
+      "type": "대문자 포함",
+      "word": "Spicy",
+      "expected": "spicy"
+    },
+    {
+      "id": 690,
+      "type": "대문자 포함",
+      "word": "Bitter",
+      "expected": "bitter"
+    },
+    {
+      "id": 691,
+      "type": "대문자 포함",
+      "word": "Juicy",
+      "expected": "juicy"
+    },
+    {
+      "id": 694,
+      "type": "대문자 포함",
+      "word": "Noisy",
+      "expected": "noisy"
+    },
+    {
+      "id": 696,
+      "type": "대문자 포함",
+      "word": "Happy",
+      "expected": "happy"
+    },
+    {
+      "id": 697,
+      "type": "대문자 포함",
+      "word": "Sad",
+      "expected": "sad"
+    },
+    {
+      "id": 698,
+      "type": "대문자 포함",
+      "word": "Angry",
+      "expected": "angry"
+    },
+    {
+      "id": 699,
+      "type": "대문자 포함",
+      "word": "Tired",
+      "expected": "tired"
+    },
+    {
+      "id": 700,
+      "type": "대문자 포함",
+      "word": "Hungry",
+      "expected": "hungry"
+    },
+    {
+      "id": 705,
+      "type": "대문자 포함",
+      "word": "Excited",
+      "expected": "excited"
+    },
+    {
+      "id": 706,
+      "type": "대문자 포함",
+      "word": "Surprised",
+      "expected": "surprised"
+    },
+    {
+      "id": 710,
+      "type": "대문자 포함",
+      "word": "Fine",
+      "expected": "fine"
+    },
+    {
+      "id": 712,
+      "type": "대문자 포함",
+      "word": "Well",
+      "expected": "well"
+    },
+    {
+      "id": 716,
+      "type": "대문자 포함",
+      "word": "Kind",
+      "expected": "kind"
+    },
+    {
+      "id": 717,
+      "type": "대문자 포함",
+      "word": "Merry",
+      "expected": "merry"
+    },
+    {
+      "id": 718,
+      "type": "대문자 포함",
+      "word": "Bold",
+      "expected": "bold"
+    },
+    {
+      "id": 719,
+      "type": "대문자 포함",
+      "word": "Safe",
+      "expected": "safe"
+    },
+    {
+      "id": 720,
+      "type": "대문자 포함",
+      "word": "Sure",
+      "expected": "sure"
+    },
+    {
+      "id": 721,
+      "type": "대문자 포함",
+      "word": "Run",
+      "expected": "run"
+    },
+    {
+      "id": 722,
+      "type": "대문자 포함",
+      "word": "Jump",
+      "expected": "jump"
+    },
+    {
+      "id": 723,
+      "type": "대문자 포함",
+      "word": "Walk",
+      "expected": "walk"
+    },
+    {
+      "id": 724,
+      "type": "대문자 포함",
+      "word": "Eat",
+      "expected": "eat"
+    },
+    {
+      "id": 725,
+      "type": "대문자 포함",
+      "word": "Drink",
+      "expected": "drink"
+    },
+    {
+      "id": 728,
+      "type": "대문자 포함",
+      "word": "Write",
+      "expected": "write"
+    },
+    {
+      "id": 729,
+      "type": "대문자 포함",
+      "word": "Sing",
+      "expected": "sing"
+    },
+    {
+      "id": 730,
+      "type": "대문자 포함",
+      "word": "Dance",
+      "expected": "dance"
+    },
+    {
+      "id": 731,
+      "type": "대문자 포함",
+      "word": "Play",
+      "expected": "play"
+    },
+    {
+      "id": 732,
+      "type": "대문자 포함",
+      "word": "Study",
+      "expected": "study"
+    },
+    {
+      "id": 734,
+      "type": "대문자 포함",
+      "word": "Fly",
+      "expected": "fly"
+    },
+    {
+      "id": 735,
+      "type": "대문자 포함",
+      "word": "Clean",
+      "expected": "clean"
+    },
+    {
+      "id": 736,
+      "type": "대문자 포함",
+      "word": "Wash",
+      "expected": "wash"
+    },
+    {
+      "id": 737,
+      "type": "대문자 포함",
+      "word": "Open",
+      "expected": "open"
+    },
+    {
+      "id": 738,
+      "type": "대문자 포함",
+      "word": "Close",
+      "expected": "close"
+    },
+    {
+      "id": 739,
+      "type": "대문자 포함",
+      "word": "Push",
+      "expected": "push"
+    },
+    {
+      "id": 740,
+      "type": "대문자 포함",
+      "word": "Pull",
+      "expected": "pull"
+    },
+    {
+      "id": 742,
+      "type": "대문자 포함",
+      "word": "Pay",
+      "expected": "pay"
+    },
+    {
+      "id": 743,
+      "type": "대문자 포함",
+      "word": "Buy",
+      "expected": "buy"
+    },
+    {
+      "id": 745,
+      "type": "대문자 포함",
+      "word": "Sit",
+      "expected": "sit"
+    },
+    {
+      "id": 746,
+      "type": "대문자 포함",
+      "word": "Stand",
+      "expected": "stand"
+    },
+    {
+      "id": 747,
+      "type": "대문자 포함",
+      "word": "Hold",
+      "expected": "hold"
+    },
+    {
+      "id": 748,
+      "type": "대문자 포함",
+      "word": "Comb",
+      "expected": "comb"
+    },
+    {
+      "id": 749,
+      "type": "대문자 포함",
+      "word": "Bake",
+      "expected": "bake"
+    },
+    {
+      "id": 750,
+      "type": "대문자 포함",
+      "word": "Taste",
+      "expected": "taste"
+    },
+    {
+      "id": 751,
+      "type": "대문자 포함",
+      "word": "Smell",
+      "expected": "smell"
+    },
+    {
+      "id": 752,
+      "type": "대문자 포함",
+      "word": "Hear",
+      "expected": "hear"
+    },
+    {
+      "id": 753,
+      "type": "대문자 포함",
+      "word": "Listen",
+      "expected": "listen"
+    },
+    {
+      "id": 754,
+      "type": "대문자 포함",
+      "word": "Draw",
+      "expected": "draw"
+    },
+    {
+      "id": 755,
+      "type": "대문자 포함",
+      "word": "Clap",
+      "expected": "clap"
+    },
+    {
+      "id": 756,
+      "type": "대문자 포함",
+      "word": "Hug",
+      "expected": "hug"
+    },
+    {
+      "id": 759,
+      "type": "대문자 포함",
+      "word": "Bite",
+      "expected": "bite"
+    },
+    {
+      "id": 760,
+      "type": "대문자 포함",
+      "word": "Chew",
+      "expected": "chew"
+    },
+    {
+      "id": 761,
+      "type": "대문자 포함",
+      "word": "Lick",
+      "expected": "lick"
+    },
+    {
+      "id": 762,
+      "type": "대문자 포함",
+      "word": "Drive",
+      "expected": "drive"
+    },
+    {
+      "id": 763,
+      "type": "대문자 포함",
+      "word": "Slip",
+      "expected": "slip"
+    },
+    {
+      "id": 764,
+      "type": "대문자 포함",
+      "word": "Skip",
+      "expected": "skip"
+    },
+    {
+      "id": 766,
+      "type": "대문자 포함",
+      "word": "Kneel",
+      "expected": "kneel"
+    },
+    {
+      "id": 768,
+      "type": "대문자 포함",
+      "word": "Rub",
+      "expected": "rub"
+    },
+    {
+      "id": 769,
+      "type": "대문자 포함",
+      "word": "Ball",
+      "expected": "ball"
+    },
+    {
+      "id": 770,
+      "type": "대문자 포함",
+      "word": "Game",
+      "expected": "game"
+    },
+    {
+      "id": 771,
+      "type": "대문자 포함",
+      "word": "Song",
+      "expected": "song"
+    },
+    {
+      "id": 772,
+      "type": "대문자 포함",
+      "word": "Team",
+      "expected": "team"
+    },
+    {
+      "id": 773,
+      "type": "대문자 포함",
+      "word": "Show",
+      "expected": "show"
+    },
+    {
+      "id": 774,
+      "type": "대문자 포함",
+      "word": "Violin",
+      "expected": "violin"
+    },
+    {
+      "id": 775,
+      "type": "대문자 포함",
+      "word": "Flute",
+      "expected": "flute"
+    },
+    {
+      "id": 776,
+      "type": "대문자 포함",
+      "word": "Trumpet",
+      "expected": "trumpet"
+    },
+    {
+      "id": 777,
+      "type": "대문자 포함",
+      "word": "Sport",
+      "expected": "sport"
+    },
+    {
+      "id": 778,
+      "type": "대문자 포함",
+      "word": "Soccer",
+      "expected": "soccer"
+    },
+    {
+      "id": 779,
+      "type": "대문자 포함",
+      "word": "Baseball",
+      "expected": "baseball"
+    },
+    {
+      "id": 781,
+      "type": "대문자 포함",
+      "word": "Volleyball",
+      "expected": "volleyball"
+    },
+    {
+      "id": 783,
+      "type": "대문자 포함",
+      "word": "Golf",
+      "expected": "golf"
+    },
+    {
+      "id": 784,
+      "type": "대문자 포함",
+      "word": "Ski",
+      "expected": "ski"
+    },
+    {
+      "id": 785,
+      "type": "대문자 포함",
+      "word": "Skate",
+      "expected": "skate"
+    },
+    {
+      "id": 786,
+      "type": "대문자 포함",
+      "word": "Disk",
+      "expected": "disk"
+    },
+    {
+      "id": 788,
+      "type": "대문자 포함",
+      "word": "Kite",
+      "expected": "kite"
+    },
+    {
+      "id": 789,
+      "type": "대문자 포함",
+      "word": "Badminton",
+      "expected": "badminton"
+    },
+    {
+      "id": 791,
+      "type": "대문자 포함",
+      "word": "Skating",
+      "expected": "skating"
+    },
+    {
+      "id": 792,
+      "type": "대문자 포함",
+      "word": "Skiing",
+      "expected": "skiing"
+    },
+    {
+      "id": 793,
+      "type": "대문자 포함",
+      "word": "Boxing",
+      "expected": "boxing"
+    },
+    {
+      "id": 794,
+      "type": "대문자 포함",
+      "word": "Taekwondo",
+      "expected": "taekwondo"
+    },
+    {
+      "id": 795,
+      "type": "대문자 포함",
+      "word": "Hiking",
+      "expected": "hiking"
+    },
+    {
+      "id": 796,
+      "type": "대문자 포함",
+      "word": "Camping",
+      "expected": "camping"
+    },
+    {
+      "id": 797,
+      "type": "대문자 포함",
+      "word": "Fishing",
+      "expected": "fishing"
+    },
+    {
+      "id": 798,
+      "type": "대문자 포함",
+      "word": "Drawing",
+      "expected": "drawing"
+    },
+    {
+      "id": 799,
+      "type": "대문자 포함",
+      "word": "Cooking",
+      "expected": "cooking"
+    }
+  ],
+  "spaceHyphenWords": [
+    {
+      "id": 21,
+      "word": "ice cream",
+      "meaning": "아이스크림",
+      "exactName": "ice cream.png",
+      "matchedFile": "ice_cream.png"
+    }
+  ]
+}

@@ -679,7 +679,18 @@ export default function Home() {
 
       // 로컬 세트의 개수가 현재 학생의 목표 수량(예: 20개)과 정확히 일치할 때만 캐시 사용, 다르면 DB 라이브 로드!
       if (savedDailySet && savedDailySet.length === targetCount && savedDailySet.length > 0) {
-        setDailyRandomWords(savedDailySet);
+        const sanitized = savedDailySet.map(w => {
+          const rawWord = (w.word || '').replace(/\.png/gi, '').trim();
+          const cleanWord = rawWord.toLowerCase();
+          return {
+            ...w,
+            word: cleanWord,
+            image_url: `https://sqonhhqosyszncjfoxfd.supabase.co/storage/v1/object/public/word_images/${cleanWord}.png`,
+            imageUrl: `https://sqonhhqosyszncjfoxfd.supabase.co/storage/v1/object/public/word_images/${cleanWord}.png`
+          };
+        });
+        setDailyRandomWords(sanitized);
+        localStorage.setItem(dailySetKey, JSON.stringify(sanitized));
       } else {
         const newRandomSet = await loadDailyRandomWordsFromDB(currentUser);
         if (newRandomSet && newRandomSet.length > 0) {
@@ -1548,17 +1559,27 @@ export default function Home() {
     const currentSrc = target.src || '';
     const wordClean = (wordStr || '').replace(/\.png/gi, '').trim();
     const wordLower = wordClean.toLowerCase();
+    const wordUnder = wordLower.replace(/ /g, '_');
+    const wordNoSpace = wordLower.replace(/[\s\-_]/g, '');
     const wordCap = wordClean ? wordClean.charAt(0).toUpperCase() + wordClean.slice(1) : '';
 
-    // 1차 폴백: 대문자 파일명 시도 (/word_img/Apple.png)
-    if (!currentSrc.includes(`/${wordCap}.png`)) {
+    // 1차 폴백: 언더바 파일명 시도 (/word_img/ice_cream.png)
+    if (!currentSrc.includes(`/${wordUnder}.png`)) {
+      target.src = `/word_img/${wordUnder}.png`;
+    }
+    // 2차 폴백: 공백 제거 파일명 시도 (/word_img/icecream.png)
+    else if (!currentSrc.includes(`/${wordNoSpace}.png`)) {
+      target.src = `/word_img/${wordNoSpace}.png`;
+    }
+    // 3차 폴백: 첫글자 대문자 파일명 시도 (/word_img/Apple.png)
+    else if (!currentSrc.includes(`/${wordCap}.png`)) {
       target.src = `/word_img/${wordCap}.png`;
     } 
-    // 2차 폴백: Supabase Cloud Storage 원본 이미지 시도
+    // 4차 폴백: Supabase Cloud Storage 원본 이미지 시도
     else if (!currentSrc.includes('supabase.co')) {
       target.src = `https://sqonhhqosyszncjfoxfd.supabase.co/storage/v1/object/public/word_images/${wordLower}.png`;
     } 
-    // 3차 폴백: 단어 이니셜 맞춤형 SVG 일러스트 카드
+    // 5차 폴백: 단어 이니셜 맞춤형 SVG 일러스트 카드
     else {
       const firstLetter = wordCap ? wordCap.charAt(0).toUpperCase() : '📖';
       target.src = `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="120" height="120" viewBox="0 0 120 120"><rect width="100%" height="100%" fill="%23F8F9FA" rx="16"/><text x="50%" y="45%" dominant-baseline="middle" text-anchor="middle" font-family="sans-serif" font-size="36" font-weight="bold" fill="%233498DB">${encodeURIComponent(firstLetter)}</text><text x="50%" y="75%" dominant-baseline="middle" text-anchor="middle" font-family="sans-serif" font-size="12" font-weight="bold" fill="%237F8C8D">${encodeURIComponent(wordClean || 'Word')}</text></svg>`;
