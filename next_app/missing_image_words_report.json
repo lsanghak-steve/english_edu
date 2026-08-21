@@ -1,0 +1,31 @@
+{
+  "summary": {
+    "totalWords": 1000,
+    "existingCount": 1000,
+    "missingCount": 0,
+    "coverageRate": "100.0%",
+    "gradeStats": {
+      "초등단어": {
+        "total": 800,
+        "exist": 800,
+        "missing": 0
+      },
+      "중등단어": {
+        "total": 200,
+        "exist": 200,
+        "missing": 0
+      },
+      "고등단어": {
+        "total": 0,
+        "exist": 0,
+        "missing": 0
+      },
+      "기타": {
+        "total": 0,
+        "exist": 0,
+        "missing": 0
+      }
+    }
+  },
+  "missingWords": []
+}

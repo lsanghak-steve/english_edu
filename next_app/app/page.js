@@ -1523,13 +1523,13 @@ export default function Home() {
   const isQuizL2Done = completedQuizLevels.includes(2);
 
   const getWordImgSrc = (wordObj) => {
-    if (!wordObj) return '/word_img/Apple.png';
+    if (!wordObj) return '/word_img/apple.png';
     const wordClean = (wordObj.word || '').replace(/\.png/gi, '').trim();
-    if (!wordClean) return '/word_img/Apple.png';
-    const wordCap = wordClean.charAt(0).toUpperCase() + wordClean.slice(1);
+    if (!wordClean) return '/word_img/apple.png';
+    const wordLower = wordClean.toLowerCase();
     
-    // 로컬 Next.js 고화질 이미지 우선 로드 (오프라인/빠른 로딩 보장)
-    return `/word_img/${wordCap}.png`;
+    // 로컬 Next.js 고화질 소문자 이미지 1순위 즉시 로드
+    return `/word_img/${wordLower}.png`;
   };
 
   const handleImageError = (e, wordStr) => {
@@ -1539,13 +1539,13 @@ export default function Home() {
     const wordLower = wordClean.toLowerCase();
     const wordCap = wordClean ? wordClean.charAt(0).toUpperCase() + wordClean.slice(1) : '';
 
-    // 1차 폴백: 소문자 파일명 시도 (/word_img/apple.png)
-    if (!currentSrc.includes(`/${wordLower}.png`)) {
-      target.src = `/word_img/${wordLower}.png`;
+    // 1차 폴백: 대문자 파일명 시도 (/word_img/Apple.png)
+    if (!currentSrc.includes(`/${wordCap}.png`)) {
+      target.src = `/word_img/${wordCap}.png`;
     } 
     // 2차 폴백: Supabase Cloud Storage 원본 이미지 시도
     else if (!currentSrc.includes('supabase.co')) {
-      target.src = `https://sqonhhqosyszncjfoxfd.supabase.co/storage/v1/object/public/word_images/${wordCap}.png`;
+      target.src = `https://sqonhhqosyszncjfoxfd.supabase.co/storage/v1/object/public/word_images/${wordLower}.png`;
     } 
     // 3차 폴백: 단어 이니셜 맞춤형 SVG 일러스트 카드
     else {

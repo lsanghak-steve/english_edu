@@ -1,0 +1,30 @@
+{
+  "grand_total": 4999,
+  "grand_exist": 4999,
+  "grand_missing_count": 0,
+  "coverage_rate": "100.0%",
+  "results_by_grade": [
+    {
+      "grade": "초등단어 (800)",
+      "file": "elementary_words_ko_zh.xlsx",
+      "total": 800,
+      "exist": 800,
+      "missing": []
+    },
+    {
+      "grade": "중등단어 (1,200)",
+      "file": "middle_school_words_ko_zh.xlsx",
+      "total": 1200,
+      "exist": 1200,
+      "missing": []
+    },
+    {
+      "grade": "고등/수능단어 (3,000)",
+      "file": "highschool_suneung_vocab_3000_ko_zh.xlsx",
+      "total": 2999,
+      "exist": 2999,
+      "missing": []
+    }
+  ],
+  "all_missing_words": []
+}
