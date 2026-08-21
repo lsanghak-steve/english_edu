@@ -1,0 +1,39 @@
+version: '3.8'
+
+services:
+  # 1. Steve Voca Next.js App
+  steve-voca-app:
+    build:
+      context: ..
+      dockerfile: deploy_hk/Dockerfile
+    container_name: steve-voca-app
+    restart: always
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+    env_file:
+      - .env.production.hk
+    expose:
+      - "3000"
+    networks:
+      - steve-net
+
+  # 2. Nginx Reverse Proxy (GFW Bypass & High-Speed Cache)
+  nginx:
+    image: nginx:alpine
+    container_name: steve-voca-nginx
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./ssl:/etc/nginx/ssl:ro
+    depends_on:
+      - steve-voca-app
+    networks:
+      - steve-net
+
+networks:
+  steve-net:
+    driver: bridge
