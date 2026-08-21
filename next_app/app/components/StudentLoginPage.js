@@ -38,6 +38,14 @@ export default function StudentLoginPage({ onLoginSuccess, onParentLoginSuccess,
   const [signUpSuccessModal, setSignUpSuccessModal] = useState(false);
   const [signUpSuccessData, setSignUpSuccessData] = useState(null);
 
+  // 🇨🇳 중국/글로벌 현지화: 로그인 모드 및 위챗/휴대폰 인증 상태
+  const [loginMode, setLoginMode] = useState('account'); // 'account' | 'phone'
+  const [phoneCountryCode, setPhoneCountryCode] = useState(currentLang === 'zh' ? '+86' : '+82');
+  const [phoneInput, setPhoneInput] = useState('');
+  const [smsCodeInput, setSmsCodeInput] = useState('');
+  const [smsCountdown, setSmsCountdown] = useState(0);
+  const [showWeChatModal, setShowWeChatModal] = useState(false);
+
   // 기본 학생 세팅 배열 (고유 학생 코드 lsh_20260807_000001 체계 적용)
   const defaultStudents = [
     { id: 'lsh_20260807_000001', student_id: 'lsh_20260807_000001', name: '이상학', grade: '대학생 및 성인', studyGradeLevel: '중등단어', dailyWordCount: '20', studentPin: '0815', parentName: '이상학학부모', parentPhone: '010-0000-0000', parentPin: '5678' },
@@ -261,6 +269,86 @@ export default function StudentLoginPage({ onLoginSuccess, onParentLoginSuccess,
     }
   };
 
+  // 📱 휴대폰 SMS 인증번호 발송 시뮬레이션
+  const handleSendSms = () => {
+    if (!phoneInput.trim() || phoneInput.trim().length < 6) {
+      alert(currentLang === 'zh' ? '请输入有效的手机号码。' : '올바른 휴대폰 번호를 입력해주세요.');
+      return;
+    }
+    const sampleCode = '6829';
+    setSmsCodeInput(sampleCode);
+    setSmsCountdown(60);
+    alert(currentLang === 'zh'
+      ? `📲 [短信验证码已发送] 验证码为: 【${sampleCode}】\n(已自动填入验证码框)`
+      : `📲 [인증번호 발송 완료] 인증번호: 【${sampleCode}】\n(인증번호가 자동으로 입력되었습니다)`);
+
+    const timer = setInterval(() => {
+      setSmsCountdown(prev => {
+        if (prev <= 1) {
+          clearInterval(timer);
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+  };
+
+  // 📱 휴대폰 번호 간편 로그인 제출
+  const handlePhoneLoginSubmit = (e) => {
+    e.preventDefault();
+    const cleanPhone = phoneInput.trim();
+    if (!cleanPhone) {
+      alert(currentLang === 'zh' ? '请输入手机号码。' : '휴대폰 번호를 입력해주세요.');
+      return;
+    }
+    if (!smsCodeInput.trim()) {
+      alert(currentLang === 'zh' ? '请输入短信验证码。' : '인증번호를 입력해주세요.');
+      return;
+    }
+
+    // 등록된 학생 전화번호 매칭
+    const student = users.find(u => u.parentPhone && u.parentPhone.includes(cleanPhone));
+    if (student) {
+      onLoginSuccess(student);
+    } else {
+      // 폰번호 기반 신규 즉시 체험 계정
+      const newPhoneUser = {
+        id: `phone_${cleanPhone}`,
+        student_id: `phone_${cleanPhone}`,
+        name: currentLang === 'zh' ? `学员_${cleanPhone.slice(-4)}` : `학생_${cleanPhone.slice(-4)}`,
+        grade: '초등 3학년',
+        studyGradeLevel: '초등단어',
+        dailyWordCount: '10',
+        studentPin: '1234',
+        parentName: '학부모',
+        parentPhone: `${phoneCountryCode}-${cleanPhone}`,
+        parentPin: '5678'
+      };
+      onLoginSuccess(newPhoneUser);
+    }
+  };
+
+  // 💬 위챗(WeChat) 간편 원클릭 / QR 로그인
+  const handleWeChatLogin = () => {
+    let wechatUser = users.find(u => (u.name && u.name.includes('微信')) || u.id === 'wechat_demo_student');
+    if (!wechatUser) {
+      wechatUser = {
+        id: 'wechat_demo_student',
+        student_id: 'wechat_demo_student',
+        name: currentLang === 'zh' ? '微信学员 (WeChat)' : '위챗 학습자',
+        grade: '초등 3학년',
+        studyGradeLevel: '초등단어',
+        dailyWordCount: '10',
+        studentPin: '1234',
+        parentName: '微信家长',
+        parentPhone: '+86-13800000000',
+        parentPin: '5678'
+      };
+    }
+    setShowWeChatModal(false);
+    onLoginSuccess(wechatUser);
+  };
+
   // 학부모 이름으로 로그인 제출 (모든 자녀 매칭)
   const handleParentLoginSubmit = (e) => {
     e.preventDefault();
@@ -446,11 +534,53 @@ export default function StudentLoginPage({ onLoginSuccess, onParentLoginSuccess,
           {t('login_subtitle', currentLang)}
         </p>
 
+        {/* 🇨🇳 로그인 모드 선택 탭 (이름+PIN vs 📱 휴대폰 번호) */}
+        <div style={{ display: 'flex', gap: '8px', marginBottom: '18px', background: '#F1F5F9', padding: '4px', borderRadius: '14px' }}>
+          <button
+            type="button"
+            onClick={() => setLoginMode('account')}
+            style={{
+              flex: 1,
+              padding: '9px 12px',
+              borderRadius: '10px',
+              fontSize: '13px',
+              fontWeight: '900',
+              border: 'none',
+              background: loginMode === 'account' ? '#FFFFFF' : 'transparent',
+              color: loginMode === 'account' ? '#2C3E50' : '#64748B',
+              boxShadow: loginMode === 'account' ? '0 2px 6px rgba(0,0,0,0.08)' : 'none',
+              cursor: 'pointer',
+              transition: 'all 0.15s'
+            }}
+          >
+            👤 {currentLang === 'zh' ? '账号密码' : '학생 이름/PIN'}
+          </button>
+          <button
+            type="button"
+            onClick={() => setLoginMode('phone')}
+            style={{
+              flex: 1,
+              padding: '9px 12px',
+              borderRadius: '10px',
+              fontSize: '13px',
+              fontWeight: '900',
+              border: 'none',
+              background: loginMode === 'phone' ? '#FFFFFF' : 'transparent',
+              color: loginMode === 'phone' ? '#2C3E50' : '#64748B',
+              boxShadow: loginMode === 'phone' ? '0 2px 6px rgba(0,0,0,0.08)' : 'none',
+              cursor: 'pointer',
+              transition: 'all 0.15s'
+            }}
+          >
+            📱 {currentLang === 'zh' ? '手机快捷登录' : '휴대폰 번호'}
+          </button>
+        </div>
+
         {isLoading ? (
           <div style={{ padding: '30px', color: '#3498DB', fontWeight: 'bold', fontSize: '15px' }}>
             ☁️ 클라우드 DB 연동 중...
           </div>
-        ) : (
+        ) : loginMode === 'account' ? (
           <form onSubmit={handleStudentLoginSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
             <div style={{ textAlign: 'left' }}>
               <label style={{ display: 'block', fontSize: '13px', fontWeight: 'bold', color: '#34495E', marginBottom: '6px' }}>
@@ -519,10 +649,145 @@ export default function StudentLoginPage({ onLoginSuccess, onParentLoginSuccess,
               {t('btn_student_login', currentLang)} ➔
             </button>
           </form>
+        ) : (
+          /* 📱 手机号 + 短信验证码 登录 表单 */
+          <form onSubmit={handlePhoneLoginSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+            <div style={{ textAlign: 'left' }}>
+              <label style={{ display: 'block', fontSize: '13px', fontWeight: 'bold', color: '#34495E', marginBottom: '6px' }}>
+                📱 {currentLang === 'zh' ? '手机号码' : '휴대폰 번호'}
+              </label>
+              <div style={{ display: 'flex', gap: '8px' }}>
+                <select
+                  value={phoneCountryCode}
+                  onChange={(e) => setPhoneCountryCode(e.target.value)}
+                  style={{
+                    padding: '12px 10px',
+                    borderRadius: '12px',
+                    border: '2px solid #CBD5E1',
+                    background: '#F8FAFC',
+                    fontWeight: '900',
+                    fontSize: '14px',
+                    outline: 'none'
+                  }}
+                >
+                  <option value="+86">🇨🇳 +86 (中国)</option>
+                  <option value="+82">🇰🇷 +82 (한국)</option>
+                  <option value="+1">🇺🇸 +1 (US)</option>
+                  <option value="+84">🇻🇳 +84 (VN)</option>
+                </select>
+                <input
+                  type="tel"
+                  placeholder={currentLang === 'zh' ? '请输入11位手机号' : '휴대폰 번호 입력'}
+                  value={phoneInput}
+                  onChange={(e) => setPhoneInput(e.target.value)}
+                  style={{
+                    flex: 1,
+                    padding: '12px 14px',
+                    borderRadius: '12px',
+                    border: '2px solid #3498DB',
+                    background: '#F4F6F7',
+                    fontSize: '15px',
+                    fontWeight: 'bold',
+                    outline: 'none'
+                  }}
+                  autoFocus
+                />
+              </div>
+            </div>
+
+            <div style={{ textAlign: 'left' }}>
+              <label style={{ display: 'block', fontSize: '13px', fontWeight: 'bold', color: '#34495E', marginBottom: '6px' }}>
+                📩 {currentLang === 'zh' ? '短信验证码' : 'SMS 인증번호'}
+              </label>
+              <div style={{ display: 'flex', gap: '8px' }}>
+                <input
+                  type="text"
+                  maxLength={6}
+                  placeholder={currentLang === 'zh' ? '6位验证码' : '인증번호'}
+                  value={smsCodeInput}
+                  onChange={(e) => setSmsCodeInput(e.target.value)}
+                  style={{
+                    flex: 1,
+                    padding: '12px 14px',
+                    borderRadius: '12px',
+                    border: '2px solid #9B59B6',
+                    fontSize: '16px',
+                    fontWeight: 'bold',
+                    outline: 'none',
+                    letterSpacing: '2px'
+                  }}
+                />
+                <button
+                  type="button"
+                  onClick={handleSendSms}
+                  disabled={smsCountdown > 0}
+                  style={{
+                    padding: '12px 14px',
+                    borderRadius: '12px',
+                    border: 'none',
+                    background: smsCountdown > 0 ? '#CBD5E1' : '#3B82F6',
+                    color: 'white',
+                    fontWeight: '900',
+                    fontSize: '13px',
+                    cursor: smsCountdown > 0 ? 'not-allowed' : 'pointer',
+                    whiteSpace: 'nowrap'
+                  }}
+                >
+                  {smsCountdown > 0 ? `${smsCountdown}s` : (currentLang === 'zh' ? '获取验证码' : '인증번호 받기')}
+                </button>
+              </div>
+            </div>
+
+            <button
+              type="submit"
+              style={{
+                width: '100%',
+                background: 'linear-gradient(135deg, #2563EB 0%, #1D4ED8 100%)',
+                color: 'white',
+                border: 'none',
+                padding: '15px',
+                borderRadius: '16px',
+                fontWeight: 'bold',
+                fontSize: '16px',
+                cursor: 'pointer',
+                boxShadow: '0 6px 16px rgba(37,99,235,0.3)',
+                marginTop: '4px'
+              }}
+            >
+              {currentLang === 'zh' ? '📱 手机快捷登录 ➔' : '📱 휴대폰 로그인 ➔'}
+            </button>
+          </form>
         )}
 
+        {/* 💬 微信一键登录 (WeChat One-Click Login) 버튼 */}
+        <div style={{ marginTop: '14px' }}>
+          <button
+            type="button"
+            onClick={() => setShowWeChatModal(true)}
+            style={{
+              width: '100%',
+              background: '#07C160',
+              color: 'white',
+              border: 'none',
+              padding: '13px',
+              borderRadius: '14px',
+              fontWeight: '900',
+              fontSize: '15px',
+              cursor: 'pointer',
+              boxShadow: '0 4px 12px rgba(7,193,96,0.3)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '8px'
+            }}
+          >
+            <span style={{ fontSize: '18px' }}>💬</span>
+            {currentLang === 'zh' ? '微信一键扫码登录' : '위챗(WeChat) 간편 로그인'}
+          </button>
+        </div>
+
         {/* 🎯 하단 회원가입 및 학부모 로그인 버튼 영역 */}
-        <div style={{ marginTop: '20px', paddingTop: '16px', borderTop: '1px dashed #BDC3C7', display: 'flex', flexDirection: 'column', gap: '10px' }}>
+        <div style={{ marginTop: '16px', paddingTop: '14px', borderTop: '1px dashed #BDC3C7', display: 'flex', flexDirection: 'column', gap: '10px' }}>
           <button
             type="button"
             onClick={() => setShowSignUpModal(true)}
@@ -811,6 +1076,76 @@ export default function StudentLoginPage({ onLoginSuccess, onParentLoginSuccess,
                 {t('btn_parent_submit', currentLang)} ➔
               </button>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* 💬 微信扫码一键登录 模拟弹窗 */}
+      {showWeChatModal && (
+        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.6)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 10000, padding: '16px' }}>
+          <div style={{ background: 'white', borderRadius: '24px', padding: '28px 24px', width: '100%', maxWidth: '360px', textAlign: 'center', boxShadow: '0 16px 40px rgba(0,0,0,0.3)' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <span style={{ fontSize: '24px' }}>💬</span>
+                <h3 style={{ margin: 0, color: '#07C160', fontSize: '18px', fontWeight: '900' }}>
+                  {currentLang === 'zh' ? '微信扫码登录' : '위챗(WeChat) 로그인'}
+                </h3>
+              </div>
+              <button
+                onClick={() => setShowWeChatModal(false)}
+                style={{ background: '#F1F5F9', border: 'none', width: '30px', height: '30px', borderRadius: '50%', cursor: 'pointer', fontWeight: 'bold' }}
+              >
+                ✖
+              </button>
+            </div>
+
+            {/* 微信二维码 UI */}
+            <div style={{ background: '#F8FAFC', border: '2px solid #E2E8F0', borderRadius: '16px', padding: '20px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '10px' }}>
+              <div style={{ width: '160px', height: '160px', background: '#FFFFFF', border: '3px solid #07C160', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative' }}>
+                <svg width="140" height="140" viewBox="0 0 140 140" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <rect width="140" height="140" fill="white"/>
+                  {/* QR Pattern Simulation */}
+                  <rect x="10" y="10" width="40" height="40" fill="#2C3E50"/>
+                  <rect x="18" y="18" width="24" height="24" fill="white"/>
+                  <rect x="24" y="24" width="12" height="12" fill="#07C160"/>
+                  
+                  <rect x="90" y="10" width="40" height="40" fill="#2C3E50"/>
+                  <rect x="98" y="18" width="24" height="24" fill="white"/>
+                  <rect x="104" y="24" width="12" height="12" fill="#07C160"/>
+
+                  <rect x="10" y="90" width="40" height="40" fill="#2C3E50"/>
+                  <rect x="18" y="98" width="24" height="24" fill="white"/>
+                  <rect x="24" y="104" width="12" height="12" fill="#07C160"/>
+
+                  <circle cx="70" cy="70" r="14" fill="#07C160"/>
+                  <text x="70" y="75" textAnchor="middle" fill="white" fontSize="12" fontWeight="bold">SV</text>
+                </svg>
+              </div>
+              <p style={{ margin: 0, fontSize: '13px', color: '#64748B', fontWeight: 'bold' }}>
+                {currentLang === 'zh' ? '请使用微信扫一扫上方二维码' : '위챗 앱으로 QR코드를 스캔하세요'}
+              </p>
+            </div>
+
+            {/* 一键快捷登录 (模拟快速授权) */}
+            <button
+              type="button"
+              onClick={handleWeChatLogin}
+              style={{
+                marginTop: '18px',
+                width: '100%',
+                background: '#07C160',
+                color: 'white',
+                border: 'none',
+                padding: '14px',
+                borderRadius: '14px',
+                fontWeight: '900',
+                fontSize: '15px',
+                cursor: 'pointer',
+                boxShadow: '0 4px 12px rgba(7,193,96,0.35)'
+              }}
+            >
+              ⚡ {currentLang === 'zh' ? '微信一键授权直接进入 ➔' : '위챗 원클릭 체험 로그인 ➔'}
+            </button>
           </div>
         </div>
       )}
