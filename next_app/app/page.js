@@ -1524,27 +1524,31 @@ export default function Home() {
 
   const getWordImgSrc = (wordObj) => {
     if (!wordObj) return '/word_img/Apple.png';
-    if (wordObj.image_url && wordObj.image_url.trim() !== '') {
-      return wordObj.image_url;
-    }
     const wordClean = (wordObj.word || '').replace(/\.png/gi, '').trim();
     if (!wordClean) return '/word_img/Apple.png';
     const wordCap = wordClean.charAt(0).toUpperCase() + wordClean.slice(1);
+    
+    // 로컬 Next.js 고화질 이미지 우선 로드 (오프라인/빠른 로딩 보장)
     return `/word_img/${wordCap}.png`;
   };
 
   const handleImageError = (e, wordStr) => {
     const target = e.target;
-    const currentSrc = target.src;
+    const currentSrc = target.src || '';
     const wordClean = (wordStr || '').replace(/\.png/gi, '').trim();
     const wordLower = wordClean.toLowerCase();
     const wordCap = wordClean ? wordClean.charAt(0).toUpperCase() + wordClean.slice(1) : '';
 
-    if (currentSrc && !currentSrc.includes(`/${wordLower}.png`) && !currentSrc.includes(`/${wordCap}.png`)) {
+    // 1차 폴백: 소문자 파일명 시도 (/word_img/apple.png)
+    if (!currentSrc.includes(`/${wordLower}.png`)) {
       target.src = `/word_img/${wordLower}.png`;
-    } else if (currentSrc && !currentSrc.includes(`/${wordCap}.png`)) {
-      target.src = `/word_img/${wordCap}.png`;
-    } else {
+    } 
+    // 2차 폴백: Supabase Cloud Storage 원본 이미지 시도
+    else if (!currentSrc.includes('supabase.co')) {
+      target.src = `https://sqonhhqosyszncjfoxfd.supabase.co/storage/v1/object/public/word_images/${wordCap}.png`;
+    } 
+    // 3차 폴백: 단어 이니셜 맞춤형 SVG 일러스트 카드
+    else {
       const firstLetter = wordCap ? wordCap.charAt(0).toUpperCase() : '📖';
       target.src = `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="120" height="120" viewBox="0 0 120 120"><rect width="100%" height="100%" fill="%23F8F9FA" rx="16"/><text x="50%" y="45%" dominant-baseline="middle" text-anchor="middle" font-family="sans-serif" font-size="36" font-weight="bold" fill="%233498DB">${encodeURIComponent(firstLetter)}</text><text x="50%" y="75%" dominant-baseline="middle" text-anchor="middle" font-family="sans-serif" font-size="12" font-weight="bold" fill="%237F8C8D">${encodeURIComponent(wordClean || 'Word')}</text></svg>`;
       target.onerror = null;
