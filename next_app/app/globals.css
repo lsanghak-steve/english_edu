@@ -1,11 +1,13 @@
 /* ===================================================
    🦉 Duolingo Style Design System (듀오링고 감성 디자인)
    초등·중등·고등 영단어 통합 학습 플랫폼 (Next.js)
+   글로벌 & 중국(CN) 만리방화벽(GFW) 대응 무지연 고속 폰트 시스템
    =================================================== */
 
-@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800;900&family=Pretendard:wght@600;700;800;900&display=swap');
-
 :root {
+  /* 글로벌 멀티랭귀지(EN/KO/ZH) 초고속 시스템 폰트 스택 */
+  --font-family-base: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "WenQuanYi Micro Hei", "Pretendard", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+
   /* Duolingo Brand Colors */
   --duo-green: #58CC02;
   --duo-green-dark: #46A302;
@@ -44,7 +46,7 @@
   box-sizing: border-box;
   margin: 0;
   padding: 0;
-  font-family: 'Nunito', 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-family: var(--font-family-base);
   -webkit-tap-highlight-color: transparent;
 }
 
