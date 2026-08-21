@@ -26,10 +26,12 @@ export default function StatsSection({ currentUser, totalWordCount = 500, onNavi
     const userName = currentUser.name ? currentUser.name.replace(/[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{1F1E0}-\u{1F1FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{1F900}-\u{1F9FF}\u{1F300}-\u{1F5FF}\u{1F004}\u{1F0CF}\u{1F170}-\u{1F251}]/gu, '').trim() : '';
 
     let queryIds = [studentCode, userId, userName];
-    if (userName.includes('상학') || userId.includes('sh')) {
-      queryIds.push('lsh_20260807_000001');
-      queryIds.push('sh_100');
-      queryIds.push('이상학');
+    if (userName.includes('상학') || userId.includes('sh') || studentCode.includes('lsh')) {
+      queryIds.push('lsh_20260807_000001', 'sh_100', '이상학');
+    } else if (userName.includes('승현') || studentCode.includes('000002')) {
+      queryIds.push('lsh_20260807_000002', 'sh_101', '이승현');
+    } else if (userName.includes('수민') || studentCode.includes('000003')) {
+      queryIds.push('lsm_20260807_000003', 'sm_102', '이수민');
     }
     const cleanIds = [...new Set(queryIds.filter(Boolean))];
 
@@ -50,55 +52,35 @@ export default function StatsSection({ currentUser, totalWordCount = 500, onNavi
 
       let learnedItemsMap = new Map();
       localLearned.forEach(w => {
-        const wordKey = typeof w === 'string' ? w : w.word;
-        if (wordKey) learnedItemsMap.set(wordKey, { word: wordKey, meaning: w.meaning || '' });
+        const wordKey = (typeof w === 'string' ? w : w.word || '').toLowerCase().trim();
+        if (wordKey) learnedItemsMap.set(wordKey, { word: typeof w === 'string' ? w : w.word, meaning: w.meaning || '' });
       });
 
       try {
+        // 🎯 클라우드 DB에서 학생 고유 ID로 직접 100% 필터링 (최대 5,000단어 완벽 조회)
         const [attRes, wrongRes, learnedRes] = await Promise.allSettled([
-          supabase.from('study_records').select('study_date, is_stamped, student_id'),
-          supabase.from('wrong_words').select('id, student_id'),
-          supabase.from('student_learned_words').select('word, meaning, student_id')
+          supabase.from('study_records').select('study_date, is_stamped, student_id').in('student_id', cleanIds),
+          supabase.from('wrong_words').select('id, student_id').in('student_id', cleanIds),
+          supabase.from('student_learned_words').select('word, meaning, student_id').in('student_id', cleanIds).order('id', { ascending: false }).limit(5000)
         ]);
 
         if (attRes.status === 'fulfilled' && Array.isArray(attRes.value.data)) {
-          const matchedAtt = attRes.value.data.filter(item => 
-            cleanIds.some(idStr => item.student_id === idStr || (item.student_id && item.student_id.includes(userName)))
-          );
-          const dbDates = matchedAtt.map(item => item.study_date).filter(Boolean);
+          const dbDates = attRes.value.data.map(item => item.study_date).filter(Boolean);
           const allDates = [...new Set([...localStamps, ...dbDates])];
           cloudAttendanceCount = allDates.length;
-
-          matchedAtt.forEach(item => {
-            if (Array.isArray(item.stamped_words)) {
-              item.stamped_words.forEach(w => {
-                const wStr = typeof w === 'string' ? w : w.word;
-                if (wStr && !learnedItemsMap.has(wStr)) {
-                  learnedItemsMap.set(wStr, { word: wStr, meaning: w.meaning || '' });
-                }
-              });
-            }
-          });
         }
 
         if (learnedRes.status === 'fulfilled' && Array.isArray(learnedRes.value.data)) {
           learnedRes.value.data.forEach(item => {
-            const isMatch = cleanIds.some(idStr => 
-              item.student_id === idStr || 
-              (item.student_id && item.student_id === userName)
-            );
-
-            if (isMatch && item.word) {
-              learnedItemsMap.set(item.word.toLowerCase(), { word: item.word, meaning: item.meaning || '' });
+            const wordKey = (item.word || '').toLowerCase().trim();
+            if (wordKey && !learnedItemsMap.has(wordKey)) {
+              learnedItemsMap.set(wordKey, { word: item.word, meaning: item.meaning || '' });
             }
           });
         }
 
         if (wrongRes.status === 'fulfilled' && Array.isArray(wrongRes.value.data)) {
-          const matchedWrong = wrongRes.value.data.filter(item => 
-            cleanIds.some(idStr => item.student_id === idStr || (item.student_id && item.student_id === userName))
-          );
-          cloudWrongCount = Math.max(localWrong.length, matchedWrong.length);
+          cloudWrongCount = Math.max(localWrong.length, wrongRes.value.data.length);
         }
       } catch (e) {
         console.error('Realtime cloud stats fetch error', e);
@@ -107,6 +89,14 @@ export default function StatsSection({ currentUser, totalWordCount = 500, onNavi
       const finalLearnedArray = Array.from(learnedItemsMap.values());
       const finalLearnedCount = finalLearnedArray.length;
       const finalAttendanceCount = cloudAttendanceCount;
+
+      // 💾 다른 PC(집 컴퓨터 등)에서도 즉시 캐시될 수 있도록 로컬 스토리지에 동기화 백업
+      try {
+        if (finalLearnedArray.length > 0 && localLearned.length === 0) {
+          localStorage.setItem(`learned_words_${userId}`, JSON.stringify(finalLearnedArray));
+          if (studentCode) localStorage.setItem(`learned_words_${studentCode}`, JSON.stringify(finalLearnedArray));
+        }
+      } catch (e) {}
 
       setLearnedWordList(finalLearnedArray);
       setStats({
@@ -118,18 +108,12 @@ export default function StatsSection({ currentUser, totalWordCount = 500, onNavi
     }
 
     loadRealtimeCloudStats();
-    const timer = setTimeout(() => {
-      loadRealtimeCloudStats();
-    }, 500);
 
     const handleUpdate = () => { loadRealtimeCloudStats(); };
     window.addEventListener('study_data_updated', handleUpdate);
-    window.addEventListener('storage', handleUpdate);
 
     return () => {
-      clearTimeout(timer);
       window.removeEventListener('study_data_updated', handleUpdate);
-      window.removeEventListener('storage', handleUpdate);
     };
   }, [currentUser]);
 
