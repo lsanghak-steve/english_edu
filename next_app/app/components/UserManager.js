@@ -218,26 +218,23 @@ export default function UserManager({ currentUser, setCurrentUser, onLogout, cur
 
       {/* 버튼 액션 그룹 (수정 및 로그아웃) */}
       <div className="user-actions-group">
-        <button
-          type="button"
-          onClick={() => setShowPaymentModal(true)}
+        <span
           style={{
-            background: 'linear-gradient(135deg, #FEF08A 0%, #FDE047 100%)',
-            color: '#854D0E',
-            border: '1px solid #EAB308',
-            padding: '9px 14px',
+            background: '#DCFCE7',
+            color: '#15803D',
+            border: '1px solid #86EFAC',
+            padding: '8px 14px',
             borderRadius: 'var(--radius-medium)',
             fontWeight: '900',
-            fontSize: '13px',
-            cursor: 'pointer',
+            fontSize: '12px',
             display: 'flex',
             alignItems: 'center',
             gap: '4px',
-            boxShadow: '0 2px 6px rgba(234,179,8,0.25)'
+            whiteSpace: 'nowrap'
           }}
         >
-          💎 {currentLang === 'zh' ? 'VIP 套餐' : 'VIP 멤버십'}
-        </button>
+          🎁 {currentLang === 'zh' ? '全功能 100% 免费版' : '전기능 100% 무료'}
+        </span>
         <button className="btn-user-edit" onClick={handleOpenEditModal}>
           {editBtnText}
         </button>

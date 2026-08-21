@@ -159,30 +159,25 @@ export default function LandingZhPage() {
           </div>
 
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <button
-              onClick={() => setShowPaymentModal(true)}
-              style={{
-                background: 'linear-gradient(135deg, #FEF08A 0%, #FDE047 100%)',
-                color: '#854D0E',
-                border: '1px solid #EAB308',
-                padding: '8px 16px',
-                borderRadius: '12px',
-                fontWeight: '900',
-                fontSize: '13px',
-                cursor: 'pointer',
-                boxShadow: '0 2px 6px rgba(234,179,8,0.3)',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '4px'
-              }}
-            >
-              💎 会员套餐
-            </button>
+            <span style={{
+              background: '#DCFCE7',
+              color: '#15803D',
+              border: '1px solid #86EFAC',
+              padding: '6px 14px',
+              borderRadius: '12px',
+              fontWeight: '900',
+              fontSize: '12px',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '4px'
+            }}>
+              🎁 全功能 100% 免费开放
+            </span>
             <Link href="/" style={{ fontSize: '13px', fontWeight: 'bold', color: '#475569', textDecoration: 'none', padding: '8px 10px' }}>
               🇰🇷 한국어
             </Link>
             <Link href="/" style={{ background: '#58CC02', color: 'white', padding: '9px 18px', borderRadius: '12px', fontWeight: '900', fontSize: '14px', textDecoration: 'none', boxShadow: '0 4px 0 #46A302' }}>
-              🚀 立即学习 ➔
+              🚀 免费进入学习 ➔
             </Link>
           </div>
         </div>
@@ -191,8 +186,8 @@ export default function LandingZhPage() {
       {/* 🌟 2. Hero 头部主视觉区 */}
       <section style={{ padding: '60px 20px 80px 20px', textAlign: 'center', background: 'linear-gradient(180deg, #FFFFFF 0%, #F1F5F9 100%)' }}>
         <div style={{ maxWidth: '960px', margin: '0 auto' }}>
-          <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', background: '#E0F2FE', color: '#0369A1', padding: '8px 18px', borderRadius: '20px', fontSize: '13px', fontWeight: '900', marginBottom: '20px' }}>
-            ✨ 小学 · 初中 · 高中/高考 5,000 核心词汇智能提分系统
+          <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', background: '#DCFCE7', color: '#15803D', border: '1px solid #86EFAC', padding: '8px 18px', borderRadius: '20px', fontSize: '13px', fontWeight: '900', marginBottom: '20px' }}>
+            🎁 5,000 核心词库全部 100% 免费开放 · 无需付费 · 微信/手机一键即学！
           </div>
 
           <h1 style={{ fontSize: '42px', fontWeight: '900', color: '#0F172A', lineHeight: 1.25, margin: '0 0 20px 0', letterSpacing: '-1px' }}>
@@ -201,18 +196,18 @@ export default function LandingZhPage() {
           </h1>
 
           <p style={{ fontSize: '18px', color: '#475569', lineHeight: 1.6, maxWidth: '720px', margin: '0 auto 36px auto' }}>
-            100% 配备高清原创图解、真人原声音频与 AI 智能发音评分。从听音辨词到主观拼写，为全国中小学生与英语培训机构打造最有趣的提分利器。
+            100% 配备高清原创图解、真人原声音频与 AI 智能发音评分。新课标小学到高中高考冲刺，所有核心功能全部免费提供。
           </p>
 
           <div style={{ display: 'flex', justifyContent: 'center', gap: '14px', flexWrap: 'wrap' }}>
             <Link href="/" style={{ background: '#58CC02', color: 'white', padding: '16px 36px', borderRadius: '16px', fontWeight: '900', fontSize: '18px', textDecoration: 'none', boxShadow: '0 6px 0 #46A302' }}>
-              ⚡ 微信/手机一键体验 ➔
+              ⚡ 微信/手机号 一键免费畅学 ➔
             </Link>
             <button
               onClick={() => { setSelectedRole('academy'); setShowAuthModal(true); }}
               style={{ background: '#FFFFFF', color: '#334155', border: '2px solid #CBD5E1', padding: '16px 28px', borderRadius: '16px', fontWeight: '900', fontSize: '16px', cursor: 'pointer', boxShadow: '0 4px 0 #CBD5E1' }}
             >
-              🏫 机构/教师专属试用
+              🏫 机构/教师 免费开通试卷后台
             </button>
           </div>
         </div>
