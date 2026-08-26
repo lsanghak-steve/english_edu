@@ -65,22 +65,12 @@ export default function LeaderboardSection({ currentUser, currentLang = 'ko' }) 
             }
           });
 
-          if (uName.includes('상학') || uName.includes('승현')) {
-            if (datesSet.size === 0) {
-              ['2026-08-05', '2026-08-06', '2026-08-07', '2026-08-08', '2026-08-09', '2026-08-10', '2026-08-11', '2026-08-12', '2026-08-13'].forEach(d => datesSet.add(d));
-              goldStampCount = 2;
-            }
-          }
-
           const stampsCount = datesSet.size;
 
           const userLearned = learnedList.filter(l =>
             matchIds.some(idStr => l.student_id === idStr || (l.student_id && l.student_id.includes(uName)))
           );
-          let learnedCount = userLearned.length;
-          if (learnedCount === 0 && (uName.includes('상학') || uName.includes('승현'))) {
-            learnedCount = 96;
-          }
+          const learnedCount = userLearned.length;
 
           const quizCount = stampsCount * 2;
           const streakDays = Math.max(1, stampsCount);

@@ -73,34 +73,54 @@ export default function AdminStudentManager() {
   const [newExampleEn, setNewExampleEn] = useState('');
   const [newExampleKo, setNewExampleKo] = useState('');
 
-  // 표준 기본 학생 세팅
+  // 기본 학생 목록 (달란트는 실제 학습한 단어 수로 산정)
   const defaultStandardStudents = [
-    { id: 'sh_100', student_id: 'sh_100', name: '이상학', grade: '대학생 및 성인', studyGradeLevel: '초등단어', dailyWordCount: '10', studentPin: '0815', parentName: '이상학', parentPhone: '010-4006-9050', parentPin: '0815', rewardPoints: 100 },
-    { id: 'sh_101', student_id: 'sh_101', name: '이승현', grade: '초등 5학년', studyGradeLevel: '초등단어', dailyWordCount: '10', studentPin: '0418', parentName: '이상학', parentPhone: '010-4006-9050', parentPin: '0815', rewardPoints: 150 },
-    { id: 'sm_102', student_id: 'sm_102', name: '이수민', grade: '초등 3학년', studyGradeLevel: '초등단어', dailyWordCount: '10', studentPin: '0809', parentName: '이상학', parentPhone: '010-4006-9050', parentPin: '0815', rewardPoints: 120 }
+    { id: 'sh_100', student_id: 'sh_100', name: '이상학', grade: '대학생 및 성인', studyGradeLevel: '초등단어', dailyWordCount: '10', studentPin: '0815', parentName: '이상학', parentPhone: '010-4006-9050', parentPin: '0815', rewardPoints: 0 },
+    { id: 'sh_101', student_id: 'sh_101', name: '이승현', grade: '초등 5학년', studyGradeLevel: '초등단어', dailyWordCount: '10', studentPin: '0418', parentName: '이상학', parentPhone: '010-4006-9050', parentPin: '0815', rewardPoints: 0 },
+    { id: 'sm_102', student_id: 'sm_102', name: '이수민', grade: '초등 3학년', studyGradeLevel: '초등단어', dailyWordCount: '10', studentPin: '0809', parentName: '이상학', parentPhone: '010-4006-9050', parentPin: '0815', rewardPoints: 0 }
   ];
 
-  // 학생 데이터 로드 (Supabase `users` 테이블 우선 조회)
+  // 학생 데이터 로드 (Supabase `users` 및 `student_learned_words` 실제 학습 단어 수 실시간 조회)
   const loadStudents = async () => {
     setLoading(true);
     try {
-      const { data, error } = await supabase.from('users').select('*').order('created_at', { ascending: true });
-      if (!error && data && data.length > 0) {
-        const formatted = data.map(s => ({
-          id: s.id,
-          db_id: s.id,
-          student_id: s.student_id || s.id,
-          name: removeEmoji(s.name),
-          grade: s.avatar || s.grade || '초등 3학년',
-          avatar: s.avatar || s.grade || '초등 3학년',
-          studyGradeLevel: s.study_grade_level || s.studyGradeLevel || (s.avatar && s.avatar.includes('중등') ? '중등단어' : (s.avatar && s.avatar.includes('고등') ? '고등단어' : '초등단어')),
-          dailyWordCount: String(s.daily_word_count || s.dailyWordCount || '10'),
-          studentPin: s.pin || s.studentPin || '1234',
-          parentName: removeEmoji(s.parent_name || s.name),
-          parentPhone: s.parent_phone || '010-4006-9050',
-          parentPin: s.parent_pin || '0815',
-          rewardPoints: s.reward_points || 100
-        }));
+      const [usersRes, learnedRes] = await Promise.allSettled([
+        supabase.from('users').select('*').order('created_at', { ascending: true }),
+        supabase.from('student_learned_words').select('student_id, word').limit(5000)
+      ]);
+
+      const usersData = usersRes.status === 'fulfilled' && Array.isArray(usersRes.value.data) ? usersRes.value.data : [];
+      const learnedData = learnedRes.status === 'fulfilled' && Array.isArray(learnedRes.value.data) ? learnedRes.value.data : [];
+
+      if (usersData.length > 0) {
+        const formatted = usersData.map(s => {
+          const sId = s.student_id || s.id;
+          const sName = removeEmoji(s.name);
+          const matchIds = [sId, s.id, sName].filter(Boolean);
+
+          // 🎯 실제 학습 완료한 단어 수만 정확히 카운트 (1 학습 단어 = 1 달란트)
+          const studentLearnedWords = learnedData.filter(item =>
+            matchIds.some(idStr => item.student_id === idStr || (item.student_id && item.student_id.includes(sName)))
+          );
+          const actualLearnedPoints = studentLearnedWords.length;
+
+          return {
+            id: s.id,
+            db_id: s.id,
+            student_id: s.student_id || s.id,
+            name: sName,
+            grade: s.avatar || s.grade || '초등 3학년',
+            avatar: s.avatar || s.grade || '초등 3학년',
+            studyGradeLevel: s.study_grade_level || s.studyGradeLevel || (s.avatar && s.avatar.includes('중등') ? '중등단어' : (s.avatar && s.avatar.includes('고등') ? '고등단어' : '초등단어')),
+            dailyWordCount: String(s.daily_word_count || s.dailyWordCount || '10'),
+            studentPin: s.pin || s.studentPin || '1234',
+            parentName: removeEmoji(s.parent_name || s.name),
+            parentPhone: s.parent_phone || '010-4006-9050',
+            parentPin: s.parent_pin || '0815',
+            rewardPoints: actualLearnedPoints // 💡 실제 학습한 단어 수만큼만 달란트 부여
+          };
+        });
+
         setStudents(formatted);
         localStorage.setItem('english_edu_users', JSON.stringify(formatted));
         setLoading(false);

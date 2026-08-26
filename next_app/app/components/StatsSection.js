@@ -181,6 +181,35 @@ export default function StatsSection({ currentUser, totalWordCount = 500, onNavi
         </div>
       </div>
 
+      {/* 🏆 실시간 달란트 보상 카드 (실제 학습한 단어 수만큼만 100% 실시간 연동) */}
+      <div
+        style={{
+          background: 'linear-gradient(135deg, #FEF9E7 0%, #FDEBD0 100%)',
+          borderRadius: '20px',
+          padding: '14px 20px',
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          border: '2px solid #F9E79F',
+          boxShadow: '0 4px 12px rgba(243,156,18,0.12)'
+        }}
+      >
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <span style={{ fontSize: '28px' }}>🏆</span>
+          <div>
+            <div style={{ fontSize: '15px', fontWeight: '900', color: '#B7950B' }}>
+              {currentLang === 'zh' ? '当前获得学分 (达兰特)' : (currentLang === 'fr' ? 'Points Talents obtenus' : '보유 달란트 포인트')}
+            </div>
+            <div style={{ fontSize: '12px', color: '#7D6608', fontWeight: 'bold' }}>
+              {currentLang === 'zh' ? '💡 真正学习完成的单词每个可累积 1 达兰特！' : (currentLang === 'fr' ? '💡 1 Talent par mot réellement appris !' : '💡 실제 학습 완료한 단어 1개당 1 달란트가 적립됩니다!')}
+            </div>
+          </div>
+        </div>
+        <div style={{ fontSize: '24px', fontWeight: '900', color: '#D35400' }}>
+          {stats.learnedCount} <span style={{ fontSize: '14px', color: '#E67E22' }}>P</span>
+        </div>
+      </div>
+
       {/* 진도율 그래픽 바 */}
       <div
         style={{

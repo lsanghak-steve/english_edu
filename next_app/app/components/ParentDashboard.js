@@ -388,20 +388,20 @@ export default function ParentDashboard({ currentUser, onLogout, currentLang = '
               </span>
             </div>
 
-            {/* 카드 2: 학습 완수 단어수 */}
+            {/* 카드 2: 학습 완수 단어수 & 달란트 */}
             <div
               onClick={() => setShowWordsModal(true)}
               style={{ background: '#FEF9E7', padding: '18px', borderRadius: '20px', border: '2px solid #F9E79F', textAlign: 'center', cursor: 'pointer', transition: 'all 0.2s ease', boxShadow: '0 4px 12px rgba(0,0,0,0.03)' }}
               className="hover-card"
             >
               <span style={{ fontSize: '13px', color: '#D4AC0D', fontWeight: 'bold' }}>
-                📚 {currentLang === 'zh' ? '掌握英语单词 (点击)' : (currentLang === 'fr' ? 'Mots maîtrisés' : '마스터한 영단어 (클릭)')}
+                📚 {currentLang === 'zh' ? '掌握单词 (🏆 达兰特)' : (currentLang === 'fr' ? 'Mots appris (🏆 Talents)' : '마스터 단어 (🏆 보유 달란트)')}
               </span>
               <h2 style={{ margin: '8px 0 2px 0', color: '#7D6608', fontSize: '24px', fontWeight: '900' }}>
                 {currentLang === 'zh' ? `共 ${learnedWordsList.length} 个` : (currentLang === 'fr' ? `Total ${learnedWordsList.length} mots` : `총 ${learnedWordsList.length}개 단어`)}
               </h2>
               <span style={{ fontSize: '11px', color: '#D35400', fontWeight: 'bold' }}>
-                👆 {currentLang === 'zh' ? '查看所有单词 ➔' : (currentLang === 'fr' ? 'Voir liste ➔' : '전체 단어 목록 ➔')}
+                🏆 {learnedWordsList.length} P {currentLang === 'zh' ? '· 查看所有单词 ➔' : (currentLang === 'fr' ? '· Voir liste ➔' : '달란트 적립 · 전체 단어 ➔')}
               </span>
             </div>
 
