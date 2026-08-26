@@ -22,11 +22,31 @@ export default function QuizSection({ currentUser, activeWords, onQuizLevelCompl
   const audioChunksRef = useRef([]);
   const recognitionRef = useRef(null);
 
+  // 🔀 Fisher-Yates 무작위 문제 셔플 알고리즘
+  const shuffleList = (list) => {
+    if (!Array.isArray(list) || list.length <= 1) return list ? [...list] : [];
+    const arr = [...list];
+    for (let i = arr.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+  };
+
   const fallbackList = Array.isArray(wordList500Fallback) && wordList500Fallback.length > 0
     ? wordList500Fallback
     : [{ id: 1, word: 'Apple', meaning: '사과', phonics: '/ˈæpəl/', category: '기초' }];
 
-  const safeWords = activeWords && activeWords.length > 0 ? activeWords : fallbackList;
+  const baseWords = activeWords && activeWords.length > 0 ? activeWords : fallbackList;
+  const [shuffledQuestions, setShuffledQuestions] = useState(() => shuffleList(baseWords));
+
+  // 🛡️ activeWords나 quizLevel이 바뀔 때 문제 순서를 새롭게 무작위 셔플
+  useEffect(() => {
+    setShuffledQuestions(shuffleList(baseWords));
+    setCurrentIndex(0);
+  }, [activeWords, quizLevel]);
+
+  const safeWords = (shuffledQuestions && shuffledQuestions.length > 0) ? shuffledQuestions : baseWords;
 
   // 🛡️ 퀴즈 단어 목록 변경 시 인덱스 범위 초과 방지
   useEffect(() => {
@@ -356,17 +376,31 @@ export default function QuizSection({ currentUser, activeWords, onQuizLevelCompl
     };
   };
 
-  // 4지선다 보기 무작위 생성
+  // 4지선다 보기 무작위 생성 (정답 + 나머지 단어 풀에서 3개 선택 후 무작위 셔플)
   const generateOptions = useCallback((targetWord) => {
-    if (!targetWord || safeWords.length === 0) return [];
+    if (!targetWord || baseWords.length === 0) return [];
     let choices = [targetWord];
-    const others = safeWords.filter(w => (w.word || w) !== (targetWord.word || targetWord));
-    const shuffledOthers = [...others].sort(() => Math.random() - 0.5);
+    const others = baseWords.filter(w => {
+      const wStr = (typeof w === 'string' ? w : w?.word || '').toLowerCase().trim();
+      const tStr = (typeof targetWord === 'string' ? targetWord : targetWord?.word || '').toLowerCase().trim();
+      return wStr !== tStr;
+    });
+    const shuffledOthers = shuffleList(others);
     for (let i = 0; i < Math.min(3, shuffledOthers.length); i++) {
       choices.push(shuffledOthers[i]);
     }
-    return choices.sort(() => Math.random() - 0.5);
-  }, [safeWords]);
+    if (choices.length < 4) {
+      const extraOthers = fallbackList.filter(w => {
+        const wStr = (w.word || '').toLowerCase().trim();
+        return !choices.some(c => (typeof c === 'string' ? c : c.word || '').toLowerCase().trim() === wStr);
+      });
+      const shuffledExtras = shuffleList(extraOthers);
+      for (let i = 0; i < shuffledExtras.length && choices.length < 4; i++) {
+        choices.push(shuffledExtras[i]);
+      }
+    }
+    return shuffleList(choices);
+  }, [baseWords, fallbackList]);
 
   useEffect(() => {
     if (currentQuiz) {
@@ -654,6 +688,7 @@ export default function QuizSection({ currentUser, activeWords, onQuizLevelCompl
   const handleRestart = (level) => {
     if (timerRef.current) clearTimeout(timerRef.current);
     isMovingRef.current = false;
+    setShuffledQuestions(shuffleList(baseWords));
     setQuizLevel(level);
     setCurrentIndex(0);
     setScore(0);
