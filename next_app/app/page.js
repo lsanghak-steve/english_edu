@@ -557,15 +557,18 @@ export default function Home() {
         }
 
         if (dbUser) {
-          const cloudGrade = dbUser.avatar || dbUser.grade || currentUser.grade || '초등 3학년';
+          const rawAvatar = String(dbUser.avatar || dbUser.grade || '').trim();
+          const cleanCloudGrade = rawAvatar.replace('[PENDING]', '').replace('[APPROVED]', '').replace('[REJECTED]', '').trim();
+          const cloudGrade = cleanCloudGrade || currentUser.grade || currentUser.avatar || '초등 5학년';
           const cloudLevel = dbUser.study_grade_level || '초등단어';
           const cloudCount = String(dbUser.daily_word_count || '10');
 
-          const curGrade = currentUser.grade || currentUser.avatar || '초등 3학년';
+          const rawCurGrade = String(currentUser.grade || currentUser.avatar || '').trim();
+          const curGrade = rawCurGrade.replace('[PENDING]', '').replace('[APPROVED]', '').replace('[REJECTED]', '').trim() || '초등 5학년';
           const curLevel = currentUser.studyGradeLevel || currentUser.study_grade_level || '초등단어';
           const curCount = String(currentUser.dailyWordCount || currentUser.daily_word_count || '10');
 
-          if (cloudLevel !== curLevel || cloudCount !== curCount || (dbUser.avatar && dbUser.avatar !== curGrade)) {
+          if (cloudLevel !== curLevel || cloudCount !== curCount || (cleanCloudGrade && cleanCloudGrade !== curGrade)) {
             console.log(`🔄 [실시간 프로필 동기화] 레벨: ${curLevel} -> ${cloudLevel}, 목표: ${curCount} -> ${cloudCount}, 학년: ${curGrade} -> ${cloudGrade}`);
             const updatedUser = {
               ...currentUser,

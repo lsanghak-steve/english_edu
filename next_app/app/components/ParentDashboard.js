@@ -42,21 +42,26 @@ export default function ParentDashboard({ currentUser, onLogout, currentLang = '
       try {
         const { data, error } = await supabase.from('users').select('*').order('created_at', { ascending: true });
         if (!error && data && data.length > 0) {
-          const formatted = data.map(s => ({
-            id: s.id,
-            db_id: s.id,
-            student_id: s.student_id || s.id,
-            name: removeEmoji(s.name),
-            grade: s.avatar || s.grade || s.study_grade_level || '초등 3학년',
-            avatar: s.avatar || s.grade || '초등 3학년',
-            studyGradeLevel: s.study_grade_level || '초등단어',
-            dailyWordCount: String(s.daily_word_count || '10'),
-            daily_word_count: s.daily_word_count || 10,
-            studentPin: s.pin || '1234',
-            parentName: removeEmoji(s.parent_name || s.name),
-            parentPhone: s.parent_phone || '010-4006-9050',
-            parentPin: s.parent_pin || '0815'
-          }));
+          const formatted = data.map(s => {
+            const rawAvatar = String(s.avatar || s.grade || '').trim();
+            const cleanGrade = rawAvatar.replace('[PENDING]', '').replace('[APPROVED]', '').replace('[REJECTED]', '').trim() || '초등 5학년';
+
+            return {
+              id: s.id,
+              db_id: s.id,
+              student_id: s.student_id || s.id,
+              name: removeEmoji(s.name),
+              grade: cleanGrade,
+              avatar: cleanGrade,
+              studyGradeLevel: s.study_grade_level || (cleanGrade.includes('중등') ? '중등단어' : (cleanGrade.includes('고등') ? '고등단어' : '초등단어')),
+              dailyWordCount: String(s.daily_word_count || '10'),
+              daily_word_count: s.daily_word_count || 10,
+              studentPin: s.pin || '1234',
+              parentName: removeEmoji(s.parent_name || s.name),
+              parentPhone: s.parent_phone || '010-4006-9050',
+              parentPin: s.parent_pin || '0815'
+            };
+          });
 
           setChildrenList(formatted);
           setLoading(false);
@@ -68,8 +73,8 @@ export default function ParentDashboard({ currentUser, onLogout, currentLang = '
 
       // LocalStorage / 기본 데이터 백업
       const defaultData = [
-        { id: 'lsh_20260807_000001', student_id: 'lsh_20260807_000001', name: '이상학', grade: '중등단어', dailyWordCount: '20', studentPin: '0815', parentName: '이상학', parentPhone: '010-4006-9050', parentPin: '0815' },
-        { id: 'lsh_20260807_000002', student_id: 'lsh_20260807_000002', name: '이승현', grade: '초등 3학년', dailyWordCount: '10', studentPin: '0418', parentName: '이상학', parentPhone: '010-4006-9050', parentPin: '0815' },
+        { id: 'lsh_20260807_000001', student_id: 'lsh_20260807_000001', name: '이상학', grade: '대학생 및 성인', dailyWordCount: '20', studentPin: '0815', parentName: '이상학', parentPhone: '010-4006-9050', parentPin: '0815' },
+        { id: 'lsh_20260807_000002', student_id: 'lsh_20260807_000002', name: '이승현', grade: '초등 5학년', dailyWordCount: '10', studentPin: '0418', parentName: '이상학', parentPhone: '010-4006-9050', parentPin: '0815' },
         { id: 'lsm_20260807_000003', student_id: 'lsm_20260807_000003', name: '이수민', grade: '초등 3학년', dailyWordCount: '10', studentPin: '0809', parentName: '이상학', parentPhone: '010-4006-9050', parentPin: '0815' }
       ];
       setChildrenList(defaultData);

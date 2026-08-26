@@ -48,14 +48,14 @@ export default function StudentLoginPage({ onLoginSuccess, onParentLoginSuccess,
 
   // 기본 학생 세팅 배열 (고유 학생 코드 lsh_20260807_000001 체계 적용)
   const defaultStudents = [
-    { id: 'lsh_20260807_000001', student_id: 'lsh_20260807_000001', name: '이상학', grade: '대학생 및 성인', studyGradeLevel: '중등단어', dailyWordCount: '20', studentPin: '0815', parentName: '이상학학부모', parentPhone: '010-0000-0000', parentPin: '5678' },
-    { id: 'lsh_20260807_000002', student_id: 'lsh_20260807_000002', name: '이승현', grade: '초등 3학년', studyGradeLevel: '초등단어', dailyWordCount: '10', studentPin: '0418', parentName: '이승현학부모', parentPhone: '010-1234-5678', parentPin: '5678' },
-    { id: 'lsm_20260807_000003', student_id: 'lsm_20260807_000003', name: '이수민', grade: '초등 4학년', studyGradeLevel: '초등단어', dailyWordCount: '10', studentPin: '0809', parentName: '이수민학부모', parentPhone: '010-9876-5432', parentPin: '5678' }
+    { id: 'lsh_20260807_000001', student_id: 'lsh_20260807_000001', name: '이상학', grade: '대학생 및 성인', avatar: '대학생 및 성인', studyGradeLevel: '중등단어', dailyWordCount: '20', studentPin: '0815', parentName: '이상학학부모', parentPhone: '010-4006-9050', parentPin: '0815' },
+    { id: 'lsh_20260807_000002', student_id: 'lsh_20260807_000002', name: '이승현', grade: '초등 5학년', avatar: '초등 5학년', studyGradeLevel: '초등단어', dailyWordCount: '10', studentPin: '0418', parentName: '이승현학부모', parentPhone: '010-4006-9050', parentPin: '0815' },
+    { id: 'lsm_20260807_000003', student_id: 'lsm_20260807_000003', name: '이수민', grade: '초등 3학년', avatar: '초등 3학년', studyGradeLevel: '초등단어', dailyWordCount: '10', studentPin: '0809', parentName: '이수민학부모', parentPhone: '010-4006-9050', parentPin: '0815' }
   ];
 
   // 수파베이스 클라우드 DB에서 학생 전체 목록 로드 (빠른 비동기 백그라운드 연동)
   useEffect(() => {
-    // 1. LocalStorage 로컬 캐시 즉시 로드 (0.01초 반응)
+    // 1. LocalStorage 로컬 캐시 즉시 로드
     try {
       const savedUsers = JSON.parse(localStorage.getItem('english_edu_users') || '[]');
       if (savedUsers.length > 0) {
@@ -80,21 +80,26 @@ export default function StudentLoginPage({ onLoginSuccess, onParentLoginSuccess,
           const cloudUsers = dbData.map(item => {
             const cleanN = removeEmoji(item.name);
             const cachedUser = savedMap.get(cleanN);
+            
+            // 🎯 DB avatar 컬럼에 저장된 정확한 학년 정보 추출 ([PENDING], [APPROVED] 등 접두사 제거)
+            const rawAvatar = String(item.avatar || item.grade || cachedUser?.grade || '').trim();
+            const cleanGrade = rawAvatar.replace('[PENDING]', '').replace('[APPROVED]', '').replace('[REJECTED]', '').trim() || cachedUser?.grade || '초등 5학년';
+
             return {
               id: item.student_id || item.id,
               db_id: item.id,
               student_id: item.student_id || item.id,
               name: cleanN,
-              grade: item.avatar || item.grade || cachedUser?.grade || '초등 3학년',
-              avatar: item.avatar || item.grade || cachedUser?.grade || '초등 3학년',
+              grade: cleanGrade,
+              avatar: cleanGrade,
               studyGradeLevel: item.study_grade_level || cachedUser?.studyGradeLevel || '초등단어',
               study_grade_level: item.study_grade_level || cachedUser?.study_grade_level || '초등단어',
               dailyWordCount: String(item.daily_word_count || cachedUser?.dailyWordCount || 10),
               daily_word_count: item.daily_word_count || (cachedUser ? parseInt(cachedUser.dailyWordCount, 10) : 10),
               studentPin: item.pin || cachedUser?.studentPin || '1234',
               parentName: cachedUser?.parentName || (cleanN + '학부모'),
-              parentPhone: cachedUser?.parentPhone || '',
-              parentPin: cachedUser?.parentPin || '5678'
+              parentPhone: cachedUser?.parentPhone || '010-4006-9050',
+              parentPin: cachedUser?.parentPin || '0815'
             };
           });
 

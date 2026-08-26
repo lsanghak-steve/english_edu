@@ -35,10 +35,10 @@ export default function LeaderboardSection({ currentUser, currentLang = 'ko' }) 
         ]);
 
         const allUsers = (usersData && usersData.length > 0) ? usersData : [
-          { id: 'lsh_20260807_000001', student_id: 'lsh_20260807_000001', name: '이상학', study_grade_level: '중등단어' },
-          { id: 'lsh_20260807_000002', student_id: 'lsh_20260807_000002', name: '이승현', study_grade_level: '초등 3학년' },
-          { id: 'lsm_20260807_000003', student_id: 'lsm_20260807_000003', name: '이수민', study_grade_level: '초등 3학년' },
-          { id: 'kmc_20260812_000004', student_id: 'kmc_20260812_000004', name: '김민채', study_grade_level: '고등 1학년' }
+          { id: 'lsh_20260807_000001', student_id: 'lsh_20260807_000001', name: '이상학', avatar: '대학생 및 성인', study_grade_level: '중등단어' },
+          { id: 'lsh_20260807_000002', student_id: 'lsh_20260807_000002', name: '이승현', avatar: '초등 5학년', study_grade_level: '초등단어' },
+          { id: 'lsm_20260807_000003', student_id: 'lsm_20260807_000003', name: '이수민', avatar: '초등 3학년', study_grade_level: '초등단어' },
+          { id: 'kmc_20260812_000004', student_id: 'kmc_20260812_000004', name: '김민채', avatar: '대학생 및 성인', study_grade_level: '고등단어' }
         ];
 
         const attList = attRes.status === 'fulfilled' && Array.isArray(attRes.value.data) ? attRes.value.data : [];
@@ -96,7 +96,7 @@ export default function LeaderboardSection({ currentUser, currentLang = 'ko' }) 
           return {
             id: uId,
             name: uName,
-            grade: u.study_grade_level || u.grade || '초등단어',
+            grade: u.avatar ? u.avatar.replace('[PENDING]', '').replace('[APPROVED]', '').trim() : (u.study_grade_level || u.grade || '초등단어'),
             stampsCount,
             goldStampCount,
             learnedCount,

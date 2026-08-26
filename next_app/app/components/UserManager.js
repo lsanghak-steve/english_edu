@@ -40,20 +40,26 @@ export default function UserManager({ currentUser, setCurrentUser, onLogout, cur
         .order('created_at', { ascending: true });
 
       if (!usersErr && usersData && usersData.length > 0) {
-        const formatted = usersData.map(item => ({
-          id: item.student_id || item.id,
-          db_id: item.id,
-          student_id: item.student_id || item.id,
-          name: removeEmoji(item.name),
-          grade: item.avatar || item.grade || '초등 3학년',
-          studyGradeLevel: item.study_grade_level || (item.avatar && item.avatar.includes('중등') ? '중등단어' : (item.avatar && item.avatar.includes('고등') ? '고등단어' : '초등단어')),
-          dailyWordCount: String(item.daily_word_count || '10'),
-          daily_word_count: item.daily_word_count || 10,
-          studentPin: item.pin || item.student_pin || '1234',
-          parentName: removeEmoji(item.parent_name || (item.name + '학부모')),
-          parentPhone: item.parent_phone || '',
-          parentPin: item.parent_pin || '5678'
-        }));
+        const formatted = usersData.map(item => {
+          const rawAvatar = String(item.avatar || item.grade || '').trim();
+          const cleanGrade = rawAvatar.replace('[PENDING]', '').replace('[APPROVED]', '').replace('[REJECTED]', '').trim() || '초등 5학년';
+
+          return {
+            id: item.student_id || item.id,
+            db_id: item.id,
+            student_id: item.student_id || item.id,
+            name: removeEmoji(item.name),
+            grade: cleanGrade,
+            avatar: cleanGrade,
+            studyGradeLevel: item.study_grade_level || (cleanGrade.includes('중등') ? '중등단어' : (cleanGrade.includes('고등') ? '고등단어' : '초등단어')),
+            dailyWordCount: String(item.daily_word_count || '10'),
+            daily_word_count: item.daily_word_count || 10,
+            studentPin: item.pin || item.student_pin || '1234',
+            parentName: removeEmoji(item.parent_name || (item.name + '학부모')),
+            parentPhone: item.parent_phone || '010-4006-9050',
+            parentPin: item.parent_pin || '0815'
+          };
+        });
         setUsers(formatted);
         localStorage.setItem('english_edu_users', JSON.stringify(formatted));
         return;
@@ -84,13 +90,15 @@ export default function UserManager({ currentUser, setCurrentUser, onLogout, cur
     setIsEditMode(true);
     setEditingUserId(currentUser.id);
     setNameInput(removeEmoji(currentUser.name));
-    setGradeInput(currentUser.grade || currentUser.avatar || '초등 3학년');
-    setStudyGradeLevelInput(currentUser.studyGradeLevel || currentUser.study_grade_level || (currentUser.grade && currentUser.grade.includes('중등') ? '중등단어' : '초등단어'));
+    const userGradeRaw = currentUser.grade || currentUser.avatar || '';
+    const cleanUserGrade = String(userGradeRaw).replace('[PENDING]', '').replace('[APPROVED]', '').replace('[REJECTED]', '').trim() || '초등 5학년';
+    setGradeInput(cleanUserGrade);
+    setStudyGradeLevelInput(currentUser.studyGradeLevel || currentUser.study_grade_level || (cleanUserGrade.includes('중등') ? '중등단어' : '초등단어'));
     setDailyCountInput(String(currentUser.dailyWordCount || currentUser.daily_word_count || '10'));
     setStudentPinInput(currentUser.studentPin || currentUser.pin || '1234');
     setParentNameInput(removeEmoji(currentUser.parentName));
-    setParentPhoneInput(currentUser.parentPhone || '');
-    setParentPinInput(currentUser.parentPin || '5678');
+    setParentPhoneInput(currentUser.parentPhone || '010-4006-9050');
+    setParentPinInput(currentUser.parentPin || '0815');
     setShowAddEditModal(true);
   };
 

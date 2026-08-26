@@ -45,9 +45,10 @@ export default function AdminStudentManager() {
   };
 
   const getCleanGrade = (student) => {
-    if (!student) return '초등 3학년';
-    const av = String(student.grade || student.avatar || '초등 3학년');
-    return av.replace('[PENDING]', '').replace('[REJECTED]', '').trim() || '초등 3학년';
+    if (!student) return '초등 5학년';
+    const av = String(student.grade || student.avatar || '');
+    const cleaned = av.replace('[PENDING]', '').replace('[APPROVED]', '').replace('[REJECTED]', '').trim();
+    return cleaned || '초등 5학년';
   };
 
   // 💌 학부모 칭찬 알림장 메시지 폼
@@ -104,14 +105,17 @@ export default function AdminStudentManager() {
           );
           const actualLearnedPoints = studentLearnedWords.length;
 
+          const rawAvatar = String(s.avatar || s.grade || '').trim();
+          const cleanGrade = rawAvatar.replace('[PENDING]', '').replace('[APPROVED]', '').replace('[REJECTED]', '').trim() || '초등 5학년';
+
           return {
             id: s.id,
             db_id: s.id,
             student_id: s.student_id || s.id,
             name: sName,
-            grade: s.avatar || s.grade || '초등 3학년',
-            avatar: s.avatar || s.grade || '초등 3학년',
-            studyGradeLevel: s.study_grade_level || s.studyGradeLevel || (s.avatar && s.avatar.includes('중등') ? '중등단어' : (s.avatar && s.avatar.includes('고등') ? '고등단어' : '초등단어')),
+            grade: rawAvatar || cleanGrade,
+            avatar: rawAvatar || cleanGrade,
+            studyGradeLevel: s.study_grade_level || s.studyGradeLevel || (cleanGrade.includes('중등') ? '중등단어' : (cleanGrade.includes('고등') ? '고등단어' : '초등단어')),
             dailyWordCount: String(s.daily_word_count || s.dailyWordCount || '10'),
             studentPin: s.pin || s.studentPin || '1234',
             parentName: removeEmoji(s.parent_name || s.name),
