@@ -221,74 +221,100 @@ body {
   justify-content: space-between;
   align-items: center;
   background: #FFFFFF;
-  padding: 14px 20px;
+  padding: 10px 16px;
   border-radius: var(--radius-large);
   border: 2px solid var(--duo-border);
-  border-bottom: 5px solid var(--duo-border-dark);
-  margin-bottom: 4px;
-  gap: 12px;
+  border-bottom: 4px solid var(--duo-border-dark);
+  margin-bottom: 6px;
+  gap: 8px;
 }
 
 .user-info-group {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
+  min-width: 0;
 }
 
-.user-info-label {
+.user-name-title {
   font-size: 14px;
   font-weight: 800;
+  color: var(--duo-text-dark);
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.user-grade-tag {
+  font-size: 12px;
+  font-weight: 700;
   color: var(--duo-text-muted);
 }
 
-.user-info-badge {
-  font-size: 15px;
-  font-weight: 900;
+.user-study-info-pill {
+  font-size: 12px;
+  font-weight: 800;
   color: var(--duo-blue-dark);
   background: var(--duo-blue-bg);
-  padding: 8px 18px;
-  border-radius: var(--radius-medium);
-  border: 2px solid var(--duo-blue);
-  border-bottom: 4px solid var(--duo-blue-dark);
+  padding: 4px 10px;
+  border-radius: 8px;
+  border: 1px solid var(--duo-blue);
   white-space: nowrap;
 }
 
 .user-actions-group {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.user-free-badge {
+  background: #DCFCE7;
+  color: #15803D;
+  border: 1px solid #86EFAC;
+  padding: 6px 10px;
+  border-radius: 8px;
+  font-weight: 900;
+  font-size: 11px;
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  white-space: nowrap;
 }
 
 .btn-user-edit {
   background: var(--duo-green);
   border: 2px solid var(--duo-green-dark);
-  border-bottom: 4px solid var(--duo-green-dark);
+  border-bottom: 3px solid var(--duo-green-dark);
   color: white;
-  padding: 9px 18px;
-  border-radius: var(--radius-medium);
+  padding: 6px 12px;
+  border-radius: 8px;
   font-weight: 900;
-  font-size: 13px;
+  font-size: 12px;
   cursor: pointer;
+  white-space: nowrap;
   transition: all 0.15s ease;
 }
 .btn-user-edit:hover {
   background: var(--duo-green-light);
 }
 .btn-user-edit:active {
-  transform: translateY(2px);
+  transform: translateY(1px);
   border-bottom-width: 2px;
 }
 
 .btn-user-logout {
   background: #FFFFFF;
   border: 2px solid var(--duo-rose);
-  border-bottom: 4px solid var(--duo-rose-dark);
+  border-bottom: 3px solid var(--duo-rose-dark);
   color: var(--duo-rose);
-  padding: 9px 18px;
-  border-radius: var(--radius-medium);
+  padding: 6px 12px;
+  border-radius: 8px;
   font-weight: 900;
-  font-size: 13px;
+  font-size: 12px;
   cursor: pointer;
+  white-space: nowrap;
   transition: all 0.15s ease;
 }
 .btn-user-logout:hover {
@@ -296,8 +322,192 @@ body {
   color: white;
 }
 .btn-user-logout:active {
-  transform: translateY(2px);
+  transform: translateY(1px);
   border-bottom-width: 2px;
+}
+
+.btn-text-hide-mobile {
+  display: inline;
+}
+.btn-text-show-mobile {
+  display: none;
+}
+
+/* 액션 툴바 (상단 퀵 바로가기 버튼 바) */
+.action-buttons-toolbar {
+  width: 100%;
+  background: #FFFFFF;
+  border: 2px solid #EBF5FB;
+  border-radius: 16px;
+  padding: 8px 12px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.04);
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 6px;
+}
+
+.action-btn-item {
+  height: 40px;
+  padding: 0 14px;
+  border-radius: 12px;
+  font-size: 13px;
+  font-weight: 800;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
+  box-sizing: border-box;
+  gap: 5px;
+  transition: all 0.2s ease;
+}
+
+/* 언어 및 속도 컨트롤러 툴바 */
+.lang-speed-toolbar {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: #FFFFFF;
+  padding: 10px 16px;
+  border-radius: 18px;
+  border: 2px solid #E2E8F0;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.04);
+  margin: 8px auto 10px auto;
+  max-width: 820px;
+  width: 100%;
+}
+
+/* ===================================================
+   모바일 전용 1화면 초밀착 반응형 뷰포트 최적화
+   =================================================== */
+@media (max-width: 768px) {
+  body {
+    padding: 6px 4px;
+    -webkit-text-size-adjust: 100%;
+  }
+  .app-container {
+    padding: 0 2px;
+    max-width: 100%;
+  }
+  .app-header {
+    margin: 2px 0 4px 0 !important;
+    padding: 0 !important;
+  }
+  .app-title {
+    font-size: 16px !important;
+    margin: 0 !important;
+  }
+
+  /* 상단 유저 바 초밀착 */
+  .user-manager-header-bar {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px 10px;
+    gap: 4px;
+    margin-bottom: 4px;
+    border-radius: 12px;
+    border-width: 1.5px;
+    border-bottom-width: 3px;
+  }
+  .user-name-title {
+    font-size: 12px;
+  }
+  .user-grade-tag {
+    font-size: 10px;
+  }
+  .user-study-info-pill {
+    font-size: 10px;
+    padding: 2px 6px;
+    border-radius: 6px;
+  }
+  .user-free-badge {
+    display: none;
+  }
+  .btn-user-edit, .btn-user-logout {
+    padding: 4px 8px;
+    font-size: 11px;
+    border-radius: 6px;
+  }
+  .btn-text-hide-mobile {
+    display: none;
+  }
+  .btn-text-show-mobile {
+    display: inline;
+  }
+
+  /* 액션 툴바: 모바일 2열 정밀 그리드 */
+  .action-buttons-toolbar {
+    padding: 6px;
+    gap: 4px;
+    border-radius: 12px;
+    margin-bottom: 4px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+  .action-btn-item {
+    height: 32px !important;
+    padding: 0 6px !important;
+    font-size: 11px !important;
+    border-radius: 8px !important;
+    white-space: nowrap;
+  }
+  .action-btn-item-full {
+    grid-column: span 2;
+  }
+
+  /* 탭 네비게이션: 가로 스크롤 밀착 */
+  .category-nav {
+    margin-bottom: 4px !important;
+  }
+  .category-nav-group {
+    display: flex;
+    flex-wrap: nowrap !important;
+    overflow-x: auto;
+    gap: 4px !important;
+    padding: 2px 2px 6px 2px !important;
+    justify-content: flex-start !important;
+    -webkit-overflow-scrolling: touch;
+  }
+  .nav-tab-btn {
+    padding: 6px 12px !important;
+    font-size: 12px !important;
+    white-space: nowrap !important;
+    flex-shrink: 0;
+    border-radius: 10px !important;
+  }
+
+  /* 플래시카드 본체 높이 최적화 (1화면에 쏙 들어가도록) */
+  .flashcard-wrapper {
+    margin: 2px auto !important;
+  }
+  .flashcard, .card-face {
+    min-height: 250px !important;
+    padding: 12px 10px !important;
+    border-radius: 18px !important;
+  }
+  .word-en {
+    font-size: 28px !important;
+    margin: 4px 0 !important;
+  }
+  .word-ko {
+    font-size: 18px !important;
+    line-height: 1.25 !important;
+    margin: 4px 0 !important;
+  }
+  .flashcard-img-container {
+    max-height: 110px !important;
+    margin: 4px auto !important;
+  }
+  .options-grid {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
 }
 
 /* ===================================================
@@ -860,41 +1070,4 @@ body {
   font-size: 22px;
   text-align: center;
   font-weight: 900;
-  color: var(--duo-text-dark);
-}
-
-/* 모바일 및 위챗 내장 브라우저 대응 */
-@media (max-width: 768px) {
-  body {
-    padding: 12px 8px;
-    -webkit-text-size-adjust: 100%;
-  }
-  .app-container {
-    padding: 0 4px;
-  }
-  .user-manager-header-bar {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 10px;
-    padding: 12px 14px;
-  }
-  .word-en {
-    font-size: 34px !important;
-  }
-  .word-ko {
-    font-size: 20px !important;
-    line-height: 1.35 !important;
-  }
-  .flashcard, .card-face {
-    min-height: 320px;
-    padding: 24px 16px;
-  }
-  .options-grid {
-    grid-template-columns: 1fr;
-    gap: 10px;
-  }
-  .category-nav-group {
-    flex-wrap: wrap;
-    justify-content: center;
-  }
 }

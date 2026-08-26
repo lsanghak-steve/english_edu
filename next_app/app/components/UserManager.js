@@ -212,42 +212,32 @@ export default function UserManager({ currentUser, setCurrentUser, onLogout, cur
   const targetLabelText = currentLang === 'zh' ? '目标' : (currentLang === 'fr' ? 'Objectif' : '목표');
   const wordsUnitText = currentLang === 'zh' ? '词' : (currentLang === 'fr' ? 'mots' : '단어');
   const editBtnText = currentLang === 'zh' ? '✏️ 修改信息' : (currentLang === 'fr' ? '✏️ Modifier mon profil' : '✏️ 내 정보 수정');
-  const logoutBtnText = currentLang === 'zh' ? '🚪 退出登录 (更换学生)' : (currentLang === 'fr' ? '🚪 Déconnexion (Changer)' : '🚪 로그아웃 (학생 변경)');
+  const logoutBtnText = currentLang === 'zh' ? '🚪 退出登录 (更换)' : (currentLang === 'fr' ? '🚪 Déconnexion' : '🚪 로그아웃 (학생 변경)');
 
   return (
     <div className="user-manager-header-bar">
       {/* 현재 로그인된 학생 정보 */}
       <div className="user-info-group">
-        <span className="user-info-label">{userLabelText}</span>
-        <span className="user-info-badge">
-          {currentUser ? `${displayName} (${translateStudentGrade(String(currentUser.grade || currentUser.avatar || '초등 5학년').replace('[PENDING]', '').replace('[APPROVED]', '').trim(), currentLang)}) • ${levelLabelText} ${translateGradeLevel(currentStudyLevel, currentLang)} • ${targetLabelText} ${currentDailyCount}${wordsUnitText}` : (currentLang === 'zh' ? '请先登录' : (currentLang === 'fr' ? 'Connexion requise' : '로그인 필요'))}
-        </span>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap' }}>
+          <span className="user-name-title">
+            👤 <strong>{displayName}</strong> <span className="user-grade-tag">({translateStudentGrade(String(currentUser?.grade || currentUser?.avatar || '초등 5학년').replace('[PENDING]', '').replace('[APPROVED]', '').trim(), currentLang)})</span>
+          </span>
+          <span className="user-study-info-pill">
+            🎯 {translateGradeLevel(currentStudyLevel, currentLang)} • {targetLabelText} {currentDailyCount}{wordsUnitText}
+          </span>
+        </div>
       </div>
 
       {/* 버튼 액션 그룹 (수정 및 로그아웃) */}
       <div className="user-actions-group">
-        <span
-          style={{
-            background: '#DCFCE7',
-            color: '#15803D',
-            border: '1px solid #86EFAC',
-            padding: '8px 14px',
-            borderRadius: 'var(--radius-medium)',
-            fontWeight: '900',
-            fontSize: '12px',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '4px',
-            whiteSpace: 'nowrap'
-          }}
-        >
-          🎁 {currentLang === 'zh' ? '全功能 100% 免费版' : '전기능 100% 무료'}
+        <span className="user-free-badge">
+          🎁 100% 무료
         </span>
         <button className="btn-user-edit" onClick={handleOpenEditModal}>
-          {editBtnText}
+          ✏️ <span className="btn-text-hide-mobile">{editBtnText}</span><span className="btn-text-show-mobile">{currentLang === 'zh' ? '修改' : (currentLang === 'fr' ? 'Modifier' : '수정')}</span>
         </button>
         <button className="btn-user-logout" onClick={onLogout}>
-          {logoutBtnText}
+          🚪 <span className="btn-text-hide-mobile">{logoutBtnText}</span><span className="btn-text-show-mobile">{currentLang === 'zh' ? '退出' : (currentLang === 'fr' ? 'Sortir' : '로그아웃')}</span>
         </button>
       </div>
 

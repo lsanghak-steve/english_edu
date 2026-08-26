@@ -1608,60 +1608,28 @@ export default function Home() {
       />
 
       {mainTab !== 'parent' && (
-        <div style={{
-          width: '100%',
-          background: '#FFFFFF',
-          border: '2px solid #EBF5FB',
-          borderRadius: '18px',
-          padding: '12px 16px',
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          boxShadow: '0 4px 14px rgba(0,0,0,0.04)',
-          gap: '10px',
-          flexWrap: 'wrap'
-        }}>
+        <div className="action-buttons-toolbar">
           {/* 1. 날짜 및 학습 진행 상태 배지 */}
-          <div style={{
-            height: '44px',
-            padding: '0 16px',
-            borderRadius: '12px',
-            border: '1.5px solid #FADBD8',
-            background: '#FEF5E7',
-            color: '#D35400',
-            fontSize: '13px',
-            fontWeight: '800',
-            display: 'inline-flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            whiteSpace: 'nowrap',
-            boxSizing: 'border-box',
-            gap: '6px'
-          }}>
-            📅 [{targetStudyDate}] {currentLang === 'zh' ? '学习进行中' : (currentLang === 'fr' ? 'Étude en cours' : (currentLang === 'ja' ? '学習進行中' : (currentLang === 'vi' ? 'Đang học' : (currentLang === 'hi' ? 'अध्ययन जारी' : '학습 진행 중'))))}
+          <div
+            className="action-btn-item"
+            style={{
+              border: '1.5px solid #FADBD8',
+              background: '#FEF5E7',
+              color: '#D35400'
+            }}
+          >
+            📅 [{targetStudyDate}] {currentLang === 'zh' ? '学习中' : (currentLang === 'fr' ? 'En cours' : (currentLang === 'ja' ? '学習中' : (currentLang === 'vi' ? 'Đang học' : (currentLang === 'hi' ? 'अध्ययन' : '학습 진행'))))}
           </div>
 
           {/* 2. 오늘 누적 학습 단어 모달 버튼 */}
           <button
+            className="action-btn-item"
             onClick={() => setShowTodayAllModal(true)}
             style={{
-              height: '44px',
-              padding: '0 16px',
-              borderRadius: '12px',
               border: 'none',
               background: '#27AE60',
               color: 'white',
-              fontSize: '13px',
-              fontWeight: '800',
-              cursor: 'pointer',
-              display: 'inline-flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              whiteSpace: 'nowrap',
-              boxSizing: 'border-box',
-              gap: '6px',
-              boxShadow: '0 3px 8px rgba(39,174,96,0.25)',
-              transition: 'all 0.2s ease'
+              boxShadow: '0 2px 6px rgba(39,174,96,0.2)'
             }}
             title="오늘 1회차+2회차 등 지금까지 공부한 모든 단어 리스트 한눈에 보기"
           >
@@ -1670,6 +1638,7 @@ export default function Home() {
 
           {/* 3. 1차 녹음 미션 바로가기 버튼 */}
           <button
+            className="action-btn-item"
             onClick={() => {
               setMainTab('flashcard');
               setTimeout(() => {
@@ -1678,82 +1647,46 @@ export default function Home() {
               }, 100);
             }}
             style={{
-              height: '44px',
-              padding: '0 16px',
-              borderRadius: '12px',
               border: hasRecorded ? '2px solid #2ECC71' : '1.5px solid #3498DB',
               background: hasRecorded ? '#E8F8F5' : '#EBF5FB',
               color: hasRecorded ? '#27AE60' : '#2980B9',
-              fontWeight: '800',
-              fontSize: '13px',
-              cursor: 'pointer',
-              display: 'inline-flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              whiteSpace: 'nowrap',
-              boxSizing: 'border-box',
-              gap: '6px',
-              boxShadow: '0 2px 6px rgba(52,152,219,0.15)',
-              transition: 'all 0.2s ease'
+              boxShadow: '0 2px 6px rgba(52,152,219,0.15)'
             }}
           >
             {hasRecorded
-              ? (currentLang === 'zh' ? '✅ 录音任务完成 🎙️' : (currentLang === 'fr' ? '✅ Enregistrement fait 🎙️' : (currentLang === 'ja' ? '✅ 録音完了 🎙️' : (currentLang === 'vi' ? '✅ Đã ghi âm 🎙️' : (currentLang === 'hi' ? '✅ रिकॉर्डिंग पूर्ण 🎙️' : '✅ 1차 녹음 완료 🎙️')))))
-              : (currentLang === 'zh' ? '🎙️ 1차 발음 녹음 ➔' : (currentLang === 'fr' ? '🎙️ Mission Enreg. ➔' : (currentLang === 'ja' ? '🎙️ 1次録音ミッション ➔' : (currentLang === 'vi' ? '🎙️ Ghi âm phát âm ➔' : (currentLang === 'hi' ? '🎙️ उच्चारण रिकॉर्डिंग ➔' : '🎙️ 1차 녹음 미션 ➔')))))}
+              ? (currentLang === 'zh' ? '✅ 录音完成 🎙️' : (currentLang === 'fr' ? '✅ Enreg. fait 🎙️' : (currentLang === 'ja' ? '✅ 録音完了 🎙️' : (currentLang === 'vi' ? '✅ Đã ghi âm 🎙️' : (currentLang === 'hi' ? '✅ रिकॉर्डिंग पूर्ण 🎙️' : '✅ 1차 녹음 완료 🎙️')))))
+              : (currentLang === 'zh' ? '🎙️ 1次录音 ➔' : (currentLang === 'fr' ? '🎙️ Enregistrement ➔' : (currentLang === 'ja' ? '🎙️ 1次録音 ➔' : (currentLang === 'vi' ? '🎙️ Ghi âm ➔' : (currentLang === 'hi' ? '🎙️ रिकॉर्डिंग ➔' : '🎙️ 1차 녹음 ➔')))))}
           </button>
 
           {/* 4. 2단계 스펠링 퀴즈 바로가기 버튼 */}
           <button
+            className="action-btn-item"
             onClick={() => setMainTab('quiz')}
             style={{
-              height: '44px',
-              padding: '0 16px',
-              borderRadius: '12px',
               border: isQuizL2Done ? '2px solid #2ECC71' : '1.5px solid #9B59B6',
               background: isQuizL2Done ? '#E8F8F5' : '#F5EEF8',
               color: isQuizL2Done ? '#27AE60' : '#8E44AD',
-              fontWeight: '800',
-              fontSize: '13px',
-              cursor: 'pointer',
-              display: 'inline-flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              whiteSpace: 'nowrap',
-              boxSizing: 'border-box',
-              gap: '6px',
-              boxShadow: '0 2px 6px rgba(155,89,182,0.15)',
-              transition: 'all 0.2s ease'
+              boxShadow: '0 2px 6px rgba(155,89,182,0.15)'
             }}
           >
             {isQuizL2Done
-              ? (currentLang === 'zh' ? '✅ 测验过关 (签到印章💮)' : (currentLang === 'fr' ? '✅ Quiz validé (Tampon💮)' : (currentLang === 'ja' ? '✅ クイズ合格 (出席スタンプ💮)' : (currentLang === 'vi' ? '✅ Đã hoàn thành (Con dấu💮)' : (currentLang === 'hi' ? '✅ क्विज सफल (उपस्थिति मुहर💮)' : '✅ 퀴즈 완수 (출석도장💮)')))))
-              : (currentLang === 'zh' ? '🧩 2关拼写测验 ➔' : (currentLang === 'fr' ? '🧩 Niveau 2 Quiz ➔' : (currentLang === 'ja' ? '🧩 第2段階スペルクイズ ➔' : (currentLang === 'vi' ? '🧩 Trắc nghiệm Cấp 2 ➔' : (currentLang === 'hi' ? '🧩 स्तर 2 वर्तनी क्विज ➔' : '🧩 2단계 스펠링 퀴즈 ➔')))))}
+              ? (currentLang === 'zh' ? '✅ 测验过关 💮' : (currentLang === 'fr' ? '✅ Quiz validé 💮' : (currentLang === 'ja' ? '✅ クイズ合格 💮' : (currentLang === 'vi' ? '✅ Đã đạt 💮' : (currentLang === 'hi' ? '✅ क्विज सफल 💮' : '✅ 퀴즈 완수 💮')))))
+              : (currentLang === 'zh' ? '🧩 2关拼写 ➔' : (currentLang === 'fr' ? '🧩 Quiz N2 ➔' : (currentLang === 'ja' ? '🧩 2段階クイズ ➔' : (currentLang === 'vi' ? '🧩 Cấp 2 ➔' : (currentLang === 'hi' ? '🧩 क्विज 2 ➔' : '🧩 2단계 퀴즈 ➔')))))}
           </button>
 
           {/* 5. 다음 단어 세트 로드 버튼 */}
           <button
+            className="action-btn-item action-btn-item-full"
             onClick={handleLoadNextWordSet}
             style={{
-              height: '44px',
-              padding: '0 18px',
-              borderRadius: '12px',
               border: '2px solid #E67E22',
               background: 'linear-gradient(135deg, #FEF5E7 0%, #FDEBD0 100%)',
               color: '#D35400',
               fontWeight: '900',
-              fontSize: '13px',
-              cursor: 'pointer',
-              display: 'inline-flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              whiteSpace: 'nowrap',
-              boxSizing: 'border-box',
-              gap: '6px',
-              boxShadow: '0 3px 8px rgba(230,126,34,0.25)',
-              transition: 'all 0.2s ease'
+              boxShadow: '0 2px 6px rgba(230,126,34,0.2)'
             }}
           >
-            🚀 {currentLang === 'zh' ? '加载下一组单词 ➔' : (currentLang === 'fr' ? 'Charger mots suivants ➔' : (currentLang === 'ja' ? '次の単語セットを学習 ➔' : (currentLang === 'vi' ? 'Học bộ từ tiếp theo ➔' : (currentLang === 'hi' ? 'अगला शब्द सेट लोड करें ➔' : '다음 단어 학습 ➔'))))}
+            🚀 {currentLang === 'zh' ? '下一组单词 ➔' : (currentLang === 'fr' ? 'Mots suivants ➔' : (currentLang === 'ja' ? '次の単語 ➔' : (currentLang === 'vi' ? 'Từ tiếp theo ➔' : (currentLang === 'hi' ? 'अगला शब्द ➔' : '다음 단어 학습 ➔'))))}
           </button>
         </div>
       )}
@@ -2212,22 +2145,8 @@ export default function Home() {
             </h1>
           </header>
 
-          {/* 🌐 글로벌 학습 언어 선택 (한국어 🇰🇷 vs 중국어 🇨🇳 등 6개국어) & 🎛️ TTS 음성 속도 조율 컨트롤러 */}
-          <div style={{
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: '10px',
-            background: '#FFFFFF',
-            padding: '12px 18px',
-            borderRadius: '20px',
-            border: '2px solid #E2E8F0',
-            boxShadow: '0 4px 14px rgba(0,0,0,0.04)',
-            margin: '14px auto 16px auto',
-            maxWidth: '820px',
-            width: '100%'
-          }}>
+          {/* 🌐 글로벌 학습 언어 선택 & 🎛️ TTS 음성 속도 조율 컨트롤러 */}
+          <div className="lang-speed-toolbar">
             {/* 1행: 🌐 6개 국어 학습 언어 스위처 */}
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px', flexWrap: 'wrap', width: '100%' }}>
               <span style={{ fontSize: '13px', fontWeight: '900', color: '#2B6CB0', display: 'inline-flex', alignItems: 'center', gap: '4px', marginRight: '4px' }}>
