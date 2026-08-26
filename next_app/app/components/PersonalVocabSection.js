@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import supabase from '../../lib/supabaseClient.js';
-import { t } from '../../lib/i18n.js';
+import { t, getLocalDateString } from '../../lib/i18n.js';
 
 export default function PersonalVocabSection({ currentUser, onPlayAudio, initialTab = 'custom', currentLang = 'ko' }) {
   const [activeTab, setActiveTab] = useState(initialTab); // 'custom', 'wrong'
@@ -86,7 +86,7 @@ export default function PersonalVocabSection({ currentUser, onPlayAudio, initial
       meaning: meaningInput.trim(),
       phonics: phonicsInput.trim() || '',
       category: currentLang === 'zh' ? '专属生词' : (currentLang === 'fr' ? 'Mon vocabulaire' : '나만의 단어'),
-      addedAt: new Date().toISOString().split('T')[0]
+      addedAt: getLocalDateString()
     };
 
     const updated = [newWordItem, ...myVocabList];

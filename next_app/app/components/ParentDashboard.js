@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import supabase from '../../lib/supabaseClient.js';
 import ParentNotificationManager from './ParentNotificationManager.js';
-import { t, translateStudentGrade } from '../../lib/i18n.js';
+import { t, translateStudentGrade, getLocalDateString } from '../../lib/i18n.js';
 
 // 이름에서 이모지 제거 헬퍼 함수
 const removeEmoji = (str) => {
@@ -330,7 +330,7 @@ export default function ParentDashboard({ currentUser, onLogout, currentLang = '
   const thisMonthStampedCount = stampedDates.filter(d => d.startsWith(currentMonthPrefix)).length;
   const thisMonthRate = Math.round((thisMonthStampedCount / Math.max(daysInMonth, 1)) * 100);
 
-  const todayStr = new Date().toISOString().split('T')[0];
+  const todayStr = getLocalDateString();
 
   const weekdays = currentLang === 'zh'
     ? ['日', '一', '二', '三', '四', '五', '六']

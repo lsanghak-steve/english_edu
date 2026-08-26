@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import supabase from '../../lib/supabaseClient.js';
 import wordList500Fallback from '../../data/wordsData.js';
-import { t } from '../../lib/i18n.js';
+import { t, getLocalDateString } from '../../lib/i18n.js';
 
 // 단어 객체 안전 규격화 헬퍼
 const sanitizeWordObject = (item, currentLang = 'ko') => {
@@ -222,7 +222,7 @@ export default function Day6ReviewSection({ currentUser, safeActiveWords, onQuiz
 
       // Supabase DB study_records에 주간 종합 복습 왕도장(🏵️) 기록 저장
       try {
-        const todayStr = new Date().toISOString().split('T')[0];
+        const todayStr = getLocalDateString();
         const syncDay6Record = async (sid) => {
           if (!sid) return;
           const { data: existing } = await supabase.from('study_records').select('id').eq('student_id', sid).eq('study_date', todayStr).limit(1);

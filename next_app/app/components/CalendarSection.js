@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import supabase from '../../lib/supabaseClient.js';
 import wordList500Fallback from '../../data/wordsData.js';
-import { t } from '../../lib/i18n.js';
+import { t, getLocalDateString } from '../../lib/i18n.js';
 
 const removeEmoji = (str) => {
   if (!str) return '';
@@ -13,11 +13,13 @@ const removeEmoji = (str) => {
 };
 
 export default function CalendarSection({ currentUser, onSelectDateToStudy, currentLang = 'ko' }) {
-  const [currentYear, setCurrentYear] = useState(2026);
-  const [currentMonth, setCurrentMonth] = useState(7); // 0-based: 7 = 8월
+  const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
+  const [currentMonth, setCurrentMonth] = useState(new Date().getMonth()); // 0-based
   const [stamps, setStamps] = useState([]);
   const [selectedStampWords, setSelectedStampWords] = useState(null);
   const [selectedDateStr, setSelectedDateStr] = useState('');
+
+  const todayDateStr = getLocalDateString();
 
   const studentName = currentUser ? removeEmoji(currentUser.name) : (currentLang === 'zh' ? '学生' : (currentLang === 'fr' ? 'Élève' : '학생'));
   const userId = currentUser ? currentUser.id : 'guest';
@@ -200,9 +202,43 @@ export default function CalendarSection({ currentUser, onSelectDateToStudy, curr
   return (
     <div style={{ background: '#FFFFFF', borderRadius: '24px', padding: '24px', border: '1px solid #E9ECEF', boxShadow: '0 8px 20px rgba(0,0,0,0.04)', width: '100%', textAlign: 'center' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', flexWrap: 'wrap', gap: '8px' }}>
-        <h2 style={{ margin: 0, color: '#2C3E50', fontSize: '20px', fontWeight: '900' }}>
-          {calendarTitle}
-        </h2>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+          <h2 style={{ margin: 0, color: '#2C3E50', fontSize: '20px', fontWeight: '900' }}>
+            {calendarTitle}
+          </h2>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+            <button
+              type="button"
+              onClick={() => {
+                if (currentMonth === 0) {
+                  setCurrentYear(prev => prev - 1);
+                  setCurrentMonth(11);
+                } else {
+                  setCurrentMonth(prev => prev - 1);
+                }
+              }}
+              style={{ background: '#F1F5F9', border: '1px solid #CBD5E1', padding: '4px 8px', borderRadius: '8px', cursor: 'pointer', fontWeight: 'bold', fontSize: '12px' }}
+              title="이전 달"
+            >
+              ◀
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                if (currentMonth === 11) {
+                  setCurrentYear(prev => prev + 1);
+                  setCurrentMonth(0);
+                } else {
+                  setCurrentMonth(prev => prev + 1);
+                }
+              }}
+              style={{ background: '#F1F5F9', border: '1px solid #CBD5E1', padding: '4px 8px', borderRadius: '8px', cursor: 'pointer', fontWeight: 'bold', fontSize: '12px' }}
+              title="다음 달"
+            >
+              ▶
+            </button>
+          </div>
+        </div>
         <span style={{ fontSize: '13px', background: '#E8F8F5', color: '#16A085', padding: '6px 12px', borderRadius: '12px', fontWeight: 'bold' }}>
           {attendanceBadgeText}
         </span>
@@ -234,6 +270,7 @@ export default function CalendarSection({ currentUser, onSelectDateToStudy, curr
           const dayStr = String(day).padStart(2, '0');
           const dateKey = `${currentYear}-${monthStr}-${dayStr}`;
           const isStamped = stamps.includes(dateKey);
+          const isToday = dateKey === todayDateStr;
 
           return (
             <div
@@ -243,8 +280,10 @@ export default function CalendarSection({ currentUser, onSelectDateToStudy, curr
                 minHeight: '68px',
                 padding: '6px',
                 borderRadius: '14px',
-                border: isStamped ? '2px solid #2ECC71' : '1px dashed #BDC3C7',
-                background: isStamped ? '#E8F8F5' : '#FFFFFF',
+                border: isToday
+                  ? '2.5px solid #3498DB'
+                  : (isStamped ? '2px solid #2ECC71' : '1px dashed #BDC3C7'),
+                background: isStamped ? '#E8F8F5' : (isToday ? '#F0F8FF' : '#FFFFFF'),
                 cursor: 'pointer',
                 display: 'flex',
                 flexDirection: 'column',
@@ -255,9 +294,16 @@ export default function CalendarSection({ currentUser, onSelectDateToStudy, curr
               }}
               className="hover-card"
             >
-              <span style={{ fontSize: '14px', fontWeight: 'bold', color: (idx % 7 === 0) ? '#E74C3C' : (idx % 7 === 6) ? '#3498DB' : '#2C3E50', alignSelf: 'flex-start' }}>
-                {day}
-              </span>
+              <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%', alignItems: 'center' }}>
+                <span style={{ fontSize: '14px', fontWeight: 'bold', color: (idx % 7 === 0) ? '#E74C3C' : (idx % 7 === 6) ? '#3498DB' : '#2C3E50' }}>
+                  {day}
+                </span>
+                {isToday && (
+                  <span style={{ fontSize: '9px', background: '#3498DB', color: 'white', padding: '1px 4px', borderRadius: '4px', fontWeight: '900' }}>
+                    TODAY
+                  </span>
+                )}
+              </div>
 
               {isStamped ? (
                 <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
@@ -268,7 +314,7 @@ export default function CalendarSection({ currentUser, onSelectDateToStudy, curr
                 </div>
               ) : (
                 <span style={{ fontSize: '11px', color: '#3498DB', fontWeight: 'bold', background: '#EBF5FB', padding: '2px 6px', borderRadius: '6px' }}>
-                  ✏️ {currentLang === 'zh' ? '去学习' : (currentLang === 'fr' ? 'Étudier' : '학습하기')}
+                  ✏️ {isToday ? (currentLang === 'zh' ? '今日学习' : (currentLang === 'fr' ? "Aujourd'hui" : '오늘학습')) : (currentLang === 'zh' ? '去学习' : (currentLang === 'fr' ? 'Étudier' : '학습하기'))}
                 </span>
               )}
             </div>

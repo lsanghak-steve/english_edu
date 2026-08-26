@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import supabase from '../../lib/supabaseClient.js';
 import wordList500Fallback from '../../data/wordsData.js';
+import { getLocalDateString } from '../../lib/i18n.js';
 
 export default function QuizSection({ currentUser, activeWords, onQuizLevelComplete, onLoadNextWordSet, initialQuizLevel = 1, currentLang = 'ko' }) {
   const [quizLevel, setQuizLevel] = useState(initialQuizLevel || 1); // 1: 소리, 2: 선택, 3: 발음 녹음(75점+), 4: 직접 입력
@@ -466,7 +467,7 @@ export default function QuizSection({ currentUser, activeWords, onQuizLevelCompl
         meaning: wordObj.meaning || '뜻 정보 없음',
         phonics: wordObj.phonics || '',
         category: wordObj.category || '기타',
-        addedAt: new Date().toISOString().split('T')[0]
+        addedAt: getLocalDateString()
       };
       wrongList.push(newWrongItem);
       localStorage.setItem(wrongKey, JSON.stringify(wrongList));

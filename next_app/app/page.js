@@ -13,7 +13,7 @@ import ParentDashboard from './components/ParentDashboard.js';
 import StatsSection from './components/StatsSection.js';
 import Day6ReviewSection from './components/Day6ReviewSection.js';
 import LeaderboardSection from './components/LeaderboardSection.js';
-import { t, translateGradeLevel } from '../lib/i18n.js';
+import { t, translateGradeLevel, getLocalDateString } from '../lib/i18n.js';
 
 export default function Home() {
   const [currentUser, setCurrentUser] = useState(null);
@@ -34,8 +34,8 @@ export default function Home() {
     document.title = `${t('app_title', currentLang)} - ${t('app_subtitle', currentLang)}`;
   }, [currentLang]);
 
-  // 달력에서 선택한 학습 날짜 (기본: 오늘 날짜 YYYY-MM-DD)
-  const todayStr = new Date().toISOString().split('T')[0];
+  // 📅 달력에서 선택한 학습 날짜 (기본: 로컬 사용자 기준 오늘 날짜 YYYY-MM-DD)
+  const todayStr = getLocalDateString();
   const [targetStudyDate, setTargetStudyDate] = useState(todayStr);
 
   // 단어 목록 데이터는 항상 Supabase 클라우드 DB에서 실시간으로 로드

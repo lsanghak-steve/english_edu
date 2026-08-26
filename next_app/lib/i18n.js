@@ -630,3 +630,14 @@ export function translateGradeLevel(gradeStr, lang = 'ko') {
   return gradeStr;
 }
 
+/**
+ * 📅 사용자 현지 시간(KST 등 로컬 타임존) 기준 YYYY-MM-DD 포맷 날짜 생성 유틸
+ * (UTC toISOString()의 날짜 변경선 밀림 현상 100% 방지)
+ */
+export function getLocalDateString(d = new Date()) {
+  const dateObj = typeof d === 'string' ? new Date(d) : (d || new Date());
+  const year = dateObj.getFullYear();
+  const month = String(dateObj.getMonth() + 1).padStart(2, '0');
+  const day = String(dateObj.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}

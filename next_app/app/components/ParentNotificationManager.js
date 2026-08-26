@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import supabase from '../../lib/supabaseClient.js';
+import { getLocalDateString } from '../../lib/i18n.js';
 
 const removeEmoji = (str) => {
   if (!str) return '';
@@ -15,7 +16,7 @@ export default function ParentNotificationManager({ currentUser, activeChild, on
   const studentName = removeEmoji(student.name || '이승현');
   const parentName = removeEmoji(student.parentName || student.name || '학부모');
   const parentPhone = student.parentPhone || '010-4006-9050';
-  const todayStr = new Date().toISOString().split('T')[0];
+  const todayStr = getLocalDateString();
 
   const [notificationLogs, setNotificationLogs] = useState([]);
   const [sending, setSending] = useState(false);
