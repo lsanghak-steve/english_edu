@@ -129,7 +129,7 @@ export default function LandingPage() {
         <div className="apple-nav-capsule">
           <div className="nav-logo" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
             <span className="logo-apple-icon"></span>
-            <span className="logo-main">pop voca</span>
+            <span className="logo-main">vocaflip</span>
           </div>
 
           <nav className="nav-menu">
@@ -211,7 +211,7 @@ export default function LandingPage() {
                 </div>
 
                 <div className="app-header-mini">
-                  <span className="app-badge">pop voca</span>
+                  <span className="app-badge">vocaflip</span>
                   <span className="free-badge">🎁 Free</span>
                 </div>
 
@@ -639,7 +639,7 @@ export default function LandingPage() {
             <button className="modal-close" onClick={() => setShowAuthModal(false)}>✕</button>
             <div className="modal-hdr">
               <h3>
-                {selectedRole === 'academy' ? '📞 학원/공부방 도입 문의 신청' : '🎓 PopVoca 100% 무료 가입'}
+                {selectedRole === 'academy' ? '📞 학원/공부방 도입 문의 신청' : '🎓 VocaFlip 100% 무료 가입'}
               </h3>
               <p>
                 {selectedRole === 'academy' ? '담당자가 확인 후 직접 따로 연락을 드리겠습니다.' : '회원 유형을 선택해 주세요.'}
@@ -790,7 +790,7 @@ export default function LandingPage() {
 
       {/* Footer */}
       <footer className="apple-footer">
-        <p>© 2026 PopVoca. All rights reserved. Designed for Apple iOS & Web.</p>
+        <p>© 2026 VocaFlip. All rights reserved. Designed for Apple iOS & Web.</p>
       </footer>
 
       {/* Scoped Apple Style Sheet */}

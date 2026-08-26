@@ -146,7 +146,7 @@ export default function ChinaPaymentModal({ isOpen, onClose, onPaymentSuccess, c
             <div style={{ textAlign: 'center', marginBottom: '20px' }}>
               <div style={{ fontSize: '36px', marginBottom: '4px' }}>💎</div>
               <h2 style={{ margin: '0 0 6px 0', fontSize: '22px', fontWeight: '900', color: '#0F172A' }}>
-                {currentLang === 'zh' ? '升级 PopVoca VIP 会员' : 'PopVoca VIP 멤버십 구독'}
+                {currentLang === 'zh' ? '升级 VocaFlip VIP 会员' : 'VocaFlip VIP 멤버십 구독'}
               </h2>
               <p style={{ margin: 0, fontSize: '13px', color: '#64748B' }}>
                 {currentLang === 'zh' ? '开通完整 5,000 词汇库、AI发音深度分析与试卷导出' : '5,000개 전 단어 무제한 학습 및 PDF 시험지 생성기'}
