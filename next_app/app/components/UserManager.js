@@ -220,7 +220,7 @@ export default function UserManager({ currentUser, setCurrentUser, onLogout, cur
       <div className="user-info-group">
         <span className="user-info-label">{userLabelText}</span>
         <span className="user-info-badge">
-          {currentUser ? `${displayName} (${translateStudentGrade(currentUser.grade || '초등 3학년', currentLang)}) • ${levelLabelText} ${translateGradeLevel(currentStudyLevel, currentLang)} • ${targetLabelText} ${currentDailyCount}${wordsUnitText}` : (currentLang === 'zh' ? '请先登录' : (currentLang === 'fr' ? 'Connexion requise' : '로그인 필요'))}
+          {currentUser ? `${displayName} (${translateStudentGrade(String(currentUser.grade || currentUser.avatar || '초등 5학년').replace('[PENDING]', '').replace('[APPROVED]', '').trim(), currentLang)}) • ${levelLabelText} ${translateGradeLevel(currentStudyLevel, currentLang)} • ${targetLabelText} ${currentDailyCount}${wordsUnitText}` : (currentLang === 'zh' ? '请先登录' : (currentLang === 'fr' ? 'Connexion requise' : '로그인 필요'))}
         </span>
       </div>
 

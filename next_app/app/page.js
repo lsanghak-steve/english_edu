@@ -1653,6 +1653,14 @@ export default function Home() {
 
   return (
     <main className="app-container">
+      {/* 👤 현재 로그인된 학생 정보 및 계정 관리 헤더 바 */}
+      <UserManager
+        currentUser={currentUser}
+        setCurrentUser={setCurrentUser}
+        onLogout={handleLogout}
+        currentLang={currentLang}
+      />
+
       {mainTab !== 'parent' && (
         <div style={{
           width: '100%',
