@@ -2258,35 +2258,39 @@ export default function Home() {
             </h1>
           </header>
 
-          {/* 🌐 글로벌 학습 언어 선택 (한국어 🇰🇷 vs 중국어 🇨🇳) & 🎛️ TTS 음성 속도 조율 컨트롤러 */}
+          {/* 🌐 글로벌 학습 언어 선택 (한국어 🇰🇷 vs 중국어 🇨🇳 등 6개국어) & 🎛️ TTS 음성 속도 조율 컨트롤러 */}
           <div style={{
             display: 'flex',
+            flexDirection: 'column',
             alignItems: 'center',
             justifyContent: 'center',
-            gap: '12px',
+            gap: '10px',
             background: '#FFFFFF',
-            padding: '10px 16px',
+            padding: '12px 18px',
             borderRadius: '20px',
             border: '2px solid #E2E8F0',
-            boxShadow: '0 4px 12px rgba(0,0,0,0.03)',
+            boxShadow: '0 4px 14px rgba(0,0,0,0.04)',
             margin: '14px auto 16px auto',
             maxWidth: '820px',
-            flexWrap: 'wrap'
+            width: '100%'
           }}>
-            {/* 🌐 6개 국어 학습 언어 스위처 */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: '4px', borderRight: '2px solid #E2E8F0', paddingRight: '12px', flexWrap: 'wrap' }}>
-              <span style={{ fontSize: '13px', fontWeight: '900', color: '#2B6CB0' }}>🌐 {t('lang_label', currentLang)}</span>
+            {/* 1행: 🌐 6개 국어 학습 언어 스위처 */}
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px', flexWrap: 'wrap', width: '100%' }}>
+              <span style={{ fontSize: '13px', fontWeight: '900', color: '#2B6CB0', display: 'inline-flex', alignItems: 'center', gap: '4px', marginRight: '4px' }}>
+                🌐 {t('lang_label', currentLang)}
+              </span>
               <button
                 onClick={() => handleLangChange('ko')}
                 style={{
-                  padding: '5px 8px',
-                  borderRadius: '8px',
-                  fontSize: '11px',
+                  padding: '6px 10px',
+                  borderRadius: '10px',
+                  fontSize: '12px',
                   fontWeight: 'bold',
                   border: currentLang === 'ko' ? '2px solid #3182CE' : '1px solid #CBD5E0',
                   background: currentLang === 'ko' ? '#EBF8FF' : '#FFFFFF',
                   color: currentLang === 'ko' ? '#2B6CB0' : '#4A5568',
-                  cursor: 'pointer'
+                  cursor: 'pointer',
+                  transition: 'all 0.15s ease'
                 }}
               >
                 🇰🇷 한국어
@@ -2294,14 +2298,15 @@ export default function Home() {
               <button
                 onClick={() => handleLangChange('zh')}
                 style={{
-                  padding: '5px 8px',
-                  borderRadius: '8px',
-                  fontSize: '11px',
+                  padding: '6px 10px',
+                  borderRadius: '10px',
+                  fontSize: '12px',
                   fontWeight: 'bold',
                   border: currentLang === 'zh' ? '2px solid #E53E3E' : '1px solid #CBD5E0',
                   background: currentLang === 'zh' ? '#FFF5F5' : '#FFFFFF',
                   color: currentLang === 'zh' ? '#C53030' : '#4A5568',
-                  cursor: 'pointer'
+                  cursor: 'pointer',
+                  transition: 'all 0.15s ease'
                 }}
               >
                 🇨🇳 中文
@@ -2309,14 +2314,15 @@ export default function Home() {
               <button
                 onClick={() => handleLangChange('fr')}
                 style={{
-                  padding: '5px 8px',
-                  borderRadius: '8px',
-                  fontSize: '11px',
+                  padding: '6px 10px',
+                  borderRadius: '10px',
+                  fontSize: '12px',
                   fontWeight: 'bold',
                   border: currentLang === 'fr' ? '2px solid #3182CE' : '1px solid #CBD5E0',
                   background: currentLang === 'fr' ? '#EBF8FF' : '#FFFFFF',
                   color: currentLang === 'fr' ? '#2B6CB0' : '#4A5568',
-                  cursor: 'pointer'
+                  cursor: 'pointer',
+                  transition: 'all 0.15s ease'
                 }}
               >
                 🇫🇷 Français
@@ -2324,14 +2330,15 @@ export default function Home() {
               <button
                 onClick={() => handleLangChange('ja')}
                 style={{
-                  padding: '5px 8px',
-                  borderRadius: '8px',
-                  fontSize: '11px',
+                  padding: '6px 10px',
+                  borderRadius: '10px',
+                  fontSize: '12px',
                   fontWeight: 'bold',
                   border: currentLang === 'ja' ? '2px solid #E53E3E' : '1px solid #CBD5E0',
                   background: currentLang === 'ja' ? '#FFF5F5' : '#FFFFFF',
                   color: currentLang === 'ja' ? '#C53030' : '#4A5568',
-                  cursor: 'pointer'
+                  cursor: 'pointer',
+                  transition: 'all 0.15s ease'
                 }}
               >
                 🇯🇵 日本語
@@ -2339,14 +2346,15 @@ export default function Home() {
               <button
                 onClick={() => handleLangChange('vi')}
                 style={{
-                  padding: '5px 8px',
-                  borderRadius: '8px',
-                  fontSize: '11px',
+                  padding: '6px 10px',
+                  borderRadius: '10px',
+                  fontSize: '12px',
                   fontWeight: 'bold',
                   border: currentLang === 'vi' ? '2px solid #D69E2E' : '1px solid #CBD5E0',
                   background: currentLang === 'vi' ? '#FEFCBF' : '#FFFFFF',
                   color: currentLang === 'vi' ? '#B7791F' : '#4A5568',
-                  cursor: 'pointer'
+                  cursor: 'pointer',
+                  transition: 'all 0.15s ease'
                 }}
               >
                 🇻🇳 Tiếng Việt
@@ -2354,51 +2362,64 @@ export default function Home() {
               <button
                 onClick={() => handleLangChange('hi')}
                 style={{
-                  padding: '5px 8px',
-                  borderRadius: '8px',
-                  fontSize: '11px',
+                  padding: '6px 10px',
+                  borderRadius: '10px',
+                  fontSize: '12px',
                   fontWeight: 'bold',
                   border: currentLang === 'hi' ? '2px solid #DD6B20' : '1px solid #CBD5E0',
                   background: currentLang === 'hi' ? '#FEEBC8' : '#FFFFFF',
                   color: currentLang === 'hi' ? '#C05621' : '#4A5568',
-                  cursor: 'pointer'
+                  cursor: 'pointer',
+                  transition: 'all 0.15s ease'
                 }}
               >
                 🇮🇳 हिन्दी
               </button>
             </div>
 
-            <span style={{ fontSize: '13px', fontWeight: 'bold', color: '#4A5568', display: 'flex', alignItems: 'center', gap: '4px' }}>
-              {t('speed_label', currentLang)}
-            </span>
+            {/* 2행: 🎛️ 발음 재생 속도 컨트롤러 (밑으로 깔끔하게 배치) */}
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '8px',
+              flexWrap: 'wrap',
+              width: '100%',
+              paddingTop: '8px',
+              borderTop: '1px dashed #E2E8F0'
+            }}>
+              <span style={{ fontSize: '13px', fontWeight: '900', color: '#4A5568', display: 'inline-flex', alignItems: 'center', gap: '4px', marginRight: '4px' }}>
+                🎛️ {t('speed_label', currentLang)}
+              </span>
 
-            <button
-              onClick={() => handleSpeedChange(0.7)}
-              className={`btn-speed-item ${ttsSpeed === 0.7 ? 'active' : ''}`}
-            >
-              {t('speed_slow', currentLang)}
-            </button>
+              <button
+                onClick={() => handleSpeedChange(0.7)}
+                className={`btn-speed-item ${ttsSpeed === 0.7 ? 'active' : ''}`}
+              >
+                {t('speed_slow', currentLang)}
+              </button>
 
-            <button
-              onClick={() => handleSpeedChange(1.0)}
-              className={`btn-speed-item ${ttsSpeed === 1.0 ? 'active' : ''}`}
-            >
-              {t('speed_normal', currentLang)}
-            </button>
+              <button
+                onClick={() => handleSpeedChange(1.0)}
+                className={`btn-speed-item ${ttsSpeed === 1.0 ? 'active' : ''}`}
+              >
+                {t('speed_normal', currentLang)}
+              </button>
 
-            <button
-              onClick={() => handleSpeedChange(1.4)}
-              className={`btn-speed-item ${ttsSpeed === 1.4 ? 'active' : ''}`}
-            >
-              {t('speed_fast', currentLang)}
-            </button>
+              <button
+                onClick={() => handleSpeedChange(1.4)}
+                className={`btn-speed-item ${ttsSpeed === 1.4 ? 'active' : ''}`}
+              >
+                {t('speed_fast', currentLang)}
+              </button>
 
-            <button
-              onClick={() => handleSpeedChange(2.0)}
-              className={`btn-speed-item ${ttsSpeed === 2.0 ? 'active' : ''}`}
-            >
-              {t('speed_super_fast', currentLang)}
-            </button>
+              <button
+                onClick={() => handleSpeedChange(2.0)}
+                className={`btn-speed-item ${ttsSpeed === 2.0 ? 'active' : ''}`}
+              >
+                {t('speed_super_fast', currentLang)}
+              </button>
+            </div>
           </div>
 
           {(!currentWord || safeActiveWords.length === 0) ? (
