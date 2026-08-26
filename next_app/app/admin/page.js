@@ -10,7 +10,7 @@ export default function AdminPage() {
   const [adminTab, setAdminTab] = useState('words'); // 'words', 'students'
 
   useEffect(() => {
-    document.title = "Steve Voca 관리자 - 센터 통합 관리 시스템";
+    document.title = "PopVoca (팝보카) 관리자 - 센터 통합 관리 시스템";
   }, []);
 
   const handleLogin = (e) => {

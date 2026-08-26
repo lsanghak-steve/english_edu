@@ -105,7 +105,7 @@ export default function ParentNotificationManager({ currentUser, activeChild, on
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px', borderBottom: '1px solid #EDF2F7', paddingBottom: '8px' }}>
                 <span style={{ fontSize: '20px' }}>🏫</span>
                 <div>
-                  <div style={{ fontSize: '13px', fontWeight: '900', color: '#2D3748' }}>Steve Voca 스티브 보카 교육관</div>
+                  <div style={{ fontSize: '13px', fontWeight: '900', color: '#2D3748' }}>PopVoca 팝보카 교육관</div>
                   <div style={{ fontSize: '10px', color: '#A0AEC0' }}>알림톡 도착 • 방금 전</div>
                 </div>
               </div>

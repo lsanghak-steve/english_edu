@@ -4,7 +4,7 @@ import { useState, useRef } from 'react';
 import wordList500Fallback from '../../data/wordsData.js';
 
 export default function PdfTestSheetGenerator({ currentUser, customWords, onClose }) {
-  const [academyName, setAcademyName] = useState('Steve Voca 영어 전문 사관학원');
+  const [academyName, setAcademyName] = useState('PopVoca 영어 전문 사관학원');
   const [testTitle, setTestTitle] = useState('초등 3학년 일일 단어 성취도 평가');
   const [layoutMode, setLayoutMode] = useState('word_to_meaning'); // 6개 모드
   const [wordCount, setWordCount] = useState(20);
@@ -250,7 +250,7 @@ export default function PdfTestSheetGenerator({ currentUser, customWords, onClos
 
         {/* 하단 푸터 꼬리표 */}
         <div style={{ marginTop: '36px', borderTop: '1px solid #000000', paddingTop: '10px', display: 'flex', justifyContent: 'space-between', fontSize: '11px', color: '#666666' }}>
-          <span>Steve Voca AI Smart Edu System • A4 Print Layout</span>
+          <span>PopVoca AI Smart Edu System • A4 Print Layout</span>
           <span>Page 1 of 1</span>
         </div>
       </div>

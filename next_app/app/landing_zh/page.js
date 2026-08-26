@@ -117,8 +117,8 @@ export default function LandingZhPage() {
 
   const faqs = [
     {
-      q: '为什么 Steve Voca 比死记硬背单词效率高 3 倍？',
-      a: 'Steve Voca 采用“视觉插画卡片 ➔ 原声听力辨音 ➔ 4阶游戏化测验 ➔ 错题智能漏斗”的闭环记忆法。配合 AI 发音音高波形比对，告别枯燥默写，真正激活深度长时记忆。'
+      q: '为什么 PopVoca 比死记硬背单词效率高 3 倍？',
+      a: 'PopVoca (泡泡背单词) 采用“视觉插画卡片 ➔ 原声听力辨音 ➔ 4阶游戏化测验 ➔ 错题智能漏斗”的闭环记忆法。配合 AI 发音音高波形比对，告别枯燥默写，真正激活深度长时记忆。'
     },
     {
       q: '培训机构与英语教师如何使用后台管理系统？',
@@ -153,7 +153,7 @@ export default function LandingZhPage() {
               🦉
             </div>
             <div>
-              <span style={{ fontSize: '20px', fontWeight: '900', color: '#2C3E50', letterSpacing: '-0.5px' }}>Steve Voca</span>
+              <span style={{ fontSize: '20px', fontWeight: '900', color: '#2C3E50', letterSpacing: '-0.5px' }}>PopVoca</span>
               <span style={{ fontSize: '11px', fontWeight: 'bold', color: '#58CC02', marginLeft: '6px', background: '#E5F8D0', padding: '2px 8px', borderRadius: '8px' }}>中国版 🇨🇳</span>
             </div>
           </div>
@@ -518,7 +518,7 @@ export default function LandingZhPage() {
       {/* 📄 8. Footer 页脚 */}
       <footer style={{ background: '#0F172A', borderTop: '1px solid #1E293B', padding: '30px 20px', textAlign: 'center', color: '#64748B', fontSize: '13px' }}>
         <p style={{ margin: '0 0 6px 0' }}>
-          © 2026 <strong>Steve Voca (史蒂夫英语词汇馆)</strong>. All rights reserved.
+          © 2026 <strong>PopVoca (泡泡背单词)</strong>. All rights reserved.
         </p>
         <p style={{ margin: 0 }}>
           小学 · 初中 · 高中 5,000 核心英语词汇智能评测平台 (支持微信与手机号极速体验)
