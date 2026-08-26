@@ -645,33 +645,6 @@ export default function ModernLoginPage() {
             </form>
           )}
 
-          {/* ⭐ 하단 4단계 퀴즈 바로가기 카드 */}
-          <div
-            onClick={() => router.push('/?tab=quiz')}
-            style={{
-              background: 'linear-gradient(135deg, #3730A3 0%, #1E1B4B 100%)',
-              borderRadius: '24px',
-              padding: '18px 20px',
-              color: '#FFFFFF',
-              position: 'relative',
-              cursor: 'pointer',
-              boxShadow: '0 10px 24px rgba(55, 48, 163, 0.25)',
-              transition: 'transform 0.2s'
-            }}
-            onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-2px)'; }}
-            onMouseLeave={(e) => { e.currentTarget.style.transform = 'translateY(0)'; }}
-          >
-            <div style={{ position: 'absolute', top: '16px', right: '18px', fontSize: '22px' }}>
-              ⭐
-            </div>
-            <div style={{ fontSize: '16px', fontWeight: '900', marginBottom: '2px' }}>
-              4-Stage Quiz Challenge
-            </div>
-            <div style={{ fontSize: '12px', opacity: 0.85 }}>
-              소리 ➔ 스펠링 ➔ 발음 ➔ 쓰기 4단계 퀴즈 마스터
-            </div>
-          </div>
-
         </div>
 
         {/* 📱 하단 플로팅 글래스 내비게이션 바 (Home, Words, Quiz, Profile) */}
