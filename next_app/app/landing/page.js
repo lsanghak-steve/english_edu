@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import { playUniversalAudio } from '../../lib/audioPlayer.js';
 
 export default function LandingPage() {
   // Modal state
@@ -65,18 +66,9 @@ export default function LandingPage() {
 
   // Play TTS audio with custom speed rate (0.75, 1.0, 1.25)
   const playWordAudio = (text, customRate = demoAudioSpeed) => {
-    if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
-      window.speechSynthesis.cancel();
-      const utterance = new SpeechSynthesisUtterance(text);
-      utterance.lang = 'en-US';
-      utterance.rate = customRate;
-      setIsDemoAudioPlaying(true);
-      utterance.onend = () => setIsDemoAudioPlaying(false);
-      utterance.onerror = () => setIsDemoAudioPlaying(false);
-      window.speechSynthesis.speak(utterance);
-    } else {
-      alert(`[🔊 음성 재생예시 (${customRate}x 배속)] "${text}"`);
-    }
+    setIsDemoAudioPlaying(true);
+    playUniversalAudio(text, { rate: customRate, lang: 'en' });
+    setTimeout(() => setIsDemoAudioPlaying(false), 1200);
   };
 
   // Demo Quiz Handle Submit

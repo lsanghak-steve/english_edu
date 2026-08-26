@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import supabase from '../../lib/supabaseClient.js';
 import fallbackWords from '../../data/wordsData.js';
+import { playUniversalAudio } from '../../lib/audioPlayer.js';
 
 export default function AdminWordManager() {
     const [words, setWords] = useState([]);
@@ -32,15 +33,10 @@ export default function AdminWordManager() {
         example_ko: ''
     });
 
-    // Web Speech API 원어민 소리 재생 (단어/예문 공용)
+    // Web Speech / Server TTS 원어민 소리 재생 (단어/예문 공용)
     const playTTS = useCallback((textToPlay) => {
-        if ('speechSynthesis' in window && textToPlay) {
-            window.speechSynthesis.cancel();
-            const utterance = new SpeechSynthesisUtterance(textToPlay);
-            utterance.lang = 'en-US';
-            utterance.rate = 0.85;
-            window.speechSynthesis.speak(utterance);
-        }
+        if (!textToPlay) return;
+        playUniversalAudio(textToPlay, { rate: 0.85, lang: 'en' });
     }, []);
 
     // Supabase DB에서 서버 1,000개 수량 제한을 완벽 우회하여 2,000개+ 전체 단어 페이징 로드

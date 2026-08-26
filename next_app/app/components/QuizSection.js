@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import supabase from '../../lib/supabaseClient.js';
 import wordList500Fallback from '../../data/wordsData.js';
 import { getLocalDateString } from '../../lib/i18n.js';
+import { playUniversalAudio } from '../../lib/audioPlayer.js';
 
 export default function QuizSection({ currentUser, activeWords, onQuizLevelComplete, onLoadNextWordSet, initialQuizLevel = 1, currentLang = 'ko' }) {
   const [quizLevel, setQuizLevel] = useState(initialQuizLevel || 1); // 1: 소리, 2: 선택, 3: 발음 녹음(75점+), 4: 직접 입력
@@ -103,7 +104,7 @@ export default function QuizSection({ currentUser, activeWords, onQuizLevelCompl
 
   const playAudio = useCallback((textToPlay) => {
     const text = (textToPlay || cleanWordStr || '').replace(/\.png/gi, '').trim();
-    if (!text || typeof window === 'undefined') return;
+    if (!text) return;
 
     let speed = 0.9;
     try {
@@ -111,48 +112,7 @@ export default function QuizSection({ currentUser, activeWords, onQuizLevelCompl
       if (saved) speed = parseFloat(saved) || 0.9;
     } catch (e) {}
 
-    // 1순위: 스튜디오급 고음질 원어민 미국식 발음 즉시 재생 (가장 맑고 자연스러움)
-    try {
-      if (currentAudioRef.current) {
-        currentAudioRef.current.pause();
-        currentAudioRef.current.currentTime = 0;
-      }
-      const audioUrl = `https://dict.youdao.com/dictvoice?audio=${encodeURIComponent(text)}&type=2`;
-      const audio = new Audio(audioUrl);
-      audio.playbackRate = speed;
-      currentAudioRef.current = audio;
-
-      const playPromise = audio.play();
-      if (playPromise !== undefined) {
-        playPromise.catch(() => {
-          // 브라우저 예외 시 브라우저 내장 TTS로 즉시 대체
-          speakWebSpeech(text, speed);
-        });
-      }
-    } catch (e) {
-      speakWebSpeech(text, speed);
-    }
-
-    // 2순위: 브라우저 내장 Web Speech API 음성 합성기
-    function speakWebSpeech(wordText, wordSpeed) {
-      if ('speechSynthesis' in window) {
-        try {
-          window.speechSynthesis.cancel();
-          window.speechSynthesis.resume();
-          const utterance = new SpeechSynthesisUtterance(wordText);
-          utterance.lang = 'en-US';
-          utterance.rate = wordSpeed;
-
-          const voices = window.speechSynthesis.getVoices();
-          if (voices && voices.length > 0) {
-            const enVoice = voices.find(v => v.lang.startsWith('en') && (v.name.includes('Google') || v.name.includes('Natural') || v.name.includes('Zira') || v.name.includes('Samantha') || v.name.includes('US'))) || voices.find(v => v.lang.startsWith('en'));
-            if (enVoice) utterance.voice = enVoice;
-          }
-
-          window.speechSynthesis.speak(utterance);
-        } catch (err) {}
-      }
-    }
+    playUniversalAudio(text, { rate: speed, lang: 'en' });
   }, [cleanWordStr]);
 
   // 🎯 학생 친화적 발음 유사도 점수(0~100점) 완화 알고리즘 (어린이 및 초보자 친화적 관용 매칭)

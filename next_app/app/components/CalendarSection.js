@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import supabase from '../../lib/supabaseClient.js';
 import wordList500Fallback from '../../data/wordsData.js';
 import { t, getLocalDateString } from '../../lib/i18n.js';
+import { playUniversalAudio } from '../../lib/audioPlayer.js';
 
 const removeEmoji = (str) => {
   if (!str) return '';
@@ -168,13 +169,7 @@ export default function CalendarSection({ currentUser, onSelectDateToStudy, curr
 
   // TTS 발음 듣기
   const playAudio = (text) => {
-    if ('speechSynthesis' in window) {
-      window.speechSynthesis.cancel();
-      const utterance = new SpeechSynthesisUtterance(text);
-      utterance.lang = 'en-US';
-      utterance.rate = 0.85;
-      window.speechSynthesis.speak(utterance);
-    }
+    playUniversalAudio(text, { rate: 0.85, lang: 'en' });
   };
 
   const weekdays = currentLang === 'zh'

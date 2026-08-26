@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import PdfTestSheetGenerator from './PdfTestSheetGenerator.js';
+import { playUniversalAudio } from '../../lib/audioPlayer.js';
 
 export default function WordListSection({ words, activeWords, onPlayAudio, playAudio, userAudioRecordings = {}, currentLang = 'ko' }) {
     const [showPdfModal, setShowPdfModal] = useState(false);
@@ -10,12 +11,8 @@ export default function WordListSection({ words, activeWords, onPlayAudio, playA
     const playWordAudio = (text) => {
         if (playAudioFn) {
             playAudioFn(text);
-        } else if ('speechSynthesis' in window && text) {
-            window.speechSynthesis.cancel();
-            const utterance = new SpeechSynthesisUtterance(text);
-            utterance.lang = 'en-US';
-            utterance.rate = 0.85;
-            window.speechSynthesis.speak(utterance);
+        } else if (text) {
+            playUniversalAudio(text, { rate: 0.85, lang: 'en' });
         }
     };
 

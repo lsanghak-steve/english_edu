@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import supabase from '../../lib/supabaseClient.js';
 import ParentNotificationManager from './ParentNotificationManager.js';
 import { t, translateStudentGrade, getLocalDateString } from '../../lib/i18n.js';
+import { playUniversalAudio } from '../../lib/audioPlayer.js';
 
 // 이름에서 이모지 제거 헬퍼 함수
 const removeEmoji = (str) => {
@@ -229,13 +230,7 @@ export default function ParentDashboard({ currentUser, onLogout, currentLang = '
 
   // 🔊 TTS 음성 재생 헬퍼
   const playAudio = (text) => {
-    if ('speechSynthesis' in window) {
-      window.speechSynthesis.cancel();
-      const utterance = new SpeechSynthesisUtterance(text);
-      utterance.lang = 'en-US';
-      utterance.rate = 0.85;
-      window.speechSynthesis.speak(utterance);
-    }
+    playUniversalAudio(text, { rate: 0.85, lang: 'en' });
   };
 
   // 📅 달력 월 이동 헬퍼

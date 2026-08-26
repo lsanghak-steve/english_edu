@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import ChinaPaymentModal from '../components/ChinaPaymentModal.js';
+import { playUniversalAudio } from '../../lib/audioPlayer.js';
 
 export default function LandingZhPage() {
   // VIP 支付弹窗状态
@@ -67,15 +68,7 @@ export default function LandingZhPage() {
 
   // 语音朗读播放
   const playWordAudio = (text, rate = demoAudioSpeed) => {
-    if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
-      window.speechSynthesis.cancel();
-      const utterance = new SpeechSynthesisUtterance(text);
-      utterance.lang = 'en-US';
-      utterance.rate = rate;
-      window.speechSynthesis.speak(utterance);
-    } else {
-      alert(`[🔊 发音演示 (${rate}x 语速)] "${text}"`);
-    }
+    playUniversalAudio(text, { rate, lang: 'en' });
   };
 
   // 测验选项点击
