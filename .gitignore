@@ -3,8 +3,19 @@ next_app/node_modules/
 next_app/.next/
 .next/
 .env*.local
+.env*
 *.log
 scratch/
 .DS_Store
 .vscode/
 .idea/
+.vercel/
+
+# 🔒 보안 복구 코드 & 키 파일 절대 추적 금지
+recovery/
+*recovery*
+*recovery-codes*
+*recovery_codes*
+*.pem
+*.key
+*.secret*
