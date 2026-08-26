@@ -21,6 +21,10 @@ export default function AdminStudentManager() {
   const [isStudentModalOpen, setIsStudentModalOpen] = useState(false);
   const [editingStudent, setEditingStudent] = useState(null);
 
+  // 🎯 학생 승인 상태 필터 및 모달 상태
+  const [statusFilter, setStatusFilter] = useState('all'); // 'all', 'pending', 'approved', 'rejected'
+  const [approvalStatus, setApprovalStatus] = useState('approved'); // 'approved', 'pending', 'rejected'
+
   // 학생 입력/수정 폼 상태
   const [name, setName] = useState('');
   const [grade, setGrade] = useState('초등 3학년');
@@ -30,6 +34,21 @@ export default function AdminStudentManager() {
   const [parentName, setParentName] = useState('');
   const [parentPhone, setParentPhone] = useState('010-4006-9050');
   const [parentPin, setParentPin] = useState('0815');
+
+  // 🎯 학생 승인 상태 헬퍼 함수
+  const getStudentStatus = (student) => {
+    if (!student) return 'approved';
+    const av = String(student.avatar || student.grade || '');
+    if (av.startsWith('[PENDING]')) return 'pending';
+    if (av.startsWith('[REJECTED]')) return 'rejected';
+    return 'approved';
+  };
+
+  const getCleanGrade = (student) => {
+    if (!student) return '초등 3학년';
+    const av = String(student.grade || student.avatar || '초등 3학년');
+    return av.replace('[PENDING]', '').replace('[REJECTED]', '').trim() || '초등 3학년';
+  };
 
   // 💌 학부모 칭찬 알림장 메시지 폼
   const [feedbackStudentId, setFeedbackStudentId] = useState('');
@@ -69,10 +88,12 @@ export default function AdminStudentManager() {
       if (!error && data && data.length > 0) {
         const formatted = data.map(s => ({
           id: s.id,
+          db_id: s.id,
           student_id: s.student_id || s.id,
           name: removeEmoji(s.name),
-          grade: s.grade || '초등 3학년',
-          studyGradeLevel: s.study_grade_level || s.studyGradeLevel || (s.grade && s.grade.includes('중등') ? '중등단어' : '초등단어'),
+          grade: s.avatar || s.grade || '초등 3학년',
+          avatar: s.avatar || s.grade || '초등 3학년',
+          studyGradeLevel: s.study_grade_level || s.studyGradeLevel || (s.avatar && s.avatar.includes('중등') ? '중등단어' : (s.avatar && s.avatar.includes('고등') ? '고등단어' : '초등단어')),
           dailyWordCount: String(s.daily_word_count || s.dailyWordCount || '10'),
           studentPin: s.pin || s.studentPin || '1234',
           parentName: removeEmoji(s.parent_name || s.name),
@@ -97,6 +118,7 @@ export default function AdminStudentManager() {
         if (Array.isArray(parsed) && parsed.length > 0) {
           const formatted = parsed.map(u => ({
             ...u,
+            grade: u.grade || u.avatar || '초등 3학년',
             studyGradeLevel: u.studyGradeLevel || u.study_grade_level || '초등단어'
           }));
           setStudents(formatted);
@@ -145,6 +167,7 @@ export default function AdminStudentManager() {
     setEditingStudent(null);
     setName('');
     setGrade('초등 3학년');
+    setApprovalStatus('approved');
     setStudyGradeLevel('초등단어');
     setDailyWordCount('10');
     setStudentPin('1234');
@@ -158,7 +181,8 @@ export default function AdminStudentManager() {
   const handleOpenEditModal = (student) => {
     setEditingStudent(student);
     setName(student.name || '');
-    setGrade(student.grade || '초등 3학년');
+    setGrade(getCleanGrade(student));
+    setApprovalStatus(getStudentStatus(student));
     setStudyGradeLevel(student.studyGradeLevel || student.study_grade_level || '초등단어');
     setDailyWordCount(String(student.dailyWordCount || '10'));
     setStudentPin(student.studentPin || student.pin || '1234');
@@ -166,6 +190,96 @@ export default function AdminStudentManager() {
     setParentPhone(student.parentPhone || '010-4006-9050');
     setParentPin(student.parentPin || '0815');
     setIsStudentModalOpen(true);
+  };
+
+  // ✅ 학생 가입 즉시 승인 처리
+  const handleApproveStudent = async (student) => {
+    const cleanGradeStr = getCleanGrade(student);
+    const updated = students.map(s => {
+      if (s.id === student.id || s.student_id === student.student_id) {
+        return { ...s, grade: cleanGradeStr, avatar: cleanGradeStr };
+      }
+      return s;
+    });
+    setStudents(updated);
+    localStorage.setItem('english_edu_users', JSON.stringify(updated));
+
+    try {
+      let targetId = student.db_id || student.id;
+      if (targetId && String(targetId).includes('-')) {
+        await supabase.from('users').update({ avatar: cleanGradeStr }).eq('id', targetId);
+      } else if (student.student_id) {
+        await supabase.from('users').update({ avatar: cleanGradeStr }).eq('student_id', student.student_id);
+      } else {
+        await supabase.from('users').update({ avatar: cleanGradeStr }).eq('name', student.name);
+      }
+      if (typeof window !== 'undefined') {
+        window.dispatchEvent(new Event('study_data_updated'));
+      }
+    } catch (e) {}
+
+    alert(`🎉 [${student.name}] 학생의 가입이 정상 승인되었습니다!\n이제 학생이 이름과 PIN 번호로 로그인하여 학습할 수 있습니다.`);
+  };
+
+  // ❌ 학생 가입 반려(미승인) 처리
+  const handleRejectStudent = async (student) => {
+    if (!confirm(`[${student.name}] 학생의 가입 신청을 반려(미승인) 처리할까요?`)) return;
+    const cleanGradeStr = getCleanGrade(student);
+    const rejectedAvatar = `[REJECTED] ${cleanGradeStr}`;
+    const updated = students.map(s => {
+      if (s.id === student.id || s.student_id === student.student_id) {
+        return { ...s, grade: rejectedAvatar, avatar: rejectedAvatar };
+      }
+      return s;
+    });
+    setStudents(updated);
+    localStorage.setItem('english_edu_users', JSON.stringify(updated));
+
+    try {
+      let targetId = student.db_id || student.id;
+      if (targetId && String(targetId).includes('-')) {
+        await supabase.from('users').update({ avatar: rejectedAvatar }).eq('id', targetId);
+      } else if (student.student_id) {
+        await supabase.from('users').update({ avatar: rejectedAvatar }).eq('student_id', student.student_id);
+      } else {
+        await supabase.from('users').update({ avatar: rejectedAvatar }).eq('name', student.name);
+      }
+      if (typeof window !== 'undefined') {
+        window.dispatchEvent(new Event('study_data_updated'));
+      }
+    } catch (e) {}
+
+    alert(`🚫 [${student.name}] 학생의 가입 신청이 반려 처리되었습니다.`);
+  };
+
+  // ⏳ 학생 가입 대기 상태로 전환
+  const handleSetPendingStudent = async (student) => {
+    const cleanGradeStr = getCleanGrade(student);
+    const pendingAvatar = `[PENDING] ${cleanGradeStr}`;
+    const updated = students.map(s => {
+      if (s.id === student.id || s.student_id === student.student_id) {
+        return { ...s, grade: pendingAvatar, avatar: pendingAvatar };
+      }
+      return s;
+    });
+    setStudents(updated);
+    localStorage.setItem('english_edu_users', JSON.stringify(updated));
+
+    try {
+      let targetId = student.db_id || student.id;
+      if (targetId && String(targetId).includes('-')) {
+        await supabase.from('users').update({ avatar: pendingAvatar }).eq('id', targetId);
+      } else if (student.student_id) {
+        await supabase.from('users').update({ avatar: pendingAvatar }).eq('student_id', student.student_id);
+      } else {
+        await supabase.from('users').update({ avatar: pendingAvatar }).eq('name', student.name);
+      }
+      if (typeof window !== 'undefined') {
+        window.dispatchEvent(new Event('study_data_updated'));
+      }
+    } catch (e) {}
+
+    alert(`⏳ [${student.name}] 학생이 승인 대기 상태로 전환되었습니다.`);
   };
 
   // 💾 학생 정보 및 학습 레벨 클라우드 DB 저장 제출
@@ -180,11 +294,17 @@ export default function AdminStudentManager() {
     const studentIdToUse = editingStudent ? editingStudent.id : `user_${Date.now()}`;
     const wordCountInt = parseInt(dailyWordCount) || 10;
 
+    // 승인 상태에 따른 avatar 문자열 조합
+    let finalAvatar = grade;
+    if (approvalStatus === 'pending') finalAvatar = `[PENDING] ${grade}`;
+    else if (approvalStatus === 'rejected') finalAvatar = `[REJECTED] ${grade}`;
+
     const newStudentObj = {
       id: studentIdToUse,
       student_id: editingStudent?.student_id || studentIdToUse,
       name: cleanName,
-      grade,
+      grade: finalAvatar,
+      avatar: finalAvatar,
       studyGradeLevel,
       dailyWordCount: String(wordCountInt),
       studentPin,
@@ -204,18 +324,24 @@ export default function AdminStudentManager() {
     setStudents(updatedList);
     localStorage.setItem('english_edu_users', JSON.stringify(updatedList));
 
-    // Supabase DB `users` 테이블에 학습 레벨(study_grade_level) 및 목표 수량 정밀 저장 (신규 insert / 기존 update 100% 분기 처리)
+    // Supabase DB `users` 테이블에 학습 레벨(study_grade_level), 학년(avatar) 및 목표 수량 정밀 저장
     try {
       const payload = {
         name: cleanName,
         pin: studentPin,
         daily_word_count: wordCountInt,
-        study_grade_level: studyGradeLevel
+        study_grade_level: studyGradeLevel,
+        avatar: finalAvatar
       };
 
       let existingRow = null;
       if (editingStudent?.id && String(editingStudent.id).includes('-')) {
         const { data } = await supabase.from('users').select('*').eq('id', editingStudent.id).limit(1);
+        if (data && data[0]) existingRow = data[0];
+      }
+      if (!existingRow && (editingStudent?.student_id || studentIdToUse)) {
+        const sid = editingStudent?.student_id || studentIdToUse;
+        const { data } = await supabase.from('users').select('*').eq('student_id', sid).limit(1);
         if (data && data[0]) existingRow = data[0];
       }
       if (!existingRow) {
@@ -225,9 +351,9 @@ export default function AdminStudentManager() {
 
       if (existingRow) {
         await supabase.from('users').update(payload).eq('id', existingRow.id);
-        console.log('☁️ DB 기존 학생 정보 수정 완수:', cleanName);
+        console.log('☁️ DB 기존 학생 정보 수정 완수:', cleanName, finalAvatar, studyGradeLevel);
       } else {
-        payload.student_id = editingStudent?.student_id || `user_${Date.now()}`;
+        payload.student_id = editingStudent?.student_id || studentIdToUse;
         await supabase.from('users').insert(payload);
         console.log('☁️ DB 신규 학생 등록 완수:', cleanName);
       }
@@ -242,9 +368,11 @@ export default function AdminStudentManager() {
         const sessionActive = JSON.parse(sessionStr);
         if (sessionActive) {
           const activeNameClean = removeEmoji(sessionActive.name || '');
-          if (activeNameClean === cleanName || sessionActive.id === studentIdToUse) {
+          if (activeNameClean === cleanName || sessionActive.id === studentIdToUse || sessionActive.student_id === studentIdToUse) {
             const updatedActive = {
               ...sessionActive,
+              grade: finalAvatar,
+              avatar: finalAvatar,
               studyGradeLevel: studyGradeLevel,
               study_grade_level: studyGradeLevel,
               dailyWordCount: String(wordCountInt),
@@ -255,13 +383,13 @@ export default function AdminStudentManager() {
             localStorage.setItem('english_edu_current_user', JSON.stringify(updatedActive));
             window.dispatchEvent(new Event('storage'));
             window.dispatchEvent(new Event('user_profile_updated'));
-            console.log('⚡ 활성 학생 세션 실시간 레벨 갱신 완수:', updatedActive);
+            console.log('⚡ 활성 학생 세션 실시간 레벨/학년 갱신 완수:', updatedActive);
           }
         }
       }
     } catch (e) {}
 
-    alert(`🎉 [${cleanName}] 학생의 학습 레벨 [${studyGradeLevel}] 및 설정 정보가 성공적으로 저장되었습니다!`);
+    alert(`🎉 [${cleanName}] 학생의 정보 및 승인 상태가 성공적으로 저장되었습니다!`);
     setIsStudentModalOpen(false);
   };
 
@@ -285,21 +413,42 @@ export default function AdminStudentManager() {
     setLoading(true);
     try {
       for (const student of students) {
-        await supabase.from('users').upsert({
-          id: student.id,
-          name: removeEmoji(student.name),
-          grade: student.grade,
-          study_grade_level: student.studyGradeLevel || '초등단어',
-          daily_word_count: parseInt(student.dailyWordCount) || 10,
-          pin: student.studentPin
-        });
+        const cleanName = removeEmoji(student.name);
+        const payload = {
+          name: cleanName,
+          avatar: student.grade || '초등 3학년',
+          study_grade_level: student.studyGradeLevel || student.study_grade_level || '초등단어',
+          daily_word_count: parseInt(student.dailyWordCount || student.daily_word_count || 10, 10),
+          pin: student.studentPin || student.pin || '1234'
+        };
+
+        let existingRow = null;
+        if (student.id && String(student.id).includes('-')) {
+          const { data } = await supabase.from('users').select('*').eq('id', student.id).limit(1);
+          if (data && data[0]) existingRow = data[0];
+        }
+        if (!existingRow && student.student_id) {
+          const { data } = await supabase.from('users').select('*').eq('student_id', student.student_id).limit(1);
+          if (data && data[0]) existingRow = data[0];
+        }
+        if (!existingRow && cleanName) {
+          const { data } = await supabase.from('users').select('*').ilike('name', `%${cleanName}%`).limit(1);
+          if (data && data[0]) existingRow = data[0];
+        }
+
+        if (existingRow) {
+          await supabase.from('users').update(payload).eq('id', existingRow.id);
+        } else {
+          payload.student_id = student.student_id || student.id || `user_${Date.now()}`;
+          await supabase.from('users').insert(payload);
+        }
       }
-      alert('☁️ Supabase 클라우드 DB에 모든 학생의 학습 레벨 데이터가 성공적으로 강제 동기화되었습니다!');
+      alert('☁️ Supabase 클라우드 DB에 모든 학생의 학년 및 학습 레벨 데이터가 성공적으로 강제 동기화되었습니다!');
       await loadStudents();
     } catch (e) {
       alert('동기화 중 오류가 발생했습니다.');
-      setLoading(false);
     }
+    setLoading(false);
   };
 
   // 💌 학부모 칭찬 알림장 전송
@@ -461,9 +610,16 @@ export default function AdminStudentManager() {
         <>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', flexWrap: 'wrap', gap: '10px' }}>
             <div>
-              <h3 style={{ margin: 0, color: '#2C3E50' }}>👥 학생 및 학부모 종합 관리자</h3>
+              <h3 style={{ margin: 0, color: '#2C3E50', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                👥 학생 계정 및 가입 승인 관리자
+                {students.filter(s => getStudentStatus(s) === 'pending').length > 0 && (
+                  <span style={{ background: '#E74C3C', color: 'white', fontSize: '12px', padding: '2px 8px', borderRadius: '12px', fontWeight: 'bold', animation: 'pulse 1.5s infinite' }}>
+                    ⏳ 승인 대기 {students.filter(s => getStudentStatus(s) === 'pending').length}건
+                  </span>
+                )}
+              </h3>
               <p style={{ margin: '4px 0 0 0', fontSize: '13px', color: '#7F8C8D' }}>
-                학생별 <strong>학습 단어 레벨(초등/중등/고등/전체)</strong> 및 목표 학습량을 관리자가 자유롭게 지정 및 변경할 수 있습니다.
+                신규 가입 신청 학생을 <strong>[승인/반려]</strong> 처리하고, 학습 레벨 및 목표 학습량을 맞춤 지정할 수 있습니다.
               </p>
             </div>
 
@@ -477,82 +633,221 @@ export default function AdminStudentManager() {
             </div>
           </div>
 
+          {/* 🎯 가입 상태별 필터 탭 바 */}
+          <div style={{ display: 'flex', gap: '8px', marginBottom: '16px', flexWrap: 'wrap', background: '#F8F9FA', padding: '6px', borderRadius: '14px', border: '1px solid #E9ECEF' }}>
+            <button
+              onClick={() => setStatusFilter('all')}
+              style={{
+                padding: '8px 16px',
+                borderRadius: '10px',
+                border: 'none',
+                background: statusFilter === 'all' ? '#2C3E50' : 'transparent',
+                color: statusFilter === 'all' ? 'white' : '#64748B',
+                fontWeight: 'bold',
+                fontSize: '13px',
+                cursor: 'pointer'
+              }}
+            >
+              전체 학생 ({students.length}명)
+            </button>
+
+            <button
+              onClick={() => setStatusFilter('pending')}
+              style={{
+                padding: '8px 16px',
+                borderRadius: '10px',
+                border: 'none',
+                background: statusFilter === 'pending' ? '#E67E22' : 'transparent',
+                color: statusFilter === 'pending' ? 'white' : (students.filter(s => getStudentStatus(s) === 'pending').length > 0 ? '#D35400' : '#64748B'),
+                fontWeight: 'bold',
+                fontSize: '13px',
+                cursor: 'pointer'
+              }}
+            >
+              ⏳ 가입 승인 대기 ({students.filter(s => getStudentStatus(s) === 'pending').length}명)
+            </button>
+
+            <button
+              onClick={() => setStatusFilter('approved')}
+              style={{
+                padding: '8px 16px',
+                borderRadius: '10px',
+                border: 'none',
+                background: statusFilter === 'approved' ? '#27AE60' : 'transparent',
+                color: statusFilter === 'approved' ? 'white' : '#64748B',
+                fontWeight: 'bold',
+                fontSize: '13px',
+                cursor: 'pointer'
+              }}
+            >
+              ✅ 승인 완료 ({students.filter(s => getStudentStatus(s) === 'approved').length}명)
+            </button>
+
+            <button
+              onClick={() => setStatusFilter('rejected')}
+              style={{
+                padding: '8px 16px',
+                borderRadius: '10px',
+                border: 'none',
+                background: statusFilter === 'rejected' ? '#C0392B' : 'transparent',
+                color: statusFilter === 'rejected' ? 'white' : '#64748B',
+                fontWeight: 'bold',
+                fontSize: '13px',
+                cursor: 'pointer'
+              }}
+            >
+              ❌ 반려/미승인 ({students.filter(s => getStudentStatus(s) === 'rejected').length}명)
+            </button>
+          </div>
+
           <div style={{ overflowX: 'auto' }}>
             <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '14px' }}>
               <thead>
                 <tr style={{ background: '#F8F9FA', borderBottom: '2px solid #E9ECEF' }}>
-                  <th style={{ padding: '12px' }}>학생 이름</th>
+                  <th style={{ padding: '12px' }}>학생 이름 & 학년</th>
+                  <th style={{ padding: '12px' }}>🚦 가입 승인 상태</th>
                   <th style={{ padding: '12px' }}>🎯 학습 단어 레벨</th>
                   <th style={{ padding: '12px' }}>목표 학습량</th>
                   <th style={{ padding: '12px' }}>학생 PIN</th>
                   <th style={{ padding: '12px' }}>학부모 정보</th>
                   <th style={{ padding: '12px' }}>🏆 달란트</th>
-                  <th style={{ padding: '12px', textAlign: 'center' }}>⚙️ 학생 관리 & 학습레벨 설정</th>
+                  <th style={{ padding: '12px', textAlign: 'center' }}>⚙️ 가입 승인 & 관리</th>
                 </tr>
               </thead>
               <tbody>
-                {students.map(s => {
-                  const level = s.studyGradeLevel || s.study_grade_level || '초등단어';
-                  let levelBadge = { label: '🎒 초등단어 (800개)', bg: '#FEF5E7', color: '#D35400', border: '#F39C12' };
-                  if (level === '중등단어') {
-                    levelBadge = { label: '🏫 중등단어 (1,200개)', bg: '#EBF5FB', color: '#2980B9', border: '#3498DB' };
-                  } else if (level === '고등단어') {
-                    levelBadge = { label: '🎓 고등단어 (3,000개)', bg: '#F5EEF8', color: '#8E44AD', border: '#9B59B6' };
-                  } else if (level === '전체') {
-                    levelBadge = { label: '🎒🏫🎓 전체통합 (5,000개)', bg: '#E8F8F5', color: '#16A085', border: '#1ABC9C' };
-                  }
+                {students
+                  .filter(s => {
+                    const st = getStudentStatus(s);
+                    if (statusFilter === 'pending') return st === 'pending';
+                    if (statusFilter === 'approved') return st === 'approved';
+                    if (statusFilter === 'rejected') return st === 'rejected';
+                    return true;
+                  })
+                  .map(s => {
+                    const st = getStudentStatus(s);
+                    const cleanGradeStr = getCleanGrade(s);
+                    const level = s.studyGradeLevel || s.study_grade_level || '초등단어';
+                    
+                    let levelBadge = { label: '🎒 초등단어 (800개)', bg: '#FEF5E7', color: '#D35400', border: '#F39C12' };
+                    if (level === '중등단어') {
+                      levelBadge = { label: '🏫 중등단어 (1,200개)', bg: '#EBF5FB', color: '#2980B9', border: '#3498DB' };
+                    } else if (level === '고등단어') {
+                      levelBadge = { label: '🎓 고등단어 (3,000개)', bg: '#F5EEF8', color: '#8E44AD', border: '#9B59B6' };
+                    } else if (level === '전체') {
+                      levelBadge = { label: '🎒🏫🎓 전체통합 (5,000개)', bg: '#E8F8F5', color: '#16A085', border: '#1ABC9C' };
+                    }
 
-                  return (
-                    <tr key={s.id} style={{ borderBottom: '1px solid #E9ECEF' }}>
-                      <td style={{ padding: '12px', fontWeight: 'bold' }}>
-                        {s.name} <span style={{ fontSize: '11px', color: '#7F8C8D', fontWeight: 'normal' }}>({s.grade})</span>
-                      </td>
-                      <td style={{ padding: '12px' }}>
-                        <span style={{
-                          background: levelBadge.bg,
-                          color: levelBadge.color,
-                          border: `1px solid ${levelBadge.border}`,
-                          padding: '4px 10px',
-                          borderRadius: '8px',
-                          fontWeight: 'bold',
-                          fontSize: '12px',
-                          whiteSpace: 'nowrap',
-                          display: 'inline-block'
-                        }}>
-                          {levelBadge.label}
-                        </span>
-                      </td>
-                      <td style={{ padding: '12px', color: '#27AE60', fontWeight: 'bold' }}>하루 {s.dailyWordCount}개</td>
-                      <td style={{ padding: '12px', color: '#8E44AD', fontWeight: 'bold' }}>{s.studentPin}</td>
-                      <td style={{ padding: '12px', fontSize: '13px' }}>
-                        {s.parentName} ({s.parentPhone})
-                      </td>
-                      <td style={{ padding: '12px', color: '#F39C12', fontWeight: 'bold' }}>{s.rewardPoints || 100} P</td>
-                      <td style={{ padding: '12px', textAlign: 'center' }}>
-                        <div style={{ display: 'flex', gap: '6px', justifyContent: 'center' }}>
-                          <button
-                            onClick={() => handleOpenEditModal(s)}
-                            style={{ background: '#3498DB', color: 'white', border: 'none', padding: '6px 12px', borderRadius: '8px', fontWeight: 'bold', cursor: 'pointer', fontSize: '12px' }}
-                          >
-                            ✏️ 학습레벨/수정
-                          </button>
-                          <button
-                            onClick={() => handleAddRewardPoints(s.id, 10)}
-                            style={{ background: '#F1C40F', color: '#7E5109', border: 'none', padding: '6px 10px', borderRadius: '8px', fontWeight: 'bold', cursor: 'pointer', fontSize: '12px' }}
-                          >
-                            +10 P
-                          </button>
-                          <button
-                            onClick={() => handleDeleteStudent(s.id, s.name)}
-                            style={{ background: '#E74C3C', color: 'white', border: 'none', padding: '6px 10px', borderRadius: '8px', fontWeight: 'bold', cursor: 'pointer', fontSize: '12px' }}
-                          >
-                            🗑️ 삭제
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  );
-                })}
+                    return (
+                      <tr key={s.id} style={{ borderBottom: '1px solid #E9ECEF', background: st === 'pending' ? '#FEF9E7' : (st === 'rejected' ? '#FDEDEC' : 'transparent') }}>
+                        <td style={{ padding: '12px', fontWeight: 'bold' }}>
+                          {s.name} <span style={{ fontSize: '11px', color: '#7F8C8D', fontWeight: 'normal' }}>({cleanGradeStr})</span>
+                        </td>
+
+                        {/* 🚦 상태 뱃지 컬럼 */}
+                        <td style={{ padding: '12px' }}>
+                          {st === 'pending' && (
+                            <span style={{ background: '#FDEBD0', color: '#D35400', border: '1px solid #F39C12', padding: '4px 8px', borderRadius: '8px', fontSize: '12px', fontWeight: 'bold', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                              ⏳ 승인 대기
+                            </span>
+                          )}
+                          {st === 'approved' && (
+                            <span style={{ background: '#E8F8F5', color: '#27AE60', border: '1px solid #2ECC71', padding: '4px 8px', borderRadius: '8px', fontSize: '12px', fontWeight: 'bold', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                              ✅ 정상 승인
+                            </span>
+                          )}
+                          {st === 'rejected' && (
+                            <span style={{ background: '#FADBD8', color: '#C0392B', border: '1px solid #E74C3C', padding: '4px 8px', borderRadius: '8px', fontSize: '12px', fontWeight: 'bold', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                              🚫 반려/미승인
+                            </span>
+                          )}
+                        </td>
+
+                        <td style={{ padding: '12px' }}>
+                          <span style={{
+                            background: levelBadge.bg,
+                            color: levelBadge.color,
+                            border: `1px solid ${levelBadge.border}`,
+                            padding: '4px 10px',
+                            borderRadius: '8px',
+                            fontWeight: 'bold',
+                            fontSize: '12px',
+                            whiteSpace: 'nowrap',
+                            display: 'inline-block'
+                          }}>
+                            {levelBadge.label}
+                          </span>
+                        </td>
+                        <td style={{ padding: '12px', color: '#27AE60', fontWeight: 'bold' }}>하루 {s.dailyWordCount}개</td>
+                        <td style={{ padding: '12px', color: '#8E44AD', fontWeight: 'bold' }}>{s.studentPin}</td>
+                        <td style={{ padding: '12px', fontSize: '13px' }}>
+                          {s.parentName} ({s.parentPhone})
+                        </td>
+                        <td style={{ padding: '12px', color: '#F39C12', fontWeight: 'bold' }}>{s.rewardPoints || 100} P</td>
+
+                        {/* ⚙️ 액션 버튼 */}
+                        <td style={{ padding: '12px', textAlign: 'center' }}>
+                          <div style={{ display: 'flex', gap: '4px', justifyContent: 'center', flexWrap: 'wrap' }}>
+                            {st === 'pending' && (
+                              <>
+                                <button
+                                  onClick={() => handleApproveStudent(s)}
+                                  style={{ background: '#27AE60', color: 'white', border: 'none', padding: '6px 12px', borderRadius: '8px', fontWeight: 'bold', cursor: 'pointer', fontSize: '12px', boxShadow: '0 2px 6px rgba(39,174,96,0.3)' }}
+                                >
+                                  ✅ 가입 승인
+                                </button>
+                                <button
+                                  onClick={() => handleRejectStudent(s)}
+                                  style={{ background: '#E74C3C', color: 'white', border: 'none', padding: '6px 10px', borderRadius: '8px', fontWeight: 'bold', cursor: 'pointer', fontSize: '12px' }}
+                                >
+                                  ❌ 반려
+                                </button>
+                              </>
+                            )}
+
+                            {st === 'approved' && (
+                              <>
+                                <button
+                                  onClick={() => handleOpenEditModal(s)}
+                                  style={{ background: '#3498DB', color: 'white', border: 'none', padding: '6px 10px', borderRadius: '8px', fontWeight: 'bold', cursor: 'pointer', fontSize: '12px' }}
+                                >
+                                  ✏️ 수정
+                                </button>
+                                <button
+                                  onClick={() => handleSetPendingStudent(s)}
+                                  style={{ background: '#F39C12', color: 'white', border: 'none', padding: '6px 8px', borderRadius: '8px', fontWeight: 'bold', cursor: 'pointer', fontSize: '11px' }}
+                                  title="승인 대기로 전환"
+                                >
+                                  ⏳ 대기전환
+                                </button>
+                                <button
+                                  onClick={() => handleAddRewardPoints(s.id, 10)}
+                                  style={{ background: '#F1C40F', color: '#7E5109', border: 'none', padding: '6px 8px', borderRadius: '8px', fontWeight: 'bold', cursor: 'pointer', fontSize: '12px' }}
+                                >
+                                  +10P
+                                </button>
+                              </>
+                            )}
+
+                            {st === 'rejected' && (
+                              <button
+                                onClick={() => handleApproveStudent(s)}
+                                style={{ background: '#27AE60', color: 'white', border: 'none', padding: '6px 12px', borderRadius: '8px', fontWeight: 'bold', cursor: 'pointer', fontSize: '12px' }}
+                              >
+                                ✅ 재승인
+                              </button>
+                            )}
+
+                            <button
+                              onClick={() => handleDeleteStudent(s.id, s.name)}
+                              style={{ background: '#95A5A6', color: 'white', border: 'none', padding: '6px 8px', borderRadius: '8px', fontWeight: 'bold', cursor: 'pointer', fontSize: '12px' }}
+                            >
+                              🗑️ 삭제
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  })}
               </tbody>
             </table>
           </div>
@@ -571,7 +866,23 @@ export default function AdminStudentManager() {
                 </div>
 
                 <form onSubmit={handleSaveStudentSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
-                  {/* 1. 핵심 요구사항: 학습할 단어 레벨 선택 */}
+                  {/* 1. 가입 승인 상태 설정 */}
+                  <div style={{ background: '#FEF9E7', padding: '12px', borderRadius: '12px', border: '2px solid #F39C12' }}>
+                    <label style={{ display: 'block', fontSize: '13px', fontWeight: 'bold', color: '#D35400', marginBottom: '6px' }}>
+                      🚦 가입 승인 상태 (Login Approval Status)
+                    </label>
+                    <select
+                      value={approvalStatus}
+                      onChange={(e) => setApprovalStatus(e.target.value)}
+                      style={{ width: '100%', padding: '10px 12px', borderRadius: '10px', border: '1px solid #F39C12', fontSize: '14px', fontWeight: 'bold', color: '#2C3E50' }}
+                    >
+                      <option value="approved">✅ 정상 승인 완료 (즉시 로그인 가능)</option>
+                      <option value="pending">⏳ 승인 대기 중 (로그인 대기/차단)</option>
+                      <option value="rejected">🚫 가입 반려 (접속 불가)</option>
+                    </select>
+                  </div>
+
+                  {/* 2. 핵심 요구사항: 학습할 단어 레벨 선택 */}
                   <div style={{ background: '#EBF5FB', padding: '12px', borderRadius: '12px', border: '2px solid #3498DB' }}>
                     <label style={{ display: 'block', fontSize: '13px', fontWeight: 'bold', color: '#2980B9', marginBottom: '6px' }}>
                       🎯 학습 단어 레벨 선택 (Daily Word Pool)
@@ -591,7 +902,7 @@ export default function AdminStudentManager() {
                     </span>
                   </div>
 
-                  {/* 2. 일일 목표 단어 수 */}
+                  {/* 3. 일일 목표 단어 수 */}
                   <div>
                     <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', color: '#34495E', marginBottom: '4px' }}>
                       📊 하루 목표 학습 단어 수
@@ -608,7 +919,7 @@ export default function AdminStudentManager() {
                     </select>
                   </div>
 
-                  {/* 3. 학생 이름 */}
+                  {/* 4. 학생 이름 */}
                   <div>
                     <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', color: '#34495E', marginBottom: '4px' }}>👤 학생 이름</label>
                     <input
@@ -621,7 +932,7 @@ export default function AdminStudentManager() {
                     />
                   </div>
 
-                  {/* 4. 학교 학년 */}
+                  {/* 5. 학교 학년 */}
                   <div>
                     <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', color: '#34495E', marginBottom: '4px' }}>🏫 학년 정보</label>
                     <select
@@ -645,7 +956,7 @@ export default function AdminStudentManager() {
                     </select>
                   </div>
 
-                  {/* 5. 학생 PIN 비밀번호 */}
+                  {/* 6. 학생 PIN 비밀번호 */}
                   <div>
                     <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', color: '#34495E', marginBottom: '4px' }}>🔑 학생 PIN 비밀번호 (4자리)</label>
                     <input
@@ -658,7 +969,7 @@ export default function AdminStudentManager() {
                     />
                   </div>
 
-                  {/* 6. 학부모 정보 */}
+                  {/* 7. 학부모 정보 */}
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
                     <div>
                       <label style={{ display: 'block', fontSize: '11px', fontWeight: 'bold', color: '#7F8C8D', marginBottom: '4px' }}>👪 학부모 성함</label>

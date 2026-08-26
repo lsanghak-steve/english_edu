@@ -1558,13 +1558,14 @@ export default function Home() {
     if (!wordObj) return '/word_img/apple.png';
     const rawFile = (wordObj.image_url || wordObj.imageUrl || '').split('/').pop().trim();
     if (rawFile && rawFile.endsWith('.png')) {
-      return `/word_img/${rawFile.toLowerCase()}`;
+      const cleanRaw = rawFile.toLowerCase().replace(/\s+/g, '_');
+      return `/word_img/${cleanRaw}`;
     }
     const wordClean = (wordObj.word || '').replace(/\.png/gi, '').trim();
     if (!wordClean) return '/word_img/apple.png';
-    const wordLower = wordClean.toLowerCase();
+    const wordLower = wordClean.toLowerCase().replace(/\s+/g, '_');
     
-    // 로컬 Next.js 고화질 소문자 이미지 1순위 즉시 로드
+    // 로컬 Next.js 고화질 소문자 언더바 이미지 1순위 즉시 로드
     return `/word_img/${wordLower}.png`;
   };
 
@@ -2296,68 +2297,28 @@ export default function Home() {
 
             <button
               onClick={() => handleSpeedChange(0.7)}
-              style={{
-                padding: '5px 12px',
-                borderRadius: '12px',
-                fontSize: '12px',
-                fontWeight: 'bold',
-                border: ttsSpeed === 0.7 ? '2px solid #E67E22' : '1px solid #CBD5E0',
-                background: ttsSpeed === 0.7 ? '#FEF9E7' : '#FFFFFF',
-                color: ttsSpeed === 0.7 ? '#D35400' : '#4A5568',
-                cursor: 'pointer',
-                boxShadow: ttsSpeed === 0.7 ? '0 2px 6px rgba(230,126,34,0.2)' : 'none'
-              }}
+              className={`btn-speed-item ${ttsSpeed === 0.7 ? 'active' : ''}`}
             >
               {t('speed_slow', currentLang)}
             </button>
 
             <button
               onClick={() => handleSpeedChange(1.0)}
-              style={{
-                padding: '5px 12px',
-                borderRadius: '12px',
-                fontSize: '12px',
-                fontWeight: 'bold',
-                border: ttsSpeed === 1.0 ? '2px solid #2ECC71' : '1px solid #CBD5E0',
-                background: ttsSpeed === 1.0 ? '#E8F8F5' : '#FFFFFF',
-                color: ttsSpeed === 1.0 ? '#27AE60' : '#4A5568',
-                cursor: 'pointer',
-                boxShadow: ttsSpeed === 1.0 ? '0 2px 6px rgba(46,204,113,0.2)' : 'none'
-              }}
+              className={`btn-speed-item ${ttsSpeed === 1.0 ? 'active' : ''}`}
             >
               {t('speed_normal', currentLang)}
             </button>
 
             <button
               onClick={() => handleSpeedChange(1.4)}
-              style={{
-                padding: '5px 12px',
-                borderRadius: '12px',
-                fontSize: '12px',
-                fontWeight: 'bold',
-                border: ttsSpeed === 1.4 ? '2px solid #3498DB' : '1px solid #CBD5E0',
-                background: ttsSpeed === 1.4 ? '#EBF5FB' : '#FFFFFF',
-                color: ttsSpeed === 1.4 ? '#2980B9' : '#4A5568',
-                cursor: 'pointer',
-                boxShadow: ttsSpeed === 1.4 ? '0 2px 6px rgba(52,152,219,0.2)' : 'none'
-              }}
+              className={`btn-speed-item ${ttsSpeed === 1.4 ? 'active' : ''}`}
             >
               {t('speed_fast', currentLang)}
             </button>
 
             <button
               onClick={() => handleSpeedChange(2.0)}
-              style={{
-                padding: '5px 12px',
-                borderRadius: '12px',
-                fontSize: '12px',
-                fontWeight: 'bold',
-                border: ttsSpeed === 2.0 ? '2px solid #9B59B6' : '1px solid #CBD5E0',
-                background: ttsSpeed === 2.0 ? '#F5EEF8' : '#FFFFFF',
-                color: ttsSpeed === 2.0 ? '#8E44AD' : '#4A5568',
-                cursor: 'pointer',
-                boxShadow: ttsSpeed === 2.0 ? '0 2px 6px rgba(155,89,182,0.2)' : 'none'
-              }}
+              className={`btn-speed-item ${ttsSpeed === 2.0 ? 'active' : ''}`}
             >
               {t('speed_super_fast', currentLang)}
             </button>

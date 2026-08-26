@@ -28,10 +28,10 @@ export default function LeaderboardSection({ currentUser, currentLang = 'ko' }) 
         // 1. Supabase users DB 조회
         const { data: usersData } = await supabase.from('users').select('*');
         const [attRes, learnedRes, wrongRes, audioRes] = await Promise.allSettled([
-          supabase.from('study_records').select('*'),
-          supabase.from('student_learned_words').select('*'),
-          supabase.from('wrong_words').select('*'),
-          supabase.from('audio_records').select('*')
+          supabase.from('study_records').select('*').limit(5000),
+          supabase.from('student_learned_words').select('*').limit(5000),
+          supabase.from('wrong_words').select('*').limit(5000),
+          supabase.from('audio_records').select('*').limit(5000)
         ]);
 
         const allUsers = (usersData && usersData.length > 0) ? usersData : [

@@ -21,8 +21,9 @@ export default function CalendarSection({ currentUser, onSelectDateToStudy, curr
 
   const studentName = currentUser ? removeEmoji(currentUser.name) : (currentLang === 'zh' ? '学生' : (currentLang === 'fr' ? 'Élève' : '학생'));
   const userId = currentUser ? currentUser.id : 'guest';
+  const studentCode = currentUser ? (currentUser.student_id || currentUser.id || '') : '';
 
-  // 💮 이상학(8/3, 8/5), 이승현(8/3, 8/4, 8/5), 이수민(8/4, 8/5) 클라우드 DB 완벽 통합 로드
+  // 💮 출석 도장 클라우드 DB & localStorage 실시간 연동 로드
   useEffect(() => {
     async function loadAttendanceStamps() {
       let defaultDates = [];
@@ -34,20 +35,19 @@ export default function CalendarSection({ currentUser, onSelectDateToStudy, curr
         defaultDates = ['2026-08-04', '2026-08-05'];
       }
 
+      let queryIds = [studentCode, userId, studentName];
+      if (studentName.includes('상학') || userId.includes('sh') || studentCode.includes('lsh')) {
+        queryIds.push('lsh_20260807_000001', 'sh_100', '이상학');
+      } else if (studentName.includes('승현') || studentCode.includes('000002')) {
+        queryIds.push('lsh_20260807_000002', 'sh_101', '이승현');
+      } else if (studentName.includes('수민') || studentCode.includes('000003')) {
+        queryIds.push('lsm_20260807_000003', 'sm_102', '이수민');
+      }
+      const cleanIds = [...new Set(queryIds.filter(Boolean))];
+
       // Supabase 클라우드 DB study_records 보관함에서 출석 도장 데이터 통합 로드
       try {
-        let query = supabase.from('study_records').select('study_date');
-        const validIds = [userId, studentCode].filter(id => id && /^[a-zA-Z0-9_-]+$/.test(id));
-        const uniqueIds = Array.from(new Set(validIds));
-        if (uniqueIds.length > 1) {
-          query = query.or(uniqueIds.map(id => `student_id.eq.${id}`).join(','));
-        } else if (uniqueIds.length === 1) {
-          query = query.eq('student_id', uniqueIds[0]);
-        } else {
-          query = query.eq('student_id', studentName || userId);
-        }
-
-        const { data, error } = await query;
+        const { data, error } = await supabase.from('study_records').select('study_date').in('student_id', cleanIds);
 
         if (!error && data && data.length > 0) {
           const dbDates = data.map(item => item.study_date).filter(Boolean);
@@ -56,6 +56,7 @@ export default function CalendarSection({ currentUser, onSelectDateToStudy, curr
           setStamps(merged);
 
           localStorage.setItem(`english_stamps_${userId}`, JSON.stringify(merged));
+          if (studentCode) localStorage.setItem(`english_stamps_${studentCode}`, JSON.stringify(merged));
           return;
         }
       } catch (e) {
@@ -73,7 +74,15 @@ export default function CalendarSection({ currentUser, onSelectDateToStudy, curr
     }
 
     loadAttendanceStamps();
-  }, [userId, studentName]);
+
+    const handleUpdate = () => { loadAttendanceStamps(); };
+    window.addEventListener('study_data_updated', handleUpdate);
+    window.addEventListener('storage', handleUpdate);
+    return () => {
+      window.removeEventListener('study_data_updated', handleUpdate);
+      window.removeEventListener('storage', handleUpdate);
+    };
+  }, [userId, studentName, studentCode]);
 
   // 달력 날짜 생성
   const firstDayOfMonth = new Date(currentYear, currentMonth, 1).getDay();
@@ -110,20 +119,49 @@ export default function CalendarSection({ currentUser, onSelectDateToStudy, curr
       return;
     }
 
-    // 이미 도장이 찍힌 날짜 단어 데이터 로드
+    // 🎯 이미 도장이 찍힌 날짜에 실제 공부한 단어 데이터 정밀 로드
     let savedWords = [];
     try {
-      savedWords = JSON.parse(localStorage.getItem(`stamped_words_${userId}_${fullDateStr}`) || '[]');
+      savedWords = JSON.parse(localStorage.getItem(`stamped_words_${userId}_${fullDateStr}`) || localStorage.getItem(`stamped_words_${studentCode}_${fullDateStr}`) || localStorage.getItem(`daily_random_words_${userId}_${fullDateStr}`) || localStorage.getItem(`daily_random_words_${studentCode}_${fullDateStr}`) || '[]');
     } catch (e) {
       savedWords = [];
     }
 
+    // Supabase DB에서 해당 날짜에 저장된 학습 단어 비동기 보정 로드
     if (!savedWords || savedWords.length === 0) {
-      savedWords = wordList500Fallback.slice(0, studentName === '이승현' || studentName === '이수민' || studentName === '이상학' ? 30 : 10);
+      const loadDbDateWords = async () => {
+        try {
+          const queryIds = [userId, studentCode, studentName].filter(Boolean);
+          const { data: dbLearned } = await supabase
+            .from('student_learned_words')
+            .select('word, meaning, learned_at')
+            .or(queryIds.map(id => `student_id.eq.${id}`).join(','))
+            .gte('learned_at', `${fullDateStr}T00:00:00`)
+            .lte('learned_at', `${fullDateStr}T23:59:59`);
+
+          if (dbLearned && dbLearned.length > 0) {
+            const map = new Map();
+            dbLearned.forEach(item => {
+              if (item.word && !map.has(item.word.toLowerCase())) {
+                map.set(item.word.toLowerCase(), { word: item.word, meaning: item.meaning || '' });
+              }
+            });
+            const actualList = Array.from(map.values());
+            if (actualList.length > 0) {
+              setSelectedStampWords(actualList);
+              try {
+                localStorage.setItem(`stamped_words_${userId}_${fullDateStr}`, JSON.stringify(actualList));
+              } catch (e) {}
+              return;
+            }
+          }
+        } catch (err) {}
+      };
+      loadDbDateWords();
     }
 
     setSelectedDateStr(fullDateStr);
-    setSelectedStampWords(savedWords);
+    setSelectedStampWords(savedWords && savedWords.length > 0 ? savedWords : []);
   };
 
   // TTS 발음 듣기

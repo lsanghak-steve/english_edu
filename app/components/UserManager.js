@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import supabase from '../../lib/supabaseClient.js';
 import { translateStudentGrade, translateGradeLevel } from '../../lib/i18n.js';
+import ChinaPaymentModal from './ChinaPaymentModal.js';
 
 // 학생 이름 이모지 자동 제거 헬퍼 함수
 const removeEmoji = (str) => {
@@ -15,6 +16,7 @@ const removeEmoji = (str) => {
 export default function UserManager({ currentUser, setCurrentUser, onLogout, currentLang = 'ko' }) {
   const [users, setUsers] = useState([]);
   const [showAddEditModal, setShowAddEditModal] = useState(false);
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
   const [editingUserId, setEditingUserId] = useState(null);
 
@@ -40,10 +42,13 @@ export default function UserManager({ currentUser, setCurrentUser, onLogout, cur
       if (!usersErr && usersData && usersData.length > 0) {
         const formatted = usersData.map(item => ({
           id: item.student_id || item.id,
+          db_id: item.id,
+          student_id: item.student_id || item.id,
           name: removeEmoji(item.name),
           grade: item.avatar || item.grade || '초등 3학년',
           studyGradeLevel: item.study_grade_level || (item.avatar && item.avatar.includes('중등') ? '중등단어' : (item.avatar && item.avatar.includes('고등') ? '고등단어' : '초등단어')),
           dailyWordCount: String(item.daily_word_count || '10'),
+          daily_word_count: item.daily_word_count || 10,
           studentPin: item.pin || item.student_pin || '1234',
           parentName: removeEmoji(item.parent_name || (item.name + '학부모')),
           parentPhone: item.parent_phone || '',
@@ -79,10 +84,10 @@ export default function UserManager({ currentUser, setCurrentUser, onLogout, cur
     setIsEditMode(true);
     setEditingUserId(currentUser.id);
     setNameInput(removeEmoji(currentUser.name));
-    setGradeInput(currentUser.grade || '초등 3학년');
+    setGradeInput(currentUser.grade || currentUser.avatar || '초등 3학년');
     setStudyGradeLevelInput(currentUser.studyGradeLevel || currentUser.study_grade_level || (currentUser.grade && currentUser.grade.includes('중등') ? '중등단어' : '초등단어'));
-    setDailyCountInput(currentUser.dailyWordCount || '10');
-    setStudentPinInput(currentUser.studentPin || '1234');
+    setDailyCountInput(String(currentUser.dailyWordCount || currentUser.daily_word_count || '10'));
+    setStudentPinInput(currentUser.studentPin || currentUser.pin || '1234');
     setParentNameInput(removeEmoji(currentUser.parentName));
     setParentPhoneInput(currentUser.parentPhone || '');
     setParentPinInput(currentUser.parentPin || '5678');
@@ -98,40 +103,56 @@ export default function UserManager({ currentUser, setCurrentUser, onLogout, cur
       return;
     }
 
-    const userPayload = {
-      id: editingUserId,
-      name: cleanStudentName,
-      avatar: gradeInput,
-      study_grade_level: studyGradeLevelInput,
-      daily_word_count: parseInt(dailyCountInput, 10),
-      pin: studentPinInput.trim() || '1234'
-    };
+    const wordCountInt = parseInt(dailyCountInput, 10) || 10;
+    const studentCode = currentUser?.student_id || editingUserId;
 
+    // 1. Supabase 클라우드 DB `users` 테이블에 정밀 반영 (UUID 및 student_id, name 다중 매칭)
     try {
-      await supabase.from('users').upsert([userPayload]);
-      await supabase.from('student_profiles').upsert([{
-        id: editingUserId,
+      const userPayload = {
         name: cleanStudentName,
-        grade: gradeInput,
+        avatar: gradeInput,
         study_grade_level: studyGradeLevelInput,
-        daily_word_count: dailyCountInput,
-        student_pin: studentPinInput.trim() || '1234',
-        parent_name: removeEmoji(parentNameInput),
-        parent_phone: parentPhoneInput.trim(),
-        parent_pin: parentPinInput.trim() || '5678'
-      }]);
+        daily_word_count: wordCountInt,
+        pin: studentPinInput.trim() || '1234'
+      };
+
+      let existingRow = null;
+      if (editingUserId && String(editingUserId).includes('-')) {
+        const { data } = await supabase.from('users').select('*').eq('id', editingUserId).limit(1);
+        if (data && data[0]) existingRow = data[0];
+      }
+      if (!existingRow && studentCode) {
+        const { data } = await supabase.from('users').select('*').eq('student_id', studentCode).limit(1);
+        if (data && data[0]) existingRow = data[0];
+      }
+      if (!existingRow && cleanStudentName) {
+        const { data } = await supabase.from('users').select('*').ilike('name', `%${cleanStudentName}%`).limit(1);
+        if (data && data[0]) existingRow = data[0];
+      }
+
+      if (existingRow) {
+        await supabase.from('users').update(userPayload).eq('id', existingRow.id);
+        console.log('☁️ DB 사용자 정보 업데이트 완수:', cleanStudentName, gradeInput, studyGradeLevelInput, wordCountInt);
+      } else {
+        userPayload.student_id = studentCode || `user_${Date.now()}`;
+        await supabase.from('users').insert(userPayload);
+        console.log('☁️ DB 사용자 신규 등록 완수:', cleanStudentName);
+      }
     } catch (e) {
-      console.log('Cloud update fallback to local');
+      console.log('Cloud update fallback to local', e);
     }
 
     const updatedUsers = users.map(u => {
-      if (u.id === editingUserId) {
+      if (u.id === editingUserId || u.student_id === studentCode) {
         return {
           ...u,
           name: cleanStudentName,
           grade: gradeInput,
+          avatar: gradeInput,
           studyGradeLevel: studyGradeLevelInput,
-          dailyWordCount: dailyCountInput,
+          study_grade_level: studyGradeLevelInput,
+          dailyWordCount: String(wordCountInt),
+          daily_word_count: wordCountInt,
           studentPin: studentPinInput.trim() || '1234',
           parentName: removeEmoji(parentNameInput),
           parentPhone: parentPhoneInput.trim(),
@@ -144,18 +165,33 @@ export default function UserManager({ currentUser, setCurrentUser, onLogout, cur
     setUsers(updatedUsers);
     localStorage.setItem('english_edu_users', JSON.stringify(updatedUsers));
 
-    const updatedCurrent = updatedUsers.find(u => u.id === editingUserId);
-    if (updatedCurrent) {
-      setCurrentUser(updatedCurrent);
-      localStorage.setItem('english_edu_current_user', JSON.stringify(updatedCurrent));
-      window.dispatchEvent(new Event('user_profile_updated'));
-    }
+    const updatedCurrent = {
+      ...currentUser,
+      name: cleanStudentName,
+      grade: gradeInput,
+      avatar: gradeInput,
+      studyGradeLevel: studyGradeLevelInput,
+      study_grade_level: studyGradeLevelInput,
+      dailyWordCount: String(wordCountInt),
+      daily_word_count: wordCountInt,
+      studentPin: studentPinInput.trim() || '1234',
+      parentName: removeEmoji(parentNameInput),
+      parentPhone: parentPhoneInput.trim(),
+      parentPin: parentPinInput.trim() || '5678'
+    };
+
+    setCurrentUser(updatedCurrent);
+    sessionStorage.setItem('english_edu_logged_user', JSON.stringify(updatedCurrent));
+    localStorage.setItem('english_edu_logged_user', JSON.stringify(updatedCurrent));
+    localStorage.setItem('english_edu_current_user', JSON.stringify(updatedCurrent));
+    window.dispatchEvent(new Event('user_profile_updated'));
+    window.dispatchEvent(new Event('storage'));
 
     alert(currentLang === 'zh'
-      ? `🎉 学生信息和学习级别(${studyGradeLevelInput})已成功保存到云端数据库！`
+      ? `🎉 学生信息、年级(${gradeInput})和学习级别(${studyGradeLevelInput})已成功保存到云端数据库！`
       : (currentLang === 'fr'
-      ? `🎉 Profil et niveau (${studyGradeLevelInput}) enregistrés sur la base cloud !`
-      : `🎉 학생 정보 및 학습 레벨(${studyGradeLevelInput})이 클라우드 DB에 성공적으로 저장되었습니다!`));
+      ? `🎉 Profil, classe (${gradeInput}) et niveau (${studyGradeLevelInput}) enregistrés sur la base cloud !`
+      : `🎉 [${cleanStudentName}] 학생의 학년(${gradeInput}), 학습 레벨(${studyGradeLevelInput}), 목표량(${wordCountInt}단어)이 클라우드 DB에 성공적으로 저장되었습니다!`));
     setShowAddEditModal(false);
   };
 
@@ -182,6 +218,23 @@ export default function UserManager({ currentUser, setCurrentUser, onLogout, cur
 
       {/* 버튼 액션 그룹 (수정 및 로그아웃) */}
       <div className="user-actions-group">
+        <span
+          style={{
+            background: '#DCFCE7',
+            color: '#15803D',
+            border: '1px solid #86EFAC',
+            padding: '8px 14px',
+            borderRadius: 'var(--radius-medium)',
+            fontWeight: '900',
+            fontSize: '12px',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '4px',
+            whiteSpace: 'nowrap'
+          }}
+        >
+          🎁 {currentLang === 'zh' ? '全功能 100% 免费版' : '전기능 100% 무료'}
+        </span>
         <button className="btn-user-edit" onClick={handleOpenEditModal}>
           {editBtnText}
         </button>
@@ -354,6 +407,17 @@ export default function UserManager({ currentUser, setCurrentUser, onLogout, cur
           </div>
         </div>
       )}
+
+      {/* 💳 微信/支付宝 VIP 支付弹窗 */}
+      <ChinaPaymentModal
+        isOpen={showPaymentModal}
+        onClose={() => setShowPaymentModal(false)}
+        currentLang={currentLang}
+        user={currentUser}
+        onPaymentSuccess={(data) => {
+          alert(`🎉 恭喜！您已成功开通 【${data.planName}】！`);
+        }}
+      />
     </div>
   );
 }

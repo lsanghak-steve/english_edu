@@ -1,11 +1,13 @@
 /* ===================================================
    🦉 Duolingo Style Design System (듀오링고 감성 디자인)
    초등·중등·고등 영단어 통합 학습 플랫폼 (Next.js)
+   글로벌 & 중국(CN) 만리방화벽(GFW) 대응 무지연 고속 폰트 시스템
    =================================================== */
 
-@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800;900&family=Pretendard:wght@600;700;800;900&display=swap');
-
 :root {
+  /* 글로벌 멀티랭귀지(EN/KO/ZH) 초고속 시스템 폰트 스택 */
+  --font-family-base: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "WenQuanYi Micro Hei", "Pretendard", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+
   /* Duolingo Brand Colors */
   --duo-green: #58CC02;
   --duo-green-dark: #46A302;
@@ -44,7 +46,7 @@
   box-sizing: border-box;
   margin: 0;
   padding: 0;
-  font-family: 'Nunito', 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-family: var(--font-family-base);
   -webkit-tap-highlight-color: transparent;
 }
 
@@ -60,7 +62,7 @@ body {
 
 .app-container {
   width: 100%;
-  max-width: 860px;
+  max-width: 1160px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -303,7 +305,8 @@ body {
    =================================================== */
 .flashcard-wrapper {
   width: 100%;
-  margin-top: 4px;
+  max-width: 820px;
+  margin: 4px auto;
   perspective: 1200px;
 }
 
@@ -611,11 +614,13 @@ body {
   display: flex;
   gap: 10px;
   margin-bottom: 16px;
+  flex-wrap: wrap;
 }
 
 .tab-btn {
   flex: 1;
-  padding: 14px;
+  min-height: 48px;
+  padding: 12px 18px;
   border: 2px solid var(--duo-border);
   border-bottom: 4px solid var(--duo-border-dark);
   background: #FFFFFF;
@@ -624,7 +629,22 @@ body {
   font-weight: 900;
   color: var(--duo-text-muted);
   cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
   transition: all 0.15s ease;
+  user-select: none;
+}
+
+.tab-btn:hover {
+  background: #F8F9FA;
+  color: var(--duo-text-dark);
+}
+
+.tab-btn:active {
+  transform: translateY(2px);
+  border-bottom-width: 2px;
 }
 
 .tab-btn.active {
@@ -632,6 +652,7 @@ body {
   color: white;
   border-color: var(--duo-purple-dark);
   border-bottom-color: var(--duo-purple-dark);
+  box-shadow: 0 2px 0 var(--duo-purple-dark);
 }
 
 .quiz-card {
@@ -643,15 +664,32 @@ body {
 }
 
 .quiz-level-btn {
+  min-height: 44px;
   border: 2px solid var(--duo-border);
   border-bottom: 4px solid var(--duo-border-dark);
   background: #FFFFFF;
   border-radius: var(--radius-small);
-  padding: 10px 14px;
+  padding: 10px 16px;
   font-weight: 900;
+  font-size: 14px;
   color: var(--duo-text-muted);
   cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
   transition: all 0.15s ease;
+  user-select: none;
+}
+
+.quiz-level-btn:hover {
+  background: #F8F9FA;
+  color: var(--duo-text-dark);
+}
+
+.quiz-level-btn:active {
+  transform: translateY(2px);
+  border-bottom-width: 2px;
 }
 
 .quiz-level-btn.active {
@@ -659,6 +697,7 @@ body {
   color: white;
   border-color: var(--duo-green-dark);
   border-bottom-color: var(--duo-green-dark);
+  box-shadow: 0 2px 0 var(--duo-green-dark);
 }
 
 .options-grid {
@@ -668,7 +707,8 @@ body {
 }
 
 .option-btn {
-  padding: 18px;
+  min-height: 64px;
+  padding: 14px 20px;
   border: 2px solid var(--duo-border);
   border-bottom: 4px solid var(--duo-border-dark);
   border-radius: var(--radius-medium);
@@ -677,7 +717,13 @@ body {
   font-size: 17px;
   color: var(--duo-text-dark);
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  line-height: 1.35;
   transition: all 0.15s ease;
+  user-select: none;
 }
 
 .option-btn:hover {
@@ -685,11 +731,123 @@ body {
   border-color: var(--duo-blue);
   border-bottom-color: var(--duo-blue-dark);
   color: var(--duo-blue-dark);
+  transform: translateY(-2px);
 }
 
 .option-btn:active {
   transform: translateY(2px);
   border-bottom-width: 2px;
+}
+
+/* ===================================================
+   🔘 통합 범용 버튼 규격 시스템 (Unified Button System)
+   =================================================== */
+.btn-unified-primary {
+  min-height: 48px;
+  padding: 12px 24px;
+  background: var(--duo-green);
+  border: 2px solid var(--duo-green-dark);
+  border-bottom: 4px solid var(--duo-green-dark);
+  color: #FFFFFF;
+  border-radius: 14px;
+  font-weight: 900;
+  font-size: 15px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.15s ease;
+  user-select: none;
+}
+.btn-unified-primary:hover {
+  background: var(--duo-green-light);
+}
+.btn-unified-primary:active {
+  transform: translateY(2px);
+  border-bottom-width: 2px;
+}
+
+.btn-unified-blue {
+  min-height: 48px;
+  padding: 12px 24px;
+  background: var(--duo-blue);
+  border: 2px solid var(--duo-blue-dark);
+  border-bottom: 4px solid var(--duo-blue-dark);
+  color: #FFFFFF;
+  border-radius: 14px;
+  font-weight: 900;
+  font-size: 15px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.15s ease;
+  user-select: none;
+}
+.btn-unified-blue:hover {
+  background: #2CBDFF;
+}
+.btn-unified-blue:active {
+  transform: translateY(2px);
+  border-bottom-width: 2px;
+}
+
+.btn-unified-secondary {
+  min-height: 44px;
+  padding: 10px 20px;
+  background: #FFFFFF;
+  border: 2px solid var(--duo-border);
+  border-bottom: 4px solid var(--duo-border-dark);
+  color: var(--duo-text-dark);
+  border-radius: 12px;
+  font-weight: 800;
+  font-size: 14px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: all 0.15s ease;
+  user-select: none;
+}
+.btn-unified-secondary:hover {
+  background: #F8F9FA;
+  border-color: #CBD5E1;
+}
+.btn-unified-secondary:active {
+  transform: translateY(2px);
+  border-bottom-width: 2px;
+}
+
+.btn-speed-item {
+  min-width: 64px;
+  height: 38px;
+  padding: 6px 12px;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 900;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid #CBD5E1;
+  border-bottom: 3px solid #94A3B8;
+  background: #F8FAFC;
+  color: #475569;
+  transition: all 0.15s ease;
+  user-select: none;
+}
+.btn-speed-item:hover {
+  background: #E2E8F0;
+}
+.btn-speed-item.active {
+  background: #58CC02;
+  color: #FFFFFF;
+  border-color: #46A302;
+  border-bottom-color: #388E00;
+  box-shadow: 0 2px 0 #388E00;
 }
 
 .spelling-input {
@@ -705,17 +863,38 @@ body {
   color: var(--duo-text-dark);
 }
 
-/* 모바일 대응 */
+/* 모바일 및 위챗 내장 브라우저 대응 */
 @media (max-width: 768px) {
   body {
-    padding: 14px 10px;
+    padding: 12px 8px;
+    -webkit-text-size-adjust: 100%;
+  }
+  .app-container {
+    padding: 0 4px;
   }
   .user-manager-header-bar {
     flex-direction: column;
     align-items: stretch;
     gap: 10px;
+    padding: 12px 14px;
+  }
+  .word-en {
+    font-size: 34px !important;
+  }
+  .word-ko {
+    font-size: 20px !important;
+    line-height: 1.35 !important;
+  }
+  .flashcard, .card-face {
+    min-height: 320px;
+    padding: 24px 16px;
   }
   .options-grid {
     grid-template-columns: 1fr;
+    gap: 10px;
+  }
+  .category-nav-group {
+    flex-wrap: wrap;
+    justify-content: center;
   }
 }

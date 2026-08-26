@@ -141,39 +141,71 @@ export default function Home() {
 
     try {
       const studentIdToUse = currentUser.student_id || currentUser.id || 'guest';
-      supabase.from('study_records').upsert({
-        student_id: studentIdToUse,
-        study_date: dateForMission,
-        last_index: currentProgress.currentIndex,
-        last_tab: currentProgress.mainTab,
-        quiz_levels: currentProgress.completedQuizLevels,
-        detail_stage: detailStageText
-      }, { onConflict: 'student_id,study_date' }).then(() => {}).catch(() => {});
-    } catch (e) {}
+      const studentNameClean = (currentUser.name || '').replace(/[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{1F1E0}-\u{1F1FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{1F900}-\u{1F9FF}\u{1F300}-\u{1F5FF}\u{1F004}\u{1F0CF}\u{1F170}-\u{1F251}]/gu, '').trim();
+
+      const syncStudyRecord = async (sid) => {
+        if (!sid) return;
+        const { data: existing } = await supabase.from('study_records').select('id').eq('student_id', sid).eq('study_date', dateForMission).limit(1);
+        if (existing && existing.length > 0) {
+          await supabase.from('study_records').update({ is_stamped: true }).eq('id', existing[0].id);
+        } else {
+          await supabase.from('study_records').insert([{ student_id: sid, study_date: dateForMission, is_stamped: true }]);
+        }
+      };
+      syncStudyRecord(studentIdToUse);
+      if (studentNameClean && studentNameClean !== studentIdToUse) {
+        syncStudyRecord(studentNameClean);
+      }
+    } catch (e) {
+      console.log('Study record sync error', e);
+    }
   }, [currentUser, isLoggedIn, targetStudyDate, todayStr, currentIndex, mainTab, completedQuizLevels, hasRecorded, initialQuizLevel]);
 
 
-  // 🎯 발음 유사도(일치율 %) 정밀 계산 알고리즘 (가짜 보정 제거)
+  // 🎯 학생 친화적 발음 유사도 점수(0~100점) 완화 알고리즘 (어린이 및 초보자 친화적 관용 매칭)
   const calculateMatchScore = (targetStr, spokenStr) => {
     if (!targetStr) return 0;
     const cleanTarget = targetStr.toLowerCase().replace(/[^a-z]/g, '');
     const cleanSpoken = (spokenStr || '').toLowerCase().replace(/[^a-z]/g, '');
 
-    // 1. 발음이 들리지 않거나 음성 인식이 실패한 경우 0점~10점 처리
+    // 1. 발음 인식이 아예 안 되거나 마이크 입력이 약한 경우 (기본 격려 점수)
     if (!cleanSpoken || cleanSpoken.trim() === '') {
-      return 15; // 마이크 소리가 거의 안 들리거나 발음 미인식 시 낮은 점수
+      return 40;
     }
 
     // 2. 완전히 일치하는 경우 100점
     if (cleanTarget === cleanSpoken) return 100;
 
-    // 3. 포함 관계인 경우 부분 점수
+    // 3. 포함 관계이거나 문장 속에 단어가 포함된 경우 (예: "a cat", "the apple", "banana please") 95점 부여
     if (cleanSpoken.includes(cleanTarget) || cleanTarget.includes(cleanSpoken)) {
-      const ratio = Math.min(cleanTarget.length, cleanSpoken.length) / Math.max(cleanTarget.length, cleanSpoken.length);
-      return Math.round(ratio * 90);
+      return 95;
     }
 
-    // 4. 레벤슈타인 거리 기반 알파벳 정밀 유사도 산출
+    // 4. 발음 유사 음운 정규화 매칭 (c/k, ph/f, z/s, v/b, r/l, 모음 변이 관용 인정)
+    const normalizePhonetics = (s) => {
+      return s
+        .replace(/ph/g, 'f')
+        .replace(/ck/g, 'k')
+        .replace(/c(?=[eiy])/g, 's')
+        .replace(/c/g, 'k')
+        .replace(/q/g, 'k')
+        .replace(/z/g, 's')
+        .replace(/x/g, 'ks')
+        .replace(/th/g, 't')
+        .replace(/[aeiouy]+/g, 'a');
+    };
+
+    const normTarget = normalizePhonetics(cleanTarget);
+    const normSpoken = normalizePhonetics(cleanSpoken);
+
+    if (normTarget === normSpoken) {
+      return 92;
+    }
+    if (normSpoken.includes(normTarget) || normTarget.includes(normSpoken)) {
+      return 88;
+    }
+
+    // 5. 레벤슈타인 편집 거리 기반 관대한 점수 산출
     let m = cleanTarget.length, n = cleanSpoken.length;
     let dp = Array.from({ length: m + 1 }, () => Array(n + 1).fill(0));
     for (let i = 0; i <= m; i++) dp[i][0] = i;
@@ -186,9 +218,16 @@ export default function Home() {
       }
     }
     const dist = dp[m][n];
-    const maxLen = Math.max(m, n);
-    const score = Math.round(((maxLen - dist) / maxLen) * 100);
-    return Math.max(0, Math.min(100, score));
+
+    // 1~2글자 가벼운 발음 차이에 대해 넉넉한 점수 부여
+    if (dist === 1) return 88;
+    if (dist === 2) return 78;
+    if (dist === 3 && Math.max(m, n) >= 5) return 70;
+
+    const maxLen = Math.max(m, n, 1);
+    const rawRatio = Math.max(0, (maxLen - dist) / maxLen);
+    const boostedScore = Math.round(45 + (rawRatio * 55));
+    return Math.max(40, Math.min(100, boostedScore));
   };
 
 
@@ -199,6 +238,14 @@ export default function Home() {
       const savedTab = sessionStorage.getItem('english_edu_main_tab');
       if (savedSession) {
         const parsed = JSON.parse(savedSession);
+        const dailySetKey = `daily_random_set_${parsed.id}_${todayStr}`;
+        try {
+          const cached = JSON.parse(localStorage.getItem(dailySetKey) || '[]');
+          const targetCount = parseInt(parsed.dailyWordCount || parsed.daily_word_count || 10, 10);
+          if (cached && cached.length === targetCount && cached.length > 0) {
+            setDailyRandomWords(cached);
+          }
+        } catch (e) {}
         setCurrentUser(parsed);
         setIsLoggedIn(true);
         if (savedTab) setMainTab(savedTab);
@@ -206,9 +253,17 @@ export default function Home() {
     } catch (e) {
       console.log('Session parse error', e);
     }
-  }, []);
+  }, [todayStr]);
 
   const handleLoginSuccess = (studentObj) => {
+    const dailySetKey = `daily_random_set_${studentObj.id}_${todayStr}`;
+    try {
+      const cached = JSON.parse(localStorage.getItem(dailySetKey) || '[]');
+      const targetCount = parseInt(studentObj.dailyWordCount || studentObj.daily_word_count || 10, 10);
+      if (cached && cached.length === targetCount && cached.length > 0) {
+        setDailyRandomWords(cached);
+      }
+    } catch (e) {}
     setCurrentUser(studentObj);
     setIsLoggedIn(true);
     setMainTab('flashcard');
@@ -472,7 +527,7 @@ export default function Home() {
   }, []);
 
 
-  // ⚡ [관리자-학생 화면 실시간 레벨 & 단어수 동기화 Engine]
+  // ⚡ [관리자-학생 화면 실시간 레벨, 학년 & 단어수 동기화 Engine]
   useEffect(() => {
     if (!currentUser || !isLoggedIn) return;
 
@@ -502,20 +557,24 @@ export default function Home() {
         }
 
         if (dbUser) {
+          const cloudGrade = dbUser.avatar || dbUser.grade || currentUser.grade || '초등 3학년';
           const cloudLevel = dbUser.study_grade_level || '초등단어';
           const cloudCount = String(dbUser.daily_word_count || '10');
 
+          const curGrade = currentUser.grade || currentUser.avatar || '초등 3학년';
           const curLevel = currentUser.studyGradeLevel || currentUser.study_grade_level || '초등단어';
           const curCount = String(currentUser.dailyWordCount || currentUser.daily_word_count || '10');
 
-          if (cloudLevel !== curLevel || cloudCount !== curCount) {
-            console.log(`🔄 [실시간 프로필 동기화] 레벨: ${curLevel} -> ${cloudLevel}, 목표: ${curCount} -> ${cloudCount}`);
+          if (cloudLevel !== curLevel || cloudCount !== curCount || (dbUser.avatar && dbUser.avatar !== curGrade)) {
+            console.log(`🔄 [실시간 프로필 동기화] 레벨: ${curLevel} -> ${cloudLevel}, 목표: ${curCount} -> ${cloudCount}, 학년: ${curGrade} -> ${cloudGrade}`);
             const updatedUser = {
               ...currentUser,
+              grade: cloudGrade,
+              avatar: cloudGrade,
               studyGradeLevel: cloudLevel,
               study_grade_level: cloudLevel,
               dailyWordCount: cloudCount,
-              daily_word_count: cloudCount
+              daily_word_count: parseInt(cloudCount, 10)
             };
             setCurrentUser(updatedUser);
             sessionStorage.setItem('english_edu_logged_user', JSON.stringify(updatedUser));
@@ -524,7 +583,7 @@ export default function Home() {
             const newRandoms = await loadDailyRandomWordsFromDB(updatedUser);
             if (newRandoms && newRandoms.length > 0) {
               setDailyRandomWords(newRandoms);
-              setWordList(newRandoms);
+              setCurrentIndex(0);
             }
           }
         }
@@ -532,7 +591,7 @@ export default function Home() {
     };
 
     checkAndSyncProfile();
-    const interval = setInterval(checkAndSyncProfile, 2000);
+    const interval = setInterval(checkAndSyncProfile, 3000);
     window.addEventListener('user_profile_updated', checkAndSyncProfile);
     window.addEventListener('storage', checkAndSyncProfile);
 
@@ -582,7 +641,7 @@ export default function Home() {
 
     if (savedProgress) {
       const savedIdx = typeof savedProgress.currentIndex === 'number' ? savedProgress.currentIndex : 0;
-      setCurrentIndex(savedIdx);
+      setCurrentIndex(Math.min(savedIdx, Math.max(0, userDailyCount - 1)));
 
       if (storedQuiz.includes(2)) {
         // 이미 2단계 스펠링 퀴즈 완수
@@ -620,13 +679,22 @@ export default function Home() {
 
       // 로컬 세트의 개수가 현재 학생의 목표 수량(예: 20개)과 정확히 일치할 때만 캐시 사용, 다르면 DB 라이브 로드!
       if (savedDailySet && savedDailySet.length === targetCount && savedDailySet.length > 0) {
-        setDailyRandomWords(savedDailySet);
-        setWordList(savedDailySet);
+        const sanitized = savedDailySet.map(w => {
+          const rawWord = (w.word || '').replace(/\.png/gi, '').trim();
+          const cleanWord = rawWord.toLowerCase();
+          return {
+            ...w,
+            word: cleanWord,
+            image_url: `https://sqonhhqosyszncjfoxfd.supabase.co/storage/v1/object/public/word_images/${cleanWord}.png`,
+            imageUrl: `https://sqonhhqosyszncjfoxfd.supabase.co/storage/v1/object/public/word_images/${cleanWord}.png`
+          };
+        });
+        setDailyRandomWords(sanitized);
+        localStorage.setItem(dailySetKey, JSON.stringify(sanitized));
       } else {
         const newRandomSet = await loadDailyRandomWordsFromDB(currentUser);
         if (newRandomSet && newRandomSet.length > 0) {
           setDailyRandomWords(newRandomSet);
-          setWordList(newRandomSet);
           localStorage.setItem(dailySetKey, JSON.stringify(newRandomSet));
           setTodayAllLearnedWords(newRandomSet);
           localStorage.setItem(todayAllKey, JSON.stringify(newRandomSet));
@@ -657,7 +725,9 @@ export default function Home() {
     setMainTab('flashcard');
     setCurrentIndex(0);
     setIsFlipped(false);
-    alert(`📅 [${selectedDateStr}] 날짜의 단어 학습을 시작합니다!\n\n플래시카드 단어를 확인하고 2단계 퀴즈를 완수하면 이 날짜에 출석 도장(💮)이 찍힙니다! 🚀`);
+    alert(currentLang === 'zh'
+      ? `📅 已开启 [${selectedDateStr}] 的单词学习！\n\n掌握单词卡片并通过测验后，该日期将盖上出勤印章(💮)！🚀`
+      : `📅 [${selectedDateStr}] 날짜의 단어 학습을 시작합니다!\n\n플래시카드 단어를 확인하고 2단계 퀴즈를 완수하면 이 날짜에 출석 도장(💮)이 찍힙니다! 🚀`);
   };
 
   const handleLoadNextWordSet = () => {
@@ -712,23 +782,27 @@ export default function Home() {
       window.speechSynthesis.speak(utterance);
     }
 
-    alert(`🎉 🚀 다음 단어 세트(제 ${nextRound}회차 - ${nextSet.length}개 단어)를 로딩했습니다!\n\n오늘 연속 마스터한 총 ${updatedTodayAll.length}개 단어는 상단 [📖 오늘 누적 학습 단어]에서 언제든 복습 가능합니다! 👏`);
+    alert(currentLang === 'zh'
+      ? `🎉 🚀 已加载下一组单词（第 ${nextRound} 轮 - ${nextSet.length} 个单词）！\n\n今日累计掌握的 ${updatedTodayAll.length} 个单词可在顶部随时复习！👏`
+      : `🎉 🚀 다음 단어 세트(제 ${nextRound}회차 - ${nextSet.length}개 단어)를 로딩했습니다!\n\n오늘 연속 마스터한 총 ${updatedTodayAll.length}개 단어는 상단 [📖 오늘 누적 학습 단어]에서 언제든 복습 가능합니다! 👏`);
   };
 
-  const userDailyCount = currentUser ? parseInt(currentUser.dailyWordCount || 10, 10) : 10;
-  const fallbackWords = Array.isArray(wordList500Fallback) && wordList500Fallback.length > 0
-    ? wordList500Fallback
-    : [{ id: 1, word: 'Apple', phonics: '/ˈæpəl/', meaning: '사과', category: '과일/음식 🍎', gradeLevel: '초등단어' }];
+  const userDailyCount = currentUser ? parseInt(currentUser.dailyWordCount || currentUser.daily_word_count || 10, 10) : 10;
 
-  const baseWordsList = (dailyRandomWords && dailyRandomWords.length > 0)
-    ? dailyRandomWords
-    : ((wordList && wordList.length > 0) ? wordList : fallbackWords);
+  const safeActiveWords = (dailyRandomWords && dailyRandomWords.length > 0)
+    ? dailyRandomWords.slice(0, userDailyCount)
+    : ((wordList && wordList.length > 0) ? wordList.slice(0, userDailyCount) : []);
 
-  const safeActiveWords = (baseWordsList && baseWordsList.length > 0)
-    ? baseWordsList.slice(0, userDailyCount)
-    : fallbackWords.slice(0, userDailyCount);
+  // 🛡️ 단어 수 변경 시 인덱스 범위 초과 방지 및 안전 클램핑
+  useEffect(() => {
+    if (safeActiveWords.length > 0 && currentIndex >= safeActiveWords.length) {
+      setCurrentIndex(0);
+    }
+  }, [safeActiveWords.length, currentIndex]);
 
-  const currentWord = safeActiveWords[currentIndex] || safeActiveWords[0] || fallbackWords[0];
+  const currentWord = (safeActiveWords && safeActiveWords.length > 0)
+    ? (safeActiveWords[currentIndex] || safeActiveWords[0])
+    : null;
 
 
   const cleanWordStr = typeof currentWord === 'string'
@@ -837,25 +911,65 @@ export default function Home() {
             : (isRealSentenceKo ? rawExampleKo : `나는 멋진 ${cleanMeaningStr}을(를) 본다.`)))));
 
 
+  const globalAudioRef = useRef(null);
+
   const playWordAudio = useCallback((wordText) => {
-    if ('speechSynthesis' in window) {
-      const text = wordText || cleanWordStr;
-      window.speechSynthesis.cancel();
-      const utterance = new SpeechSynthesisUtterance(text);
-      utterance.lang = 'en-US';
-      utterance.rate = ttsSpeed;
-      window.speechSynthesis.speak(utterance);
+    const text = (wordText || cleanWordStr || '').replace(/\.png/gi, '').trim();
+    if (!text || typeof window === 'undefined') return;
+
+    // 1순위: 고음질 스튜디오 원어민 MP3 음원 즉시 재생
+    try {
+      if (globalAudioRef.current) {
+        globalAudioRef.current.pause();
+        globalAudioRef.current.currentTime = 0;
+      }
+      const audioUrl = `https://dict.youdao.com/dictvoice?audio=${encodeURIComponent(text)}&type=2`;
+      const audio = new Audio(audioUrl);
+      audio.playbackRate = ttsSpeed;
+      globalAudioRef.current = audio;
+
+      const playPromise = audio.play();
+      if (playPromise !== undefined) {
+        playPromise.catch(() => {
+          speakWebSpeech(text, ttsSpeed);
+        });
+      }
+    } catch (e) {
+      speakWebSpeech(text, ttsSpeed);
+    }
+
+    function speakWebSpeech(speechText, speechSpeed) {
+      if ('speechSynthesis' in window) {
+        try {
+          window.speechSynthesis.cancel();
+          window.speechSynthesis.resume();
+          const utterance = new SpeechSynthesisUtterance(speechText);
+          utterance.lang = 'en-US';
+          utterance.rate = speechSpeed;
+
+          const voices = window.speechSynthesis.getVoices();
+          if (voices && voices.length > 0) {
+            const enVoice = voices.find(v => v.lang.startsWith('en') && (v.name.includes('Google') || v.name.includes('Natural') || v.name.includes('Zira') || v.name.includes('Samantha') || v.name.includes('US'))) || voices.find(v => v.lang.startsWith('en'));
+            if (enVoice) utterance.voice = enVoice;
+          }
+
+          window.speechSynthesis.speak(utterance);
+        } catch (err) {}
+      }
     }
   }, [cleanWordStr, ttsSpeed]);
 
   const playSentenceAudio = useCallback((sentenceText) => {
-    if ('speechSynthesis' in window) {
-      const textToSpeak = sentenceText || displayExampleEn;
-      window.speechSynthesis.cancel();
-      const utterance = new SpeechSynthesisUtterance(textToSpeak);
-      utterance.lang = 'en-US';
-      utterance.rate = ttsSpeed;
-      window.speechSynthesis.speak(utterance);
+    const textToSpeak = sentenceText || displayExampleEn;
+    if (typeof window !== 'undefined' && 'speechSynthesis' in window && textToSpeak) {
+      try {
+        window.speechSynthesis.cancel();
+        window.speechSynthesis.resume();
+        const utterance = new SpeechSynthesisUtterance(textToSpeak);
+        utterance.lang = 'en-US';
+        utterance.rate = ttsSpeed;
+        window.speechSynthesis.speak(utterance);
+      } catch (err) {}
     }
   }, [displayExampleEn, ttsSpeed]);
 
@@ -867,6 +981,35 @@ export default function Home() {
       return () => clearTimeout(timer);
     }
   }, [isLoggedIn, mainTab, currentIndex, currentWord, playWordAudio, cleanWordStr]);
+
+  // 📚 단어 학습 실시간 Supabase DB & LocalStorage 영구 기록 함수
+  const saveSingleLearnedWord = useCallback(async (wordObj) => {
+    if (!currentUser || !wordObj) return;
+    const wordStr = typeof wordObj === 'string' ? wordObj.replace(/\.png/gi, '').trim() : (wordObj.word || '').replace(/\.png/gi, '').trim();
+    const meaningStr = typeof wordObj === 'object' ? (wordObj.meaning || '') : '';
+    if (!wordStr) return;
+
+    const studentIdToUse = currentUser.student_id || currentUser.id || 'guest';
+    const studentNameClean = (currentUser.name || '').replace(/[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{1F1E0}-\u{1F1FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{1F900}-\u{1F9FF}\u{1F300}-\u{1F5FF}\u{1F004}\u{1F0CF}\u{1F170}-\u{1F251}]/gu, '').trim();
+
+    try {
+      const payload = [{ student_id: studentIdToUse, word: wordStr, meaning: meaningStr, learned_at: new Date().toISOString() }];
+      if (studentNameClean && studentNameClean !== studentIdToUse) {
+        payload.push({ student_id: studentNameClean, word: wordStr, meaning: meaningStr, learned_at: new Date().toISOString() });
+      }
+      await supabase.from('student_learned_words').insert(payload);
+    } catch (e) {}
+
+    // localStorage 동기화
+    try {
+      const localKey = `learned_words_${currentUser.id}`;
+      const existingLocal = JSON.parse(localStorage.getItem(localKey) || '[]');
+      if (!existingLocal.some(item => (typeof item === 'string' ? item : item.word) === wordStr)) {
+        existingLocal.push({ word: wordStr, meaning: meaningStr, learned_at: new Date().toISOString() });
+        localStorage.setItem(localKey, JSON.stringify(existingLocal));
+      }
+    } catch (e) {}
+  }, [currentUser]);
 
   const handleCardClick = (e) => {
     if (e.target.closest('button') || e.target.closest('.audio-btn') || e.target.closest('.record-btn')) {
@@ -887,8 +1030,19 @@ export default function Home() {
     setIsFlipped(false);
     setRecordedAudioUrl(null);
 
+    // 📚 방금 본 단어 DB에 실시간 외운 단어로 저장
+    if (currentWord) {
+      saveSingleLearnedWord(currentWord);
+    }
+
     if (currentIndex + 1 >= safeActiveWords.length) {
-      alert('🎉 선택한 세트 단어를 모두 보았습니다! 1단계 소리 퀴즈로 자동 이동합니다!');
+      // 모든 세트 단어 일괄 저장
+      safeActiveWords.forEach(w => saveSingleLearnedWord(w));
+      alert(currentLang === 'zh'
+        ? '🎉 这一组单词已全部学完！即将自动进入第 1 阶听力选词测验！'
+        : (currentLang === 'fr'
+        ? '🎉 Vous avez vu tous les mots de cette série ! Passage au quiz audio !'
+        : '🎉 선택한 세트 단어를 모두 보았습니다! 1단계 소리 퀴즈로 자동 이동합니다!'));
       setMainTab('quiz');
       setInitialQuizLevel(1);
       setCurrentIndex(0);
@@ -934,7 +1088,7 @@ export default function Home() {
     const cleanWord = targetWordStr.toLowerCase().trim();
 
     if (score !== null && score !== undefined) {
-      if (score >= 90) {
+      if (score >= 85) {
         return {
           icon: '🎉',
           title: lang === 'zh' ? '🤖 AI 发音完美赞赏！' : (lang === 'fr' ? '🤖 Félicitations IA !' : (lang === 'ja' ? '🤖 AI 発音パーフェクト称賛！' : (lang === 'vi' ? '🤖 AI Khen ngợi phát âm hoàn hảo!' : (lang === 'hi' ? '🤖 AI उत्कृष्ट उच्चारण प्रशंसा!' : '🤖 AI 발음 완벽 칭찬!')))),
@@ -952,6 +1106,26 @@ export default function Home() {
           color: '#27AE60',
           bg: '#E8F8F5',
           border: '#A3E4D7'
+        };
+      }
+      if (score >= 65) {
+        return {
+          icon: '👍',
+          title: lang === 'zh' ? '🤖 AI 发音合格赞赏！' : (lang === 'fr' ? '🤖 Bravo, validé !' : (lang === 'ja' ? '🤖 AI 合格称賛！' : (lang === 'vi' ? '🤖 AI Khen ngợi đạt chuẩn!' : (lang === 'hi' ? '🤖 AI सफल उच्चारण प्रशंसा!' : '🤖 AI 발음 통과 칭찬!')))),
+          text: lang === 'zh'
+            ? `[${targetWordStr}] 恭喜达到65分以上合格标准！发音清晰响亮，继续保持！🌟`
+            : (lang === 'fr'
+            ? `[${targetWordStr}] Félicitations pour avoir dépassé 65 points ! Prononciation claire et nette ! 🌟`
+            : (lang === 'ja'
+            ? `[${targetWordStr}] 65点以上の合格基準達成おめでとうございます！発音も明瞭で素晴らしいです！🌟`
+            : (lang === 'vi'
+            ? `[${targetWordStr}] Chúc mừng đạt trên 65 điểm! Phát âm rõ ràng và tự tin! 🌟`
+            : (lang === 'hi'
+            ? `[${targetWordStr}] 65 से अधिक अंक प्राप्त करने पर बधाई! स्पष्ट और अच्छा उच्चारण! 🌟`
+            : `[${targetWordStr}] 65점 이상 합격 기준을 멋지게 달성했어요! 자신감 있는 또박또박한 발음이 아주 훌륭합니다. 🌟`)))),
+          color: '#2ECC71',
+          bg: '#E5F8D0',
+          border: '#46A302'
         };
       }
     }
@@ -1201,7 +1375,7 @@ export default function Home() {
 
       drawAudioVisualizer();
     } catch (err) {
-      alert('마이크 접근 권한이 필요합니다.');
+      alert(currentLang === 'zh' ? '请允许浏览器使用麦克风权限。' : '마이크 접근 권한이 필요합니다.');
     }
   };
 
@@ -1230,7 +1404,7 @@ export default function Home() {
   // 💾 내 컴퓨터 다운로드 폴더에 음성 파일(.webm) 안전 저장
   const downloadRecordedAudio = () => {
     if (!recordedAudioUrl) {
-      alert('저장할 녹음 파일이 없습니다. 먼저 녹음을 진행해 주세요!');
+      alert(currentLang === 'zh' ? '没有可保存的录音文件，请先进行发音录音！' : '저장할 녹음 파일이 없습니다. 먼저 녹음을 진행해 주세요!');
       return;
     }
     const studentIdToUse = currentUser ? (currentUser.student_id || currentUser.id || 'guest') : 'guest';
@@ -1244,7 +1418,9 @@ export default function Home() {
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
-    alert(`💾 [${fileName}] 음성 녹음 파일이 내 컴퓨터 다운로드 폴더에 안전하게 저장되었습니다! 📁`);
+    alert(currentLang === 'zh'
+      ? `💾 [${fileName}] 发音录音文件已成功下载到电脑下载文件夹！📁`
+      : `💾 [${fileName}] 음성 녹음 파일이 내 컴퓨터 다운로드 폴더에 안전하게 저장되었습니다! 📁`);
   };
 
 
@@ -1254,48 +1430,74 @@ export default function Home() {
     const stampDateKey = targetStudyDate || todayStr;
     const stampKey = `english_stamps_${currentUser.id}`;
     const stampedWordsKey = `stamped_words_${currentUser.id}_${stampDateKey}`;
+    const stampedWordsCodeKey = currentUser.student_id ? `stamped_words_${currentUser.student_id}_${stampDateKey}` : null;
     
-    // 1. 단어 목록 2중 3중 안전 정제 (절대 빈 값이 되지 않도록 보장)
-    const rawWords = todayAllLearnedWords.length > 0 ? todayAllLearnedWords : (safeActiveWords.length > 0 ? safeActiveWords : dailyRandomWords);
-    const wordsToSave = (rawWords && rawWords.length > 0) ? rawWords : [{ word: 'Apple', meaning: '사과' }];
+    // 🎯 1. 실제 화면에서 공부한 단어(safeActiveWords)를 1순위로 확정 정제
+    const currentStudiedWords = (safeActiveWords && safeActiveWords.length > 0) ? safeActiveWords : (dailyRandomWords || []);
+    const wordMap = new Map();
+    currentStudiedWords.forEach(w => {
+      const key = (typeof w === 'string' ? w : (w.word || '')).toLowerCase();
+      if (key) wordMap.set(key, w);
+    });
+    (todayAllLearnedWords || []).forEach(w => {
+      const key = (typeof w === 'string' ? w : (w.word || '')).toLowerCase();
+      if (key && !wordMap.has(key)) wordMap.set(key, w);
+    });
+    const wordsToSave = Array.from(wordMap.values());
     
     const studentIdToUse = currentUser.student_id || currentUser.id || 'guest';
     const studentNameClean = (currentUser.name || '').replace(/[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{1F1E0}-\u{1F1FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{1F900}-\u{1F9FF}\u{1F300}-\u{1F5FF}\u{1F004}\u{1F0CF}\u{1F170}-\u{1F251}]/gu, '').trim();
 
-    // 2. Supabase 클라우드 DB study_records 및 student_learned_words 보관함에 100% 즉시 정밀 전송
+    // 2. Supabase 클라우드 DB student_learned_words 및 study_records 보관함에 100% 즉시 정밀 전송
     try {
-      const dbLearnedMap = new Map();
+      const learnedPayload = [];
       wordsToSave.forEach(w => {
         const wordVal = typeof w === 'string' ? w : (w.word || '');
         const meaningVal = typeof w === 'string' ? '' : (w.meaning || '');
         if (wordVal) {
-          const key1 = `${studentIdToUse}_${wordVal.toLowerCase()}`;
-          dbLearnedMap.set(key1, { student_id: studentIdToUse, word: wordVal, meaning: meaningVal });
+          learnedPayload.push({
+            student_id: studentIdToUse,
+            word: wordVal,
+            meaning: meaningVal,
+            learned_at: new Date().toISOString()
+          });
           if (studentNameClean && studentNameClean !== studentIdToUse) {
-            const key2 = `${studentNameClean}_${wordVal.toLowerCase()}`;
-            dbLearnedMap.set(key2, { student_id: studentNameClean, word: wordVal, meaning: meaningVal });
+            learnedPayload.push({
+              student_id: studentNameClean,
+              word: wordVal,
+              meaning: meaningVal,
+              learned_at: new Date().toISOString()
+            });
           }
         }
       });
 
-      const studyRecordsMap = new Map();
-      studyRecordsMap.set(studentIdToUse, { student_id: studentIdToUse, study_date: stampDateKey, is_stamped: true, stamped_words: wordsToSave });
-      if (studentNameClean && studentNameClean !== studentIdToUse) {
-        studyRecordsMap.set(studentNameClean, { student_id: studentNameClean, study_date: stampDateKey, is_stamped: true, stamped_words: wordsToSave });
+      if (learnedPayload.length > 0) {
+        await supabase.from('student_learned_words').insert(learnedPayload);
       }
 
-      console.log('🚀 DB 학습 단어 및 출석 도장 정밀 전송:', Array.from(dbLearnedMap.values()).length);
+      // 출석 테이블(study_records)에 안전하게 단일 날짜 도장 저장
+      const syncStudyRecord = async (sid) => {
+        if (!sid) return;
+        const { data: existing } = await supabase.from('study_records').select('id').eq('student_id', sid).eq('study_date', stampDateKey).limit(1);
+        if (existing && existing.length > 0) {
+          await supabase.from('study_records').update({ is_stamped: true }).eq('id', existing[0].id);
+        } else {
+          await supabase.from('study_records').insert([{ student_id: sid, study_date: stampDateKey, is_stamped: true }]);
+        }
+      };
 
-      await Promise.allSettled([
-        supabase.from('study_records').upsert(Array.from(studyRecordsMap.values()), { onConflict: 'student_id,study_date' }),
-        supabase.from('student_learned_words').insert(Array.from(dbLearnedMap.values()))
-      ]);
-      console.log('✅ DB 학습 데이터 전송 완벽 성공!');
+      await syncStudyRecord(studentIdToUse);
+      if (studentNameClean && studentNameClean !== studentIdToUse) {
+        await syncStudyRecord(studentNameClean);
+      }
+
+      console.log('✅ DB 학습 데이터 및 출석 도장 전송 완벽 성공!');
     } catch (e) {
       console.error('Cloud attendance and learned words save error:', e);
     }
 
-    // 3. localStorage 백업 저장
+    // 3. localStorage 백업 저장 & 실시간 갱신 이벤트 발행
     let stamps = [];
     try {
       stamps = JSON.parse(localStorage.getItem(stampKey) || '[]');
@@ -1305,9 +1507,26 @@ export default function Home() {
     if (!stamps.includes(stampDateKey)) {
       stamps.push(stampDateKey);
       localStorage.setItem(stampKey, JSON.stringify(stamps));
+      if (currentUser.student_id) {
+        localStorage.setItem(`english_stamps_${currentUser.student_id}`, JSON.stringify(stamps));
+      }
     }
 
     localStorage.setItem(stampedWordsKey, JSON.stringify(wordsToSave));
+    if (stampedWordsCodeKey) {
+      localStorage.setItem(stampedWordsCodeKey, JSON.stringify(wordsToSave));
+    }
+    localStorage.setItem(`today_all_learned_${currentUser.id}_${stampDateKey}`, JSON.stringify(wordsToSave));
+    if (currentUser.student_id) {
+      localStorage.setItem(`today_all_learned_${currentUser.student_id}_${stampDateKey}`, JSON.stringify(wordsToSave));
+    }
+
+    setTodayAllLearnedWords(wordsToSave);
+
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new Event('study_data_updated'));
+      window.dispatchEvent(new Event('storage'));
+    }
   }, [currentUser, targetStudyDate, todayStr, todayAllLearnedWords, safeActiveWords, dailyRandomWords]);
 
   // 💡 2단계 퀴즈 완수 시 출석 도장 찍기 수행!
@@ -1336,28 +1555,47 @@ export default function Home() {
   const isQuizL2Done = completedQuizLevels.includes(2);
 
   const getWordImgSrc = (wordObj) => {
-    if (!wordObj) return '/word_img/Apple.png';
-    if (wordObj.image_url && wordObj.image_url.trim() !== '') {
-      return wordObj.image_url;
+    if (!wordObj) return '/word_img/apple.png';
+    const rawFile = (wordObj.image_url || wordObj.imageUrl || '').split('/').pop().trim();
+    if (rawFile && rawFile.endsWith('.png')) {
+      const cleanRaw = rawFile.toLowerCase().replace(/\s+/g, '_');
+      return `/word_img/${cleanRaw}`;
     }
     const wordClean = (wordObj.word || '').replace(/\.png/gi, '').trim();
-    if (!wordClean) return '/word_img/Apple.png';
-    const wordCap = wordClean.charAt(0).toUpperCase() + wordClean.slice(1);
-    return `/word_img/${wordCap}.png`;
+    if (!wordClean) return '/word_img/apple.png';
+    const wordLower = wordClean.toLowerCase().replace(/\s+/g, '_');
+    
+    // 로컬 Next.js 고화질 소문자 언더바 이미지 1순위 즉시 로드
+    return `/word_img/${wordLower}.png`;
   };
 
   const handleImageError = (e, wordStr) => {
     const target = e.target;
-    const currentSrc = target.src;
+    const currentSrc = target.src || '';
     const wordClean = (wordStr || '').replace(/\.png/gi, '').trim();
     const wordLower = wordClean.toLowerCase();
+    const wordUnder = wordLower.replace(/ /g, '_');
+    const wordNoSpace = wordLower.replace(/[\s\-_]/g, '');
     const wordCap = wordClean ? wordClean.charAt(0).toUpperCase() + wordClean.slice(1) : '';
 
-    if (currentSrc && !currentSrc.includes(`/${wordLower}.png`) && !currentSrc.includes(`/${wordCap}.png`)) {
-      target.src = `/word_img/${wordLower}.png`;
-    } else if (currentSrc && !currentSrc.includes(`/${wordCap}.png`)) {
+    // 1차 폴백: 언더바 파일명 시도 (/word_img/ice_cream.png)
+    if (!currentSrc.includes(`/${wordUnder}.png`)) {
+      target.src = `/word_img/${wordUnder}.png`;
+    }
+    // 2차 폴백: 공백 제거 파일명 시도 (/word_img/icecream.png)
+    else if (!currentSrc.includes(`/${wordNoSpace}.png`)) {
+      target.src = `/word_img/${wordNoSpace}.png`;
+    }
+    // 3차 폴백: 첫글자 대문자 파일명 시도 (/word_img/Apple.png)
+    else if (!currentSrc.includes(`/${wordCap}.png`)) {
       target.src = `/word_img/${wordCap}.png`;
-    } else {
+    } 
+    // 4차 폴백: Supabase Cloud Storage 원본 이미지 시도
+    else if (!currentSrc.includes('supabase.co')) {
+      target.src = `https://sqonhhqosyszncjfoxfd.supabase.co/storage/v1/object/public/word_images/${wordLower}.png`;
+    } 
+    // 5차 폴백: 단어 이니셜 맞춤형 SVG 일러스트 카드
+    else {
       const firstLetter = wordCap ? wordCap.charAt(0).toUpperCase() : '📖';
       target.src = `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="120" height="120" viewBox="0 0 120 120"><rect width="100%" height="100%" fill="%23F8F9FA" rx="16"/><text x="50%" y="45%" dominant-baseline="middle" text-anchor="middle" font-family="sans-serif" font-size="36" font-weight="bold" fill="%233498DB">${encodeURIComponent(firstLetter)}</text><text x="50%" y="75%" dominant-baseline="middle" text-anchor="middle" font-family="sans-serif" font-size="12" font-weight="bold" fill="%237F8C8D">${encodeURIComponent(wordClean || 'Word')}</text></svg>`;
       target.onerror = null;
@@ -1588,7 +1826,7 @@ export default function Home() {
                   ⚡ {t('progress_status_text', currentLang)}
                 </span>
                 <span style={{ fontSize: '14px', fontWeight: '800', color: '#3C3C3C' }}>
-                  {resumeNotice || `▶ ${currentLang === 'zh' ? `当前位置: 单词 #${currentIndex + 1} / ${safeActiveWords.length}` : (currentLang === 'fr' ? `Position: Mot #${currentIndex + 1} / ${safeActiveWords.length}` : `현재 학습 위치: 단어 #${currentIndex + 1} / ${safeActiveWords.length}`)}`}
+                  {getResumeNoticeText(resumeNotice, currentLang, currentIndex, safeActiveWords.length)}
                 </span>
               </div>
 
@@ -1955,7 +2193,7 @@ export default function Home() {
             border: '2px solid #E2E8F0',
             boxShadow: '0 4px 12px rgba(0,0,0,0.03)',
             margin: '14px auto 16px auto',
-            maxWidth: '680px',
+            maxWidth: '820px',
             flexWrap: 'wrap'
           }}>
             {/* 🌐 6개 국어 학습 언어 스위처 */}
@@ -2059,73 +2297,47 @@ export default function Home() {
 
             <button
               onClick={() => handleSpeedChange(0.7)}
-              style={{
-                padding: '5px 12px',
-                borderRadius: '12px',
-                fontSize: '12px',
-                fontWeight: 'bold',
-                border: ttsSpeed === 0.7 ? '2px solid #E67E22' : '1px solid #CBD5E0',
-                background: ttsSpeed === 0.7 ? '#FEF9E7' : '#FFFFFF',
-                color: ttsSpeed === 0.7 ? '#D35400' : '#4A5568',
-                cursor: 'pointer',
-                boxShadow: ttsSpeed === 0.7 ? '0 2px 6px rgba(230,126,34,0.2)' : 'none'
-              }}
+              className={`btn-speed-item ${ttsSpeed === 0.7 ? 'active' : ''}`}
             >
               {t('speed_slow', currentLang)}
             </button>
 
             <button
               onClick={() => handleSpeedChange(1.0)}
-              style={{
-                padding: '5px 12px',
-                borderRadius: '12px',
-                fontSize: '12px',
-                fontWeight: 'bold',
-                border: ttsSpeed === 1.0 ? '2px solid #2ECC71' : '1px solid #CBD5E0',
-                background: ttsSpeed === 1.0 ? '#E8F8F5' : '#FFFFFF',
-                color: ttsSpeed === 1.0 ? '#27AE60' : '#4A5568',
-                cursor: 'pointer',
-                boxShadow: ttsSpeed === 1.0 ? '0 2px 6px rgba(46,204,113,0.2)' : 'none'
-              }}
+              className={`btn-speed-item ${ttsSpeed === 1.0 ? 'active' : ''}`}
             >
               {t('speed_normal', currentLang)}
             </button>
 
             <button
               onClick={() => handleSpeedChange(1.4)}
-              style={{
-                padding: '5px 12px',
-                borderRadius: '12px',
-                fontSize: '12px',
-                fontWeight: 'bold',
-                border: ttsSpeed === 1.4 ? '2px solid #3498DB' : '1px solid #CBD5E0',
-                background: ttsSpeed === 1.4 ? '#EBF5FB' : '#FFFFFF',
-                color: ttsSpeed === 1.4 ? '#2980B9' : '#4A5568',
-                cursor: 'pointer',
-                boxShadow: ttsSpeed === 1.4 ? '0 2px 6px rgba(52,152,219,0.2)' : 'none'
-              }}
+              className={`btn-speed-item ${ttsSpeed === 1.4 ? 'active' : ''}`}
             >
               {t('speed_fast', currentLang)}
             </button>
 
             <button
               onClick={() => handleSpeedChange(2.0)}
-              style={{
-                padding: '5px 12px',
-                borderRadius: '12px',
-                fontSize: '12px',
-                fontWeight: 'bold',
-                border: ttsSpeed === 2.0 ? '2px solid #9B59B6' : '1px solid #CBD5E0',
-                background: ttsSpeed === 2.0 ? '#F5EEF8' : '#FFFFFF',
-                color: ttsSpeed === 2.0 ? '#8E44AD' : '#4A5568',
-                cursor: 'pointer',
-                boxShadow: ttsSpeed === 2.0 ? '0 2px 6px rgba(155,89,182,0.2)' : 'none'
-              }}
+              className={`btn-speed-item ${ttsSpeed === 2.0 ? 'active' : ''}`}
             >
               {t('speed_super_fast', currentLang)}
             </button>
           </div>
 
+          {(!currentWord || safeActiveWords.length === 0) ? (
+            <div className="flashcard-wrapper">
+              <div className="flashcard" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '380px', background: '#FFFFFF', borderRadius: '32px', border: '3px solid #E2E8F0', boxShadow: '0 12px 30px rgba(0,0,0,0.06)', padding: '30px 20px', textAlign: 'center' }}>
+                <div style={{ fontSize: '48px', marginBottom: '14px' }}>📖</div>
+                <h3 style={{ margin: '0 0 8px 0', color: '#2C3E50', fontSize: '20px', fontWeight: 'bold' }}>
+                  {currentUser?.name ? `${currentUser.name} 님의` : ''} {translateGradeLevel(currentUser?.studyGradeLevel || currentUser?.study_grade_level || '맞춤', currentLang)} 단어장 준비 중...
+                </h3>
+                <p style={{ margin: '0 0 16px 0', color: '#7F8C8D', fontSize: '14px' }}>
+                  오늘 학습할 {userDailyCount}개 단어를 안전하게 불러오고 있습니다. ⚡
+                </p>
+                <div style={{ width: '36px', height: '36px', border: '4px solid #E2E8F0', borderTop: '4px solid #3498DB', borderRadius: '50%' }} />
+              </div>
+            </div>
+          ) : (
           <div className="flashcard-wrapper">
             <div className={`flashcard ${isFlipped ? 'flipped' : ''}`} onClick={handleCardClick}>
               {/* 앞면: 그림 + 영단어 + 발음기호 + 번역 뜻 */}
@@ -2237,40 +2449,43 @@ export default function Home() {
                     margin: '12px 0 6px 0',
                     padding: '12px',
                     borderRadius: '16px',
-                    background: pronunciationScore >= 90 ? '#E8F8F5' : (pronunciationScore >= 75 ? '#FEF9E7' : '#FDEDEC'),
-                    border: `2px solid ${pronunciationScore >= 90 ? '#2ECC71' : (pronunciationScore >= 75 ? '#F1C40F' : '#E74C3C')}`,
+                    background: pronunciationScore >= 85 ? '#E8F8F5' : (pronunciationScore >= 65 ? '#E5F8D0' : '#FDEDEC'),
+                    border: `2px solid ${pronunciationScore >= 85 ? '#2ECC71' : (pronunciationScore >= 65 ? '#46A302' : '#E74C3C')}`,
                     animation: 'fadeIn 0.5s ease',
                   }}
                 >
-                  <div style={{ fontSize: '15px', fontWeight: '900', color: pronunciationScore >= 90 ? '#27AE60' : (pronunciationScore >= 75 ? '#D4AC0D' : '#C0392B') }}>
+                  <div style={{ fontSize: '15px', fontWeight: '900', color: pronunciationScore >= 85 ? '#27AE60' : (pronunciationScore >= 65 ? '#46A302' : '#C0392B') }}>
                     {(() => {
-                      if (pronunciationScore >= 90) {
-                        if (currentLang === 'zh') return '🎯 发音匹配率 100% 完美！⭐⭐⭐';
-                        if (currentLang === 'fr') return '🎯 Précision 100% Parfait ! ⭐⭐⭐';
-                        if (currentLang === 'ja') return '🎯 発音一致率 100% 完璧です！⭐⭐⭐';
-                        if (currentLang === 'vi') return '🎯 Độ chính xác 100% Hoàn hảo! ⭐⭐⭐';
-                        if (currentLang === 'hi') return '🎯 उच्चारण सटीकता 100% उत्कृष्ट! ⭐⭐⭐';
-                        return '🎯 발음 일치율 100% 완벽해요! ⭐⭐⭐';
+                      if (pronunciationScore >= 85) {
+                        if (currentLang === 'zh') return `🎉 [${pronunciationScore}分] 完美发音达成！⭐⭐⭐`;
+                        if (currentLang === 'fr') return `🎉 [${pronunciationScore} pts] Prononciation Parfaite ! ⭐⭐⭐`;
+                        if (currentLang === 'ja') return `🎉 [${pronunciationScore}点] 完璧な発音達成！⭐⭐⭐`;
+                        if (currentLang === 'vi') return `🎉 [${pronunciationScore} điểm] Phát âm hoàn hảo! ⭐⭐⭐`;
+                        if (currentLang === 'hi') return `🎉 [${pronunciationScore} अंक] उत्कृष्ट उच्चारण! ⭐⭐⭐`;
+                        return `🎉 [${pronunciationScore}점] 완벽한 원어민 발음! ⭐⭐⭐`;
                       }
-                      if (pronunciationScore >= 75) {
-                        if (currentLang === 'zh') return `👍 发音匹配率 ${pronunciationScore}% 很棒！⭐⭐`;
-                        if (currentLang === 'fr') return `👍 Précision ${pronunciationScore}% Excellent ! ⭐⭐`;
-                        if (currentLang === 'ja') return `👍 発音一致率 ${pronunciationScore}% 素晴らしいです！⭐⭐`;
-                        if (currentLang === 'vi') return `👍 Độ chính xác ${pronunciationScore}% Rất tốt! ⭐⭐`;
-                        if (currentLang === 'hi') return `👍 उच्चारण सटीकता ${pronunciationScore}% बहुत बढ़िया! ⭐⭐`;
-                        return `👍 발음 일치율 ${pronunciationScore}% 훌륭해요! ⭐⭐`;
+                      if (pronunciationScore >= 65) {
+                        if (currentLang === 'zh') return `👍 [${pronunciationScore}分] 65分以上通过！录音任务完成 ⭐⭐`;
+                        if (currentLang === 'fr') return `👍 [${pronunciationScore} pts] Validé (65+ pts) ! Bravo ⭐⭐`;
+                        if (currentLang === 'ja') return `👍 [${pronunciationScore}点] 65点以上合格！録音完了 ⭐⭐`;
+                        if (currentLang === 'vi') return `👍 [${pronunciationScore} điểm] Đạt trên 65 điểm! Xuất sắc ⭐⭐`;
+                        if (currentLang === 'hi') return `👍 [${pronunciationScore} अंक] 65 से अधिक सफल! ⭐⭐`;
+                        return `👍 [${pronunciationScore}점] 발음 통과 (65점 이상 합격)! 훌륭해요 ⭐⭐`;
                       }
-                      if (currentLang === 'zh') return `🌱 发音匹配率 ${pronunciationScore}% 加油！⭐`;
-                      if (currentLang === 'fr') return `🌱 Précision ${pronunciationScore}% Continuez ! ⭐`;
-                      if (currentLang === 'ja') return `🌱 発音一致率 ${pronunciationScore}% 頑張りましょう！⭐`;
-                      if (currentLang === 'vi') return `🌱 Độ chính xác ${pronunciationScore}% Cố lên! ⭐`;
-                      if (currentLang === 'hi') return `🌱 उच्चारण सटीकता ${pronunciationScore}% अभ्यास जारी रखें! ⭐`;
-                      return `🌱 발음 일치율 ${pronunciationScore}% 힘내세요! ⭐`;
+                      if (currentLang === 'zh') return `🌱 [${pronunciationScore}分] 低于65分，请再试一次！⭐`;
+                      if (currentLang === 'fr') return `🌱 [${pronunciationScore} pts] Moins de 65, réessayez ! ⭐`;
+                      if (currentLang === 'ja') return `🌱 [${pronunciationScore}点] 65点未満、もう一度挑戦してみましょう！⭐`;
+                      if (currentLang === 'vi') return `🌱 [${pronunciationScore} điểm] Dưới 65 điểm, hãy thử lại nhé! ⭐`;
+                      if (currentLang === 'hi') return `🌱 [${pronunciationScore} अंक] 65 से कम, पुनः प्रयास करें! ⭐`;
+                      return `🌱 [${pronunciationScore}점] 조금만 더 크게 읽어보아요! (65점 이상 합격) ⭐`;
                     })()}
                   </div>
                   <div style={{ fontSize: '12px', color: '#555', marginTop: '4px', fontWeight: 'bold' }}>
                     {cleanWordStr} {currentLang === 'zh' ? '发音测评分数:' : (currentLang === 'fr' ? 'Score de prononciation:' : (currentLang === 'ja' ? '発音測定スコア:' : (currentLang === 'vi' ? 'Điểm phát âm:' : (currentLang === 'hi' ? 'उच्चारण स्कोर:' : '발음 측정 점수:'))))}{' '}
-                    <span style={{ fontSize: '14px', color: '#2980B9' }}>{pronunciationScore}{currentLang === 'zh' ? '分' : (currentLang === 'fr' ? ' pts' : (currentLang === 'ja' ? '点' : (currentLang === 'vi' ? ' điểm' : (currentLang === 'hi' ? ' अंक' : '점'))))}</span>
+                    <span style={{ fontSize: '14px', color: pronunciationScore >= 65 ? '#46A302' : '#C0392B', fontWeight: '900' }}>
+                      {pronunciationScore}{currentLang === 'zh' ? '分' : (currentLang === 'fr' ? ' pts' : (currentLang === 'ja' ? '点' : (currentLang === 'vi' ? ' điểm' : (currentLang === 'hi' ? ' अंक' : '점'))))}
+                      {pronunciationScore >= 65 ? ' (합격 💮)' : ' (재도전 필요 💡)'}
+                    </span>
                   </div>
                 </div>
               )}
@@ -2322,6 +2537,7 @@ export default function Home() {
               </div>
             </div>
           </div>
+          )}
         </>
       )}
 
@@ -2377,7 +2593,12 @@ export default function Home() {
         <Day6ReviewSection
           currentUser={currentUser}
           safeActiveWords={safeActiveWords}
-          onQuizComplete={fetchStudyRecordsFromDB}
+          onQuizComplete={() => {
+            if (typeof window !== 'undefined') {
+              window.dispatchEvent(new Event('study_data_updated'));
+              window.dispatchEvent(new Event('storage'));
+            }
+          }}
           currentLang={currentLang}
         />
       )}
