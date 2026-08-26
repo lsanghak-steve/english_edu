@@ -1,8 +1,8 @@
-// 🌐 VocaFlip (보카플립) 6대 글로벌 다국어 (한국어 🇰🇷 / 중국어 🇨🇳 / 프랑스어 🇫🇷 / 일본어 🇯🇵 / 베트남어 🇻🇳 / 힌디어 🇮🇳) UI 번역 사전 (i18n)
+// 🌐 FlipVoca (플립보카) 6대 글로벌 다국어 (한국어 🇰🇷 / 중국어 🇨🇳 / 프랑스어 🇫🇷 / 일본어 🇯🇵 / 베트남어 🇻🇳 / 힌디어 🇮🇳) UI 번역 사전 (i18n)
 
 export const translations = {
   ko: {
-    app_title: "VocaFlip (보카플립)",
+    app_title: "FlipVoca (플립보카)",
     app_subtitle: "초/중/고 5,000개 영단어 스마트 학습관",
     lang_label: "🌐 언어:",
     speed_label: "🎛️ 속도:",
@@ -61,7 +61,7 @@ export const translations = {
     wordlist_pdf_btn: "🖨️ 원클릭 PDF 시험지/워크시트 인쇄 (6종)",
     btn_example_audio: "🔊 예문",
     btn_my_audio: "🎙️ 내 녹음",
-    login_title: "VocaFlip (보카플립) 스마트 학습 로그인",
+    login_title: "FlipVoca (플립보카) 스마트 학습 로그인",
     login_subtitle: "등록된 학생 이름과 PIN 번호 4자리를 입력하세요.",
     input_student_name_ph: "학생 이름 (예: 김철수)",
     input_pin_ph: "PIN 번호 (4자리)",
@@ -80,7 +80,7 @@ export const translations = {
     btn_close: "닫기"
   },
   zh: {
-    app_title: "VocaFlip (翻翻背单词)",
+    app_title: "FlipVoca (翻翻背单词)",
     app_subtitle: "小学/初中/高中 5,000 核心词汇 3D 智能学习平台",
     lang_label: "🌐 语言:",
     speed_label: "🎛️ 语速:",
@@ -139,7 +139,7 @@ export const translations = {
     wordlist_pdf_btn: "🖨️ 一键打印 PDF 练习卷/试卷 (6种)",
     btn_example_audio: "🔊 例句",
     btn_my_audio: "🎙️ 我的录音",
-    login_title: "VocaFlip 智能学习登录",
+    login_title: "FlipVoca 智能学习登录",
     login_subtitle: "请输入已注册的学生姓名和 4 位 PIN 密码。",
     input_student_name_ph: "学生姓名 (例: 李明)",
     input_pin_ph: "PIN 密码 (4位)",
@@ -158,7 +158,7 @@ export const translations = {
     btn_close: "关闭"
   },
   fr: {
-    app_title: "VocaFlip (Apprentissage Vocabulaire)",
+    app_title: "FlipVoca (Apprentissage Vocabulaire)",
     app_subtitle: "Plateforme intelligente de 5 000 mots anglais",
     lang_label: "🌐 Langue:",
     speed_label: "🎛️ Vitesse:",
@@ -217,7 +217,7 @@ export const translations = {
     wordlist_pdf_btn: "🖨️ Imprimer fiches d'exercices/tests PDF (6 types)",
     btn_example_audio: "🔊 Exemple",
     btn_my_audio: "🎙️ Mon Audio",
-    login_title: "Connexion VocaFlip Smart Learning",
+    login_title: "Connexion FlipVoca Smart Learning",
     login_subtitle: "Veuillez saisir votre nom d'élève et votre code PIN à 4 chiffres.",
     input_student_name_ph: "Nom de l'élève (Ex: Paul)",
     input_pin_ph: "Code PIN (4 chiffres)",
@@ -236,7 +236,7 @@ export const translations = {
     btn_close: "Fermer"
   },
   ja: {
-    app_title: "VocaFlip (ボカフリップ)",
+    app_title: "FlipVoca (フリップボカ)",
     app_subtitle: "小・中・高 5,000英単語 3Dスマート学習館",
     lang_label: "🌐 言語:",
     speed_label: "🎛️ 速度:",
@@ -295,7 +295,7 @@ export const translations = {
     wordlist_pdf_btn: "🖨️ ワンクリック PDF テスト用紙印刷 (6種)",
     btn_example_audio: "🔊 例文",
     btn_my_audio: "🎙️ 自分の録音",
-    login_title: "VocaFlip スマート学習ログイン",
+    login_title: "FlipVoca スマート学習ログイン",
     login_subtitle: "登録された生徒名と4桁のPINコードを入力してください。",
     input_student_name_ph: "生徒名 (例: 田中)",
     input_pin_ph: "PINコード (4桁)",
@@ -314,7 +314,7 @@ export const translations = {
     btn_close: "閉じる"
   },
   vi: {
-    app_title: "VocaFlip (Học Từ Vựng Thông Minh)",
+    app_title: "FlipVoca (Học Từ Vựng Thông Minh)",
     app_subtitle: "Nền tảng học 5.000 từ vựng tiếng Anh Tiểu học/THCS/THPT",
     lang_label: "🌐 Ngôn ngữ:",
     speed_label: "🎛️ Tốc độ:",
@@ -373,7 +373,7 @@ export const translations = {
     wordlist_pdf_btn: "🖨️ In đề thi/phiếu bài tập PDF (6 loại)",
     btn_example_audio: "🔊 Ví dụ",
     btn_my_audio: "🎙️ Bản ghi âm của tôi",
-    login_title: "Đăng nhập học tập VocaFlip",
+    login_title: "Đăng nhập học tập FlipVoca",
     login_subtitle: "Vui lòng nhập tên học sinh đã đăng ký và mã PIN 4 chữ số.",
     input_student_name_ph: "Tên học sinh (VD: Minh)",
     input_pin_ph: "Mã PIN (4 chữ số)",
@@ -392,7 +392,7 @@ export const translations = {
     btn_close: "Đóng"
   },
   hi: {
-    app_title: "VocaFlip (स्टीव वोका - स्मार्ट लर्निंग)",
+    app_title: "FlipVoca (स्टीव वोका - स्मार्ट लर्निंग)",
     app_subtitle: "प्राथमिक/माध्यमिक/उच्चतर माध्यमिक 5,000 अंग्रेजी शब्दावली",
     lang_label: "🌐 भाषा:",
     speed_label: "🎛️ गति:",
@@ -451,7 +451,7 @@ export const translations = {
     wordlist_pdf_btn: "🖨️ एक-क्लिक पीडीएफ टेस्ट शीट प्रिंट करें (6 प्रकार)",
     btn_example_audio: "🔊 उदाहरण",
     btn_my_audio: "🎙️ मेरी रिकॉर्डिंग",
-    login_title: "VocaFlip स्मार्ट लर्निंग लॉगिन",
+    login_title: "FlipVoca स्मार्ट लर्निंग लॉगिन",
     login_subtitle: "कृपया पंजीकृत छात्र का नाम और 4 अंकों का पिन दर्ज करें।",
     input_student_name_ph: "छात्र का नाम",
     input_pin_ph: "पिन नंबर (4 अंक)",

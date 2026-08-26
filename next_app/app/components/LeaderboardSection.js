@@ -181,7 +181,7 @@ export default function LeaderboardSection({ currentUser, currentLang = 'ko' }) 
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px', borderBottom: '2px dashed #E9ECEF', paddingBottom: '14px', flexWrap: 'wrap', gap: '10px' }}>
         <div>
           <h2 style={{ margin: 0, color: '#D35400', fontSize: '22px', fontWeight: '900', display: 'flex', alignItems: 'center', gap: '8px' }}>
-            🏆 VocaFlip Real-time Leaderboard 👑
+            🏆 FlipVoca Real-time Leaderboard 👑
           </h2>
           <span style={{ fontSize: '13px', color: '#E67E22', fontWeight: 'bold' }}>
             {currentLang === 'zh' ? '基于实时 Voca Power Score 的全国与班级排行榜' : (currentLang === 'fr' ? 'Classement général et classe basé sur les points Voca Power' : '실시간 Voca Power Score 점수 산식 기반 전국 & 클래스 리더보드')}
