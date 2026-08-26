@@ -672,14 +672,14 @@ export default function QuizSection({ currentUser, activeWords, onQuizLevelCompl
   return (
     <div className="quiz-section-card" style={{ padding: '24px', background: '#FFFFFF', borderRadius: '24px', border: '2px solid #E5E5E5', borderBottom: '5px solid #CECECE', boxShadow: '0 8px 20px rgba(0,0,0,0.04)' }}>
       {/* 4대 퀴즈 레벨 탭 (Level 1~2: 필수, Level 3~4: 선택 심화) */}
-      <div style={{ display: 'flex', gap: '6px', marginBottom: '20px', flexWrap: 'wrap' }}>
+      <div style={{ display: 'flex', gap: '8px', marginBottom: '20px', flexWrap: 'wrap' }}>
         <button
           onClick={() => handleRestart(1)}
           style={{
             flex: 1,
-            minHeight: '48px',
-            minWidth: '90px',
-            padding: '10px 8px',
+            minHeight: '56px',
+            minWidth: '85px',
+            padding: '6px 4px',
             borderRadius: '14px',
             border: quizLevel === 1 ? '2px solid #1899D6' : '2px solid #E5E5E5',
             borderBottom: quizLevel === 1 ? '4px solid #1899D6' : '4px solid #CECECE',
@@ -688,22 +688,28 @@ export default function QuizSection({ currentUser, activeWords, onQuizLevelCompl
             fontWeight: '900',
             fontSize: '13px',
             cursor: 'pointer',
-            display: 'inline-flex',
+            display: 'flex',
+            flexDirection: 'column',
             alignItems: 'center',
             justifyContent: 'center',
             textAlign: 'center',
+            lineHeight: 1.25,
             transition: 'all 0.15s ease'
           }}
         >
-          🔊 {currentLang === 'zh' ? '第1关 听力' : (currentLang === 'fr' ? 'Niveau 1 Écoute' : (currentLang === 'ja' ? '第1段階 リスニング' : (currentLang === 'vi' ? 'Cấp 1 Nghe' : (currentLang === 'hi' ? 'स्तर 1 श्रवण' : '1단계 소리 (필수)'))))}
+          <span>🔊 {currentLang === 'zh' ? '第1关 听力' : (currentLang === 'fr' ? 'Niveau 1 Écoute' : (currentLang === 'ja' ? '第1段階 リスニング' : (currentLang === 'vi' ? 'Cấp 1 Nghe' : (currentLang === 'hi' ? 'स्तर 1 श्रवण' : '1단계 소리'))))}</span>
+          <span style={{ fontSize: '11px', marginTop: '2px', fontWeight: '800', opacity: 0.95 }}>
+            {currentLang === 'zh' ? '(必修)' : (currentLang === 'fr' ? '(Obligatoire)' : (currentLang === 'ja' ? '(必須)' : (currentLang === 'vi' ? '(Bắt buộc)' : (currentLang === 'hi' ? '(अनिवार्य)' : '(필수)'))))}
+          </span>
         </button>
+
         <button
           onClick={() => handleRestart(2)}
           style={{
             flex: 1,
-            minHeight: '48px',
-            minWidth: '90px',
-            padding: '10px 8px',
+            minHeight: '56px',
+            minWidth: '85px',
+            padding: '6px 4px',
             borderRadius: '14px',
             border: quizLevel === 2 ? '2px solid #46A302' : '2px solid #E5E5E5',
             borderBottom: quizLevel === 2 ? '4px solid #46A302' : '4px solid #CECECE',
@@ -712,22 +718,28 @@ export default function QuizSection({ currentUser, activeWords, onQuizLevelCompl
             fontWeight: '900',
             fontSize: '13px',
             cursor: 'pointer',
-            display: 'inline-flex',
+            display: 'flex',
+            flexDirection: 'column',
             alignItems: 'center',
             justifyContent: 'center',
             textAlign: 'center',
+            lineHeight: 1.25,
             transition: 'all 0.15s ease'
           }}
         >
-          🧩 {currentLang === 'zh' ? '第2关 辨析 (打卡💮)' : (currentLang === 'fr' ? 'Niveau 2 Choix (Tampon💮)' : (currentLang === 'ja' ? '第2段階 選択 (出席💮)' : (currentLang === 'vi' ? 'Cấp 2 Chọn (Điểm danh💮)' : (currentLang === 'hi' ? 'स्तर 2 चयन (उपस्थिति💮)' : '2단계 선택 (필수💮)'))))}
+          <span>🧩 {currentLang === 'zh' ? '第2关 辨析' : (currentLang === 'fr' ? 'Niveau 2 Choix' : (currentLang === 'ja' ? '第2段階 選択' : (currentLang === 'vi' ? 'Cấp 2 Chọn' : (currentLang === 'hi' ? 'स्तर 2 चयन' : '2단계 선택'))))}</span>
+          <span style={{ fontSize: '11px', marginTop: '2px', fontWeight: '800', opacity: 0.95 }}>
+            {currentLang === 'zh' ? '(打卡💮)' : (currentLang === 'fr' ? '(Tampon💮)' : (currentLang === 'ja' ? '(出席💮)' : (currentLang === 'vi' ? '(Điểm danh💮)' : (currentLang === 'hi' ? '(उपस्थिति💮)' : '(필수💮)'))))}
+          </span>
         </button>
+
         <button
           onClick={() => handleRestart(3)}
           style={{
             flex: 1,
-            minHeight: '48px',
-            minWidth: '90px',
-            padding: '10px 8px',
+            minHeight: '56px',
+            minWidth: '85px',
+            padding: '6px 4px',
             borderRadius: '14px',
             border: quizLevel === 3 ? '2px solid #E67E22' : '2px solid #E5E5E5',
             borderBottom: quizLevel === 3 ? '4px solid #D35400' : '4px solid #CECECE',
@@ -736,22 +748,28 @@ export default function QuizSection({ currentUser, activeWords, onQuizLevelCompl
             fontWeight: '900',
             fontSize: '13px',
             cursor: 'pointer',
-            display: 'inline-flex',
+            display: 'flex',
+            flexDirection: 'column',
             alignItems: 'center',
             justifyContent: 'center',
             textAlign: 'center',
+            lineHeight: 1.25,
             transition: 'all 0.15s ease'
           }}
         >
-          🎙️ {currentLang === 'zh' ? '第3关 录音 (选修⭐)' : (currentLang === 'fr' ? 'Niveau 3 Micro (Option⭐)' : (currentLang === 'ja' ? '第3段階 録音 (選択⭐)' : (currentLang === 'vi' ? 'Cấp 3 Ghi âm (Tự chọn⭐)' : (currentLang === 'hi' ? 'स्तर 3 रिकॉर्डिंग (वैकल्पिक⭐)' : '3단계 녹음 (선택⭐)'))))}
+          <span>🎙️ {currentLang === 'zh' ? '第3关 录音' : (currentLang === 'fr' ? 'Niveau 3 Micro' : (currentLang === 'ja' ? '第3段階 録音' : (currentLang === 'vi' ? 'Cấp 3 Ghi âm' : (currentLang === 'hi' ? 'स्तर 3 रिकॉर्डिंग' : '3단계 녹음'))))}</span>
+          <span style={{ fontSize: '11px', marginTop: '2px', fontWeight: '800', opacity: 0.95 }}>
+            {currentLang === 'zh' ? '(选修⭐)' : (currentLang === 'fr' ? '(Option⭐)' : (currentLang === 'ja' ? '(選択⭐)' : (currentLang === 'vi' ? '(Tự chọn⭐)' : (currentLang === 'hi' ? '(वैकल्पिक⭐)' : '(선택⭐)'))))}
+          </span>
         </button>
+
         <button
           onClick={() => handleRestart(4)}
           style={{
             flex: 1,
-            minHeight: '48px',
-            minWidth: '90px',
-            padding: '10px 8px',
+            minHeight: '56px',
+            minWidth: '85px',
+            padding: '6px 4px',
             borderRadius: '14px',
             border: quizLevel === 4 ? '2px solid #B75DFF' : '2px solid #E5E5E5',
             borderBottom: quizLevel === 4 ? '4px solid #8E44AD' : '4px solid #CECECE',
@@ -760,14 +778,19 @@ export default function QuizSection({ currentUser, activeWords, onQuizLevelCompl
             fontWeight: '900',
             fontSize: '13px',
             cursor: 'pointer',
-            display: 'inline-flex',
+            display: 'flex',
+            flexDirection: 'column',
             alignItems: 'center',
             justifyContent: 'center',
             textAlign: 'center',
+            lineHeight: 1.25,
             transition: 'all 0.15s ease'
           }}
         >
-          ✍️ {currentLang === 'zh' ? '第4关 默写 (进阶)' : (currentLang === 'fr' ? 'Niveau 4 Écriture' : (currentLang === 'ja' ? '第4段階 記述 (応用)' : (currentLang === 'vi' ? 'Cấp 4 Viết (Nâng cao)' : (currentLang === 'hi' ? 'स्तर 4 लेखन (उन्नत)' : '4단계 직접쓰기 (선택⭐)'))))}
+          <span>✍️ {currentLang === 'zh' ? '第4关 默写' : (currentLang === 'fr' ? 'Niveau 4 Écriture' : (currentLang === 'ja' ? '第4段階 記述' : (currentLang === 'vi' ? 'Cấp 4 Viết' : (currentLang === 'hi' ? 'स्तर 4 लेखन' : '4단계 직접쓰기'))))}</span>
+          <span style={{ fontSize: '11px', marginTop: '2px', fontWeight: '800', opacity: 0.95 }}>
+            {currentLang === 'zh' ? '(进阶⭐)' : (currentLang === 'fr' ? '(Avancé⭐)' : (currentLang === 'ja' ? '(応用⭐)' : (currentLang === 'vi' ? '(Nâng cao⭐)' : (currentLang === 'hi' ? '(उन्नत⭐)' : '(선택⭐)'))))}
+          </span>
         </button>
       </div>
 
