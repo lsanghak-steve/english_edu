@@ -57,7 +57,7 @@ export default function ParentDashboard({ currentUser, onLogout, currentLang = '
               dailyWordCount: String(s.daily_word_count || '10'),
               daily_word_count: s.daily_word_count || 10,
               studentPin: s.pin || '1234',
-              parentName: removeEmoji(s.parent_name || (removeEmoji(s.name).includes('이') ? '이상학' : (removeEmoji(s.name).includes('조') ? '조수혁학부모' : `${removeEmoji(s.name)}학부모`))),
+              parentName: removeEmoji(s.parent_name || (removeEmoji(s.name).includes('조') ? '조수혁학부모' : '이상학')),
               parentPhone: s.parent_phone || '010-4006-9050',
               parentPin: s.parent_pin || '0815'
             };
@@ -65,17 +65,15 @@ export default function ParentDashboard({ currentUser, onLogout, currentLang = '
 
           // 👨‍👩‍👧‍👦 가족/학부모별 등록 학생(자녀) 매핑 기준
           const FAMILY_CHILDREN_RELATIONS = {
-            '이상학': ['이승현', '이수민', '이상학'],
-            '이승현': ['이승현', '이수민'],
-            '이수민': ['이승현', '이수민'],
+            '이상학': ['이상학', '이승현', '이수민', '박재현', '김민채'],
+            '이승현': ['이상학', '이승현', '이수민', '박재현', '김민채'],
+            '이수민': ['이상학', '이승현', '이수민', '박재현', '김민채'],
+            '박재현': ['이상학', '이승현', '이수민', '박재현', '김민채'],
+            '김민채': ['이상학', '이승현', '이수민', '박재현', '김민채'],
             '조수혁': ['조수혁', '조수아'],
             '조수아': ['조수혁', '조수아'],
             '조수혁학부모': ['조수혁', '조수아'],
-            '조수아학부모': ['조수혁', '조수아'],
-            '김민채': ['김민채'],
-            '김민채학부모': ['김민채'],
-            '박재현': ['박재현'],
-            '박재현학부모': ['박재현']
+            '조수아학부모': ['조수혁', '조수아']
           };
 
           const targetParent = removeEmoji(currentUser?.parentName || '');
