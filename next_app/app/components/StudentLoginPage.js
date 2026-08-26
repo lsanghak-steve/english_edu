@@ -363,7 +363,31 @@ export default function StudentLoginPage({ onLoginSuccess, onParentLoginSuccess,
       return;
     }
 
-    const matchedChildren = users.filter(u => removeEmoji(u.parentName) === trimmedParentName || removeEmoji(u.name).includes(trimmedParentName));
+    const FAMILY_CHILDREN_RELATIONS = {
+      '이상학': ['이승현', '이수민', '이상학'],
+      '이승현': ['이승현', '이수민'],
+      '이수민': ['이승현', '이수민'],
+      '조수혁': ['조수혁', '조수아'],
+      '조수아': ['조수혁', '조수아'],
+      '조수혁학부모': ['조수혁', '조수아'],
+      '조수아학부모': ['조수혁', '조수아'],
+      '김민채': ['김민채'],
+      '김민채학부모': ['김민채'],
+      '박재현': ['박재현'],
+      '박재현학부모': ['박재현']
+    };
+
+    const allowedFamily = FAMILY_CHILDREN_RELATIONS[trimmedParentName] || [];
+
+    const matchedChildren = users.filter(u => {
+      const uName = removeEmoji(u.name);
+      const uParent = removeEmoji(u.parentName);
+      if (allowedFamily.length > 0) {
+        return allowedFamily.includes(uName);
+      }
+      return uParent === trimmedParentName || uParent.includes(trimmedParentName) || uName === trimmedParentName;
+    });
+
     if (matchedChildren.length === 0) {
       alert(currentLang === 'zh'
         ? `未找到与 '${trimmedParentName}' 家长关联的子女信息，请重新确认。`

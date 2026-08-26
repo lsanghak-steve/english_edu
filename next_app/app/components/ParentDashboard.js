@@ -35,14 +35,14 @@ export default function ParentDashboard({ currentUser, onLogout, currentLang = '
   const [showWrongModal, setShowWrongModal] = useState(false);
   const [showNotificationModal, setShowNotificationModal] = useState(false);
 
-  // 1. Supabase 클라우드 DB `users` 테이블에서 전체 자녀/학생 목록 라이브 로드
+  // 1. Supabase 클라우드 DB `users` 테이블에서 현재 학부모에게 등록된 자녀 목록만 필터링 로드
   useEffect(() => {
     async function loadCloudChildren() {
       setLoading(true);
       try {
         const { data, error } = await supabase.from('users').select('*').order('created_at', { ascending: true });
         if (!error && data && data.length > 0) {
-          const formatted = data.map(s => {
+          const allFormatted = data.map(s => {
             const rawAvatar = String(s.avatar || s.grade || '').trim();
             const cleanGrade = rawAvatar.replace('[PENDING]', '').replace('[APPROVED]', '').replace('[REJECTED]', '').trim() || '초등 5학년';
 
@@ -57,27 +57,71 @@ export default function ParentDashboard({ currentUser, onLogout, currentLang = '
               dailyWordCount: String(s.daily_word_count || '10'),
               daily_word_count: s.daily_word_count || 10,
               studentPin: s.pin || '1234',
-              parentName: removeEmoji(s.parent_name || s.name),
+              parentName: removeEmoji(s.parent_name || (removeEmoji(s.name).includes('이') ? '이상학' : (removeEmoji(s.name).includes('조') ? '조수혁학부모' : `${removeEmoji(s.name)}학부모`))),
               parentPhone: s.parent_phone || '010-4006-9050',
               parentPin: s.parent_pin || '0815'
             };
           });
 
-          setChildrenList(formatted);
-          setLoading(false);
-          return;
+          // 👨‍👩‍👧‍👦 가족/학부모별 등록 학생(자녀) 매핑 기준
+          const FAMILY_CHILDREN_RELATIONS = {
+            '이상학': ['이승현', '이수민', '이상학'],
+            '이승현': ['이승현', '이수민'],
+            '이수민': ['이승현', '이수민'],
+            '조수혁': ['조수혁', '조수아'],
+            '조수아': ['조수혁', '조수아'],
+            '조수혁학부모': ['조수혁', '조수아'],
+            '조수아학부모': ['조수혁', '조수아'],
+            '김민채': ['김민채'],
+            '김민채학부모': ['김민채'],
+            '박재현': ['박재현'],
+            '박재현학부모': ['박재현']
+          };
+
+          const targetParent = removeEmoji(currentUser?.parentName || '');
+          const targetStudent = removeEmoji(currentUser?.name || '');
+          const allowedNames = FAMILY_CHILDREN_RELATIONS[targetParent] ||
+                               FAMILY_CHILDREN_RELATIONS[targetStudent] ||
+                               (targetStudent ? [targetStudent] : []);
+
+          let filtered = allFormatted.filter(s => {
+            const sName = removeEmoji(s.name);
+            const sParent = removeEmoji(s.parentName);
+            if (allowedNames.length > 0) {
+              return allowedNames.includes(sName);
+            }
+            if (targetParent) {
+              return sParent === targetParent || sParent.includes(targetParent) || targetParent.includes(sParent);
+            }
+            return sName === targetStudent;
+          });
+
+          if (filtered.length === 0 && currentUser) {
+            const currentObj = allFormatted.find(s => removeEmoji(s.name) === targetStudent || s.id === currentUser.id);
+            filtered = currentObj ? [currentObj] : [currentUser];
+          }
+
+          if (filtered.length > 0) {
+            setChildrenList(filtered);
+            setSelectedChildIndex(0);
+            setLoading(false);
+            return;
+          }
         }
       } catch (e) {
         console.log('Cloud child load fallback', e);
       }
 
       // LocalStorage / 기본 데이터 백업
-      const defaultData = [
-        { id: 'lsh_20260807_000001', student_id: 'lsh_20260807_000001', name: '이상학', grade: '대학생 및 성인', dailyWordCount: '20', studentPin: '0815', parentName: '이상학', parentPhone: '010-4006-9050', parentPin: '0815' },
-        { id: 'lsh_20260807_000002', student_id: 'lsh_20260807_000002', name: '이승현', grade: '초등 5학년', dailyWordCount: '10', studentPin: '0418', parentName: '이상학', parentPhone: '010-4006-9050', parentPin: '0815' },
-        { id: 'lsm_20260807_000003', student_id: 'lsm_20260807_000003', name: '이수민', grade: '초등 3학년', dailyWordCount: '10', studentPin: '0809', parentName: '이상학', parentPhone: '010-4006-9050', parentPin: '0815' }
-      ];
-      setChildrenList(defaultData);
+      if (currentUser) {
+        setChildrenList([currentUser]);
+      } else {
+        const defaultData = [
+          { id: 'lsh_20260807_000002', student_id: 'lsh_20260807_000002', name: '이승현', grade: '초등 5학년', dailyWordCount: '10', studentPin: '0418', parentName: '이상학', parentPhone: '010-4006-9050', parentPin: '0815' }
+        ];
+        setChildrenList(defaultData);
+      }
+      setSelectedChildIndex(0);
       setLoading(false);
     }
 
@@ -86,7 +130,7 @@ export default function ParentDashboard({ currentUser, onLogout, currentLang = '
 
   const activeChild = childrenList[selectedChildIndex] || currentUser || { name: '이상학', dailyWordCount: '20' };
   const studentName = removeEmoji(activeChild.name || '');
-  const parentName = removeEmoji(activeChild.parentName) || (currentLang === 'zh' ? '家长' : (currentLang === 'fr' ? 'Parent' : '학부모'));
+  const parentName = removeEmoji(activeChild.parentName) || removeEmoji(currentUser?.parentName) || (currentLang === 'zh' ? '家长' : (currentLang === 'fr' ? 'Parent' : '학부모'));
   const childId = activeChild.student_id || activeChild.id || 'guest';
   const childDbId = activeChild.db_id || activeChild.id || childId;
 
