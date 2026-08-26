@@ -803,6 +803,41 @@ export default function Home() {
     }
   }, [safeActiveWords.length, currentIndex]);
 
+  // ⚡ [초고속 이미지 프리로딩 엔진] 오늘 학습 세트(10~20단어)의 모든 고화질 단어 이미지를 백그라운드 브라우저 RAM 캐시에 사전 탑재
+  useEffect(() => {
+    if (!safeActiveWords || safeActiveWords.length === 0 || typeof window === 'undefined') return;
+
+    // 1. 현재 학습 단어 + 전후 단어 3개 최우선 즉시 프리로드 (High Priority)
+    [currentIndex, currentIndex + 1, currentIndex + 2, currentIndex - 1].forEach((idx) => {
+      if (idx >= 0 && idx < safeActiveWords.length) {
+        const wObj = safeActiveWords[idx];
+        const src = getWordImgSrc(wObj);
+        if (src) {
+          const preImg = new Image();
+          preImg.fetchPriority = 'high';
+          preImg.decoding = 'async';
+          preImg.src = src;
+        }
+      }
+    });
+
+    // 2. 나머지 모든 단어 이미지도 백그라운드에서 병렬 프리로드
+    const timer = setTimeout(() => {
+      safeActiveWords.forEach((wObj, i) => {
+        if (i !== currentIndex) {
+          const src = getWordImgSrc(wObj);
+          if (src) {
+            const preImg = new Image();
+            preImg.decoding = 'async';
+            preImg.src = src;
+          }
+        }
+      });
+    }, 50);
+
+    return () => clearTimeout(timer);
+  }, [safeActiveWords, currentIndex]);
+
   const currentWord = (safeActiveWords && safeActiveWords.length > 0)
     ? (safeActiveWords[currentIndex] || safeActiveWords[0])
     : null;
@@ -2392,7 +2427,10 @@ export default function Home() {
                   <img
                     src={getWordImgSrc(currentWord)}
                     alt={cleanWordStr}
-                    style={{ width: '100%', height: '100%', objectFit: 'contain', padding: '6px' }}
+                    loading="eager"
+                    fetchPriority="high"
+                    decoding="async"
+                    style={{ width: '100%', height: '100%', objectFit: 'contain', padding: '6px', willChange: 'transform' }}
                     onError={(e) => handleImageError(e, cleanWordStr)}
                   />
                 </div>
@@ -2420,7 +2458,10 @@ export default function Home() {
                   <img
                     src={getWordImgSrc(currentWord)}
                     alt={cleanWordStr}
-                    style={{ width: '100%', height: '100%', objectFit: 'contain', padding: '6px' }}
+                    loading="eager"
+                    fetchPriority="high"
+                    decoding="async"
+                    style={{ width: '100%', height: '100%', objectFit: 'contain', padding: '6px', willChange: 'transform' }}
                     onError={(e) => handleImageError(e, cleanWordStr)}
                   />
                 </div>
