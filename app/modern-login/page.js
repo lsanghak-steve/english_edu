@@ -233,7 +233,6 @@ export default function ModernLoginPage() {
   const [parentPinInput, setParentPinInput] = useState('');
   const [showParentPassword, setShowParentPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(true);
-  const [activeBottomNav, setActiveBottomNav] = useState('Home');
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [loginSuccessToast, setLoginSuccessToast] = useState('');
@@ -955,54 +954,11 @@ export default function ModernLoginPage() {
 
         </div>
 
-        {/* 📱 하단 플로팅 글래스 내비게이션 바 (Home, Words, Quiz, Profile) */}
-        <div style={{
-          background: 'rgba(255, 255, 255, 0.95)',
-          backdropFilter: 'blur(12px)',
-          borderTop: '1px solid #F1F5F9',
-          padding: '12px 24px 18px 24px',
-          display: 'flex',
-          justifyContent: 'space-around',
-          alignItems: 'center'
-        }}>
-          {[
-            { id: 'Home', label: currentStrings.navHome, icon: '🏠', path: '/modern-login' },
-            { id: 'Words', label: currentStrings.navWords, icon: '📖', path: '/' },
-            { id: 'Quiz', label: currentStrings.navQuiz, icon: '☑️', path: '/?tab=quiz' },
-            { id: 'Profile', label: currentStrings.navProfile, icon: '👤', path: '/?tab=parent' },
-          ].map((tab) => {
-            const isActive = activeBottomNav === tab.id;
-            return (
-              <button
-                key={tab.id}
-                onClick={() => {
-                  setActiveBottomNav(tab.id);
-                  if (tab.id !== 'Home') router.push(tab.path);
-                }}
-                style={{
-                  background: 'none',
-                  border: 'none',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  alignItems: 'center',
-                  gap: '4px',
-                  cursor: 'pointer',
-                  color: isActive ? '#3B82F6' : '#94A3B8',
-                  transition: 'all 0.2s ease'
-                }}
-              >
-                <span style={{ fontSize: '20px' }}>{tab.icon}</span>
-                <span style={{ fontSize: '11px', fontWeight: isActive ? '900' : '600' }}>{tab.label}</span>
-              </button>
-            );
-          })}
-        </div>
-
         {/* 🔔 로그인 성공 토스트 메시지 */}
         {loginSuccessToast && (
           <div style={{
             position: 'absolute',
-            bottom: '80px',
+            bottom: '24px',
             left: '20px',
             right: '20px',
             background: '#10B981',
