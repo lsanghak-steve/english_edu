@@ -389,7 +389,7 @@ export default function ModernLoginPage() {
         }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
             <img
-              src="/flipvoca_logo.png"
+              src="/image/flipvoca_logo.png"
               alt="FlipVoca Logo"
               style={{
                 height: '42px',

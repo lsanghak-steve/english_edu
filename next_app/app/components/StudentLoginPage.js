@@ -524,7 +524,7 @@ export default function StudentLoginPage({ onLoginSuccess, onParentLoginSuccess,
           gap: '8px'
         }}>
           <img
-            src="/flipvoca_logo.png"
+            src="/image/flipvoca_logo.png"
             alt="FlipVoca - Flip • Learn • Remember"
             style={{
               width: '260px',
