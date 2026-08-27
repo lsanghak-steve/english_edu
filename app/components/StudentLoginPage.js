@@ -48,14 +48,14 @@ export default function StudentLoginPage({ onLoginSuccess, onParentLoginSuccess,
 
   // 기본 학생 세팅 배열 (고유 학생 코드 lsh_20260807_000001 체계 적용)
   const defaultStudents = [
-    { id: 'lsh_20260807_000001', student_id: 'lsh_20260807_000001', name: '이상학', grade: '대학생 및 성인', studyGradeLevel: '중등단어', dailyWordCount: '20', studentPin: '0815', parentName: '이상학학부모', parentPhone: '010-0000-0000', parentPin: '5678' },
-    { id: 'lsh_20260807_000002', student_id: 'lsh_20260807_000002', name: '이승현', grade: '초등 3학년', studyGradeLevel: '초등단어', dailyWordCount: '10', studentPin: '0418', parentName: '이승현학부모', parentPhone: '010-1234-5678', parentPin: '5678' },
-    { id: 'lsm_20260807_000003', student_id: 'lsm_20260807_000003', name: '이수민', grade: '초등 4학년', studyGradeLevel: '초등단어', dailyWordCount: '10', studentPin: '0809', parentName: '이수민학부모', parentPhone: '010-9876-5432', parentPin: '5678' }
+    { id: 'lsh_20260807_000001', student_id: 'lsh_20260807_000001', name: '이상학', grade: '대학생 및 성인', avatar: '대학생 및 성인', studyGradeLevel: '중등단어', dailyWordCount: '20', studentPin: '0815', parentName: '이상학학부모', parentPhone: '010-4006-9050', parentPin: '0815' },
+    { id: 'lsh_20260807_000002', student_id: 'lsh_20260807_000002', name: '이승현', grade: '초등 5학년', avatar: '초등 5학년', studyGradeLevel: '초등단어', dailyWordCount: '10', studentPin: '0418', parentName: '이승현학부모', parentPhone: '010-4006-9050', parentPin: '0815' },
+    { id: 'lsm_20260807_000003', student_id: 'lsm_20260807_000003', name: '이수민', grade: '초등 3학년', avatar: '초등 3학년', studyGradeLevel: '초등단어', dailyWordCount: '10', studentPin: '0809', parentName: '이수민학부모', parentPhone: '010-4006-9050', parentPin: '0815' }
   ];
 
   // 수파베이스 클라우드 DB에서 학생 전체 목록 로드 (빠른 비동기 백그라운드 연동)
   useEffect(() => {
-    // 1. LocalStorage 로컬 캐시 즉시 로드 (0.01초 반응)
+    // 1. LocalStorage 로컬 캐시 즉시 로드
     try {
       const savedUsers = JSON.parse(localStorage.getItem('english_edu_users') || '[]');
       if (savedUsers.length > 0) {
@@ -80,21 +80,26 @@ export default function StudentLoginPage({ onLoginSuccess, onParentLoginSuccess,
           const cloudUsers = dbData.map(item => {
             const cleanN = removeEmoji(item.name);
             const cachedUser = savedMap.get(cleanN);
+            
+            // 🎯 DB avatar 컬럼에 저장된 정확한 학년 정보 추출 ([PENDING], [APPROVED] 등 접두사 제거)
+            const rawAvatar = String(item.avatar || item.grade || cachedUser?.grade || '').trim();
+            const cleanGrade = rawAvatar.replace('[PENDING]', '').replace('[APPROVED]', '').replace('[REJECTED]', '').trim() || cachedUser?.grade || '초등 5학년';
+
             return {
               id: item.student_id || item.id,
               db_id: item.id,
               student_id: item.student_id || item.id,
               name: cleanN,
-              grade: item.avatar || item.grade || cachedUser?.grade || '초등 3학년',
-              avatar: item.avatar || item.grade || cachedUser?.grade || '초등 3학년',
+              grade: cleanGrade,
+              avatar: cleanGrade,
               studyGradeLevel: item.study_grade_level || cachedUser?.studyGradeLevel || '초등단어',
               study_grade_level: item.study_grade_level || cachedUser?.study_grade_level || '초등단어',
               dailyWordCount: String(item.daily_word_count || cachedUser?.dailyWordCount || 10),
               daily_word_count: item.daily_word_count || (cachedUser ? parseInt(cachedUser.dailyWordCount, 10) : 10),
               studentPin: item.pin || cachedUser?.studentPin || '1234',
               parentName: cachedUser?.parentName || (cleanN + '학부모'),
-              parentPhone: cachedUser?.parentPhone || '',
-              parentPin: cachedUser?.parentPin || '5678'
+              parentPhone: cachedUser?.parentPhone || '010-4006-9050',
+              parentPin: cachedUser?.parentPin || '0815'
             };
           });
 
@@ -358,7 +363,29 @@ export default function StudentLoginPage({ onLoginSuccess, onParentLoginSuccess,
       return;
     }
 
-    const matchedChildren = users.filter(u => removeEmoji(u.parentName) === trimmedParentName || removeEmoji(u.name).includes(trimmedParentName));
+    const FAMILY_CHILDREN_RELATIONS = {
+      '이상학': ['이상학', '이승현', '이수민', '박재현', '김민채'],
+      '이승현': ['이상학', '이승현', '이수민', '박재현', '김민채'],
+      '이수민': ['이상학', '이승현', '이수민', '박재현', '김민채'],
+      '박재현': ['이상학', '이승현', '이수민', '박재현', '김민채'],
+      '김민채': ['이상학', '이승현', '이수민', '박재현', '김민채'],
+      '조수혁': ['조수혁', '조수아'],
+      '조수아': ['조수혁', '조수아'],
+      '조수혁학부모': ['조수혁', '조수아'],
+      '조수아학부모': ['조수혁', '조수아']
+    };
+
+    const allowedFamily = FAMILY_CHILDREN_RELATIONS[trimmedParentName] || [];
+
+    const matchedChildren = users.filter(u => {
+      const uName = removeEmoji(u.name);
+      const uParent = removeEmoji(u.parentName);
+      if (allowedFamily.length > 0) {
+        return allowedFamily.includes(uName);
+      }
+      return uParent === trimmedParentName || uParent.includes(trimmedParentName) || uName === trimmedParentName;
+    });
+
     if (matchedChildren.length === 0) {
       alert(currentLang === 'zh'
         ? `未找到与 '${trimmedParentName}' 家长关联的子女信息，请重新确认。`
@@ -413,118 +440,63 @@ export default function StudentLoginPage({ onLoginSuccess, onParentLoginSuccess,
         margin: 'auto'
       }}>
         {/* 🌐 글로벌 6개 국어 언어 스위처 바 */}
-        {onLangChange && (
-          <div style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: '4px',
-            marginBottom: '16px',
-            background: '#F8FAFC',
-            padding: '6px 8px',
-            borderRadius: '16px',
-            border: '1px solid #E2E8F0',
-            flexWrap: 'wrap'
-          }}>
-            <span style={{ fontSize: '12px', fontWeight: 'bold', color: '#64748B' }}>🌐</span>
-            <button
-              type="button"
-              onClick={() => onLangChange('ko')}
-              style={{
-                padding: '4px 6px',
-                borderRadius: '8px',
-                fontSize: '11px',
-                fontWeight: 'bold',
-                border: currentLang === 'ko' ? '2px solid #3182CE' : '1px solid #CBD5E0',
-                background: currentLang === 'ko' ? '#EBF8FF' : '#FFFFFF',
-                color: currentLang === 'ko' ? '#2B6CB0' : '#64748B',
-                cursor: 'pointer'
-              }}
-            >
-              🇰🇷 한국어
-            </button>
-            <button
-              type="button"
-              onClick={() => onLangChange('zh')}
-              style={{
-                padding: '4px 6px',
-                borderRadius: '8px',
-                fontSize: '11px',
-                fontWeight: 'bold',
-                border: currentLang === 'zh' ? '2px solid #E53E3E' : '1px solid #CBD5E0',
-                background: currentLang === 'zh' ? '#FFF5F5' : '#FFFFFF',
-                color: currentLang === 'zh' ? '#C53030' : '#64748B',
-                cursor: 'pointer'
-              }}
-            >
-              🇨🇳 中文
-            </button>
-            <button
-              type="button"
-              onClick={() => onLangChange('fr')}
-              style={{
-                padding: '4px 6px',
-                borderRadius: '8px',
-                fontSize: '11px',
-                fontWeight: 'bold',
-                border: currentLang === 'fr' ? '2px solid #3182CE' : '1px solid #CBD5E0',
-                background: currentLang === 'fr' ? '#EBF8FF' : '#FFFFFF',
-                color: currentLang === 'fr' ? '#2B6CB0' : '#64748B',
-                cursor: 'pointer'
-              }}
-            >
-              🇫🇷 Français
-            </button>
-            <button
-              type="button"
-              onClick={() => onLangChange('ja')}
-              style={{
-                padding: '4px 6px',
-                borderRadius: '8px',
-                fontSize: '11px',
-                fontWeight: 'bold',
-                border: currentLang === 'ja' ? '2px solid #E53E3E' : '1px solid #CBD5E0',
-                background: currentLang === 'ja' ? '#FFF5F5' : '#FFFFFF',
-                color: currentLang === 'ja' ? '#C53030' : '#64748B',
-                cursor: 'pointer'
-              }}
-            >
-              🇯🇵 日本語
-            </button>
-            <button
-              type="button"
-              onClick={() => onLangChange('vi')}
-              style={{
-                padding: '4px 6px',
-                borderRadius: '8px',
-                fontSize: '11px',
-                fontWeight: 'bold',
-                border: currentLang === 'vi' ? '2px solid #D69E2E' : '1px solid #CBD5E0',
-                background: currentLang === 'vi' ? '#FEFCBF' : '#FFFFFF',
-                color: currentLang === 'vi' ? '#B7791F' : '#64748B',
-                cursor: 'pointer'
-              }}
-            >
-              🇻🇳 Tiếng Việt
-            </button>
-            <button
-              type="button"
-              onClick={() => onLangChange('hi')}
-              style={{
-                padding: '4px 6px',
-                borderRadius: '8px',
-                fontSize: '11px',
-                fontWeight: 'bold',
-                border: currentLang === 'hi' ? '2px solid #DD6B20' : '1px solid #CBD5E0',
-                background: currentLang === 'hi' ? '#FEEBC8' : '#FFFFFF',
-                color: currentLang === 'hi' ? '#C05621' : '#64748B',
-                cursor: 'pointer'
-              }}
-            >
-              🇮🇳 हिन्दी
-            </button>
-          </div>
-        )}
+        <div style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: '6px',
+          marginBottom: '16px',
+          background: '#F8FAFC',
+          padding: '8px 10px',
+          borderRadius: '16px',
+          border: '1.5px solid #E2E8F0',
+          overflowX: 'auto',
+          scrollbarWidth: 'none'
+        }}>
+          <span style={{ fontSize: '15px', flexShrink: 0, padding: '0 2px' }}>🌐</span>
+          {[
+            { code: 'ko', flag: '🇰🇷', label: '한국어' },
+            { code: 'zh', flag: '🇨🇳', label: '中文' },
+            { code: 'fr', flag: '🇫🇷', label: 'Français' },
+            { code: 'ja', flag: '🇯🇵', label: '日本語' },
+            { code: 'vi', flag: '🇻🇳', label: 'Tiếng Việt' },
+            { code: 'hi', flag: '🇮🇳', label: 'हिन्दी' }
+          ].map(item => {
+            const isSelected = (currentLang || 'ko') === item.code;
+            return (
+              <button
+                key={item.code}
+                type="button"
+                onClick={() => {
+                  if (onLangChange) onLangChange(item.code);
+                  try {
+                    localStorage.setItem('steve_voca_lang', item.code);
+                    localStorage.setItem('flipvoca_lang', item.code);
+                  } catch (e) {}
+                }}
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '4px',
+                  padding: '6px 10px',
+                  borderRadius: '12px',
+                  fontSize: '12px',
+                  fontWeight: isSelected ? '900' : '700',
+                  border: isSelected ? '2px solid #3182CE' : '1px solid #CBD5E1',
+                  background: isSelected ? '#EBF8FF' : '#FFFFFF',
+                  color: isSelected ? '#2B6CB0' : '#64748B',
+                  cursor: 'pointer',
+                  whiteSpace: 'nowrap',
+                  flexShrink: 0,
+                  transition: 'all 0.15s ease',
+                  boxShadow: isSelected ? '0 2px 6px rgba(49, 130, 206, 0.2)' : 'none'
+                }}
+              >
+                <span>{item.flag}</span>
+                <span>{item.label}</span>
+              </button>
+            );
+          })}
+        </div>
 
         <div style={{ fontSize: '44px', marginBottom: '6px' }}>🎓</div>
         <h1 style={{ margin: '0 0 6px 0', fontSize: '22px', color: '#2C3E50', fontWeight: '900' }}>

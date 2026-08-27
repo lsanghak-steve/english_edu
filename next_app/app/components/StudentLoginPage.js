@@ -440,118 +440,63 @@ export default function StudentLoginPage({ onLoginSuccess, onParentLoginSuccess,
         margin: 'auto'
       }}>
         {/* 🌐 글로벌 6개 국어 언어 스위처 바 */}
-        {onLangChange && (
-          <div style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: '4px',
-            marginBottom: '16px',
-            background: '#F8FAFC',
-            padding: '6px 8px',
-            borderRadius: '16px',
-            border: '1px solid #E2E8F0',
-            flexWrap: 'wrap'
-          }}>
-            <span style={{ fontSize: '12px', fontWeight: 'bold', color: '#64748B' }}>🌐</span>
-            <button
-              type="button"
-              onClick={() => onLangChange('ko')}
-              style={{
-                padding: '4px 6px',
-                borderRadius: '8px',
-                fontSize: '11px',
-                fontWeight: 'bold',
-                border: currentLang === 'ko' ? '2px solid #3182CE' : '1px solid #CBD5E0',
-                background: currentLang === 'ko' ? '#EBF8FF' : '#FFFFFF',
-                color: currentLang === 'ko' ? '#2B6CB0' : '#64748B',
-                cursor: 'pointer'
-              }}
-            >
-              🇰🇷 한국어
-            </button>
-            <button
-              type="button"
-              onClick={() => onLangChange('zh')}
-              style={{
-                padding: '4px 6px',
-                borderRadius: '8px',
-                fontSize: '11px',
-                fontWeight: 'bold',
-                border: currentLang === 'zh' ? '2px solid #E53E3E' : '1px solid #CBD5E0',
-                background: currentLang === 'zh' ? '#FFF5F5' : '#FFFFFF',
-                color: currentLang === 'zh' ? '#C53030' : '#64748B',
-                cursor: 'pointer'
-              }}
-            >
-              🇨🇳 中文
-            </button>
-            <button
-              type="button"
-              onClick={() => onLangChange('fr')}
-              style={{
-                padding: '4px 6px',
-                borderRadius: '8px',
-                fontSize: '11px',
-                fontWeight: 'bold',
-                border: currentLang === 'fr' ? '2px solid #3182CE' : '1px solid #CBD5E0',
-                background: currentLang === 'fr' ? '#EBF8FF' : '#FFFFFF',
-                color: currentLang === 'fr' ? '#2B6CB0' : '#64748B',
-                cursor: 'pointer'
-              }}
-            >
-              🇫🇷 Français
-            </button>
-            <button
-              type="button"
-              onClick={() => onLangChange('ja')}
-              style={{
-                padding: '4px 6px',
-                borderRadius: '8px',
-                fontSize: '11px',
-                fontWeight: 'bold',
-                border: currentLang === 'ja' ? '2px solid #E53E3E' : '1px solid #CBD5E0',
-                background: currentLang === 'ja' ? '#FFF5F5' : '#FFFFFF',
-                color: currentLang === 'ja' ? '#C53030' : '#64748B',
-                cursor: 'pointer'
-              }}
-            >
-              🇯🇵 日本語
-            </button>
-            <button
-              type="button"
-              onClick={() => onLangChange('vi')}
-              style={{
-                padding: '4px 6px',
-                borderRadius: '8px',
-                fontSize: '11px',
-                fontWeight: 'bold',
-                border: currentLang === 'vi' ? '2px solid #D69E2E' : '1px solid #CBD5E0',
-                background: currentLang === 'vi' ? '#FEFCBF' : '#FFFFFF',
-                color: currentLang === 'vi' ? '#B7791F' : '#64748B',
-                cursor: 'pointer'
-              }}
-            >
-              🇻🇳 Tiếng Việt
-            </button>
-            <button
-              type="button"
-              onClick={() => onLangChange('hi')}
-              style={{
-                padding: '4px 6px',
-                borderRadius: '8px',
-                fontSize: '11px',
-                fontWeight: 'bold',
-                border: currentLang === 'hi' ? '2px solid #DD6B20' : '1px solid #CBD5E0',
-                background: currentLang === 'hi' ? '#FEEBC8' : '#FFFFFF',
-                color: currentLang === 'hi' ? '#C05621' : '#64748B',
-                cursor: 'pointer'
-              }}
-            >
-              🇮🇳 हिन्दी
-            </button>
-          </div>
-        )}
+        <div style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: '6px',
+          marginBottom: '16px',
+          background: '#F8FAFC',
+          padding: '8px 10px',
+          borderRadius: '16px',
+          border: '1.5px solid #E2E8F0',
+          overflowX: 'auto',
+          scrollbarWidth: 'none'
+        }}>
+          <span style={{ fontSize: '15px', flexShrink: 0, padding: '0 2px' }}>🌐</span>
+          {[
+            { code: 'ko', flag: '🇰🇷', label: '한국어' },
+            { code: 'zh', flag: '🇨🇳', label: '中文' },
+            { code: 'fr', flag: '🇫🇷', label: 'Français' },
+            { code: 'ja', flag: '🇯🇵', label: '日本語' },
+            { code: 'vi', flag: '🇻🇳', label: 'Tiếng Việt' },
+            { code: 'hi', flag: '🇮🇳', label: 'हिन्दी' }
+          ].map(item => {
+            const isSelected = (currentLang || 'ko') === item.code;
+            return (
+              <button
+                key={item.code}
+                type="button"
+                onClick={() => {
+                  if (onLangChange) onLangChange(item.code);
+                  try {
+                    localStorage.setItem('steve_voca_lang', item.code);
+                    localStorage.setItem('flipvoca_lang', item.code);
+                  } catch (e) {}
+                }}
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '4px',
+                  padding: '6px 10px',
+                  borderRadius: '12px',
+                  fontSize: '12px',
+                  fontWeight: isSelected ? '900' : '700',
+                  border: isSelected ? '2px solid #3182CE' : '1px solid #CBD5E1',
+                  background: isSelected ? '#EBF8FF' : '#FFFFFF',
+                  color: isSelected ? '#2B6CB0' : '#64748B',
+                  cursor: 'pointer',
+                  whiteSpace: 'nowrap',
+                  flexShrink: 0,
+                  transition: 'all 0.15s ease',
+                  boxShadow: isSelected ? '0 2px 6px rgba(49, 130, 206, 0.2)' : 'none'
+                }}
+              >
+                <span>{item.flag}</span>
+                <span>{item.label}</span>
+              </button>
+            );
+          })}
+        </div>
 
         <div style={{ fontSize: '44px', marginBottom: '6px' }}>🎓</div>
         <h1 style={{ margin: '0 0 6px 0', fontSize: '22px', color: '#2C3E50', fontWeight: '900' }}>
