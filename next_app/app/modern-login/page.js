@@ -378,32 +378,28 @@ export default function ModernLoginPage() {
         position: 'relative'
       }}>
         
-        {/* 🌟 상단 앱 헤더 (FlipVoca 공식 3D 로고) */}
+        {/* 🌟 상단 앱 헤더 */}
         <div style={{
-          padding: '16px 20px 12px 20px',
+          padding: '14px 20px 10px 20px',
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
           background: 'linear-gradient(180deg, #FFFFFF 0%, #F8FAFC 100%)',
           borderBottom: '1px solid #F1F5F9'
         }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <img
-              src="/image/flipvoca_logo.png"
-              alt="FlipVoca Logo"
-              style={{
-                height: '42px',
-                width: 'auto',
-                objectFit: 'contain',
-                filter: 'drop-shadow(0 4px 12px rgba(0, 166, 251, 0.18))'
-              }}
-            />
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <span style={{ fontSize: '14px', fontWeight: '900', color: '#0F172A', letterSpacing: '-0.3px' }}>
+              Flip<span style={{ color: '#00A8BF' }}>Voca</span>
+            </span>
+            <span style={{ fontSize: '11px', fontWeight: '800', color: '#008294', background: '#E6FAFC', padding: '2px 7px', borderRadius: '8px', border: '1px solid #BAE8EE' }}>
+              스마트 학습관
+            </span>
           </div>
 
           <Link
             href="/"
             style={{
-              padding: '7px 13px',
+              padding: '6px 12px',
               borderRadius: '20px',
               background: '#F1F5F9',
               color: '#475569',
@@ -566,84 +562,36 @@ export default function ModernLoginPage() {
           paddingBottom: '20px'
         }}>
 
-          {/* 🎴 FlipVoca 브랜드 로고 & 스마트 학습관 설명 배너 카드 */}
+          {/* 🎴 FlipVoca 공식 로고 & 슬로건 */}
           <div style={{
-            background: activeRole === 'student'
-              ? 'linear-gradient(135deg, #00C7E5 0%, #00A8BF 50%, #0284C7 100%)'
-              : 'linear-gradient(135deg, #0EA5E9 0%, #6366F1 100%)',
-            borderRadius: '26px',
-            padding: '18px 18px',
-            color: '#FFFFFF',
-            position: 'relative',
-            boxShadow: activeRole === 'student'
-              ? '0 14px 28px rgba(0, 168, 191, 0.28)'
-              : '0 14px 28px rgba(14, 165, 233, 0.28)',
-            transition: 'all 0.3s ease',
             display: 'flex',
+            flexDirection: 'column',
             alignItems: 'center',
-            gap: '14px'
+            justifyContent: 'center',
+            padding: '12px 0 6px 0',
+            gap: '8px'
           }}>
-            {/* 🎴 FlipVoca 3D 로고 배지 */}
-            <div style={{
-              width: '52px',
-              height: '52px',
-              borderRadius: '18px',
-              background: '#FFFFFF',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              padding: '6px',
-              flexShrink: 0,
-              boxShadow: '0 6px 16px rgba(0, 0, 0, 0.12)',
-              border: '1px solid rgba(255, 255, 255, 0.8)'
+            <img
+              src="/image/flipvoca_logo.png"
+              alt="FlipVoca - Flip • Learn • Remember"
+              style={{
+                width: '270px',
+                maxWidth: '90%',
+                height: 'auto',
+                objectFit: 'contain',
+                filter: 'drop-shadow(0 8px 24px rgba(0, 168, 191, 0.22))'
+              }}
+            />
+            <p style={{
+              margin: 0,
+              fontSize: '12px',
+              color: '#64748B',
+              fontWeight: '700',
+              letterSpacing: '-0.2px',
+              textAlign: 'center'
             }}>
-              <img
-                src="/image/flipvoca_logo.png"
-                alt="FlipVoca Logo"
-                style={{
-                  width: '100%',
-                  height: '100%',
-                  objectFit: 'contain'
-                }}
-              />
-            </div>
-
-            {/* 브랜드 타이틀 & 프로그램 간단 설명 */}
-            <div style={{ flex: 1 }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
-                <h1 style={{
-                  margin: 0,
-                  fontSize: '22px',
-                  fontWeight: '900',
-                  letterSpacing: '-0.5px',
-                  lineHeight: 1.1,
-                  textShadow: '0 2px 4px rgba(0,0,0,0.1)'
-                }}>
-                  FlipVoca
-                </h1>
-                <span style={{
-                  fontSize: '10px',
-                  fontWeight: '800',
-                  padding: '2px 7px',
-                  borderRadius: '20px',
-                  background: 'rgba(255, 255, 255, 0.25)',
-                  border: '1px solid rgba(255, 255, 255, 0.4)',
-                  letterSpacing: '0.5px'
-                }}>
-                  SMART VOCA
-                </span>
-              </div>
-
-              <div style={{
-                fontSize: '12px',
-                opacity: 0.95,
-                fontWeight: '600',
-                lineHeight: 1.35,
-                textShadow: '0 1px 2px rgba(0,0,0,0.08)'
-              }}>
-                {currentStrings.programDescription}
-              </div>
-            </div>
+              {currentStrings.programDescription}
+            </p>
           </div>
 
           {/* 🔑 1. 학생 로그인 폼 (ID & 비밀번호) */}
