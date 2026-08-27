@@ -1,12 +1,14 @@
+@import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css");
+
 /* ===================================================
    🦉 Duolingo Style Design System (듀오링고 감성 디자인)
    초등·중등·고등 영단어 통합 학습 플랫폼 (Next.js)
-   글로벌 & 중국(CN) 만리방화벽(GFW) 대응 무지연 고속 폰트 시스템
+   프리텐다드(Pretendard) 고품질 현대적 서체 탑재
    =================================================== */
 
 :root {
-  /* 글로벌 멀티랭귀지(EN/KO/ZH) 초고속 시스템 폰트 스택 */
-  --font-family-base: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "WenQuanYi Micro Hei", "Pretendard", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+  /* 프리텐다드(Pretendard) 중심 글로벌 멀티랭귀지 시스템 폰트 스택 */
+  --font-family-base: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, system-ui, Roboto, "Helvetica Neue", "Segoe UI", "Apple SD Gothic Neo", "Noto Sans KR", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Malgun Gothic", sans-serif;
 
   /* Duolingo Brand Colors */
   --duo-green: #58CC02;

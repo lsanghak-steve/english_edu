@@ -363,7 +363,7 @@ export default function ModernLoginPage() {
       alignItems: 'center',
       justifyContent: 'center',
       padding: '20px 12px',
-      fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif'
+      fontFamily: '"Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif'
     }}>
       {/* 📱 모바일 스마트폰 컨테이너 */}
       <div style={{
