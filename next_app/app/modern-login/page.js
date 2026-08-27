@@ -378,82 +378,26 @@ export default function ModernLoginPage() {
         position: 'relative'
       }}>
         
-        {/* 🌟 상단 앱 헤더 (FlipVoca 정품 3D 로고 & 브랜딩 타이틀) */}
+        {/* 🌟 상단 앱 헤더 (FlipVoca 공식 3D 로고) */}
         <div style={{
-          padding: '20px 22px 14px 22px',
+          padding: '16px 20px 12px 20px',
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
           background: 'linear-gradient(180deg, #FFFFFF 0%, #F8FAFC 100%)',
           borderBottom: '1px solid #F1F5F9'
         }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-            {/* 🎴 FlipVoca 3D 프리미엄 글래스 로고 */}
-            <div style={{
-              width: '46px',
-              height: '46px',
-              borderRadius: '16px',
-              background: 'linear-gradient(135deg, #FF6B6B 0%, #FF8E53 45%, #7C3AED 100%)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              boxShadow: '0 8px 18px rgba(255, 107, 107, 0.35)',
-              flexShrink: 0,
-              position: 'relative',
-              overflow: 'hidden'
-            }}>
-              {/* 상단 은은한 광택 오버레이 */}
-              <div style={{
-                position: 'absolute',
-                top: 0,
-                left: 0,
-                right: 0,
-                height: '45%',
-                background: 'linear-gradient(180deg, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0) 100%)',
-                borderRadius: '16px 16px 0 0'
-              }} />
-              
-              {/* 3D 플립 카드 & 반짝이는 별 벡터 아이콘 */}
-              <svg width="26" height="26" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                {/* 뒤쪽 회전된 카드 */}
-                <rect x="7" y="3" width="13" height="16" rx="3" fill="rgba(255, 255, 255, 0.4)" transform="rotate(10 7 3)" />
-                {/* 앞쪽 메인 화이트 카드 */}
-                <rect x="3" y="4" width="14" height="17" rx="3.5" fill="#FFFFFF" />
-                {/* 카드 내부 단어 텍스트 라인 */}
-                <path d="M6.5 8.5H13.5M6.5 12H11.5M6.5 15.5H13.5" stroke="#FF6B6B" strokeWidth="1.8" strokeLinecap="round" />
-                {/* 우상단 반짝이는 골든 스타 */}
-                <path d="M18.5 4.5L19.2 6.2L21 6.5L19.5 7.8L20 9.5L18.5 8.5L17 9.5L17.5 7.8L16 6.5L17.8 6.2L18.5 4.5Z" fill="#FDE047" stroke="#EAB308" strokeWidth="0.5" />
-              </svg>
-            </div>
-
-            {/* 브랜드 타이틀 & 슬로건 */}
-            <div style={{ display: 'flex', flexDirection: 'column' }}>
-              <h1 style={{
-                margin: 0,
-                fontSize: '21px',
-                fontWeight: '900',
-                letterSpacing: '-0.5px',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '1px'
-              }}>
-                <span style={{ color: '#0F172A' }}>Flip</span>
-                <span style={{
-                  background: 'linear-gradient(135deg, #FF6B6B 0%, #EA580C 50%, #7C3AED 100%)',
-                  WebkitBackgroundClip: 'text',
-                  WebkitTextFillColor: 'transparent'
-                }}>Voca</span>
-              </h1>
-              <span style={{
-                fontSize: '11px',
-                fontWeight: '700',
-                color: '#64748B',
-                marginTop: '1px',
-                letterSpacing: '-0.2px'
-              }}>
-                {currentStrings.headerTagline || currentStrings.appSubtitle}
-              </span>
-            </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <img
+              src="/flipvoca_logo.png"
+              alt="FlipVoca Logo"
+              style={{
+                height: '42px',
+                width: 'auto',
+                objectFit: 'contain',
+                filter: 'drop-shadow(0 4px 12px rgba(0, 166, 251, 0.18))'
+              }}
+            />
           </div>
 
           <Link
