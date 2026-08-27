@@ -358,7 +358,7 @@ export default function ModernLoginPage() {
   return (
     <div style={{
       minHeight: '100vh',
-      background: 'linear-gradient(180deg, #E0EBFF 0%, #EDE9FE 45%, #FDE2E4 100%)',
+      background: 'linear-gradient(180deg, #E6FAFC 0%, #E0F2FE 45%, #F0FDF4 100%)',
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
@@ -371,7 +371,7 @@ export default function ModernLoginPage() {
         maxWidth: '430px',
         background: '#FFFFFF',
         borderRadius: '38px',
-        boxShadow: '0 25px 60px -15px rgba(99, 102, 241, 0.25), 0 0 0 1px rgba(255, 255, 255, 0.8) inset',
+        boxShadow: '0 25px 60px -15px rgba(0, 168, 191, 0.22), 0 0 0 1px rgba(255, 255, 255, 0.8) inset',
         overflow: 'hidden',
         display: 'flex',
         flexDirection: 'column',
@@ -464,12 +464,12 @@ export default function ModernLoginPage() {
               ].map(item => {
                 const isSelected = currentLang === item.code;
                 const activeBg = activeRole === 'student'
-                  ? 'linear-gradient(135deg, #FFF5F5 0%, #FFE8E8 100%)'
+                  ? 'linear-gradient(135deg, #E6FAFC 0%, #E0F7FA 100%)'
                   : 'linear-gradient(135deg, #EFF6FF 0%, #E0E7FF 100%)';
-                const activeBorder = activeRole === 'student' ? '1.5px solid #FF6B6B' : '1.5px solid #60A5FA';
-                const activeColor = activeRole === 'student' ? '#E53E3E' : '#2563EB';
+                const activeBorder = activeRole === 'student' ? '1.5px solid #00A8BF' : '1.5px solid #60A5FA';
+                const activeColor = activeRole === 'student' ? '#008294' : '#2563EB';
                 const activeShadow = activeRole === 'student'
-                  ? '0 3px 10px rgba(255, 107, 107, 0.22)'
+                  ? '0 3px 10px rgba(0, 168, 191, 0.22)'
                   : '0 3px 10px rgba(96, 165, 250, 0.22)';
 
                 return (
@@ -526,9 +526,9 @@ export default function ModernLoginPage() {
                 fontWeight: '900',
                 cursor: 'pointer',
                 transition: 'all 0.25s ease',
-                background: activeRole === 'student' ? 'linear-gradient(135deg, #FF6B6B 0%, #FF8E53 100%)' : 'transparent',
+                background: activeRole === 'student' ? 'linear-gradient(135deg, #00C7E5 0%, #00A8BF 100%)' : 'transparent',
                 color: activeRole === 'student' ? '#FFFFFF' : '#64748B',
-                boxShadow: activeRole === 'student' ? '0 4px 12px rgba(255, 107, 107, 0.3)' : 'none'
+                boxShadow: activeRole === 'student' ? '0 4px 12px rgba(0, 168, 191, 0.3)' : 'none'
               }}
             >
               {currentStrings.studentTab}
@@ -545,9 +545,9 @@ export default function ModernLoginPage() {
                 fontWeight: '900',
                 cursor: 'pointer',
                 transition: 'all 0.25s ease',
-                background: activeRole === 'parent' ? 'linear-gradient(135deg, #60A5FA 0%, #A78BFA 100%)' : 'transparent',
+                background: activeRole === 'parent' ? 'linear-gradient(135deg, #38BDF8 0%, #6366F1 100%)' : 'transparent',
                 color: activeRole === 'parent' ? '#FFFFFF' : '#64748B',
-                boxShadow: activeRole === 'parent' ? '0 4px 12px rgba(96, 165, 250, 0.3)' : 'none'
+                boxShadow: activeRole === 'parent' ? '0 4px 12px rgba(56, 189, 248, 0.3)' : 'none'
               }}
             >
               {currentStrings.parentTab}
@@ -569,15 +569,15 @@ export default function ModernLoginPage() {
           {/* 🎴 FlipVoca 브랜드 로고 & 스마트 학습관 설명 배너 카드 */}
           <div style={{
             background: activeRole === 'student'
-              ? 'linear-gradient(135deg, #FF6B6B 0%, #FF8E53 100%)'
-              : 'linear-gradient(135deg, #60A5FA 0%, #A78BFA 100%)',
+              ? 'linear-gradient(135deg, #00C7E5 0%, #00A8BF 50%, #0284C7 100%)'
+              : 'linear-gradient(135deg, #0EA5E9 0%, #6366F1 100%)',
             borderRadius: '26px',
             padding: '18px 18px',
             color: '#FFFFFF',
             position: 'relative',
             boxShadow: activeRole === 'student'
-              ? '0 14px 28px rgba(255, 107, 107, 0.28)'
-              : '0 14px 28px rgba(96, 165, 250, 0.28)',
+              ? '0 14px 28px rgba(0, 168, 191, 0.28)'
+              : '0 14px 28px rgba(14, 165, 233, 0.28)',
             transition: 'all 0.3s ease',
             display: 'flex',
             alignItems: 'center',
@@ -696,7 +696,7 @@ export default function ModernLoginPage() {
                       boxSizing: 'border-box',
                       transition: 'border-color 0.2s'
                     }}
-                    onFocus={(e) => { e.target.style.borderColor = '#FF6B6B'; }}
+                    onFocus={(e) => { e.target.style.borderColor = '#00A8BF'; }}
                     onBlur={(e) => { e.target.style.borderColor = '#CBD5E1'; }}
                   />
                   <span style={{ position: 'absolute', left: '14px', top: '50%', transform: 'translateY(-50%)', fontSize: '16px' }}>
@@ -730,7 +730,7 @@ export default function ModernLoginPage() {
                       boxSizing: 'border-box',
                       transition: 'border-color 0.2s'
                     }}
-                    onFocus={(e) => { e.target.style.borderColor = '#FF6B6B'; }}
+                    onFocus={(e) => { e.target.style.borderColor = '#00A8BF'; }}
                     onBlur={(e) => { e.target.style.borderColor = '#CBD5E1'; }}
                   />
                   <span style={{ position: 'absolute', left: '14px', top: '50%', transform: 'translateY(-50%)', fontSize: '16px' }}>
@@ -763,7 +763,7 @@ export default function ModernLoginPage() {
                     type="checkbox"
                     checked={rememberMe}
                     onChange={(e) => setRememberMe(e.target.checked)}
-                    style={{ width: '15px', height: '15px', accentColor: '#FF6B6B' }}
+                    style={{ width: '15px', height: '15px', accentColor: '#00A8BF' }}
                   />
                   {currentStrings.rememberId}
                 </label>
@@ -781,12 +781,12 @@ export default function ModernLoginPage() {
                   padding: '16px',
                   borderRadius: '16px',
                   border: 'none',
-                  background: 'linear-gradient(135deg, #FF6B6B 0%, #FF8E53 100%)',
+                  background: 'linear-gradient(135deg, #00C7E5 0%, #00A8BF 100%)',
                   color: '#FFFFFF',
                   fontWeight: '900',
                   fontSize: '16px',
                   cursor: 'pointer',
-                  boxShadow: '0 8px 20px rgba(255, 107, 107, 0.35)',
+                  boxShadow: '0 8px 22px rgba(0, 168, 191, 0.38)',
                   transition: 'all 0.2s ease',
                   display: 'flex',
                   alignItems: 'center',
