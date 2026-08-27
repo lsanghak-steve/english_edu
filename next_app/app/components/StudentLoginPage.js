@@ -556,37 +556,23 @@ export default function StudentLoginPage({ onLoginSuccess, onParentLoginSuccess,
             </svg>
           </div>
 
-          {/* 브랜드 명칭 & 배지 */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-            <h1 style={{
-              margin: 0,
-              fontSize: '24px',
-              fontWeight: '900',
-              letterSpacing: '-0.5px',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '2px'
-            }}>
-              <span style={{ color: '#0F172A' }}>Flip</span>
-              <span style={{
-                background: 'linear-gradient(135deg, #FF6B6B 0%, #EA580C 50%, #7C3AED 100%)',
-                WebkitBackgroundClip: 'text',
-                WebkitTextFillColor: 'transparent'
-              }}>Voca</span>
-            </h1>
+          {/* 브랜드 명칭 */}
+          <h1 style={{
+            margin: 0,
+            fontSize: '25px',
+            fontWeight: '900',
+            letterSpacing: '-0.5px',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '1px'
+          }}>
+            <span style={{ color: '#0F172A' }}>Flip</span>
             <span style={{
-              background: 'linear-gradient(135deg, #4F46E5 0%, #7C3AED 100%)',
-              color: '#FFFFFF',
-              fontSize: '11px',
-              fontWeight: '900',
-              padding: '2px 8px',
-              borderRadius: '8px',
-              boxShadow: '0 2px 6px rgba(124, 58, 237, 0.25)',
-              letterSpacing: '0.3px'
-            }}>
-              AI 3.0
-            </span>
-          </div>
+              background: 'linear-gradient(135deg, #FF6B6B 0%, #EA580C 50%, #7C3AED 100%)',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent'
+            }}>Voca</span>
+          </h1>
 
           {/* 슬로건 서브타이틀 */}
           <p style={{

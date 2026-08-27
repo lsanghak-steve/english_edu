@@ -428,36 +428,22 @@ export default function ModernLoginPage() {
 
             {/* 브랜드 타이틀 & 슬로건 */}
             <div style={{ display: 'flex', flexDirection: 'column' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                <h1 style={{
-                  margin: 0,
-                  fontSize: '21px',
-                  fontWeight: '900',
-                  letterSpacing: '-0.5px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '1px'
-                }}>
-                  <span style={{ color: '#0F172A' }}>Flip</span>
-                  <span style={{
-                    background: 'linear-gradient(135deg, #FF6B6B 0%, #EA580C 50%, #7C3AED 100%)',
-                    WebkitBackgroundClip: 'text',
-                    WebkitTextFillColor: 'transparent'
-                  }}>Voca</span>
-                </h1>
+              <h1 style={{
+                margin: 0,
+                fontSize: '21px',
+                fontWeight: '900',
+                letterSpacing: '-0.5px',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '1px'
+              }}>
+                <span style={{ color: '#0F172A' }}>Flip</span>
                 <span style={{
-                  background: 'linear-gradient(135deg, #4F46E5 0%, #7C3AED 100%)',
-                  color: '#FFFFFF',
-                  fontSize: '10px',
-                  fontWeight: '900',
-                  padding: '2px 7px',
-                  borderRadius: '6px',
-                  boxShadow: '0 2px 6px rgba(124, 58, 237, 0.25)',
-                  letterSpacing: '0.3px'
-                }}>
-                  AI 3.0
-                </span>
-              </div>
+                  background: 'linear-gradient(135deg, #FF6B6B 0%, #EA580C 50%, #7C3AED 100%)',
+                  WebkitBackgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent'
+                }}>Voca</span>
+              </h1>
               <span style={{
                 fontSize: '11px',
                 fontWeight: '700',
