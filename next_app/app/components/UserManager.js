@@ -216,9 +216,19 @@ export default function UserManager({ currentUser, setCurrentUser, onLogout, cur
 
   return (
     <div className="user-manager-header-bar">
-      {/* 현재 로그인된 학생 정보 */}
+      {/* 현재 로그인된 학생 정보 & 로고 */}
       <div className="user-info-group">
-        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+          <img
+            src="/image/flipvoca_logo.png"
+            alt="FlipVoca"
+            style={{
+              height: '24px',
+              width: 'auto',
+              objectFit: 'contain',
+              filter: 'drop-shadow(0 2px 4px rgba(0, 166, 251, 0.15))'
+            }}
+          />
           <span className="user-name-title">
             👤 <strong>{displayName}</strong> <span className="user-grade-tag">({translateStudentGrade(String(currentUser?.grade || currentUser?.avatar || '초등 5학년').replace('[PENDING]', '').replace('[APPROVED]', '').trim(), currentLang)})</span>
           </span>

@@ -130,11 +130,18 @@ export default function PdfTestSheetGenerator({ currentUser, customWords, onClos
         {/* 시험지 상단 헤더 표지 */}
         <div style={{ borderBottom: '3px double #000000', paddingBottom: '14px', marginBottom: '24px' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-            <div>
-              <div style={{ fontSize: '12px', fontWeight: 'bold', color: '#555555' }}>{academyName}</div>
-              <h1 style={{ margin: '4px 0 0 0', fontSize: '24px', fontWeight: '900', letterSpacing: '-0.5px' }}>
-                {testTitle} {layoutMode === 'answer_key' ? '[ 정답지 Answer Key ]' : ''}
-              </h1>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+              <img
+                src="/image/flipvoca_logo.png"
+                alt="FlipVoca"
+                style={{ height: '36px', width: 'auto', objectFit: 'contain' }}
+              />
+              <div>
+                <div style={{ fontSize: '12px', fontWeight: 'bold', color: '#555555' }}>{academyName}</div>
+                <h1 style={{ margin: '2px 0 0 0', fontSize: '22px', fontWeight: '900', letterSpacing: '-0.5px' }}>
+                  {testTitle} {layoutMode === 'answer_key' ? '[ 정답지 Answer Key ]' : ''}
+                </h1>
+              </div>
             </div>
             
             {/* 학생 정보 & 점수 박스 */}

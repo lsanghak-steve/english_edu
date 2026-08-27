@@ -142,13 +142,14 @@ export default function LandingZhPage() {
       }}>
         <div style={{ maxWidth: '1200px', margin: '0 auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <div style={{ width: '42px', height: '42px', borderRadius: '12px', background: '#58CC02', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '24px', color: '#FFF', boxShadow: '0 4px 10px rgba(88,204,2,0.3)' }}>
-              🦉
-            </div>
-            <div>
-              <span style={{ fontSize: '20px', fontWeight: '900', color: '#2C3E50', letterSpacing: '-0.5px' }}>FlipVoca</span>
-              <span style={{ fontSize: '11px', fontWeight: 'bold', color: '#58CC02', marginLeft: '6px', background: '#E5F8D0', padding: '2px 8px', borderRadius: '8px' }}>中国版 🇨🇳</span>
-            </div>
+            <img
+              src="/image/flipvoca_logo.png"
+              alt="FlipVoca"
+              style={{ height: '36px', width: 'auto', objectFit: 'contain', filter: 'drop-shadow(0 2px 6px rgba(0, 166, 251, 0.15))' }}
+            />
+            <span style={{ fontSize: '11px', fontWeight: 'bold', color: '#0284C7', background: '#E0F2FE', padding: '2px 8px', borderRadius: '8px', border: '1px solid #BAE6FD' }}>
+              中国版 🇨🇳
+            </span>
           </div>
 
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>

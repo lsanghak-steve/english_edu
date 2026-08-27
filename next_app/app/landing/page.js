@@ -119,9 +119,12 @@ export default function LandingPage() {
       {/* 🍏 1. Floating Apple-style Capsule Header */}
       <header className="apple-nav-wrapper">
         <div className="apple-nav-capsule">
-          <div className="nav-logo" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
-            <span className="logo-apple-icon"></span>
-            <span className="logo-main">flip voca</span>
+          <div className="nav-logo" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} style={{ cursor: 'pointer', display: 'flex', alignItems: 'center' }}>
+            <img
+              src="/image/flipvoca_logo.png"
+              alt="FlipVoca"
+              style={{ height: '34px', width: 'auto', objectFit: 'contain', filter: 'drop-shadow(0 2px 6px rgba(0, 166, 251, 0.15))' }}
+            />
           </div>
 
           <nav className="nav-menu">

@@ -347,13 +347,25 @@ export default function ParentDashboard({ currentUser, onLogout, currentLang = '
     <div style={{ background: '#FFFFFF', borderRadius: '24px', padding: '24px', border: '1px solid #E9ECEF', boxShadow: '0 8px 20px rgba(0,0,0,0.04)', width: '100%' }}>
       {/* 👨‍👩‍👧‍👦 학부모 전용 상단 헤더 바 */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '18px', borderBottom: '2px dashed #E9ECEF', paddingBottom: '14px', flexWrap: 'wrap', gap: '10px' }}>
-        <div>
-          <h2 style={{ margin: 0, color: '#8E44AD', fontSize: '22px', fontWeight: '900' }}>
-            {headerTitle}
-          </h2>
-          <span style={{ fontSize: '13px', color: '#27AE60', fontWeight: 'bold' }}>
-            {linkedChildrenText}
-          </span>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <img
+            src="/image/flipvoca_logo.png"
+            alt="FlipVoca"
+            style={{
+              height: '36px',
+              width: 'auto',
+              objectFit: 'contain',
+              filter: 'drop-shadow(0 2px 6px rgba(0, 166, 251, 0.18))'
+            }}
+          />
+          <div>
+            <h2 style={{ margin: 0, color: '#8E44AD', fontSize: '20px', fontWeight: '900' }}>
+              {headerTitle}
+            </h2>
+            <span style={{ fontSize: '13px', color: '#27AE60', fontWeight: 'bold' }}>
+              {linkedChildrenText}
+            </span>
+          </div>
         </div>
 
         <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
