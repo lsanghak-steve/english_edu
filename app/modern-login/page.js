@@ -21,10 +21,8 @@ const loginI18n = {
     backBtn: '학습 홈 ➔',
     studentTab: '👦 학생 로그인',
     parentTab: '👨‍👩‍👧 학부모 모드',
-    studentBannerTitle: 'Day 1 Vocabulary',
-    studentBannerSub: '10 Words Complete • 플립보카 맞춤 학습관',
-    parentBannerTitle: 'Attendance Calendar',
-    parentBannerSub: '5 Days Streak • 자녀 진도 & 출석 리포트',
+    brandTitle: 'FlipVoca',
+    programDescription: '초·중·고 5,000 영단어 스마트 학습관 • 3D 플래시카드 & 4단계 퀴즈',
     studentIdLabel: '👤 학생 아이디 / 이름',
     studentIdPh: '아이디 또는 이름 입력 (예: 이상학)',
     pinLabel: '🔒 비밀번호 (4자리 PIN)',
@@ -37,10 +35,6 @@ const loginI18n = {
     parentPinLabel: '🔒 학부모 비밀번호',
     parentPinPh: '비밀번호 입력 (기본: 0815)',
     parentLoginBtn: '📊 학부모 대시보드 입장',
-    navHome: '홈',
-    navWords: '단어장',
-    navQuiz: '퀴즈',
-    navProfile: '프로필',
     errNoId: '아이디(또는 이름)를 입력해주세요.',
     errNoPin: '비밀번호(또는 4자리 PIN)를 입력해주세요.',
     errNotFound: '등록되지 않은 학생 아이디/이름입니다. 다시 확인해주세요.',
@@ -55,10 +49,8 @@ const loginI18n = {
     backBtn: '学习主页 ➔',
     studentTab: '👦 学生登录',
     parentTab: '👨‍👩‍👧 家长模式',
-    studentBannerTitle: 'Day 1 核心词汇',
-    studentBannerSub: '每日 10 词通关 • 翻翻背单词个性化馆',
-    parentBannerTitle: '签到日历与进度',
-    parentBannerSub: '连续签到打卡 • 孩子学习报告',
+    brandTitle: 'FlipVoca',
+    programDescription: '小学/初中/高中 5,000 核心词汇 • 3D 翻转卡片与 4 阶智能测验',
     studentIdLabel: '👤 学生账号 / 姓名',
     studentIdPh: '请输入学生姓名或账号 (例: 李明)',
     pinLabel: '🔒 密码 (4位 PIN)',
@@ -71,10 +63,6 @@ const loginI18n = {
     parentPinLabel: '🔒 家长密码',
     parentPinPh: '请输入家长密码 (默认: 0815)',
     parentLoginBtn: '📊 进入家长控制台',
-    navHome: '首页',
-    navWords: '单词',
-    navQuiz: '测验',
-    navProfile: '我的',
     errNoId: '请输入学生账号或姓名。',
     errNoPin: '请输入密码。',
     errNotFound: '未找到该学生信息，请重新核对。',
@@ -89,10 +77,8 @@ const loginI18n = {
     backBtn: 'Accueil ➔',
     studentTab: '👦 Connexion Élève',
     parentTab: '👨‍👩‍👧 Mode Parents',
-    studentBannerTitle: 'Day 1 Vocabulary',
-    studentBannerSub: '10 Mots Quotidiens • Apprentissage Personnalisé',
-    parentBannerTitle: 'Calendrier de Présence',
-    parentBannerSub: 'Rapport de progression de votre enfant',
+    brandTitle: 'FlipVoca',
+    programDescription: '5 000 Mots Anglais • Flashcards 3D & Quiz Intelligent 4 Niveaux',
     studentIdLabel: '👤 Identifiant / Nom de l\'élève',
     studentIdPh: 'Entrez votre nom ou ID (Ex: Paul)',
     pinLabel: '🔒 Mot de passe (Code PIN 4 chiffres)',
@@ -105,10 +91,6 @@ const loginI18n = {
     parentPinLabel: '🔒 Code PIN Parent',
     parentPinPh: 'Code PIN (Défaut: 0815)',
     parentLoginBtn: '📊 Accéder au Tableau de Bord',
-    navHome: 'Accueil',
-    navWords: 'Mots',
-    navQuiz: 'Quiz',
-    navProfile: 'Profil',
     errNoId: 'Veuillez saisir votre nom ou identifiant.',
     errNoPin: 'Veuillez saisir votre code PIN.',
     errNotFound: 'Élève non trouvé. Veuillez vérifier.',
@@ -123,15 +105,13 @@ const loginI18n = {
     backBtn: '学習ホーム ➔',
     studentTab: '👦 生徒ログイン',
     parentTab: '👨‍👩‍👧 保護者モード',
-    studentBannerTitle: 'Day 1 英単語',
-    studentBannerSub: '1日10単語マスター • フリップボカ学習館',
-    parentBannerTitle: '出席カレンダー',
-    parentBannerSub: 'お子様の学習進度＆出席レポート',
+    brandTitle: 'FlipVoca',
+    programDescription: '小・中・高 5,000英単語 • 3Dフラッシュカード＆4段階クイズ学習館',
     studentIdLabel: '👤 生徒ID / お名前',
     studentIdPh: 'お名前またはID入力 (例: 田中)',
     pinLabel: '🔒 暗証番号 (4桁 PIN)',
     pinPh: 'PIN番号入力 (初期値: 1234 または 0815)',
-    rememberId: 'IDを保存',
+    rememberId: 'ID를保存',
     defaultPinHint: '初期暗証番号: 1234',
     studentLoginBtn: '🚀 ログインして本日の単語学習を開始',
     parentNameLabel: '👨‍👩‍👧 保護者のお名前',
@@ -139,10 +119,6 @@ const loginI18n = {
     parentPinLabel: '🔒 保護者暗証番号',
     parentPinPh: '暗証番号入力 (初期値: 0815)',
     parentLoginBtn: '📊 保護者ダッシュボードへ入場',
-    navHome: 'ホーム',
-    navWords: '単語帳',
-    navQuiz: 'クイズ',
-    navProfile: 'マイページ',
     errNoId: 'お名前または生徒IDを入力してください。',
     errNoPin: '暗証番号を入力してください。',
     errNotFound: '登録されていない生徒です。再確認してください。',
@@ -157,10 +133,8 @@ const loginI18n = {
     backBtn: 'Trang chủ học ➔',
     studentTab: '👦 Đăng nhập Học sinh',
     parentTab: '👨‍👩‍👧 Chế độ Phụ huynh',
-    studentBannerTitle: 'Day 1 Vocabulary',
-    studentBannerSub: 'Hoàn thành 10 từ • Học theo lộ trình',
-    parentBannerTitle: 'Lịch điểm danh',
-    parentBannerSub: 'Báo cáo tiến độ & điểm danh của con',
+    brandTitle: 'FlipVoca',
+    programDescription: '5.000 Từ vựng tiếng Anh • Flashcard 3D & Trắc nghiệm 4 cấp độ',
     studentIdLabel: '👤 Tên học sinh / ID',
     studentIdPh: 'Nhập tên hoặc mã ID (VD: Minh)',
     pinLabel: '🔒 Mật khẩu (Mã PIN 4 số)',
@@ -173,10 +147,6 @@ const loginI18n = {
     parentPinLabel: '🔒 Mã PIN phụ huynh',
     parentPinPh: 'Nhập mã PIN (Mặc định: 0815)',
     parentLoginBtn: '📊 Vào Bảng điều khiển Phụ huynh',
-    navHome: 'Trang chủ',
-    navWords: 'Từ vựng',
-    navQuiz: 'Trắc nghiệm',
-    navProfile: 'Hồ sơ',
     errNoId: 'Vui lòng nhập tên học sinh hoặc ID.',
     errNoPin: 'Vui lòng nhập mã PIN.',
     errNotFound: 'Không tìm thấy học sinh. Vui lòng kiểm tra lại.',
@@ -191,26 +161,8 @@ const loginI18n = {
     backBtn: 'अध्ययन होम ➔',
     studentTab: '👦 विद्यार्थी लॉगिन',
     parentTab: '👨‍👩‍👧 अभिभावक मोड',
-    studentBannerTitle: 'Day 1 शब्दावली',
-    studentBannerSub: '10 शब्द पूर्ण • व्यक्तिगत अध्ययन',
-    parentBannerTitle: 'उपस्थिति कैलेंडर',
-    parentBannerSub: 'बच्चे की अध्ययन प्रगति और उपस्थिति रिपोर्ट',
-    studentIdLabel: '👤 विद्यार्थी आईडी / नाम',
-    studentIdPh: 'नाम या आईडी दर्ज करें (उदा: राहुल)',
-    pinLabel: '🔒 पासवर्ड (4 अंकों का PIN)',
-    pinPh: 'पिन दर्ज करें (डिफ़ॉल्ट: 1234 या 0815)',
-    rememberId: 'आईडी याद रखें',
-    defaultPinHint: 'प्रारंभिक पिन: 1234',
-    studentLoginBtn: '🚀 लॉगिन करें और आज का अध्ययन शुरू करें',
-    parentNameLabel: '👨‍👩‍👧 अभिभावक का नाम',
-    parentNamePh: 'उदा: राहुल के अभिभावक',
-    parentPinLabel: '🔒 अभिभावक पिन',
-    parentPinPh: 'पिन दर्ज करें (डिफ़ॉल्ट: 0815)',
-    parentLoginBtn: '📊 अभिभावक डैशबोर्ड में प्रवेश करें',
-    navHome: 'होम',
-    navWords: 'शब्दावली',
-    navQuiz: 'क्विज',
-    navProfile: 'प्रोफाइल',
+    brandTitle: 'FlipVoca',
+    programDescription: '5,000 अंग्रेजी शब्दावली • 3D फ्लैशकार्ड और 4-स्तरीय स्मार्ट क्विज',
     errNoId: 'कृपया विद्यार्थी का नाम या आईडी दर्ज करें।',
     errNoPin: 'कृपया पासवर्ड पिन दर्ज करें।',
     errNotFound: 'विद्यार्थी नहीं मिला। कृपया पुनः जाँचें।',
@@ -614,36 +566,76 @@ export default function ModernLoginPage() {
           paddingBottom: '20px'
         }}>
 
-          {/* 🌸 상단 비주얼 그라디언트 배너 카드 */}
+          {/* 🎴 FlipVoca 브랜드 로고 & 스마트 학습관 설명 배너 카드 */}
           <div style={{
             background: activeRole === 'student'
               ? 'linear-gradient(135deg, #FF6B6B 0%, #FF8E53 100%)'
               : 'linear-gradient(135deg, #60A5FA 0%, #A78BFA 100%)',
             borderRadius: '26px',
-            padding: '22px 20px',
+            padding: '18px 18px',
             color: '#FFFFFF',
             position: 'relative',
             boxShadow: activeRole === 'student'
               ? '0 14px 28px rgba(255, 107, 107, 0.28)'
               : '0 14px 28px rgba(96, 165, 250, 0.28)',
-            transition: 'all 0.3s ease'
+            transition: 'all 0.3s ease',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '14px'
           }}>
-            {/* 우상단 플로팅 아이콘 */}
+            {/* 🎴 FlipVoca 3D 로고 배지 */}
             <div style={{
-              position: 'absolute',
-              top: '18px',
-              right: '20px',
+              width: '48px',
+              height: '48px',
+              borderRadius: '16px',
+              background: 'rgba(255, 255, 255, 0.24)',
+              backdropFilter: 'blur(8px)',
+              border: '1.5px solid rgba(255, 255, 255, 0.45)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
               fontSize: '26px',
-              filter: 'drop-shadow(0 2px 6px rgba(0,0,0,0.15))'
+              flexShrink: 0,
+              boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
             }}>
-              {activeRole === 'student' ? '🌸' : '📅'}
+              🎴
             </div>
 
-            <div style={{ fontSize: '19px', fontWeight: '900', lineHeight: 1.25, marginBottom: '4px' }}>
-              {activeRole === 'student' ? currentStrings.studentBannerTitle : currentStrings.parentBannerTitle}
-            </div>
-            <div style={{ fontSize: '13px', opacity: 0.9, fontWeight: '600' }}>
-              {activeRole === 'student' ? currentStrings.studentBannerSub : currentStrings.parentBannerSub}
+            {/* 브랜드 타이틀 & 프로그램 간단 설명 */}
+            <div style={{ flex: 1 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
+                <h1 style={{
+                  margin: 0,
+                  fontSize: '22px',
+                  fontWeight: '900',
+                  letterSpacing: '-0.5px',
+                  lineHeight: 1.1,
+                  textShadow: '0 2px 4px rgba(0,0,0,0.1)'
+                }}>
+                  FlipVoca
+                </h1>
+                <span style={{
+                  fontSize: '10px',
+                  fontWeight: '800',
+                  padding: '2px 7px',
+                  borderRadius: '20px',
+                  background: 'rgba(255, 255, 255, 0.25)',
+                  border: '1px solid rgba(255, 255, 255, 0.4)',
+                  letterSpacing: '0.5px'
+                }}>
+                  SMART VOCA
+                </span>
+              </div>
+
+              <div style={{
+                fontSize: '12px',
+                opacity: 0.95,
+                fontWeight: '600',
+                lineHeight: 1.35,
+                textShadow: '0 1px 2px rgba(0,0,0,0.08)'
+              }}>
+                {currentStrings.programDescription}
+              </div>
             </div>
           </div>
 
