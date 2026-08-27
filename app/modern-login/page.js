@@ -473,57 +473,83 @@ export default function ModernLoginPage() {
         {/* 🌐 6대 글로벌 다국어 선택 바 (한국어, 中文, Français, 日本語, Tiếng Việt, हिन्दी) */}
         <div style={{
           padding: '0 20px',
-          marginBottom: '12px'
+          marginBottom: '14px'
         }}>
           <div style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '6px',
             background: '#F8FAFC',
-            padding: '8px 10px',
-            borderRadius: '16px',
+            padding: '10px 12px',
+            borderRadius: '20px',
             border: '1.5px solid #E2E8F0',
-            overflowX: 'auto',
-            scrollbarWidth: 'none'
+            boxShadow: '0 2px 8px rgba(0,0,0,0.02)'
           }}>
-            <span style={{ fontSize: '15px', flexShrink: 0, padding: '0 2px' }}>🌐</span>
-            {[
-              { code: 'ko', flag: '🇰🇷', label: '한국어' },
-              { code: 'zh', flag: '🇨🇳', label: '中文' },
-              { code: 'fr', flag: '🇫🇷', label: 'Français' },
-              { code: 'ja', flag: '🇯🇵', label: '日本語' },
-              { code: 'vi', flag: '🇻🇳', label: 'Tiếng Việt' },
-              { code: 'hi', flag: '🇮🇳', label: 'हिन्दी' }
-            ].map(item => {
-              const isSelected = currentLang === item.code;
-              return (
-                <button
-                  key={item.code}
-                  type="button"
-                  onClick={() => handleLanguageChange(item.code)}
-                  style={{
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    gap: '4px',
-                    padding: '6px 10px',
-                    borderRadius: '12px',
-                    fontSize: '12px',
-                    fontWeight: isSelected ? '900' : '700',
-                    border: isSelected ? '2px solid #3B82F6' : '1px solid #CBD5E1',
-                    background: isSelected ? '#EFF6FF' : '#FFFFFF',
-                    color: isSelected ? '#1D4ED8' : '#64748B',
-                    cursor: 'pointer',
-                    whiteSpace: 'nowrap',
-                    flexShrink: 0,
-                    transition: 'all 0.15s ease',
-                    boxShadow: isSelected ? '0 2px 6px rgba(59, 130, 246, 0.2)' : 'none'
-                  }}
-                >
-                  <span>{item.flag}</span>
-                  <span>{item.label}</span>
-                </button>
-              );
-            })}
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              marginBottom: '8px',
+              padding: '0 2px'
+            }}>
+              <span style={{ fontSize: '12px', fontWeight: '800', color: '#64748B', display: 'flex', alignItems: 'center', gap: '5px' }}>
+                <span style={{ fontSize: '14px' }}>🌐</span> Language / 언어 선택
+              </span>
+              <span style={{ fontSize: '11px', fontWeight: '700', color: '#94A3B8' }}>
+                6 Global Languages
+              </span>
+            </div>
+
+            {/* 3열 x 2행 100% 핏 그리드 (잘림 및 스크롤 완전 해결) */}
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(3, 1fr)',
+              gap: '6px'
+            }}>
+              {[
+                { code: 'ko', flag: '🇰🇷', label: '한국어' },
+                { code: 'zh', flag: '🇨🇳', label: '中文' },
+                { code: 'fr', flag: '🇫🇷', label: 'Français' },
+                { code: 'ja', flag: '🇯🇵', label: '日本語' },
+                { code: 'vi', flag: '🇻🇳', label: 'Tiếng Việt' },
+                { code: 'hi', flag: '🇮🇳', label: 'हिन्दी' }
+              ].map(item => {
+                const isSelected = currentLang === item.code;
+                const activeBg = activeRole === 'student'
+                  ? 'linear-gradient(135deg, #FFF5F5 0%, #FFE8E8 100%)'
+                  : 'linear-gradient(135deg, #EFF6FF 0%, #E0E7FF 100%)';
+                const activeBorder = activeRole === 'student' ? '1.5px solid #FF6B6B' : '1.5px solid #60A5FA';
+                const activeColor = activeRole === 'student' ? '#E53E3E' : '#2563EB';
+                const activeShadow = activeRole === 'student'
+                  ? '0 3px 10px rgba(255, 107, 107, 0.22)'
+                  : '0 3px 10px rgba(96, 165, 250, 0.22)';
+
+                return (
+                  <button
+                    key={item.code}
+                    type="button"
+                    onClick={() => handleLanguageChange(item.code)}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '5px',
+                      padding: '8px 4px',
+                      borderRadius: '12px',
+                      fontSize: '12px',
+                      fontWeight: isSelected ? '900' : '700',
+                      border: isSelected ? activeBorder : '1.5px solid #E2E8F0',
+                      background: isSelected ? activeBg : '#FFFFFF',
+                      color: isSelected ? activeColor : '#475569',
+                      cursor: 'pointer',
+                      transition: 'all 0.2s ease',
+                      boxShadow: isSelected ? activeShadow : '0 1px 3px rgba(0,0,0,0.02)',
+                      userSelect: 'none'
+                    }}
+                  >
+                    <span style={{ fontSize: '14px', lineHeight: 1 }}>{item.flag}</span>
+                    <span style={{ whiteSpace: 'nowrap' }}>{item.label}</span>
+                  </button>
+                );
+              })}
+            </div>
           </div>
         </div>
 

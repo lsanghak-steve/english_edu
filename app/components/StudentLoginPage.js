@@ -441,61 +441,77 @@ export default function StudentLoginPage({ onLoginSuccess, onParentLoginSuccess,
       }}>
         {/* 🌐 글로벌 6개 국어 언어 스위처 바 */}
         <div style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: '6px',
-          marginBottom: '16px',
           background: '#F8FAFC',
-          padding: '8px 10px',
-          borderRadius: '16px',
+          padding: '10px 12px',
+          borderRadius: '20px',
           border: '1.5px solid #E2E8F0',
-          overflowX: 'auto',
-          scrollbarWidth: 'none'
+          marginBottom: '16px',
+          boxShadow: '0 2px 8px rgba(0,0,0,0.02)'
         }}>
-          <span style={{ fontSize: '15px', flexShrink: 0, padding: '0 2px' }}>🌐</span>
-          {[
-            { code: 'ko', flag: '🇰🇷', label: '한국어' },
-            { code: 'zh', flag: '🇨🇳', label: '中文' },
-            { code: 'fr', flag: '🇫🇷', label: 'Français' },
-            { code: 'ja', flag: '🇯🇵', label: '日本語' },
-            { code: 'vi', flag: '🇻🇳', label: 'Tiếng Việt' },
-            { code: 'hi', flag: '🇮🇳', label: 'हिन्दी' }
-          ].map(item => {
-            const isSelected = (currentLang || 'ko') === item.code;
-            return (
-              <button
-                key={item.code}
-                type="button"
-                onClick={() => {
-                  if (onLangChange) onLangChange(item.code);
-                  try {
-                    localStorage.setItem('steve_voca_lang', item.code);
-                    localStorage.setItem('flipvoca_lang', item.code);
-                  } catch (e) {}
-                }}
-                style={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '4px',
-                  padding: '6px 10px',
-                  borderRadius: '12px',
-                  fontSize: '12px',
-                  fontWeight: isSelected ? '900' : '700',
-                  border: isSelected ? '2px solid #3182CE' : '1px solid #CBD5E1',
-                  background: isSelected ? '#EBF8FF' : '#FFFFFF',
-                  color: isSelected ? '#2B6CB0' : '#64748B',
-                  cursor: 'pointer',
-                  whiteSpace: 'nowrap',
-                  flexShrink: 0,
-                  transition: 'all 0.15s ease',
-                  boxShadow: isSelected ? '0 2px 6px rgba(49, 130, 206, 0.2)' : 'none'
-                }}
-              >
-                <span>{item.flag}</span>
-                <span>{item.label}</span>
-              </button>
-            );
-          })}
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            marginBottom: '8px',
+            padding: '0 2px'
+          }}>
+            <span style={{ fontSize: '12px', fontWeight: '800', color: '#64748B', display: 'flex', alignItems: 'center', gap: '5px' }}>
+              <span style={{ fontSize: '14px' }}>🌐</span> Language / 언어 선택
+            </span>
+            <span style={{ fontSize: '11px', fontWeight: '700', color: '#94A3B8' }}>
+              6 Global Languages
+            </span>
+          </div>
+
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(3, 1fr)',
+            gap: '6px'
+          }}>
+            {[
+              { code: 'ko', flag: '🇰🇷', label: '한국어' },
+              { code: 'zh', flag: '🇨🇳', label: '中文' },
+              { code: 'fr', flag: '🇫🇷', label: 'Français' },
+              { code: 'ja', flag: '🇯🇵', label: '日本語' },
+              { code: 'vi', flag: '🇻🇳', label: 'Tiếng Việt' },
+              { code: 'hi', flag: '🇮🇳', label: 'हिन्दी' }
+            ].map(item => {
+              const isSelected = (currentLang || 'ko') === item.code;
+              return (
+                <button
+                  key={item.code}
+                  type="button"
+                  onClick={() => {
+                    if (onLangChange) onLangChange(item.code);
+                    try {
+                      localStorage.setItem('steve_voca_lang', item.code);
+                      localStorage.setItem('flipvoca_lang', item.code);
+                    } catch (e) {}
+                  }}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '5px',
+                    padding: '8px 4px',
+                    borderRadius: '12px',
+                    fontSize: '12px',
+                    fontWeight: isSelected ? '900' : '700',
+                    border: isSelected ? '1.5px solid #FF6B6B' : '1.5px solid #E2E8F0',
+                    background: isSelected ? 'linear-gradient(135deg, #FFF5F5 0%, #FFE8E8 100%)' : '#FFFFFF',
+                    color: isSelected ? '#E53E3E' : '#475569',
+                    cursor: 'pointer',
+                    transition: 'all 0.2s ease',
+                    boxShadow: isSelected ? '0 3px 10px rgba(255, 107, 107, 0.22)' : '0 1px 3px rgba(0,0,0,0.02)',
+                    userSelect: 'none'
+                  }}
+                >
+                  <span style={{ fontSize: '14px', lineHeight: 1 }}>{item.flag}</span>
+                  <span style={{ whiteSpace: 'nowrap' }}>{item.label}</span>
+                </button>
+              );
+            })}
+          </div>
         </div>
 
         <div style={{ fontSize: '44px', marginBottom: '6px' }}>🎓</div>
