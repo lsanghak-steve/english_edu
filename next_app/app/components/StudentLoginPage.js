@@ -835,33 +835,6 @@ export default function StudentLoginPage({ onLoginSuccess, onParentLoginSuccess,
           </form>
         )}
 
-        {/* 💬 微信一键登录 (WeChat One-Click Login) 버튼 */}
-        <div style={{ marginTop: '14px' }}>
-          <button
-            type="button"
-            onClick={() => setShowWeChatModal(true)}
-            style={{
-              width: '100%',
-              background: '#07C160',
-              color: 'white',
-              border: 'none',
-              padding: '13px',
-              borderRadius: '14px',
-              fontWeight: '900',
-              fontSize: '15px',
-              cursor: 'pointer',
-              boxShadow: '0 4px 12px rgba(7,193,96,0.3)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: '8px'
-            }}
-          >
-            <span style={{ fontSize: '18px' }}>💬</span>
-            {currentLang === 'zh' ? '微信一键扫码登录' : '위챗(WeChat) 간편 로그인'}
-          </button>
-        </div>
-
         {/* 🎯 하단 회원가입 및 학부모 로그인 버튼 영역 */}
         <div style={{ marginTop: '16px', paddingTop: '14px', borderTop: '1px dashed #BDC3C7', display: 'flex', flexDirection: 'column', gap: '10px' }}>
           <button
