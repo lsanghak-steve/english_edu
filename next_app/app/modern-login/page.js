@@ -585,20 +585,27 @@ export default function ModernLoginPage() {
           }}>
             {/* 🎴 FlipVoca 3D 로고 배지 */}
             <div style={{
-              width: '48px',
-              height: '48px',
-              borderRadius: '16px',
-              background: 'rgba(255, 255, 255, 0.24)',
-              backdropFilter: 'blur(8px)',
-              border: '1.5px solid rgba(255, 255, 255, 0.45)',
+              width: '52px',
+              height: '52px',
+              borderRadius: '18px',
+              background: '#FFFFFF',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              fontSize: '26px',
+              padding: '6px',
               flexShrink: 0,
-              boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
+              boxShadow: '0 6px 16px rgba(0, 0, 0, 0.12)',
+              border: '1px solid rgba(255, 255, 255, 0.8)'
             }}>
-              🎴
+              <img
+                src="/image/flipvoca_logo.png"
+                alt="FlipVoca Logo"
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  objectFit: 'contain'
+                }}
+              />
             </div>
 
             {/* 브랜드 타이틀 & 프로그램 간단 설명 */}
