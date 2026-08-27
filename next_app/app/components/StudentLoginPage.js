@@ -514,13 +514,101 @@ export default function StudentLoginPage({ onLoginSuccess, onParentLoginSuccess,
           </div>
         </div>
 
-        <div style={{ fontSize: '44px', marginBottom: '6px' }}>🎓</div>
-        <h1 style={{ margin: '0 0 6px 0', fontSize: '22px', color: '#2C3E50', fontWeight: '900' }}>
-          {t('login_title', currentLang)}
-        </h1>
-        <p style={{ margin: '0 0 20px 0', fontSize: '13px', color: '#7F8C8D', fontWeight: 'bold' }}>
-          {t('login_subtitle', currentLang)}
-        </p>
+        {/* 🎴 FlipVoca 3D 프리미엄 글래스 로고 & 브랜딩 헤더 */}
+        <div style={{
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          marginBottom: '20px',
+          gap: '10px'
+        }}>
+          {/* 3D 로고 아이콘 */}
+          <div style={{
+            width: '60px',
+            height: '60px',
+            borderRadius: '20px',
+            background: 'linear-gradient(135deg, #FF6B6B 0%, #FF8E53 45%, #7C3AED 100%)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            boxShadow: '0 10px 24px rgba(255, 107, 107, 0.35)',
+            position: 'relative',
+            overflow: 'hidden'
+          }}>
+            {/* 은은한 광택 오버레이 */}
+            <div style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              right: 0,
+              height: '45%',
+              background: 'linear-gradient(180deg, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0) 100%)',
+              borderRadius: '20px 20px 0 0'
+            }} />
+            
+            {/* 3D 플립 카드 & 반짝이는 골든 스타 벡터 */}
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect x="7" y="3" width="13" height="16" rx="3" fill="rgba(255, 255, 255, 0.4)" transform="rotate(10 7 3)" />
+              <rect x="3" y="4" width="14" height="17" rx="3.5" fill="#FFFFFF" />
+              <path d="M6.5 8.5H13.5M6.5 12H11.5M6.5 15.5H13.5" stroke="#FF6B6B" strokeWidth="1.8" strokeLinecap="round" />
+              <path d="M18.5 4.5L19.2 6.2L21 6.5L19.5 7.8L20 9.5L18.5 8.5L17 9.5L17.5 7.8L16 6.5L17.8 6.2L18.5 4.5Z" fill="#FDE047" stroke="#EAB308" strokeWidth="0.5" />
+            </svg>
+          </div>
+
+          {/* 브랜드 명칭 & 배지 */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <h1 style={{
+              margin: 0,
+              fontSize: '24px',
+              fontWeight: '900',
+              letterSpacing: '-0.5px',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '2px'
+            }}>
+              <span style={{ color: '#0F172A' }}>Flip</span>
+              <span style={{
+                background: 'linear-gradient(135deg, #FF6B6B 0%, #EA580C 50%, #7C3AED 100%)',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent'
+              }}>Voca</span>
+            </h1>
+            <span style={{
+              background: 'linear-gradient(135deg, #4F46E5 0%, #7C3AED 100%)',
+              color: '#FFFFFF',
+              fontSize: '11px',
+              fontWeight: '900',
+              padding: '2px 8px',
+              borderRadius: '8px',
+              boxShadow: '0 2px 6px rgba(124, 58, 237, 0.25)',
+              letterSpacing: '0.3px'
+            }}>
+              AI 3.0
+            </span>
+          </div>
+
+          {/* 슬로건 서브타이틀 */}
+          <p style={{
+            margin: 0,
+            fontSize: '12.5px',
+            color: '#64748B',
+            fontWeight: '700',
+            letterSpacing: '-0.2px'
+          }}>
+            {currentLang === 'zh'
+              ? '中小学 5,000 核心英语词汇智能学习馆'
+              : currentLang === 'fr'
+              ? 'Plateforme Intelligente de 5 000 Mots Anglais'
+              : currentLang === 'ja'
+              ? '小・中・高 5,000英単語スマート学習館'
+              : currentLang === 'vi'
+              ? 'Học 5.000 từ vựng tiếng Anh thông minh'
+              : currentLang === 'hi'
+              ? '5,000 अंग्रेजी शब्दावली स्मार्ट लर्निंग हब'
+              : '초·중·고 5,000 영단어 스마트 맞춤 학습관'}
+          </p>
+        </div>
 
         {/* 🇨🇳 로그인 모드 선택 탭 (이름+PIN vs 📱 휴대폰 번호) */}
         <div style={{ display: 'flex', gap: '8px', marginBottom: '18px', background: '#F1F5F9', padding: '4px', borderRadius: '14px' }}>
