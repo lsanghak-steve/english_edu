@@ -210,7 +210,7 @@ export default function ModernStudyPage() {
   const router = useRouter();
   const [currentUser, setCurrentUser] = useState(null);
   const [currentLang, setCurrentLang] = useState('ko');
-  const [currentTab, setCurrentTab] = useState('dashboard'); // 'dashboard' | 'deck' | 'calendar' | 'quiz' | 'profile'
+  const [currentTab, setCurrentTab] = useState('deck'); // 'deck' (기본: 단어 학습 화면) | 'dashboard' | 'calendar' | 'quiz' | 'profile'
   
   // 📚 단어 데이터 상태
   const [words, setWords] = useState([]);
