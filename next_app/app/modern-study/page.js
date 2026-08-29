@@ -1381,44 +1381,9 @@ export default function ModernStudyPage() {
                 <span style={{ fontSize: '13px', fontWeight: '900', color: '#008294' }}>
                   단어 {currentIndex + 1} / {words.length || 10}
                 </span>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                  <button
-                    type="button"
-                    onClick={handleShuffleWords}
-                    style={{
-                      fontSize: '11px',
-                      fontWeight: '800',
-                      color: '#008294',
-                      background: '#E6FAFC',
-                      border: '1px solid #BCEBF2',
-                      padding: '3px 8px',
-                      borderRadius: '10px',
-                      cursor: 'pointer',
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '3px'
-                    }}
-                    title="단어 무작위 섞기"
-                  >
-                    🔀 섞기
-                  </button>
-                  <button
-                    type="button"
-                    onClick={toggleSpeed}
-                    style={{
-                      fontSize: '11px',
-                      fontWeight: '800',
-                      color: '#64748B',
-                      background: '#F1F5F9',
-                      border: 'none',
-                      padding: '3px 8px',
-                      borderRadius: '10px',
-                      cursor: 'pointer'
-                    }}
-                  >
-                    배속: {ttsSpeed}x
-                  </button>
-                </div>
+                <span style={{ fontSize: '11px', fontWeight: '800', color: '#64748B', background: '#F1F5F9', padding: '3px 8px', borderRadius: '10px' }}>
+                  배속: {ttsSpeed}x
+                </span>
               </div>
 
               {/* 🎴 3D 플립 카드 컨테이너 */}
