@@ -218,12 +218,18 @@ export default function ModernStudyPage() {
   const [isFlipped, setIsFlipped] = useState(false);
   const [ttsSpeed, setTtsSpeed] = useState(1.0); // 0.7x, 1.0x, 1.4x, 2.0x
 
-  // 🎙️ 녹음 & 점수 상태
+  // 🎙️ 녹음 & 발음 체크 상태
   const [isRecording, setIsRecording] = useState(false);
   const [recordedScore, setRecordedScore] = useState(null);
+  const [recognizedText, setRecognizedText] = useState('');
+  const [recordedAudioUrl, setRecordedAudioUrl] = useState(null);
+  const [isPlayingUserAudio, setIsPlayingUserAudio] = useState(false);
   const [recordingStatusText, setRecordingStatusText] = useState('');
+  
   const mediaRecorderRef = useRef(null);
   const audioChunksRef = useRef([]);
+  const recognitionRef = useRef(null);
+  const userAudioPlayerRef = useRef(null);
   const canvasRef = useRef(null);
   const audioContextRef = useRef(null);
   const analyserRef = useRef(null);
@@ -245,6 +251,219 @@ export default function ModernStudyPage() {
   const [isQuizCorrect, setIsQuizCorrect] = useState(null);
   const [typingInput, setTypingInput] = useState('');
 
+  // 🎯 학생 친화적 발음 유사도 점수(0~100점) 판정 알고리즘
+  const calculateMatchScore = (targetStr, spokenStr) => {
+    if (!targetStr) return 0;
+    const cleanTarget = targetStr.toLowerCase().replace(/[^a-z]/g, '');
+    const cleanSpoken = (spokenStr || '').toLowerCase().replace(/[^a-z]/g, '');
+
+    if (!cleanSpoken || cleanSpoken.trim() === '') {
+      return 50; // 마이크 감지되었으나 단어 미인식 시 기본 격려 점수
+    }
+
+    // 1. 완전 일치
+    if (cleanTarget === cleanSpoken) return 100;
+
+    // 2. 포함 관계 (예: "an apple", "the cat")
+    if (cleanSpoken.includes(cleanTarget) || cleanTarget.includes(cleanSpoken)) {
+      return 95;
+    }
+
+    // 3. 음소 정규화 매칭 (ph/f, ck/k, th/t, z/s 등)
+    const normalizePhonetics = (s) => {
+      return s
+        .replace(/ph/g, 'f')
+        .replace(/ck/g, 'k')
+        .replace(/c(?=[eiy])/g, 's')
+        .replace(/c/g, 'k')
+        .replace(/q/g, 'k')
+        .replace(/z/g, 's')
+        .replace(/x/g, 'ks')
+        .replace(/th/g, 't')
+        .replace(/[aeiouy]+/g, 'a');
+    };
+
+    const normTarget = normalizePhonetics(cleanTarget);
+    const normSpoken = normalizePhonetics(cleanSpoken);
+
+    if (normTarget === normSpoken) return 92;
+    if (normSpoken.includes(normTarget) || normTarget.includes(normSpoken)) return 88;
+
+    // 4. 레벤슈타인 편집 거리 기반 점수 산출
+    let m = cleanTarget.length, n = cleanSpoken.length;
+    let dp = Array.from({ length: m + 1 }, () => Array(n + 1).fill(0));
+    for (let i = 0; i <= m; i++) dp[i][0] = i;
+    for (let j = 0; j <= n; j++) dp[0][j] = j;
+
+    for (let i = 1; i <= m; i++) {
+      for (let j = 1; j <= n; j++) {
+        if (cleanTarget[i - 1] === cleanSpoken[j - 1]) dp[i][j] = dp[i - 1][j - 1];
+        else dp[i][j] = 1 + Math.min(dp[i - 1][j], dp[i][j - 1], dp[i - 1][j - 1]);
+      }
+    }
+    const dist = dp[m][n];
+    if (dist === 1) return 88;
+    if (dist === 2) return 78;
+    if (dist === 3) return 65;
+
+    const maxLen = Math.max(cleanTarget.length, cleanSpoken.length, 1);
+    const similarity = Math.max(0, 1 - dist / maxLen);
+    return Math.max(45, Math.round(similarity * 100));
+  };
+
+  // 🤖 AI 발음 교정 가이드 팁 엔진 (다국어 지원)
+  const getAIPronunciationGuideTip = (targetWordStr, score, lang = 'ko') => {
+    if (!targetWordStr) return null;
+    const cleanWord = targetWordStr.toLowerCase().trim();
+
+    if (score !== null && score !== undefined) {
+      if (score >= 85) {
+        return {
+          icon: '🎉',
+          title: lang === 'zh' ? '🤖 AI 发音完美赞赏！' : (lang === 'fr' ? '🤖 Félicitations IA !' : (lang === 'ja' ? '🤖 AI 発音パーフェクト称賛！' : (lang === 'vi' ? '🤖 AI Khen ngợi phát âm hoàn hảo!' : (lang === 'hi' ? '🤖 AI उत्कृष्ट उच्चारण प्रशंसा!' : '🤖 AI 발음 완벽 칭찬!')))),
+          text: lang === 'zh'
+            ? `[${targetWordStr}] 母语级完美的舌位与唇形！语调极其自然标准。👏`
+            : (lang === 'fr'
+            ? `[${targetWordStr}] Position de la langue et des lèvres digne d'un locuteur natif ! 👏`
+            : (lang === 'ja'
+            ? `[${targetWordStr}] ネイティブレベルの完璧な舌の位置と口の形です！👏`
+            : (lang === 'vi'
+            ? `[${targetWordStr}] Vị trí lưỡi và khẩu hình chuẩn như người bản xứ! 👏`
+            : (lang === 'hi'
+            ? `[${targetWordStr}] मूल वक्ता स्तर की सही जीभ स्थिति और उच्चारण! 👏`
+            : `[${targetWordStr}] 원어민 수준의 완벽한 혀 위치와 입모양입니다! 억양과 발음이 아주 부드럽고 훌륭합니다. 👏`)))),
+          color: '#059669',
+          bg: '#ECFDF5',
+          border: '#A7F3D0'
+        };
+      }
+      if (score >= 65) {
+        return {
+          icon: '👍',
+          title: lang === 'zh' ? '🤖 AI 发音合格赞赏！' : (lang === 'fr' ? '🤖 Bravo, validé !' : (lang === 'ja' ? '🤖 AI 合格称賛！' : (lang === 'vi' ? '🤖 AI Khen ngợi đạt chuẩn!' : (lang === 'hi' ? '🤖 AI सफल उच्चारण प्रशंसा!' : '🤖 AI 발음 통과 칭찬!')))),
+          text: lang === 'zh'
+            ? `[${targetWordStr}] 恭喜达到65分以上合格标准！发音清晰响亮，继续保持！🌟`
+            : (lang === 'fr'
+            ? `[${targetWordStr}] Félicitations pour avoir dépassé 65 points ! Prononciation claire et nette ! 🌟`
+            : (lang === 'ja'
+            ? `[${targetWordStr}] 65点以上の合格基準達成！発音も明瞭で素晴らしいです！🌟`
+            : (lang === 'vi'
+            ? `[${targetWordStr}] Chúc mừng đạt trên 65 điểm! Phát âm rõ ràng và tự tin! 🌟`
+            : (lang === 'hi'
+            ? `[${targetWordStr}] 65 से अधिक अंक प्राप्त करने पर बधाई! अच्छा उच्चारण! 🌟`
+            : `[${targetWordStr}] 65점 이상 합격 기준을 멋지게 달성했어요! 자신감 있는 또박또박한 발음이 아주 좋습니다. 🌟`)))),
+          color: '#0284C7',
+          bg: '#F0F9FF',
+          border: '#BAE6FD'
+        };
+      }
+    }
+
+    // 음소별 (R/L, TH, V/F, SH/CH) 맞춤 혀위치 & 입모양 피드백
+    if (cleanWord.includes('r')) {
+      return {
+        icon: '👅',
+        title: lang === 'zh' ? '🤖 AI 舌位纠正 [R 发音]' : (lang === 'fr' ? '🤖 Conseil IA langue [Son R]' : (lang === 'ja' ? '🤖 AI 舌の位置 [R 発音]' : (lang === 'vi' ? '🤖 Mẹo khẩu hình [Âm R]' : (lang === 'hi' ? '🤖 AI जीभ स्थिति [R]' : '🤖 AI 혀 위치 교정 [R 발음]')))),
+        text: lang === 'zh'
+          ? '发 R 音时舌尖切勿触碰上颚，舌头向口腔内轻微卷起发出圆润卷舌音！'
+          : (lang === 'fr'
+          ? 'Pour le son R, ne touchez pas le palais avec la langue, reculez-la légèrement !'
+          : (lang === 'ja'
+          ? 'Rの発音時、舌先を口蓋につけず、奥に少し丸めて「ウー」と響かせましょう！'
+          : (lang === 'vi'
+          ? 'Khi phát âm R, không chạm đầu lưỡi vào vòm miệng mà uốn nhẹ vào trong!'
+          : (lang === 'hi'
+          ? 'R बोलते समय जीभ की नोक को तालू से न छुएं, बल्कि मुंह के अंदर हल्का मोड़ें!'
+          : 'R 발음 시 혀끝을 입천장에 대지 않고 입 안쪽으로 살짝 구부려 소리를 굴려보세요!')))),
+        color: '#D97706',
+        bg: '#FFFBEB',
+        border: '#FDE68A'
+      };
+    }
+
+    if (cleanWord.includes('l')) {
+      return {
+        icon: '👅',
+        title: lang === 'zh' ? '🤖 AI 舌位纠正 [L 发音]' : (lang === 'fr' ? '🤖 Conseil IA langue [Son L]' : (lang === 'ja' ? '🤖 AI 舌の位置 [L 発音]' : (lang === 'vi' ? '🤖 Mẹo khẩu hình [Âm L]' : (lang === 'hi' ? '🤖 AI जीभ स्थिति [L]' : '🤖 AI 혀 위치 교정 [L 발음]')))),
+        text: lang === 'zh'
+          ? '发 L 音时，将舌尖顶住上门牙正后方的齿龈并清脆弹开！'
+          : (lang === 'fr'
+          ? 'Pour le son L, appuyez la pointe de la langue derrière les dents du haut puis relâchez !'
+          : (lang === 'ja'
+          ? 'Lの発音時、舌先を上の前歯の裏側にしっかりつけてから離しましょう！'
+          : (lang === 'vi'
+          ? 'Khi phát âm L, hãy đặt đầu lưỡi chạm vào chân răng hàm trên rồi bật nhẹ ra!'
+          : (lang === 'hi'
+          ? 'L बोलते समय जीभ की नोक को ऊपरी दांतों के पीछे तालू पर दबाएं!'
+          : 'L 발음 시 혀끝을 윗니 바로 뒤 입천장에 꾹 대었다가 \'얼-\' 소리를 내며 떼어보세요!')))),
+        color: '#0284C7',
+        bg: '#F0F9FF',
+        border: '#BAE6FD'
+      };
+    }
+
+    if (cleanWord.includes('th')) {
+      return {
+        icon: '👄',
+        title: lang === 'zh' ? '🤖 AI 唇齿纠正 [TH 发音]' : (lang === 'fr' ? '🤖 Conseil IA lèvres [Son TH]' : (lang === 'ja' ? '🤖 AI 口の形 [TH 発音]' : (lang === 'vi' ? '🤖 Mẹo khẩu hình [Âm TH]' : (lang === 'hi' ? '🤖 AI मुख मुद्रा [TH]' : '🤖 AI 입모양 교정 [TH 발음]')))),
+        text: lang === 'zh'
+          ? '将舌尖轻咬在上下门牙之间，呼气摩擦发出清脆气流音！'
+          : (lang === 'fr'
+          ? 'Placez le bout de la langue entre les dents du haut et du bas et soufflez !'
+          : (lang === 'ja'
+          ? '舌先を上下の前歯で軽く挟み、空気を吹き出しながら摩擦音を出しましょう！'
+          : (lang === 'vi'
+          ? 'Đặt đầu lưỡi nhẹ nhàng giữa hai hàm răng và đẩy luồng hơi ra ngoài!'
+          : (lang === 'hi'
+          ? 'जीभ की नोक को ऊपरी और निचले दांतों के बीच थोड़ा दबाएं और हवा बाहर निकालें!'
+          : '혀끝을 윗니와 아랫니 사이에 살짝 물었다가 바람을 뿜어내며 소리를 내보세요!')))),
+        color: '#7C3AED',
+        bg: '#F5F3FF',
+        border: '#DDD6FE'
+      };
+    }
+
+    if (cleanWord.includes('v') || cleanWord.includes('f')) {
+      return {
+        icon: '👄',
+        title: lang === 'zh' ? '🤖 AI 唇齿纠正 [V / F 发音]' : (lang === 'fr' ? '🤖 Conseil IA lèvres [Son V / F]' : (lang === 'ja' ? '🤖 AI 口の形 [V / F 発音]' : (lang === 'vi' ? '🤖 Mẹo khẩu hình [Âm V / F]' : (lang === 'hi' ? '🤖 AI मुख मुद्रा [V / F]' : '🤖 AI 입모양 교정 [V / F 발음]')))),
+        text: lang === 'zh'
+          ? '用上门牙轻轻咬住下嘴唇内侧，缓缓送出摩擦气流！'
+          : (lang === 'fr'
+          ? 'Posez les dents supérieures sur la lèvre inférieure et soufflez doucement !'
+          : (lang === 'ja'
+          ? '上の前歯で下唇を軽く押さえ、すき間から息をこするように音を出しましょう！'
+          : (lang === 'vi'
+          ? 'Dùng răng cửa trên chạm nhẹ vào môi dưới và thổi luồng hơi ra!'
+          : (lang === 'hi'
+          ? 'ऊपरी दांतों से निचले होंठ को हल्का दबाएं और हवा को बाहर निकालें!'
+          : '윗니로 아랫입술을 가볍게 지그시 누르고 공기를 스치듯이 바람 소리를 불어내보세요!')))),
+        color: '#DC2626',
+        bg: '#FEF2F2',
+        border: '#FECACA'
+      };
+    }
+
+    return {
+      icon: '💡',
+      title: lang === 'zh' ? '🤖 AI 原声语调建议' : (lang === 'fr' ? '🤖 Conseil IA intonation' : (lang === 'ja' ? '🤖 AI イントネーション' : (lang === 'vi' ? '🤖 Mẹo ngữ điệu AI' : (lang === 'hi' ? '🤖 AI लय सुझाव' : '🤖 AI 원어민 억양 교정 팁')))),
+      text: lang === 'zh'
+        ? '可使用 0.7x 慢速播放试听，并注意提高带有重音（Accent）的音节！'
+        : (lang === 'fr'
+        ? 'Écoutez en 0.7x ralenti et accentuez la syllabe tonique !'
+        : (lang === 'ja'
+        ? '0.7x スロー再生を聞きながら、アクセントが入る音節を強調して読んでみましょう！'
+        : (lang === 'vi'
+        ? 'Nghe ở tốc độ 0.7x và nhấn mạnh vào âm tiết có trọng âm (Accent)!'
+        : (lang === 'hi'
+        ? '0.7x धीमी गति से सुनें और बलाघात (Accent) वाले शब्दांश पर जोर दें!'
+        : '0.7x 슬로우 배속으로 원어민 발음을 들으면서 강세(Accent)가 들어가는 음절을 높여 읽어보세요!')))),
+      color: '#0284C7',
+      bg: '#F0F9FF',
+      border: '#BAE6FD'
+    };
+  };
+
   // 1. 세션 및 로컬 사용자 데이터 로드
   useEffect(() => {
     initAudioUnlock();
@@ -258,7 +477,6 @@ export default function ModernStudyPage() {
         const parsed = JSON.parse(savedUserStr);
         setCurrentUser(parsed);
       } else {
-        // 기본 체험 사용자
         const defaultUser = {
           id: 'lsh_20260807_000001',
           name: '이상학',
@@ -312,36 +530,97 @@ export default function ModernStudyPage() {
     playUniversalAudio(currentWord?.word || 'Apple', { rate: nextSpeed });
   };
 
-  // 🎙️ 음성 녹음 시작 / 중지 함수
+  // 🎧 사용자 녹음 음성 재생 함수
+  const playUserRecordedAudio = () => {
+    if (!recordedAudioUrl) return;
+    if (userAudioPlayerRef.current) {
+      userAudioPlayerRef.current.pause();
+    }
+    const audio = new Audio(recordedAudioUrl);
+    userAudioPlayerRef.current = audio;
+    setIsPlayingUserAudio(true);
+    audio.onended = () => setIsPlayingUserAudio(false);
+    audio.play();
+  };
+
+  // 🎙️ AI 실시간 음성 녹음 및 발음 체크 시작 / 중지 함수
   const toggleRecording = async () => {
     if (isRecording) {
       // 녹음 중단
+      if (recognitionRef.current) {
+        try { recognitionRef.current.stop(); } catch(e) {}
+      }
       if (mediaRecorderRef.current && mediaRecorderRef.current.state === 'recording') {
         mediaRecorderRef.current.stop();
       }
       setIsRecording(false);
-      // 무작위 점수 시뮬레이션 (85 ~ 100점)
-      const randomScore = Math.floor(Math.random() * 16) + 85;
-      setRecordedScore(randomScore);
-      setRecordingStatusText(`${currentStrings.recordingDone} ${randomScore}점 ⭐`);
       if (animFrameRef.current) cancelAnimationFrame(animFrameRef.current);
     } else {
       // 녹음 시작
       try {
+        setRecordedScore(null);
+        setRecognizedText('');
+        setRecordedAudioUrl(null);
+        setRecordingStatusText(currentStrings.recordingHint);
+
         const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
         mediaRecorderRef.current = new MediaRecorder(stream);
         audioChunksRef.current = [];
 
+        const targetWordStr = currentWord?.word || 'Apple';
+        let spokenResult = '';
+
+        // 1. Web Speech API 음성 인식 활성화
+        if (typeof window !== 'undefined' && ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window)) {
+          const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+          const recognition = new SpeechRecognition();
+          recognition.lang = 'en-US';
+          recognition.interimResults = false;
+          recognition.maxAlternatives = 1;
+
+          recognition.onresult = (event) => {
+            if (event.results && event.results[0] && event.results[0][0]) {
+              spokenResult = event.results[0][0].transcript || '';
+              setRecognizedText(spokenResult);
+            }
+          };
+
+          recognition.onerror = (e) => {
+            console.log('Speech recognition event', e);
+          };
+
+          try {
+            recognition.start();
+            recognitionRef.current = recognition;
+          } catch (e) {}
+        }
+
+        // 2. MediaRecorder 음성 바이너리 캡처
         mediaRecorderRef.current.ondataavailable = (e) => {
           if (e.data.size > 0) audioChunksRef.current.push(e.data);
         };
 
+        mediaRecorderRef.current.onstop = async () => {
+          const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/webm' });
+          const url = URL.createObjectURL(audioBlob);
+          setRecordedAudioUrl(url);
+
+          // 🎯 발음 일치율 % 계산
+          const finalScore = calculateMatchScore(targetWordStr, spokenResult);
+          setRecordedScore(finalScore);
+          setRecordingStatusText(
+            finalScore >= 85
+              ? `🎉 ${finalScore}점! 원어민 수준의 완벽한 발음입니다! ⭐`
+              : finalScore >= 65
+              ? `👍 ${finalScore}점! 아주 훌륭한 발음입니다! 🌟`
+              : `💡 ${finalScore}점! 아래 AI 코칭 팁을 보고 다시 도전해 보세요!`
+          );
+        };
+
         mediaRecorderRef.current.start();
         setIsRecording(true);
-        setRecordedScore(null);
-        setRecordingStatusText(currentStrings.recordingHint);
 
-        // 오디오 파형 시각화
+        // 3. 실시간 오디오 파형 시각화
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
         audioContextRef.current = audioCtx;
         const source = audioCtx.createMediaStreamSource(stream);
@@ -359,13 +638,13 @@ export default function ModernStudyPage() {
           analyserRef.current.getByteFrequencyData(dataArray);
 
           ctx.clearRect(0, 0, canvas.width, canvas.height);
-          const barWidth = (canvas.width / bufferLength) * 2;
+          const barWidth = (canvas.width / bufferLength) * 2.2;
           let x = 0;
 
           for (let i = 0; i < bufferLength; i++) {
             const barHeight = (dataArray[i] / 255) * canvas.height;
-            ctx.fillStyle = '#00A8BF';
-            ctx.fillRect(x, canvas.height - barHeight, barWidth - 1, barHeight);
+            ctx.fillStyle = `hsl(${i * 12 + 165}, 90%, 45%)`;
+            ctx.fillRect(x, canvas.height - barHeight, barWidth - 1.5, barHeight);
             x += barWidth;
           }
           animFrameRef.current = requestAnimationFrame(drawWave);
@@ -383,6 +662,8 @@ export default function ModernStudyPage() {
   const handlePrev = () => {
     setIsFlipped(false);
     setRecordedScore(null);
+    setRecognizedText('');
+    setRecordedAudioUrl(null);
     setRecordingStatusText('');
     setCurrentIndex((prev) => (prev > 0 ? prev - 1 : words.length - 1));
   };
@@ -390,6 +671,8 @@ export default function ModernStudyPage() {
   const handleNext = () => {
     setIsFlipped(false);
     setRecordedScore(null);
+    setRecognizedText('');
+    setRecordedAudioUrl(null);
     setRecordingStatusText('');
     setCurrentIndex((prev) => (prev < words.length - 1 ? prev + 1 : 0));
   };
@@ -937,23 +1220,146 @@ export default function ModernStudyPage() {
 
               {/* 🎙️ 실시간 파형 캔버스 (녹음 중일 때 표시) */}
               {isRecording && (
-                <div style={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px' }}>
-                  <canvas ref={canvasRef} width={280} height={36} style={{ borderRadius: '10px', background: '#F1F5F9' }} />
-                  <span style={{ fontSize: '11px', color: '#EF4444', fontWeight: '800' }}>● 녹음 중... 마이크에 말씀해주세요!</span>
+                <div style={{
+                  width: '100%',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  gap: '6px',
+                  background: '#FEF2F2',
+                  padding: '12px',
+                  borderRadius: '20px',
+                  border: '1.5px solid #FECACA',
+                  boxShadow: '0 4px 12px rgba(239, 68, 68, 0.12)'
+                }}>
+                  <canvas ref={canvasRef} width={280} height={40} style={{ borderRadius: '10px', background: '#FFFFFF' }} />
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                    <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#EF4444' }}></span>
+                    <span style={{ fontSize: '12px', color: '#DC2626', fontWeight: '900' }}>
+                      🎙️ 음성 녹음 중... "{currentWord?.word}" 발음해 보세요!
+                    </span>
+                  </div>
                 </div>
               )}
 
-              {recordingStatusText && !isRecording && (
+              {/* 🎯 AI 발음 평가 & 코칭 피드백 카드 (녹음 완료 시 노출) */}
+              {recordedScore !== null && !isRecording && (
                 <div style={{
-                  padding: '6px 14px',
-                  borderRadius: '12px',
-                  background: '#E6FAFC',
-                  border: '1px solid #BAE8EE',
-                  color: '#008294',
-                  fontSize: '12px',
-                  fontWeight: '800'
+                  width: '100%',
+                  background: recordedScore >= 85 ? '#F0FDF4' : recordedScore >= 65 ? '#F0F9FF' : '#FFFBEB',
+                  borderRadius: '24px',
+                  padding: '16px 18px',
+                  border: recordedScore >= 85 ? '2px solid #86EFAC' : recordedScore >= 65 ? '2px solid #BAE6FD' : '2px solid #FDE68A',
+                  boxShadow: '0 8px 24px rgba(0,0,0,0.04)',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '10px'
                 }}>
-                  {recordingStatusText}
+                  {/* 상단 점수 뱃지 & 인식 텍스트 */}
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '6px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <span style={{
+                        fontSize: '22px',
+                        fontWeight: '900',
+                        color: recordedScore >= 85 ? '#16A34A' : recordedScore >= 65 ? '#0284C7' : '#D97706'
+                      }}>
+                        {recordedScore}점
+                      </span>
+                      <span style={{
+                        fontSize: '11px',
+                        fontWeight: '800',
+                        padding: '3px 8px',
+                        borderRadius: '10px',
+                        background: recordedScore >= 85 ? '#DCFCE7' : recordedScore >= 65 ? '#E0F2FE' : '#FEF3C7',
+                        color: recordedScore >= 85 ? '#15803D' : recordedScore >= 65 ? '#0369A1' : '#B45309'
+                      }}>
+                        {recordedScore >= 85 ? '🌟 원어민급 발음' : recordedScore >= 65 ? '👍 합격 수준' : '💡 연습 필요'}
+                      </span>
+                    </div>
+
+                    {recognizedText && (
+                      <span style={{ fontSize: '11px', fontWeight: '700', color: '#64748B' }}>
+                        인식된 발음: <strong style={{ color: '#1E293B' }}>"{recognizedText}"</strong>
+                      </span>
+                    )}
+                  </div>
+
+                  {/* AI 입모양/혀위치 교정 코칭 피드백 */}
+                  {(() => {
+                    const tip = getAIPronunciationGuideTip(currentWord?.word, recordedScore, currentLang);
+                    if (!tip) return null;
+                    return (
+                      <div style={{
+                        background: '#FFFFFF',
+                        borderRadius: '16px',
+                        padding: '12px',
+                        border: `1px solid ${tip.border}`,
+                        display: 'flex',
+                        gap: '8px',
+                        alignItems: 'flex-start'
+                      }}>
+                        <span style={{ fontSize: '20px' }}>{tip.icon}</span>
+                        <div>
+                          <div style={{ fontSize: '12px', fontWeight: '900', color: tip.color, marginBottom: '2px' }}>
+                            {tip.title}
+                          </div>
+                          <div style={{ fontSize: '11px', fontWeight: '700', color: '#475569', lineHeight: 1.35 }}>
+                            {tip.text}
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })()}
+
+                  {/* 오디오 다시듣기 & 원어민 비교 버튼 그룹 */}
+                  <div style={{ display: 'flex', gap: '8px', width: '100%', marginTop: '2px' }}>
+                    {recordedAudioUrl && (
+                      <button
+                        type="button"
+                        onClick={playUserRecordedAudio}
+                        style={{
+                          flex: 1,
+                          padding: '9px 12px',
+                          borderRadius: '14px',
+                          border: '1.5px solid #CBD5E1',
+                          background: '#FFFFFF',
+                          color: '#1E293B',
+                          fontSize: '12px',
+                          fontWeight: '800',
+                          cursor: 'pointer',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          gap: '4px'
+                        }}
+                      >
+                        {isPlayingUserAudio ? '⏹️ 재생 중...' : '🎧 내 발음 듣기'}
+                      </button>
+                    )}
+
+                    <button
+                      type="button"
+                      onClick={() => handlePlaySound(currentWord?.word)}
+                      style={{
+                        flex: 1,
+                        padding: '9px 12px',
+                        borderRadius: '14px',
+                        border: 'none',
+                        background: 'linear-gradient(135deg, #00C7E5 0%, #00A8BF 100%)',
+                        color: '#FFFFFF',
+                        fontSize: '12px',
+                        fontWeight: '800',
+                        cursor: 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: '4px',
+                        boxShadow: '0 4px 10px rgba(0, 168, 191, 0.25)'
+                      }}
+                    >
+                      🔊 원어민 비교
+                    </button>
+                  </div>
                 </div>
               )}
 
