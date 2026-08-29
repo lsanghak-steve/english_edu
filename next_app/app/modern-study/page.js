@@ -716,7 +716,9 @@ export default function ModernStudyPage() {
       mediaRecorderRef.current.start();
       setIsRecording(true);
     } catch (err) {
-      alert(currentLang === 'zh' ? '请允许浏览器使用麦克风权限。' : '마이크 접근 권한이 필요합니다.');
+      console.warn('getUserMedia mic permission error:', err);
+      setIsRecording(false);
+      setShowMicGuideModal(true);
     }
   };
 
