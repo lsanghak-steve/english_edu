@@ -223,6 +223,7 @@ export default function ModernStudyPage() {
   const [recordedScore, setRecordedScore] = useState(null);
   const [recognizedText, setRecognizedText] = useState('');
   const [recordedAudioUrl, setRecordedAudioUrl] = useState(null);
+  const [userAudioRecordings, setUserAudioRecordings] = useState({});
   const [isPlayingUserAudio, setIsPlayingUserAudio] = useState(false);
   const [recordingStatusText, setRecordingStatusText] = useState('');
   const [showMicGuideModal, setShowMicGuideModal] = useState(false);
@@ -601,17 +602,41 @@ export default function ModernStudyPage() {
     playUniversalAudio(currentWord?.word || 'Apple', { rate: nextSpeed });
   };
 
-  // 🎧 사용자 녹음 음성 재생 함수
+  // 🎧 사용자 녹음 음성 재생 / 정지 함수
   const playUserRecordedAudio = () => {
-    if (!recordedAudioUrl) return;
+    const currentWordKey = currentWord?.word || '';
+    const audioUrlToPlay = userAudioRecordings[currentWordKey] || recordedAudioUrl;
+
+    if (!audioUrlToPlay) {
+      alert('🎙️ 먼저 "발음녹음" 버튼을 눌러 발음을 녹음해 주세요!');
+      return;
+    }
+
     if (userAudioPlayerRef.current) {
       userAudioPlayerRef.current.pause();
+      if (isPlayingUserAudio) {
+        setIsPlayingUserAudio(false);
+        return;
+      }
     }
-    const audio = new Audio(recordedAudioUrl);
-    userAudioPlayerRef.current = audio;
-    setIsPlayingUserAudio(true);
-    audio.onended = () => setIsPlayingUserAudio(false);
-    audio.play();
+
+    if (audioUrlToPlay === 'demo') {
+      handlePlaySound(currentWordKey);
+      setIsPlayingUserAudio(true);
+      setTimeout(() => setIsPlayingUserAudio(false), 1200);
+      return;
+    }
+
+    try {
+      const audio = new Audio(audioUrlToPlay);
+      userAudioPlayerRef.current = audio;
+      setIsPlayingUserAudio(true);
+      audio.onended = () => setIsPlayingUserAudio(false);
+      audio.onerror = () => setIsPlayingUserAudio(false);
+      audio.play().catch(() => setIsPlayingUserAudio(false));
+    } catch (e) {
+      setIsPlayingUserAudio(false);
+    }
   };
 
   // 🎙️ AI 실시간 음성 녹음 및 발음 체크 시작 / 중지 함수
@@ -623,6 +648,9 @@ export default function ModernStudyPage() {
       }
       if (mediaRecorderRef.current && mediaRecorderRef.current.state === 'recording') {
         try { mediaRecorderRef.current.stop(); } catch(e) {}
+      }
+      if (audioContextRef.current && audioContextRef.current.state !== 'closed') {
+        try { audioContextRef.current.close(); } catch(e) {}
       }
       setIsRecording(false);
       if (animFrameRef.current) cancelAnimationFrame(animFrameRef.current);
@@ -696,6 +724,9 @@ export default function ModernStudyPage() {
             const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/webm' });
             const url = URL.createObjectURL(audioBlob);
             setRecordedAudioUrl(url);
+            if (targetWordStr) {
+              setUserAudioRecordings(prev => ({ ...prev, [targetWordStr]: url }));
+            }
 
             const finalScore = calculateMatchScore(targetWordStr, spokenResult);
             setRecordedScore(finalScore);
@@ -756,6 +787,8 @@ export default function ModernStudyPage() {
       const simScore = Math.floor(Math.random() * 15) + 86; // 86 ~ 100
       setRecognizedText(target);
       setRecordedScore(simScore);
+      setRecordedAudioUrl('demo');
+      setUserAudioRecordings(prev => ({ ...prev, [target]: 'demo' }));
       setRecordingStatusText(`🎉 ${simScore}점! 원어민 수준의 훌륭한 발음입니다! ⭐`);
     }, 1500);
   };
@@ -1320,11 +1353,11 @@ export default function ModernStudyPage() {
                 </div>
               </div>
 
-              {/* 🎛️ 하단 4대 액션 서클 버튼 (Sound, Mic, Quiz, Speed) */}
+              {/* 🎛️ 하단 5대 액션 서클 버튼 (Sound, Mic, MyVoice, Quiz, Speed) */}
               <div style={{
                 display: 'grid',
-                gridTemplateColumns: 'repeat(4, 1fr)',
-                gap: '10px',
+                gridTemplateColumns: 'repeat(5, 1fr)',
+                gap: '8px',
                 width: '100%',
                 marginTop: '2px'
               }}>
@@ -1339,17 +1372,17 @@ export default function ModernStudyPage() {
                     gap: '4px',
                     background: '#FFFFFF',
                     border: '1.5px solid #E2E8F0',
-                    borderRadius: '18px',
-                    padding: '10px 4px',
+                    borderRadius: '16px',
+                    padding: '8px 2px',
                     cursor: 'pointer',
                     boxShadow: '0 4px 10px rgba(0,0,0,0.03)',
                     transition: 'all 0.15s ease'
                   }}
                 >
-                  <div style={{ width: '38px', height: '38px', borderRadius: '50%', background: '#E6FAFC', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '18px' }}>
+                  <div style={{ width: '36px', height: '36px', borderRadius: '50%', background: '#E6FAFC', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '17px' }}>
                     🔊
                   </div>
-                  <span style={{ fontSize: '11px', fontWeight: '800', color: '#475569' }}>{currentStrings.soundBtn}</span>
+                  <span style={{ fontSize: '10px', fontWeight: '800', color: '#475569' }}>{currentStrings.soundBtn}</span>
                 </button>
 
                 {/* 2. Mic */}
@@ -1363,33 +1396,81 @@ export default function ModernStudyPage() {
                     gap: '4px',
                     background: isRecording ? '#FEE2E2' : '#FFFFFF',
                     border: isRecording ? '1.5px solid #EF4444' : '1.5px solid #E2E8F0',
-                    borderRadius: '18px',
-                    padding: '10px 4px',
+                    borderRadius: '16px',
+                    padding: '8px 2px',
                     cursor: 'pointer',
                     boxShadow: isRecording ? '0 4px 14px rgba(239, 68, 68, 0.3)' : '0 4px 10px rgba(0,0,0,0.03)',
                     transition: 'all 0.15s ease'
                   }}
                 >
                   <div style={{
-                    width: '38px',
-                    height: '38px',
+                    width: '36px',
+                    height: '36px',
                     borderRadius: '50%',
                     background: isRecording ? '#EF4444' : '#F0FDF4',
                     color: isRecording ? '#FFF' : '#16A34A',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    fontSize: '18px',
+                    fontSize: '17px',
                     animation: isRecording ? 'pulse 1s infinite' : 'none'
                   }}>
                     🎙️
                   </div>
-                  <span style={{ fontSize: '11px', fontWeight: '800', color: isRecording ? '#DC2626' : '#475569' }}>
+                  <span style={{ fontSize: '10px', fontWeight: '800', color: isRecording ? '#DC2626' : '#475569' }}>
                     {isRecording ? '정지' : currentStrings.micBtn}
                   </span>
                 </button>
 
-                {/* 3. Quiz */}
+                {/* 3. My Voice (내 녹음듣기) */}
+                <button
+                  type="button"
+                  onClick={playUserRecordedAudio}
+                  style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    gap: '4px',
+                    background: isPlayingUserAudio ? '#EFF6FF' : (userAudioRecordings[currentWord?.word] || recordedAudioUrl) ? '#F5F3FF' : '#FFFFFF',
+                    border: isPlayingUserAudio ? '1.5px solid #3B82F6' : (userAudioRecordings[currentWord?.word] || recordedAudioUrl) ? '1.5px solid #DDD6FE' : '1.5px solid #E2E8F0',
+                    borderRadius: '16px',
+                    padding: '8px 2px',
+                    cursor: 'pointer',
+                    boxShadow: isPlayingUserAudio ? '0 4px 12px rgba(59, 130, 246, 0.25)' : '0 4px 10px rgba(0,0,0,0.03)',
+                    transition: 'all 0.15s ease',
+                    position: 'relative'
+                  }}
+                >
+                  {(userAudioRecordings[currentWord?.word] || recordedAudioUrl) && !isPlayingUserAudio && (
+                    <span style={{
+                      position: 'absolute',
+                      top: '4px',
+                      right: '6px',
+                      width: '6px',
+                      height: '6px',
+                      borderRadius: '50%',
+                      background: '#7C3AED'
+                    }}></span>
+                  )}
+                  <div style={{
+                    width: '36px',
+                    height: '36px',
+                    borderRadius: '50%',
+                    background: isPlayingUserAudio ? '#3B82F6' : (userAudioRecordings[currentWord?.word] || recordedAudioUrl) ? '#EDE9FE' : '#F8FAFC',
+                    color: isPlayingUserAudio ? '#FFFFFF' : (userAudioRecordings[currentWord?.word] || recordedAudioUrl) ? '#7C3AED' : '#94A3B8',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontSize: '17px'
+                  }}>
+                    {isPlayingUserAudio ? '⏹️' : '🎧'}
+                  </div>
+                  <span style={{ fontSize: '10px', fontWeight: '800', color: isPlayingUserAudio ? '#2563EB' : (userAudioRecordings[currentWord?.word] || recordedAudioUrl) ? '#6D28D9' : '#94A3B8' }}>
+                    {isPlayingUserAudio ? '재생중' : '내녹음'}
+                  </span>
+                </button>
+
+                {/* 4. Quiz */}
                 <button
                   type="button"
                   onClick={() => setCurrentTab('quiz')}
@@ -1400,20 +1481,20 @@ export default function ModernStudyPage() {
                     gap: '4px',
                     background: '#FFFFFF',
                     border: '1.5px solid #E2E8F0',
-                    borderRadius: '18px',
-                    padding: '10px 4px',
+                    borderRadius: '16px',
+                    padding: '8px 2px',
                     cursor: 'pointer',
                     boxShadow: '0 4px 10px rgba(0,0,0,0.03)',
                     transition: 'all 0.15s ease'
                   }}
                 >
-                  <div style={{ width: '38px', height: '38px', borderRadius: '50%', background: '#F5EEF8', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '18px' }}>
+                  <div style={{ width: '36px', height: '36px', borderRadius: '50%', background: '#F5EEF8', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '17px' }}>
                     ❓
                   </div>
-                  <span style={{ fontSize: '11px', fontWeight: '800', color: '#475569' }}>{currentStrings.quizBtn}</span>
+                  <span style={{ fontSize: '10px', fontWeight: '800', color: '#475569' }}>{currentStrings.quizBtn}</span>
                 </button>
 
-                {/* 4. Speed */}
+                {/* 5. Speed */}
                 <button
                   type="button"
                   onClick={toggleSpeed}
@@ -1424,17 +1505,17 @@ export default function ModernStudyPage() {
                     gap: '4px',
                     background: '#FFFFFF',
                     border: '1.5px solid #E2E8F0',
-                    borderRadius: '18px',
-                    padding: '10px 4px',
+                    borderRadius: '16px',
+                    padding: '8px 2px',
                     cursor: 'pointer',
                     boxShadow: '0 4px 10px rgba(0,0,0,0.03)',
                     transition: 'all 0.15s ease'
                   }}
                 >
-                  <div style={{ width: '38px', height: '38px', borderRadius: '50%', background: '#EFF6FF', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '15px', fontWeight: '900', color: '#2563EB' }}>
+                  <div style={{ width: '36px', height: '36px', borderRadius: '50%', background: '#EFF6FF', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '14px', fontWeight: '900', color: '#2563EB' }}>
                     {ttsSpeed}x
                   </div>
-                  <span style={{ fontSize: '11px', fontWeight: '800', color: '#475569' }}>{currentStrings.speedBtn}</span>
+                  <span style={{ fontSize: '10px', fontWeight: '800', color: '#475569' }}>{currentStrings.speedBtn}</span>
                 </button>
               </div>
 
