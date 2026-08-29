@@ -771,14 +771,29 @@ export default function ModernStudyPage() {
     }, 1500);
   };
 
-  // 단어 이동 핸들러
+  // 🚪 로그아웃 처리
+  const handleLogout = () => {
+    try {
+      localStorage.removeItem('english_edu_current_user');
+    } catch (e) {}
+    router.push('/modern-login');
+  };
+
+  // 🔄 단어 이동 핸들러 (다음/이전 단어로 넘어가면 원어민 음성 자동 재생!)
   const handlePrev = () => {
     setIsFlipped(false);
     setRecordedScore(null);
     setRecognizedText('');
     setRecordedAudioUrl(null);
     setRecordingStatusText('');
-    setCurrentIndex((prev) => (prev > 0 ? prev - 1 : words.length - 1));
+    const newIdx = currentIndex > 0 ? currentIndex - 1 : (words.length > 0 ? words.length - 1 : 0);
+    setCurrentIndex(newIdx);
+    const targetWord = words[newIdx] || wordList500Fallback[newIdx];
+    if (targetWord && targetWord.word) {
+      setTimeout(() => {
+        handlePlaySound(targetWord.word);
+      }, 80);
+    }
   };
 
   const handleNext = () => {
@@ -787,15 +802,14 @@ export default function ModernStudyPage() {
     setRecognizedText('');
     setRecordedAudioUrl(null);
     setRecordingStatusText('');
-    setCurrentIndex((prev) => (prev < words.length - 1 ? prev + 1 : 0));
-  };
-
-  // 🚪 로그아웃 처리
-  const handleLogout = () => {
-    try {
-      localStorage.removeItem('english_edu_current_user');
-    } catch (e) {}
-    router.push('/modern-login');
+    const newIdx = currentIndex + 1 < (words.length || 10) ? currentIndex + 1 : 0;
+    setCurrentIndex(newIdx);
+    const targetWord = words[newIdx] || wordList500Fallback[newIdx];
+    if (targetWord && targetWord.word) {
+      setTimeout(() => {
+        handlePlaySound(targetWord.word);
+      }, 80);
+    }
   };
 
   // 다국어 뜻 헬퍼
