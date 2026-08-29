@@ -257,6 +257,7 @@ export default function ModernStudyPage() {
   const [isQuizCorrect, setIsQuizCorrect] = useState(null);
   const [typingInput, setTypingInput] = useState('');
   const [isQuizFinished, setIsQuizFinished] = useState(false);
+  const [levelTransitionToast, setLevelTransitionToast] = useState('');
 
   // 🎯 학생 친화적 발음 유사도 점수(0~100점) 판정 알고리즘
   const calculateMatchScore = (targetStr, spokenStr) => {
@@ -1042,7 +1043,31 @@ export default function ModernStudyPage() {
       setIsQuizCorrect(null);
       setTypingInput('');
     } else {
-      setIsQuizFinished(true);
+      // 🎉 해당 단계(Level)의 모든 문제 완료 ➔ 자동으로 다음 단계로 직행!
+      if (quizLevel < 4) {
+        const nextLevel = quizLevel + 1;
+        const levelNames = {
+          1: '1단계 🔊 소리 퀴즈',
+          2: '2단계 🔤 스펠링 퀴즈',
+          3: '3단계 🎙️ 발음 퀴즈',
+          4: '4단계 ✍️ 쓰기 퀴즈'
+        };
+        setLevelTransitionToast(`🎉 ${levelNames[quizLevel]} 완수! 다음 ${levelNames[nextLevel]}로 자동 이동합니다! 🚀`);
+        setTimeout(() => setLevelTransitionToast(''), 3500);
+
+        setQuizLevel(nextLevel);
+        setQuizIndex(0);
+        setSelectedAnswer(null);
+        setIsAnswerChecked(false);
+        setIsQuizCorrect(null);
+        setTypingInput('');
+        setIsQuizFinished(false);
+      } else {
+        // 4단계까지 모두 완수 시 최종 퀴즈 완료 축하 카드 표시!
+        setIsQuizFinished(true);
+        setLevelTransitionToast('🏆 4단계 퀴즈 마스터를 모두 완수하셨습니다! 축하합니다! 🌟');
+        setTimeout(() => setLevelTransitionToast(''), 4000);
+      }
     }
   };
 
@@ -1060,7 +1085,6 @@ export default function ModernStudyPage() {
     setQuizLevel(prev => (prev < 4 ? prev + 1 : 1));
     setQuizIndex(0);
     setIsQuizFinished(false);
-    setQuizScore(0);
     setSelectedAnswer(null);
     setIsAnswerChecked(false);
     setIsQuizCorrect(null);
@@ -2041,6 +2065,24 @@ export default function ModernStudyPage() {
             return (
               <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
                 
+                {/* 🚀 단계 자동 전환 안내 토스트 배너 */}
+                {levelTransitionToast && (
+                  <div style={{
+                    background: 'linear-gradient(135deg, #ECFDF5 0%, #D1FAE5 100%)',
+                    border: '1.5px solid #6EE7B7',
+                    color: '#065F46',
+                    padding: '10px 14px',
+                    borderRadius: '16px',
+                    fontSize: '12.5px',
+                    fontWeight: '900',
+                    textAlign: 'center',
+                    boxShadow: '0 4px 12px rgba(16, 185, 129, 0.2)',
+                    animation: 'fadeIn 0.3s ease'
+                  }}>
+                    {levelTransitionToast}
+                  </div>
+                )}
+
                 {/* 퀴즈 단계 선택 뱃지 (1단계~4단계) */}
                 <div style={{ display: 'flex', gap: '6px', overflowX: 'auto', paddingBottom: '2px' }}>
                   {[
@@ -2417,7 +2459,7 @@ export default function ModernStudyPage() {
                           </div>
                         )}
 
-                        {/* 👉 [다음 문제로 이동 ➔] 버튼 */}
+                        {/* 👉 [다음 문제로 이동 ➔] 버튼 (마지막 문제일 시 다음 단계 자동 이동 안내) */}
                         <button
                           type="button"
                           onClick={handleNextQuizQuestion}
@@ -2426,20 +2468,40 @@ export default function ModernStudyPage() {
                             padding: '12px',
                             borderRadius: '16px',
                             border: 'none',
-                            background: 'linear-gradient(135deg, #00C7E5 0%, #00A8BF 100%)',
+                            background: quizIndex === totalQuizCount - 1
+                              ? (quizLevel < 4 ? 'linear-gradient(135deg, #10B981 0%, #059669 100%)' : 'linear-gradient(135deg, #F59E0B 0%, #D97706 100%)')
+                              : 'linear-gradient(135deg, #00C7E5 0%, #00A8BF 100%)',
                             color: '#FFFFFF',
                             fontWeight: '900',
                             fontSize: '14px',
                             cursor: 'pointer',
-                            boxShadow: '0 4px 14px rgba(0, 168, 191, 0.3)',
+                            boxShadow: quizIndex === totalQuizCount - 1
+                              ? '0 4px 14px rgba(16, 185, 129, 0.35)'
+                              : '0 4px 14px rgba(0, 168, 191, 0.3)',
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
                             gap: '6px'
                           }}
                         >
-                          <span>다음 문제로 이동</span>
-                          <span style={{ fontSize: '16px' }}>➔</span>
+                          {quizIndex === totalQuizCount - 1 ? (
+                            quizLevel < 4 ? (
+                              <>
+                                <span>🎉 {quizLevel}단계 완료 (다음 {quizLevel + 1}단계로 자동 이동)</span>
+                                <span style={{ fontSize: '16px' }}>➔</span>
+                              </>
+                            ) : (
+                              <>
+                                <span>🏆 4단계 최종 완료 (전체 결과 확인)</span>
+                                <span style={{ fontSize: '16px' }}>➔</span>
+                              </>
+                            )
+                          ) : (
+                            <>
+                              <span>다음 문제로 이동</span>
+                              <span style={{ fontSize: '16px' }}>➔</span>
+                            </>
+                          )}
                         </button>
                       </div>
                     )}
