@@ -425,6 +425,44 @@ export default function ModernStudyPage() {
     return { en, trans };
   };
 
+  // 🖼️ 고화질 단어 이미지 로드 및 스마트 폴백 시스템
+  const getWordImgSrc = (wordObj) => {
+    if (!wordObj) return '/word_img/apple.png';
+    const rawFile = (wordObj.image_url || wordObj.imageUrl || '').split('/').pop().trim();
+    if (rawFile && rawFile.endsWith('.png')) {
+      const cleanRaw = rawFile.toLowerCase().replace(/\s+/g, '_');
+      return `/word_img/${cleanRaw}`;
+    }
+    const wordClean = (wordObj.word || '').replace(/\.png/gi, '').trim();
+    if (!wordClean) return '/word_img/apple.png';
+    const wordLower = wordClean.toLowerCase().replace(/\s+/g, '_');
+    return `/word_img/${wordLower}.png`;
+  };
+
+  const handleImageError = (e, wordStr) => {
+    const target = e.target;
+    const currentSrc = target.src || '';
+    const wordClean = (wordStr || '').replace(/\.png/gi, '').trim();
+    const wordLower = wordClean.toLowerCase();
+    const wordUnder = wordLower.replace(/ /g, '_');
+    const wordNoSpace = wordLower.replace(/[\s\-_]/g, '');
+    const wordCap = wordClean ? wordClean.charAt(0).toUpperCase() + wordClean.slice(1) : '';
+
+    if (!currentSrc.includes(`/${wordUnder}.png`)) {
+      target.src = `/word_img/${wordUnder}.png`;
+    } else if (!currentSrc.includes(`/${wordNoSpace}.png`)) {
+      target.src = `/word_img/${wordNoSpace}.png`;
+    } else if (!currentSrc.includes(`/${wordCap}.png`)) {
+      target.src = `/word_img/${wordCap}.png`;
+    } else if (!currentSrc.includes('supabase.co')) {
+      target.src = `https://sqonhhqosyszncjfoxfd.supabase.co/storage/v1/object/public/word_images/${wordLower}.png`;
+    } else {
+      const firstLetter = wordCap ? wordCap.charAt(0).toUpperCase() : '📖';
+      target.src = `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="120" height="120" viewBox="0 0 120 120"><rect width="100%" height="100%" fill="%23FFFFFF" rx="20"/><text x="50%" y="45%" dominant-baseline="middle" text-anchor="middle" font-family="sans-serif" font-size="36" font-weight="bold" fill="%2300A8BF">${encodeURIComponent(firstLetter)}</text><text x="50%" y="75%" dominant-baseline="middle" text-anchor="middle" font-family="sans-serif" font-size="12" font-weight="bold" fill="%2364748B">${encodeURIComponent(wordClean || 'Word')}</text></svg>`;
+      target.onerror = null;
+    }
+  };
+
   const example = getExampleSentences(currentWord);
 
   return (
@@ -740,7 +778,7 @@ export default function ModernStudyPage() {
                 style={{
                   perspective: '1000px',
                   width: '100%',
-                  height: '290px',
+                  height: '340px',
                   cursor: 'pointer'
                 }}
               >
@@ -752,7 +790,7 @@ export default function ModernStudyPage() {
                   transition: 'transform 0.5s cubic-bezier(0.4, 0.2, 0.2, 1)',
                   transform: isFlipped ? 'rotateY(180deg)' : 'rotateY(0deg)'
                 }}>
-                  {/* 카드 앞면 (Front Face - 영단어 & 발음기호 & 뜻) */}
+                  {/* 카드 앞면 (Front Face - 고화질 이미지 & 영단어 & 발음기호 & 뜻) */}
                   <div style={{
                     position: 'absolute',
                     width: '100%',
@@ -761,45 +799,84 @@ export default function ModernStudyPage() {
                     borderRadius: '32px',
                     background: 'linear-gradient(135deg, #00C7E5 0%, #00A8BF 50%, #0284C7 100%)',
                     color: '#FFFFFF',
-                    padding: '24px 20px',
+                    padding: '16px 18px',
                     display: 'flex',
                     flexDirection: 'column',
                     alignItems: 'center',
-                    justifyContent: 'center',
+                    justifyContent: 'space-between',
                     boxShadow: '0 18px 36px rgba(0, 168, 191, 0.35)',
                     border: '1px solid rgba(255, 255, 255, 0.4)'
                   }}>
-                    {/* 상단 뱃지 */}
+                    {/* 상단 뱃지 & 카테고리 */}
+                    <div style={{ width: '100%', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <span style={{
+                        background: 'rgba(255, 255, 255, 0.25)',
+                        backdropFilter: 'blur(8px)',
+                        borderRadius: '12px',
+                        padding: '3px 10px',
+                        fontSize: '11px',
+                        fontWeight: '800'
+                      }}>
+                        {currentWord?.category || '초등단어 🍎'}
+                      </span>
+
+                      <span style={{
+                        background: 'rgba(255, 255, 255, 0.25)',
+                        backdropFilter: 'blur(8px)',
+                        borderRadius: '12px',
+                        padding: '3px 10px',
+                        fontSize: '11px',
+                        fontWeight: '800',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '4px'
+                      }}>
+                        <span>🧠</span> 3D Flip
+                      </span>
+                    </div>
+
+                    {/* 🖼️ 중앙 고화질 단어 일러스트 이미지 */}
                     <div style={{
-                      position: 'absolute',
-                      top: '16px',
-                      right: '16px',
-                      background: 'rgba(255, 255, 255, 0.25)',
-                      backdropFilter: 'blur(8px)',
-                      borderRadius: '16px',
-                      padding: '4px 10px',
-                      fontSize: '11px',
-                      fontWeight: '800',
+                      width: '110px',
+                      height: '110px',
+                      borderRadius: '24px',
+                      background: '#FFFFFF',
                       display: 'flex',
                       alignItems: 'center',
-                      gap: '4px'
+                      justifyContent: 'center',
+                      padding: '8px',
+                      boxShadow: '0 10px 24px rgba(0, 0, 0, 0.14)',
+                      border: '2px solid rgba(255, 255, 255, 0.9)',
+                      margin: '2px 0'
                     }}>
-                      <span>🧠</span> Flip Card
+                      <img
+                        src={getWordImgSrc(currentWord)}
+                        alt={currentWord?.word}
+                        onError={(e) => handleImageError(e, currentWord?.word)}
+                        style={{
+                          width: '100%',
+                          height: '100%',
+                          objectFit: 'contain'
+                        }}
+                      />
                     </div>
 
-                    <div style={{ fontSize: '38px', fontWeight: '900', letterSpacing: '-0.5px', marginBottom: '6px', textAlign: 'center' }}>
-                      {currentWord?.word}
+                    {/* 영단어 & 발음기호 & 뜻 */}
+                    <div style={{ textAlign: 'center' }}>
+                      <div style={{ fontSize: '30px', fontWeight: '900', letterSpacing: '-0.5px', lineHeight: 1.1, textShadow: '0 2px 6px rgba(0,0,0,0.1)' }}>
+                        {currentWord?.word}
+                      </div>
+
+                      <div style={{ fontSize: '13px', opacity: 0.9, fontWeight: '700', margin: '2px 0 6px 0' }}>
+                        {currentWord?.phonics || '/---/'}
+                      </div>
+
+                      <div style={{ fontSize: '17px', fontWeight: '900', background: 'rgba(255, 255, 255, 0.22)', padding: '4px 16px', borderRadius: '14px', display: 'inline-block' }}>
+                        {getWordMeaning(currentWord)}
+                      </div>
                     </div>
 
-                    <div style={{ fontSize: '16px', opacity: 0.9, fontWeight: '600', marginBottom: '10px' }}>
-                      {currentWord?.phonics || '/---/'}
-                    </div>
-
-                    <div style={{ fontSize: '20px', fontWeight: '800', background: 'rgba(255, 255, 255, 0.2)', padding: '6px 18px', borderRadius: '16px', marginBottom: '14px' }}>
-                      {getWordMeaning(currentWord)}
-                    </div>
-
-                    <div style={{ fontSize: '11px', opacity: 0.85, fontWeight: '700' }}>
+                    <div style={{ fontSize: '10px', opacity: 0.85, fontWeight: '800' }}>
                       {currentStrings.flipHint}
                     </div>
                   </div>
@@ -814,22 +891,45 @@ export default function ModernStudyPage() {
                     borderRadius: '32px',
                     background: 'linear-gradient(135deg, #60A5FA 0%, #A78BFA 100%)',
                     color: '#FFFFFF',
-                    padding: '24px 20px',
+                    padding: '20px 18px',
                     display: 'flex',
                     flexDirection: 'column',
                     alignItems: 'center',
-                    justifyContent: 'center',
+                    justifyContent: 'space-between',
                     boxShadow: '0 18px 36px rgba(96, 165, 250, 0.35)',
                     border: '1px solid rgba(255, 255, 255, 0.4)'
                   }}>
-                    <div style={{ fontSize: '18px', fontWeight: '900', marginBottom: '8px' }}>
-                      📝 Example Sentence
+                    {/* 상단 미니 썸네일 & 단어 */}
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px', width: '100%' }}>
+                      <div style={{ width: '48px', height: '48px', borderRadius: '14px', background: '#FFFFFF', padding: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 4px 10px rgba(0,0,0,0.1)' }}>
+                        <img
+                          src={getWordImgSrc(currentWord)}
+                          alt={currentWord?.word}
+                          onError={(e) => handleImageError(e, currentWord?.word)}
+                          style={{ width: '100%', height: '100%', objectFit: 'contain' }}
+                        />
+                      </div>
+                      <div>
+                        <div style={{ fontSize: '18px', fontWeight: '900' }}>{currentWord?.word}</div>
+                        <div style={{ fontSize: '12px', opacity: 0.9, fontWeight: '700' }}>{getWordMeaning(currentWord)}</div>
+                      </div>
                     </div>
-                    <div style={{ fontSize: '15px', fontWeight: '800', textAlign: 'center', lineHeight: 1.4, marginBottom: '8px' }}>
-                      "{example.en}"
+
+                    {/* 중앙 예문 카드 */}
+                    <div style={{ width: '100%', background: 'rgba(255, 255, 255, 0.18)', borderRadius: '20px', padding: '16px', backdropFilter: 'blur(8px)', textAlign: 'center' }}>
+                      <div style={{ fontSize: '11px', fontWeight: '900', letterSpacing: '0.5px', opacity: 0.85, marginBottom: '6px' }}>
+                        📝 EXAMPLE SENTENCE
+                      </div>
+                      <div style={{ fontSize: '15px', fontWeight: '900', lineHeight: 1.35, marginBottom: '8px' }}>
+                        "{example.en}"
+                      </div>
+                      <div style={{ fontSize: '13px', opacity: 0.95, fontWeight: '700', lineHeight: 1.35, color: '#FEF08A' }}>
+                        {example.trans}
+                      </div>
                     </div>
-                    <div style={{ fontSize: '13px', opacity: 0.95, textAlign: 'center', lineHeight: 1.4, background: 'rgba(255, 255, 255, 0.2)', padding: '6px 14px', borderRadius: '14px' }}>
-                      {example.trans}
+
+                    <div style={{ fontSize: '10px', opacity: 0.85, fontWeight: '800' }}>
+                      👆 카드를 터치하면 앞면으로 돌아갑니다
                     </div>
                   </div>
                 </div>
