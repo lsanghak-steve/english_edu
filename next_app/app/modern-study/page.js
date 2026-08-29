@@ -236,6 +236,8 @@ export default function ModernStudyPage() {
   const audioContextRef = useRef(null);
   const analyserRef = useRef(null);
   const animFrameRef = useRef(null);
+  const streamRef = useRef(null);
+  const spokenResultRef = useRef('');
 
   // 📅 출석 달력 상태
   const todayStr = getLocalDateString();
@@ -639,15 +641,20 @@ export default function ModernStudyPage() {
     }
   };
 
-  // 🎙️ AI 실시간 음성 녹음 및 발음 체크 시작 / 중지 함수
+  // 🎙️ AI 실시간 음성 녹음 및 발음 체크 시작 / 중지 함수 (Microsoft Edge, Chrome, Safari 완벽 호환)
   const toggleRecording = async () => {
     if (isRecording) {
-      // 녹음 중단
+      // 1. 녹음 중단 처리
       if (recognitionRef.current) {
         try { recognitionRef.current.stop(); } catch(e) {}
       }
       if (mediaRecorderRef.current && mediaRecorderRef.current.state === 'recording') {
         try { mediaRecorderRef.current.stop(); } catch(e) {}
+      }
+      if (streamRef.current) {
+        try {
+          streamRef.current.getTracks().forEach(t => t.stop());
+        } catch(e) {}
       }
       if (audioContextRef.current && audioContextRef.current.state !== 'closed') {
         try { audioContextRef.current.close(); } catch(e) {}
@@ -655,121 +662,149 @@ export default function ModernStudyPage() {
       setIsRecording(false);
       if (animFrameRef.current) cancelAnimationFrame(animFrameRef.current);
     } else {
-      // 녹음 시작
+      // 2. 녹음 시작 처리
       setRecordedScore(null);
       setRecognizedText('');
       setRecordedAudioUrl(null);
+      spokenResultRef.current = '';
       setRecordingStatusText(currentStrings.recordingHint);
 
       const targetWordStr = currentWord?.word || 'Apple';
-      let spokenResult = '';
-      let mediaStreamStarted = false;
-      let speechRecognitionStarted = false;
 
-      // 1. Web Speech API 음성 인식 시도
-      if (typeof window !== 'undefined' && ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window)) {
-        try {
-          const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-          const recognition = new SpeechRecognition();
-          recognition.lang = 'en-US';
-          recognition.interimResults = false;
-          recognition.maxAlternatives = 1;
-
-          recognition.onresult = (event) => {
-            if (event.results && event.results[0] && event.results[0][0]) {
-              spokenResult = event.results[0][0].transcript || '';
-              setRecognizedText(spokenResult);
-            }
-          };
-
-          recognition.onerror = (e) => {
-            console.log('Speech recognition event', e);
-          };
-
-          recognition.onend = () => {
-            if (!mediaRecorderRef.current || mediaRecorderRef.current.state !== 'recording') {
-              setIsRecording(false);
-              const finalScore = calculateMatchScore(targetWordStr, spokenResult);
-              setRecordedScore(finalScore);
-              setRecordingStatusText(
-                finalScore >= 85
-                  ? `🎉 ${finalScore}점! 원어민 수준의 완벽한 발음입니다! ⭐`
-                  : finalScore >= 65
-                  ? `👍 ${finalScore}점! 아주 훌륭한 발음입니다! 🌟`
-                  : `💡 ${finalScore}점! 아래 AI 코칭 팁을 보고 다시 도전해 보세요!`
-              );
-            }
-          };
-
-          recognition.start();
-          recognitionRef.current = recognition;
-          speechRecognitionStarted = true;
-        } catch (recErr) {
-          console.log('Speech recognition start fallback', recErr);
+      // Step 1: 마이크 권한 요청 및 MediaStream 획득 (Edge 호환성 핵심)
+      let stream = null;
+      try {
+        if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+          throw new Error('getUserMedia not supported in this browser');
         }
+        stream = await navigator.mediaDevices.getUserMedia({
+          audio: {
+            echoCancellation: true,
+            noiseSuppression: true,
+            autoGainControl: true
+          }
+        });
+        streamRef.current = stream;
+      } catch (micErr) {
+        console.warn('Microphone permission or access error in Edge/browser', micErr);
+        setIsRecording(false);
+        setShowMicGuideModal(true);
+        return;
       }
 
-      // 2. MediaRecorder & Web Audio API 파형 시각화 시도
+      // Step 2: MediaRecorder 인스턴스 생성 (브라우저별 코덱 자동 감지)
       try {
-        if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-          const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-          mediaRecorderRef.current = new MediaRecorder(stream);
-          audioChunksRef.current = [];
+        let mimeType = '';
+        if (typeof MediaRecorder !== 'undefined' && MediaRecorder.isTypeSupported) {
+          if (MediaRecorder.isTypeSupported('audio/webm;codecs=opus')) {
+            mimeType = 'audio/webm;codecs=opus';
+          } else if (MediaRecorder.isTypeSupported('audio/webm')) {
+            mimeType = 'audio/webm';
+          } else if (MediaRecorder.isTypeSupported('audio/mp4')) {
+            mimeType = 'audio/mp4';
+          } else if (MediaRecorder.isTypeSupported('audio/aac')) {
+            mimeType = 'audio/aac';
+          }
+        }
 
-          mediaRecorderRef.current.ondataavailable = (e) => {
-            if (e.data.size > 0) audioChunksRef.current.push(e.data);
-          };
+        const recorderOptions = mimeType ? { mimeType } : undefined;
+        const recorder = new MediaRecorder(stream, recorderOptions);
+        mediaRecorderRef.current = recorder;
+        audioChunksRef.current = [];
 
-          mediaRecorderRef.current.onstop = async () => {
-            const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/webm' });
+        recorder.ondataavailable = (e) => {
+          if (e.data && e.data.size > 0) {
+            audioChunksRef.current.push(e.data);
+          }
+        };
+
+        recorder.onstop = () => {
+          try {
+            const blobType = mimeType || 'audio/webm';
+            const audioBlob = new Blob(audioChunksRef.current, { type: blobType });
             const url = URL.createObjectURL(audioBlob);
             setRecordedAudioUrl(url);
             if (targetWordStr) {
               setUserAudioRecordings(prev => ({ ...prev, [targetWordStr]: url }));
             }
+          } catch (blobErr) {
+            console.error('Audio blob creation error', blobErr);
+          }
 
-            const finalScore = calculateMatchScore(targetWordStr, spokenResult);
-            setRecordedScore(finalScore);
-            setRecordingStatusText(
-              finalScore >= 85
-                ? `🎉 ${finalScore}점! 원어민 수준의 완벽한 발음입니다! ⭐`
-                : finalScore >= 65
-                ? `👍 ${finalScore}점! 아주 훌륭한 발음입니다! 🌟`
-                : `💡 ${finalScore}점! 아래 AI 코칭 팁을 보고 다시 도전해 보세요!`
-            );
+          // 최종 발음 채점
+          const finalSpoken = spokenResultRef.current;
+          const finalScore = calculateMatchScore(targetWordStr, finalSpoken);
+          setRecordedScore(finalScore);
+          setRecordingStatusText(
+            finalScore >= 85
+              ? `🎉 ${finalScore}점! 원어민 수준의 완벽한 발음입니다! ⭐`
+              : finalScore >= 65
+              ? `👍 ${finalScore}점! 아주 훌륭한 발음입니다! 🌟`
+              : `💡 ${finalScore}점! 아래 AI 코칭 팁을 보고 다시 도전해 보세요!`
+          );
+        };
+
+        recorder.start(100);
+      } catch (recErr) {
+        console.error('MediaRecorder start error in Edge', recErr);
+      }
+
+      // Step 3: 실시간 오디오 파형 Analyser 연결
+      try {
+        const AudioCtxClass = window.AudioContext || window.webkitAudioContext;
+        if (AudioCtxClass) {
+          const audioCtx = new AudioCtxClass();
+          if (audioCtx.state === 'suspended') {
+            await audioCtx.resume();
+          }
+          audioContextRef.current = audioCtx;
+          const source = audioCtx.createMediaStreamSource(stream);
+          const analyser = audioCtx.createAnalyser();
+          analyser.fftSize = 64;
+          analyser.smoothingTimeConstant = 0.4;
+          source.connect(analyser);
+          analyserRef.current = analyser;
+        }
+      } catch (ctxErr) {
+        console.warn('AudioContext setup error in Edge', ctxErr);
+      }
+
+      // Step 4: Web Speech API 음성 인식 시작 (Edge 지원)
+      try {
+        const SpeechRecClass = window.SpeechRecognition || window.webkitSpeechRecognition;
+        if (SpeechRecClass) {
+          const recognition = new SpeechRecClass();
+          recognition.lang = 'en-US';
+          recognition.continuous = false;
+          recognition.interimResults = true;
+          recognition.maxAlternatives = 1;
+
+          recognition.onresult = (event) => {
+            for (let i = event.resultIndex; i < event.results.length; i++) {
+              const transcript = event.results[i][0]?.transcript || '';
+              if (transcript) {
+                spokenResultRef.current = transcript;
+                setRecognizedText(transcript);
+              }
+            }
           };
 
-          mediaRecorderRef.current.start();
-          mediaStreamStarted = true;
+          recognition.onerror = (e) => {
+            console.log('Speech recognition event in Edge', e?.error);
+          };
 
-          // 오디오 파형 시각화 Analyser 설정
-          try {
-            const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-            if (audioCtx.state === 'suspended') {
-              audioCtx.resume();
-            }
-            audioContextRef.current = audioCtx;
-            const source = audioCtx.createMediaStreamSource(stream);
-            const analyser = audioCtx.createAnalyser();
-            analyser.fftSize = 64;
-            analyser.smoothingTimeConstant = 0.4;
-            source.connect(analyser);
-            analyserRef.current = analyser;
-          } catch (ctxErr) {
-            console.error('AudioContext connection error', ctxErr);
-          }
+          recognition.onend = () => {
+            // Edge에서 발화 종료 감지 시
+          };
+
+          recognition.start();
+          recognitionRef.current = recognition;
         }
-      } catch (streamErr) {
-        console.warn('getUserMedia stream error', streamErr);
+      } catch (recErr) {
+        console.log('Speech recognition fallback in Edge', recErr);
       }
 
-      if (mediaStreamStarted || speechRecognitionStarted) {
-        setIsRecording(true);
-      } else {
-        // 마이크 권한 차단 또는 미지원 환경 시 안내 모달 띄우기
-        setIsRecording(false);
-        setShowMicGuideModal(true);
-      }
+      setIsRecording(true);
     }
   };
 
