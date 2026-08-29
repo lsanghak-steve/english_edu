@@ -882,19 +882,48 @@ export default function ModernStudyPage() {
     }
   };
 
-  const handleNext = () => {
+  const handleNext = async () => {
     setIsFlipped(false);
     setRecordedScore(null);
     setRecognizedText('');
     setRecordedAudioUrl(null);
     setRecordingStatusText('');
-    const newIdx = currentIndex + 1 < (words.length || 10) ? currentIndex + 1 : 0;
-    setCurrentIndex(newIdx);
-    const targetWord = words[newIdx] || wordList500Fallback[newIdx];
-    if (targetWord && targetWord.word) {
-      setTimeout(() => {
-        handlePlaySound(targetWord.word);
-      }, 80);
+
+    const totalCount = words.length || 10;
+    if (currentIndex + 1 < totalCount) {
+      const newIdx = currentIndex + 1;
+      setCurrentIndex(newIdx);
+      const targetWord = words[newIdx] || wordList500Fallback[newIdx];
+      if (targetWord && targetWord.word) {
+        setTimeout(() => {
+          handlePlaySound(targetWord.word);
+        }, 80);
+      }
+    } else {
+      // 🎉 마지막 단어 학습 완료 ➔ 퀴즈로 바로 전환!
+      try {
+        const studentCode = currentUser?.student_id || currentUser?.id || '';
+        if (studentCode && words.length > 0) {
+          const payload = words.map(w => ({
+            student_id: studentCode,
+            word: (w.word || '').replace(/\.png/gi, '').trim(),
+            meaning: w.meaning || '',
+            learned_at: new Date().toISOString()
+          }));
+          await supabase.from('student_learned_words').insert(payload);
+        }
+      } catch (e) {}
+
+      // 퀴즈 탭으로 이동 및 1단계 퀴즈 초기화
+      setCurrentTab('quiz');
+      setQuizLevel(1);
+      setQuizIndex(0);
+      setIsQuizFinished(false);
+      setQuizScore(0);
+      setSelectedAnswer(null);
+      setIsAnswerChecked(false);
+      setIsQuizCorrect(null);
+      setTypingInput('');
     }
   };
 
@@ -1886,15 +1915,30 @@ export default function ModernStudyPage() {
                     padding: '11px',
                     borderRadius: '14px',
                     border: 'none',
-                    background: 'linear-gradient(135deg, #00C7E5 0%, #00A8BF 100%)',
+                    background: currentIndex === (words.length || 10) - 1
+                      ? 'linear-gradient(135deg, #10B981 0%, #059669 100%)'
+                      : 'linear-gradient(135deg, #00C7E5 0%, #00A8BF 100%)',
                     color: '#FFFFFF',
                     fontWeight: '900',
                     fontSize: '13px',
                     cursor: 'pointer',
-                    boxShadow: '0 4px 12px rgba(0, 168, 191, 0.25)'
+                    boxShadow: currentIndex === (words.length || 10) - 1
+                      ? '0 4px 14px rgba(16, 185, 129, 0.35)'
+                      : '0 4px 12px rgba(0, 168, 191, 0.25)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '4px'
                   }}
                 >
-                  {currentStrings.nextBtn}
+                  {currentIndex === (words.length || 10) - 1 ? (
+                    <>
+                      <span>🎉 학습 완료 (퀴즈 시작)</span>
+                      <span style={{ fontSize: '15px' }}>➔</span>
+                    </>
+                  ) : (
+                    currentStrings.nextBtn
+                  )}
                 </button>
               </div>
 
