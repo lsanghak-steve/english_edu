@@ -317,7 +317,7 @@ export default function ModernLoginPage() {
 
       setLoginSuccessToast(`🎉 ${userData.name} ${currentStrings.loginSuccess}`);
       setTimeout(() => {
-        router.push('/');
+        router.push('/modern-study');
       }, 700);
 
     } catch (err) {
