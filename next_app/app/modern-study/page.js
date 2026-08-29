@@ -556,8 +556,8 @@ export default function ModernStudyPage() {
           id: 'lsh_20260807_000001',
           name: '이상학',
           grade: '대학생 및 성인',
-          studyGradeLevel: '초등단어',
-          dailyWordCount: '10'
+          studyGradeLevel: '중등단어',
+          dailyWordCount: '20'
         };
         setCurrentUser(defaultUser);
       }
@@ -566,26 +566,64 @@ export default function ModernStudyPage() {
     }
   }, []);
 
-  // 2. 단어 데이터 로드 (Supabase 우선, fallback wordsData)
+  // 2. 로그인한 학생의 학습 레벨(중등단어 등)과 목표 단어 수(dailyWordCount: 20단어/일)에 맞춘 스마트 단어 로드
   useEffect(() => {
     async function loadWords() {
       try {
-        const { data: dbWords, error } = await supabase
-          .from('words')
-          .select('*')
-          .limit(50);
-        
-        if (!error && dbWords && dbWords.length > 0) {
-          setWords(dbWords);
-        } else {
-          setWords(wordList500Fallback.slice(0, 30));
+        const targetLevel = currentUser?.studyGradeLevel || currentUser?.study_grade_level || '중등단어';
+        let dailyCount = parseInt(currentUser?.dailyWordCount || currentUser?.daily_word_count || 20, 10);
+        if (isNaN(dailyCount) || dailyCount <= 0) dailyCount = 20;
+
+        let chosenWords = [];
+
+        // Supabase DB에서 해당 레벨 단어 조회
+        try {
+          let query = supabase.from('words').select('*');
+          if (targetLevel && targetLevel !== '전체') {
+            query = query.or(`category.eq.${targetLevel},grade_level.eq.${targetLevel},grade_level_ko.eq.${targetLevel}`);
+          }
+          const { data: dbWords, error } = await query.order('id', { ascending: true }).limit(500);
+
+          if (!error && dbWords && dbWords.length > 0) {
+            chosenWords = dbWords;
+          }
+        } catch (e) {}
+
+        // Fallback 또는 전체 단어에서 레벨 필터링
+        if (chosenWords.length === 0) {
+          try {
+            const { data: allDbWords } = await supabase.from('words').select('*').limit(300);
+            if (allDbWords && allDbWords.length > 0) {
+              const filtered = allDbWords.filter(w => 
+                w.category === targetLevel || w.grade_level === targetLevel || w.gradeLevel === targetLevel
+              );
+              chosenWords = filtered.length > 0 ? filtered : allDbWords;
+            }
+          } catch (e) {}
         }
+
+        if (chosenWords.length === 0) {
+          const filteredFallback = wordList500Fallback.filter(w => 
+            w.category === targetLevel || w.grade_level === targetLevel
+          );
+          chosenWords = filteredFallback.length > 0 ? filteredFallback : wordList500Fallback;
+        }
+
+        // 학생의 일일 목표 단어 수(예: 20개)만큼 정밀 슬라이스
+        const finalWords = chosenWords.slice(0, dailyCount);
+        setWords(finalWords);
+        setCurrentIndex(0);
       } catch (err) {
-        setWords(wordList500Fallback.slice(0, 30));
+        console.warn('Word load error:', err);
+        const dailyCount = parseInt(currentUser?.dailyWordCount || 20, 10);
+        setWords(wordList500Fallback.slice(0, dailyCount));
       }
     }
-    loadWords();
-  }, []);
+
+    if (currentUser) {
+      loadWords();
+    }
+  }, [currentUser?.studyGradeLevel, currentUser?.dailyWordCount, currentUser?.id]);
 
   const currentStrings = studyI18n[currentLang] || studyI18n.ko;
   const currentWord = words[currentIndex] || wordList500Fallback[0];
