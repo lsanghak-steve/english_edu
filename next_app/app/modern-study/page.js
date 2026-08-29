@@ -568,7 +568,18 @@ export default function ModernStudyPage() {
     }
   }, []);
 
-  // 2. 로그인한 학생의 학습 레벨(중등단어 등)과 목표 단어 수(dailyWordCount: 20단어/일)에 맞춘 스마트 단어 로드
+  // 🔀 Fisher-Yates 무작위 셔플 알고리즘
+  const shuffleArray = (arr) => {
+    if (!Array.isArray(arr) || arr.length <= 1) return arr ? [...arr] : [];
+    const copy = [...arr];
+    for (let i = copy.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [copy[i], copy[j]] = [copy[j], copy[i]];
+    }
+    return copy;
+  };
+
+  // 2. 로그인한 학생의 학습 레벨(중등단어 등)과 목표 단어 수(dailyWordCount: 20단어/일)에 맞춘 스마트 무작위 단어 로드
   useEffect(() => {
     async function loadWords() {
       try {
@@ -578,7 +589,7 @@ export default function ModernStudyPage() {
 
         let chosenWords = [];
 
-        // Supabase DB에서 해당 레벨 단어 조회
+        // 1) Supabase DB에서 해당 레벨의 전체 단어 풀 조회
         try {
           let query = supabase.from('words').select('*');
           if (targetLevel && targetLevel !== '전체') {
@@ -591,7 +602,7 @@ export default function ModernStudyPage() {
           }
         } catch (e) {}
 
-        // Fallback 또는 전체 단어에서 레벨 필터링
+        // 2) Fallback 데이터 보정
         if (chosenWords.length === 0) {
           try {
             const { data: allDbWords } = await supabase.from('words').select('*').limit(300);
@@ -611,14 +622,38 @@ export default function ModernStudyPage() {
           chosenWords = filteredFallback.length > 0 ? filteredFallback : wordList500Fallback;
         }
 
-        // 학생의 일일 목표 단어 수(예: 20개)만큼 정밀 슬라이스
-        const finalWords = chosenWords.slice(0, dailyCount);
+        // 3) 학생의 학습 완료 단어(student_learned_words) 확인하여 안 배운 단어 우선 선별
+        let unlearnedWords = chosenWords;
+        try {
+          const studentCode = currentUser?.student_id || currentUser?.id || '';
+          if (studentCode) {
+            const { data: learnedList } = await supabase
+              .from('student_learned_words')
+              .select('word')
+              .eq('student_id', studentCode);
+
+            if (learnedList && learnedList.length > 0) {
+              const learnedSet = new Set(learnedList.map(item => (item.word || '').toLowerCase().trim()));
+              const unlearned = chosenWords.filter(w => !learnedSet.has((w.word || '').toLowerCase().trim()));
+              if (unlearned.length >= dailyCount) {
+                unlearnedWords = unlearned;
+              }
+            }
+          }
+        } catch (e) {}
+
+        // 4) 🔀 100% 무작위 셔플 (Fisher-Yates) 후 목표 수량(예: 20개) 추출
+        const shuffled = shuffleArray(unlearnedWords);
+        const finalWords = shuffled.slice(0, dailyCount);
+
         setWords(finalWords);
         setCurrentIndex(0);
+        setIsFlipped(false);
       } catch (err) {
         console.warn('Word load error:', err);
         const dailyCount = parseInt(currentUser?.dailyWordCount || 20, 10);
-        setWords(wordList500Fallback.slice(0, dailyCount));
+        const shuffledFallback = shuffleArray(wordList500Fallback);
+        setWords(shuffledFallback.slice(0, dailyCount));
       }
     }
 
@@ -626,6 +661,17 @@ export default function ModernStudyPage() {
       loadWords();
     }
   }, [currentUser?.studyGradeLevel, currentUser?.dailyWordCount, currentUser?.id]);
+
+  // 🔀 단어 실시간 수동 셔플 함수
+  const handleShuffleWords = () => {
+    setWords(prev => shuffleArray(prev));
+    setCurrentIndex(0);
+    setIsFlipped(false);
+    setRecordedScore(null);
+    setRecognizedText('');
+    setRecordedAudioUrl(null);
+    setRecordingStatusText('');
+  };
 
   const currentStrings = studyI18n[currentLang] || studyI18n.ko;
   const currentWord = words[currentIndex] || wordList500Fallback[0];
@@ -1335,9 +1381,44 @@ export default function ModernStudyPage() {
                 <span style={{ fontSize: '13px', fontWeight: '900', color: '#008294' }}>
                   단어 {currentIndex + 1} / {words.length || 10}
                 </span>
-                <span style={{ fontSize: '11px', fontWeight: '800', color: '#64748B', background: '#F1F5F9', padding: '3px 8px', borderRadius: '10px' }}>
-                  배속: {ttsSpeed}x
-                </span>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                  <button
+                    type="button"
+                    onClick={handleShuffleWords}
+                    style={{
+                      fontSize: '11px',
+                      fontWeight: '800',
+                      color: '#008294',
+                      background: '#E6FAFC',
+                      border: '1px solid #BCEBF2',
+                      padding: '3px 8px',
+                      borderRadius: '10px',
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '3px'
+                    }}
+                    title="단어 무작위 섞기"
+                  >
+                    🔀 섞기
+                  </button>
+                  <button
+                    type="button"
+                    onClick={toggleSpeed}
+                    style={{
+                      fontSize: '11px',
+                      fontWeight: '800',
+                      color: '#64748B',
+                      background: '#F1F5F9',
+                      border: 'none',
+                      padding: '3px 8px',
+                      borderRadius: '10px',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    배속: {ttsSpeed}x
+                  </button>
+                </div>
               </div>
 
               {/* 🎴 3D 플립 카드 컨테이너 */}
