@@ -227,6 +227,7 @@ export default function ModernStudyPage() {
   const [isPlayingUserAudio, setIsPlayingUserAudio] = useState(false);
   const [recordingStatusText, setRecordingStatusText] = useState('');
   const [showMicGuideModal, setShowMicGuideModal] = useState(false);
+  const [micErrorDetail, setMicErrorDetail] = useState('');
   
   const mediaRecorderRef = useRef(null);
   const audioChunksRef = useRef([]);
@@ -675,21 +676,66 @@ export default function ModernStudyPage() {
       let stream = null;
       try {
         if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-          throw new Error('getUserMedia not supported in this browser');
+          throw new Error('getUserMedia not supported');
         }
-        stream = await navigator.mediaDevices.getUserMedia({
-          audio: {
-            echoCancellation: true,
-            noiseSuppression: true,
-            autoGainControl: true
-          }
-        });
+        stream = await navigator.mediaDevices.getUserMedia({ audio: true });
         streamRef.current = stream;
+        setMicErrorDetail('');
       } catch (micErr) {
         console.warn('Microphone permission or access error in Edge/browser', micErr);
-        setIsRecording(false);
-        setShowMicGuideModal(true);
-        return;
+        const errName = micErr?.name || 'NotAllowedError';
+        setMicErrorDetail(errName === 'NotAllowedError' ? 'NotAllowedError (마이크 권한 차단/대기)' : `${errName}: ${micErr?.message || '마이크 접근 불가'}`);
+
+        // 🚀 Fallback: getUserMedia가 차단된 경우에도 Web Speech API 단독 시도
+        let speechFallbackStarted = false;
+        try {
+          const SpeechRecClass = window.SpeechRecognition || window.webkitSpeechRecognition;
+          if (SpeechRecClass) {
+            const recognition = new SpeechRecClass();
+            recognition.lang = 'en-US';
+            recognition.continuous = false;
+            recognition.interimResults = true;
+            recognition.maxAlternatives = 1;
+
+            recognition.onresult = (event) => {
+              for (let i = event.resultIndex; i < event.results.length; i++) {
+                const transcript = event.results[i][0]?.transcript || '';
+                if (transcript) {
+                  spokenResultRef.current = transcript;
+                  setRecognizedText(transcript);
+                }
+              }
+            };
+
+            recognition.onend = () => {
+              setIsRecording(false);
+              const finalSpoken = spokenResultRef.current;
+              const finalScore = calculateMatchScore(targetWordStr, finalSpoken);
+              setRecordedScore(finalScore);
+              setRecordingStatusText(
+                finalScore >= 85
+                  ? `🎉 ${finalScore}점! 원어민 수준의 완벽한 발음입니다! ⭐`
+                  : finalScore >= 65
+                  ? `👍 ${finalScore}점! 아주 훌륭한 발음입니다! 🌟`
+                  : `💡 ${finalScore}점! 아래 AI 코칭 팁을 보고 다시 도전해 보세요!`
+              );
+            };
+
+            recognition.start();
+            recognitionRef.current = recognition;
+            speechFallbackStarted = true;
+            setIsRecording(true);
+            return;
+          }
+        } catch (recFallbackErr) {
+          console.warn('SpeechRecognition fallback error', recFallbackErr);
+        }
+
+        if (!speechFallbackStarted) {
+          setIsRecording(false);
+          setShowMicGuideModal(true);
+          return;
+        }
       }
 
       // Step 2: MediaRecorder 인스턴스 생성 (브라우저별 코덱 자동 감지)
@@ -2158,22 +2204,22 @@ export default function ModernStudyPage() {
             <div style={{
               background: '#FFFFFF',
               borderRadius: '28px',
-              maxWidth: '380px',
+              maxWidth: '390px',
               width: '100%',
               padding: '24px 20px',
               boxShadow: '0 20px 50px rgba(0,0,0,0.25)',
               textAlign: 'center',
               display: 'flex',
               flexDirection: 'column',
-              gap: '14px'
+              gap: '12px'
             }}>
               <div style={{
-                width: '56px',
-                height: '56px',
+                width: '52px',
+                height: '52px',
                 borderRadius: '50%',
                 background: '#FEE2E2',
                 color: '#DC2626',
-                fontSize: '28px',
+                fontSize: '26px',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
@@ -2183,49 +2229,54 @@ export default function ModernStudyPage() {
               </div>
 
               <div>
-                <div style={{ fontSize: '18px', fontWeight: '900', color: '#1E293B', marginBottom: '6px' }}>
-                  마이크 접근 권한이 필요합니다
+                <div style={{ fontSize: '18px', fontWeight: '900', color: '#1E293B', marginBottom: '4px' }}>
+                  마이크 접근 권한 안내
                 </div>
-                <div style={{ fontSize: '13px', color: '#64748B', lineHeight: 1.45, fontWeight: '600' }}>
-                  브라우저에서 마이크 사용이 차단되어 있습니다.<br/>
-                  아래 방법으로 마이크를 <strong>허용</strong>해 주세요!
+                <div style={{ fontSize: '12.5px', color: '#64748B', lineHeight: 1.45, fontWeight: '600' }}>
+                  브라우저 또는 Windows에서 마이크 사용이 차단되어 있습니다. 아래 2가지를 확인해 주세요!
                 </div>
+                {micErrorDetail && (
+                  <div style={{ marginTop: '6px', display: 'inline-block', background: '#FEF2F2', border: '1px solid #FECACA', padding: '3px 10px', borderRadius: '8px', fontSize: '11px', color: '#B91C1C', fontWeight: '800' }}>
+                    상태: {micErrorDetail}
+                  </div>
+                )}
               </div>
 
-              {/* 권한 허용 안내 3단계 박스 */}
+              {/* 권한 허용 상세 가이드 박스 */}
               <div style={{
                 background: '#F8FAFC',
                 borderRadius: '18px',
-                padding: '14px 16px',
+                padding: '12px 14px',
                 textAlign: 'left',
                 display: 'flex',
                 flexDirection: 'column',
                 gap: '8px',
                 border: '1px solid #E2E8F0',
-                fontSize: '12px',
+                fontSize: '11.5px',
                 color: '#334155',
                 fontWeight: '700'
               }}>
-                <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-                  <span style={{ background: '#00A8BF', color: '#FFF', borderRadius: '50%', width: '18px', height: '18px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '11px', flexShrink: 0 }}>1</span>
-                  <span>주소창 좌측의 <strong>🔒(자물쇠)</strong> 또는 <strong>🎛️(설정)</strong> 클릭</span>
+                <div style={{ display: 'flex', gap: '8px', alignItems: 'flex-start' }}>
+                  <span style={{ background: '#00A8BF', color: '#FFF', borderRadius: '50%', width: '18px', height: '18px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '11px', flexShrink: 0, marginTop: '2px' }}>1</span>
+                  <span><strong>Edge/브라우저:</strong> 주소창 좌측의 <strong>🔒(자물쇠)</strong> 클릭 ➔ <strong>[마이크]</strong>를 <strong>'허용'</strong>으로 변경</span>
                 </div>
-                <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-                  <span style={{ background: '#00A8BF', color: '#FFF', borderRadius: '50%', width: '18px', height: '18px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '11px', flexShrink: 0 }}>2</span>
-                  <span>[마이크] 항목을 <strong>'허용'</strong>으로 변경</span>
-                </div>
-                <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-                  <span style={{ background: '#00A8BF', color: '#FFF', borderRadius: '50%', width: '18px', height: '18px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '11px', flexShrink: 0 }}>3</span>
-                  <span>새로고침(F5) 후 <strong>[🎙️ 발음녹음]</strong> 다시 클릭</span>
+                <div style={{ display: 'flex', gap: '8px', alignItems: 'flex-start' }}>
+                  <span style={{ background: '#00A8BF', color: '#FFF', borderRadius: '50%', width: '18px', height: '18px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '11px', flexShrink: 0, marginTop: '2px' }}>2</span>
+                  <span><strong>Windows 10/11 설정:</strong> [설정] ➔ [개인 정보 및 보안] ➔ [마이크] ➔ <strong>'앱의 마이크 액세스'</strong> 및 <strong>'Microsoft Edge'</strong>를 <strong>[켬]</strong>으로 설정</span>
                 </div>
               </div>
 
               {/* 액션 버튼 */}
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginTop: '4px' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginTop: '2px' }}>
                 <button
                   type="button"
-                  onClick={() => {
+                  onClick={async () => {
                     setShowMicGuideModal(false);
+                    try {
+                      if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+                        await navigator.mediaDevices.getUserMedia({ audio: true });
+                      }
+                    } catch (e) {}
                     toggleRecording();
                   }}
                   style={{
@@ -2253,8 +2304,8 @@ export default function ModernStudyPage() {
                     borderRadius: '16px',
                     border: '1.5px solid #CBD5E1',
                     background: '#FFFFFF',
-                    color: '#475569',
-                    fontWeight: '800',
+                    color: '#0369A1',
+                    fontWeight: '900',
                     fontSize: '13px',
                     cursor: 'pointer'
                   }}
