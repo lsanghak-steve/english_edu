@@ -465,7 +465,7 @@ export default function ModernStudyPage() {
     };
   };
 
-  // 🌊 실시간 오디오 파형(Waveform) 시각화 애니메이션 엔진
+  // 🌊 실시간 마이크 음성 반응 파형(Waveform) 엔진 (사용자가 발음할 때만 실시간 반응)
   useEffect(() => {
     let animId;
     if (!isRecording) {
@@ -481,46 +481,35 @@ export default function ModernStudyPage() {
 
       const bufferLength = analyserRef.current ? analyserRef.current.frequencyBinCount : 32;
       const dataArray = new Uint8Array(bufferLength);
-      let tick = 0;
 
       const draw = () => {
         if (!canvasRef.current) return;
-        tick += 0.15;
+
+        if (analyserRef.current) {
+          analyserRef.current.getByteFrequencyData(dataArray);
+        }
 
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-        let hasAudioData = false;
-        if (analyserRef.current) {
-          analyserRef.current.getByteFrequencyData(dataArray);
-          for (let i = 0; i < bufferLength; i++) {
-            if (dataArray[i] > 10) {
-              hasAudioData = true;
-              break;
-            }
-          }
-        }
-
-        const barCount = 26;
+        const barCount = 28;
         const barWidth = canvas.width / barCount;
 
         for (let i = 0; i < barCount; i++) {
-          let barHeight;
-          if (hasAudioData && analyserRef.current) {
-            const dataIndex = Math.floor((i / barCount) * bufferLength);
-            barHeight = Math.max(4, (dataArray[dataIndex] / 255) * canvas.height * 0.9);
-          } else {
-            // 마이크 대기 및 녹음 중 역동적인 음성 파동 애니메이션
-            const wave1 = Math.sin(tick + i * 0.45) * 0.5 + 0.5;
-            const wave2 = Math.cos(tick * 1.2 + i * 0.7) * 0.5 + 0.5;
-            barHeight = Math.max(5, ((wave1 + wave2) / 2) * (canvas.height * 0.8));
-          }
+          const dataIndex = Math.floor((i / barCount) * bufferLength);
+          const rawVal = dataArray[dataIndex] || 0; // 마이크 실시간 음성 주파수 값 (0~255)
+          
+          // 발음할 때 음성 진폭에 따라 역동적으로 파동 생성 (말하지 않을 때는 3px 평온 상태)
+          const voiceIntensity = rawVal > 6 ? Math.min(1, (rawVal / 180) * 1.4) : 0;
+          const barHeight = Math.max(3, voiceIntensity * canvas.height * 0.95);
 
-          const hue = 165 + i * 4; // vibrant teal -> cyan -> sky blue
-          ctx.fillStyle = `hsl(${hue}, 90%, 48%)`;
+          // 음성 강도에 따라 청량한 민트(#00E5FF)에서 선명한 틸(#00A8BF)로 반응
+          const hue = 165 + (i * 3) + (voiceIntensity * 20);
+          const lightness = 45 + (voiceIntensity * 10);
+          ctx.fillStyle = `hsl(${hue}, 95%, ${lightness}%)`;
 
           const x = i * barWidth;
           const y = (canvas.height - barHeight) / 2;
-          const w = Math.max(2.5, barWidth - 2);
+          const w = Math.max(2.5, barWidth - 2.5);
 
           ctx.beginPath();
           if (ctx.roundRect) {
@@ -722,38 +711,22 @@ export default function ModernStudyPage() {
           mediaRecorderRef.current.start();
           mediaStreamStarted = true;
 
-          // 오디오 파형 시각화
+          // 오디오 파형 시각화 Analyser 설정
           try {
             const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            if (audioCtx.state === 'suspended') {
+              audioCtx.resume();
+            }
             audioContextRef.current = audioCtx;
             const source = audioCtx.createMediaStreamSource(stream);
             const analyser = audioCtx.createAnalyser();
             analyser.fftSize = 64;
+            analyser.smoothingTimeConstant = 0.4;
             source.connect(analyser);
             analyserRef.current = analyser;
-
-            const drawWave = () => {
-              if (!canvasRef.current || !analyserRef.current) return;
-              const canvas = canvasRef.current;
-              const ctx = canvas.getContext('2d');
-              const bufferLength = analyserRef.current.frequencyBinCount;
-              const dataArray = new Uint8Array(bufferLength);
-              analyserRef.current.getByteFrequencyData(dataArray);
-
-              ctx.clearRect(0, 0, canvas.width, canvas.height);
-              const barWidth = (canvas.width / bufferLength) * 2.2;
-              let x = 0;
-
-              for (let i = 0; i < bufferLength; i++) {
-                const barHeight = (dataArray[i] / 255) * canvas.height;
-                ctx.fillStyle = `hsl(${i * 12 + 165}, 90%, 45%)`;
-                ctx.fillRect(x, canvas.height - barHeight, barWidth - 1.5, barHeight);
-                x += barWidth;
-              }
-              animFrameRef.current = requestAnimationFrame(drawWave);
-            };
-            drawWave();
-          } catch (ctxErr) {}
+          } catch (ctxErr) {
+            console.error('AudioContext connection error', ctxErr);
+          }
         }
       } catch (streamErr) {
         console.warn('getUserMedia stream error', streamErr);
