@@ -251,10 +251,12 @@ export default function ModernStudyPage() {
   const [quizLevel, setQuizLevel] = useState(1);
   const [quizIndex, setQuizIndex] = useState(0);
   const [quizScore, setQuizScore] = useState(0);
+  const [quizOptions, setQuizOptions] = useState([]);
   const [selectedAnswer, setSelectedAnswer] = useState(null);
   const [isAnswerChecked, setIsAnswerChecked] = useState(false);
   const [isQuizCorrect, setIsQuizCorrect] = useState(null);
   const [typingInput, setTypingInput] = useState('');
+  const [isQuizFinished, setIsQuizFinished] = useState(false);
 
   // 🎯 학생 친화적 발음 유사도 점수(0~100점) 판정 알고리즘
   const calculateMatchScore = (targetStr, spokenStr) => {
@@ -871,6 +873,123 @@ export default function ModernStudyPage() {
     if (currentLang === 'vi') trans = w.example_vi || trans;
     if (currentLang === 'hi') trans = w.example_hi || trans;
     return { en, trans };
+  };
+
+  // 🔀 퀴즈 4지선다 보기 무작위 생성기
+  const generateQuizOptions = (targetWord, allWords, level) => {
+    if (!targetWord) return [];
+    const pool = (allWords && allWords.length > 1) ? allWords : wordList500Fallback;
+    const targetWordStr = (targetWord.word || 'Apple').toLowerCase().trim();
+
+    const others = pool.filter(w => (w.word || '').toLowerCase().trim() !== targetWordStr);
+    const shuffledOthers = [...others].sort(() => Math.random() - 0.5).slice(0, 3);
+
+    const correctOpt = {
+      word: targetWord.word,
+      meaning: getWordMeaning(targetWord),
+      label: level === 1 ? getWordMeaning(targetWord) : targetWord.word,
+      isCorrect: true
+    };
+
+    const wrongOpts = shuffledOthers.map(w => ({
+      word: w.word,
+      meaning: getWordMeaning(w),
+      label: level === 1 ? getWordMeaning(w) : w.word,
+      isCorrect: false
+    }));
+
+    while (wrongOpts.length < 3) {
+      const dummy = wordList500Fallback[wrongOpts.length % wordList500Fallback.length];
+      wrongOpts.push({
+        word: dummy.word,
+        meaning: getWordMeaning(dummy),
+        label: level === 1 ? getWordMeaning(dummy) : dummy.word,
+        isCorrect: false
+      });
+    }
+
+    return [correctOpt, ...wrongOpts].sort(() => Math.random() - 0.5);
+  };
+
+  // ✍️ 퀴즈 문제 및 보기 자동 동기화
+  useEffect(() => {
+    if (currentTab === 'quiz') {
+      setSelectedAnswer(null);
+      setIsAnswerChecked(false);
+      setIsQuizCorrect(null);
+      setTypingInput('');
+
+      const activeWordList = words.length > 0 ? words : wordList500Fallback;
+      const currentQuizWord = activeWordList[quizIndex] || activeWordList[0];
+      if (currentQuizWord) {
+        const opts = generateQuizOptions(currentQuizWord, activeWordList, quizLevel);
+        setQuizOptions(opts);
+
+        if (quizLevel === 1) {
+          setTimeout(() => {
+            handlePlaySound(currentQuizWord.word);
+          }, 300);
+        }
+      }
+    }
+  }, [quizIndex, quizLevel, currentTab, words.length, currentLang]);
+
+  // ✍️ 퀴즈 인터랙션 핸들러
+  const handleSelectQuizOption = (optIndex, opt) => {
+    if (isAnswerChecked) return;
+    setSelectedAnswer(optIndex);
+    setIsAnswerChecked(true);
+    setIsQuizCorrect(opt.isCorrect);
+    if (opt.isCorrect) {
+      setQuizScore(prev => prev + 10);
+    }
+  };
+
+  const handleSubmitTyping = (e) => {
+    if (e) e.preventDefault();
+    if (isAnswerChecked || !typingInput.trim()) return;
+    const activeWordList = words.length > 0 ? words : wordList500Fallback;
+    const currentQuizWord = activeWordList[quizIndex] || activeWordList[0];
+    const isMatched = typingInput.trim().toLowerCase() === (currentQuizWord?.word || '').toLowerCase().trim();
+    setIsAnswerChecked(true);
+    setIsQuizCorrect(isMatched);
+    if (isMatched) {
+      setQuizScore(prev => prev + 10);
+    }
+  };
+
+  const handleNextQuizQuestion = () => {
+    const totalCount = words.length || 10;
+    if (quizIndex + 1 < totalCount) {
+      setQuizIndex(prev => prev + 1);
+      setSelectedAnswer(null);
+      setIsAnswerChecked(false);
+      setIsQuizCorrect(null);
+      setTypingInput('');
+    } else {
+      setIsQuizFinished(true);
+    }
+  };
+
+  const handleRestartQuizLevel = () => {
+    setQuizIndex(0);
+    setIsQuizFinished(false);
+    setQuizScore(0);
+    setSelectedAnswer(null);
+    setIsAnswerChecked(false);
+    setIsQuizCorrect(null);
+    setTypingInput('');
+  };
+
+  const handleNextQuizLevel = () => {
+    setQuizLevel(prev => (prev < 4 ? prev + 1 : 1));
+    setQuizIndex(0);
+    setIsQuizFinished(false);
+    setQuizScore(0);
+    setSelectedAnswer(null);
+    setIsAnswerChecked(false);
+    setIsQuizCorrect(null);
+    setTypingInput('');
   };
 
   // 🖼️ 고화질 단어 이미지 로드 및 스마트 폴백 시스템
@@ -1824,184 +1943,422 @@ export default function ModernStudyPage() {
           {/* ═══════════════════════════════════════════════════════
               TAB 4: ✍️ 4-STAGE QUIZ (4단계 퀴즈 마스터 뷰)
              ═══════════════════════════════════════════════════════ */}
-          {currentTab === 'quiz' && (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
-              
-              {/* 퀴즈 단계 선택 뱃지 */}
-              <div style={{ display: 'flex', gap: '6px', overflowX: 'auto', paddingBottom: '4px' }}>
-                {[
-                  { lvl: 1, label: '1단계 🔊 소리' },
-                  { lvl: 2, label: '2단계 🔤 스펠' },
-                  { lvl: 3, label: '3단계 🎙️ 발음' },
-                  { lvl: 4, label: '4단계 ✍️ 쓰기' }
-                ].map((item) => (
-                  <button
-                    key={item.lvl}
-                    onClick={() => {
-                      setQuizLevel(item.lvl);
-                      setSelectedAnswer(null);
-                      setIsAnswerChecked(false);
-                    }}
-                    style={{
-                      flex: 1,
-                      padding: '8px 10px',
-                      borderRadius: '12px',
-                      border: 'none',
-                      fontSize: '12px',
-                      fontWeight: '900',
-                      cursor: 'pointer',
-                      whiteSpace: 'nowrap',
-                      background: quizLevel === item.lvl ? 'linear-gradient(135deg, #00C7E5 0%, #00A8BF 100%)' : '#F1F5F9',
-                      color: quizLevel === item.lvl ? '#FFFFFF' : '#64748B',
-                      boxShadow: quizLevel === item.lvl ? '0 4px 10px rgba(0,168,191,0.25)' : 'none'
-                    }}
-                  >
-                    {item.label}
-                  </button>
-                ))}
-              </div>
+          {currentTab === 'quiz' && (() => {
+            const activeWordList = words.length > 0 ? words : wordList500Fallback;
+            const currentQuizWord = activeWordList[quizIndex] || activeWordList[0];
+            const totalQuizCount = activeWordList.length || 20;
 
-              {/* 퀴즈 카드 박스 */}
-              <div style={{
-                background: '#FFFFFF',
-                borderRadius: '24px',
-                padding: '24px 20px',
-                border: '1.5px solid #E2E8F0',
-                boxShadow: '0 8px 24px rgba(0,0,0,0.03)',
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                gap: '14px'
-              }}>
-                <div style={{ fontSize: '13px', fontWeight: '800', color: '#00A8BF' }}>
-                  Question 1 / 5
+            return (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                
+                {/* 퀴즈 단계 선택 뱃지 (1단계~4단계) */}
+                <div style={{ display: 'flex', gap: '6px', overflowX: 'auto', paddingBottom: '2px' }}>
+                  {[
+                    { lvl: 1, label: '1단계 🔊 소리' },
+                    { lvl: 2, label: '2단계 🔤 스펠' },
+                    { lvl: 3, label: '3단계 🎙️ 발음' },
+                    { lvl: 4, label: '4단계 ✍️ 쓰기' }
+                  ].map((item) => (
+                    <button
+                      key={item.lvl}
+                      type="button"
+                      onClick={() => {
+                        setQuizLevel(item.lvl);
+                        setQuizIndex(0);
+                        setIsQuizFinished(false);
+                        setSelectedAnswer(null);
+                        setIsAnswerChecked(false);
+                        setIsQuizCorrect(null);
+                        setTypingInput('');
+                      }}
+                      style={{
+                        flex: 1,
+                        padding: '8px 6px',
+                        borderRadius: '12px',
+                        border: 'none',
+                        fontSize: '11.5px',
+                        fontWeight: '900',
+                        cursor: 'pointer',
+                        whiteSpace: 'nowrap',
+                        background: quizLevel === item.lvl ? 'linear-gradient(135deg, #00C7E5 0%, #00A8BF 100%)' : '#F1F5F9',
+                        color: quizLevel === item.lvl ? '#FFFFFF' : '#64748B',
+                        boxShadow: quizLevel === item.lvl ? '0 4px 10px rgba(0,168,191,0.25)' : 'none',
+                        transition: 'all 0.15s ease'
+                      }}
+                    >
+                      {item.label}
+                    </button>
+                  ))}
                 </div>
 
-                {/* 1단계 소리 퀴즈 */}
-                {quizLevel === 1 && (
-                  <>
-                    <button
-                      onClick={() => handlePlaySound(currentWord?.word)}
-                      style={{
-                        width: '70px',
-                        height: '70px',
-                        borderRadius: '50%',
-                        border: 'none',
-                        background: 'linear-gradient(135deg, #00C7E5 0%, #00A8BF 100%)',
-                        color: '#FFF',
-                        fontSize: '32px',
-                        cursor: 'pointer',
-                        boxShadow: '0 8px 20px rgba(0, 168, 191, 0.35)'
-                      }}
-                    >
-                      🔊
-                    </button>
-                    <div style={{ fontSize: '14px', fontWeight: '700', color: '#64748B' }}>
-                      발음을 듣고 알맞은 뜻을 고르세요
+                {/* 🏆 퀴즈 완료 축하 카드 */}
+                {isQuizFinished ? (
+                  <div style={{
+                    background: '#FFFFFF',
+                    borderRadius: '24px',
+                    padding: '28px 20px',
+                    border: '1.5px solid #E2E8F0',
+                    boxShadow: '0 8px 24px rgba(0,0,0,0.04)',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    gap: '14px',
+                    textAlign: 'center'
+                  }}>
+                    <div style={{ fontSize: '48px', animation: 'bounce 1s infinite' }}>🏆</div>
+                    <div>
+                      <div style={{ fontSize: '20px', fontWeight: '900', color: '#1E293B', marginBottom: '4px' }}>
+                        {quizLevel}단계 퀴즈 마스터 완료!
+                      </div>
+                      <div style={{ fontSize: '13px', color: '#64748B', fontWeight: '700' }}>
+                        총 {totalQuizCount}문제 중 정답을 모두 맞히셨습니다!
+                      </div>
                     </div>
-                  </>
-                )}
 
-                {/* 2단계 스펠링 퀴즈 */}
-                {quizLevel === 2 && (
-                  <div style={{ textAlign: 'center' }}>
-                    <div style={{ fontSize: '24px', fontWeight: '900', color: '#1E293B', marginBottom: '4px' }}>
-                      {getWordMeaning(currentWord)}
+                    <div style={{
+                      background: 'linear-gradient(135deg, #ECFDF5 0%, #D1FAE5 100%)',
+                      padding: '12px 24px',
+                      borderRadius: '16px',
+                      border: '1.5px solid #6EE7B7',
+                      color: '#065F46',
+                      fontWeight: '900',
+                      fontSize: '18px'
+                    }}>
+                      ⭐ 획득 점수: {quizScore}점
                     </div>
-                    <div style={{ fontSize: '13px', color: '#64748B', fontWeight: '600' }}>
-                      알맞은 영단어 스펠링을 선택하세요
-                    </div>
-                  </div>
-                )}
 
-                {/* 3단계 발음 퀴즈 */}
-                {quizLevel === 3 && (
-                  <div style={{ textAlign: 'center' }}>
-                    <div style={{ fontSize: '32px', fontWeight: '900', color: '#1E293B', marginBottom: '6px' }}>
-                      {currentWord?.word}
-                    </div>
-                    <div style={{ fontSize: '14px', color: '#64748B', fontWeight: '700', marginBottom: '14px' }}>
-                      마이크 버튼을 누르고 정확하게 읽어보세요!
-                    </div>
-                    <button
-                      onClick={toggleRecording}
-                      style={{
-                        padding: '12px 24px',
-                        borderRadius: '20px',
-                        border: 'none',
-                        background: isRecording ? '#EF4444' : 'linear-gradient(135deg, #00C7E5 0%, #00A8BF 100%)',
-                        color: '#FFF',
-                        fontWeight: '900',
-                        fontSize: '15px',
-                        cursor: 'pointer'
-                      }}
-                    >
-                      {isRecording ? '⏹️ 녹음 완료' : '🎙️ 발음 시작'}
-                    </button>
-                  </div>
-                )}
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', width: '100%', marginTop: '6px' }}>
+                      {quizLevel < 4 && (
+                        <button
+                          type="button"
+                          onClick={handleNextQuizLevel}
+                          style={{
+                            width: '100%',
+                            padding: '13px',
+                            borderRadius: '16px',
+                            border: 'none',
+                            background: 'linear-gradient(135deg, #00C7E5 0%, #00A8BF 100%)',
+                            color: '#FFFFFF',
+                            fontWeight: '900',
+                            fontSize: '14px',
+                            cursor: 'pointer',
+                            boxShadow: '0 4px 12px rgba(0, 168, 191, 0.3)'
+                          }}
+                        >
+                          🌟 다음 {quizLevel + 1}단계 퀴즈 도전 ➔
+                        </button>
+                      )}
 
-                {/* 4단계 직접 쓰기 퀴즈 */}
-                {quizLevel === 4 && (
-                  <div style={{ width: '100%', textAlign: 'center' }}>
-                    <div style={{ fontSize: '24px', fontWeight: '900', color: '#1E293B', marginBottom: '12px' }}>
-                      {getWordMeaning(currentWord)}
-                    </div>
-                    <input
-                      type="text"
-                      placeholder="단어 스펠링 직접 입력"
-                      value={typingInput}
-                      onChange={(e) => setTypingInput(e.target.value)}
-                      style={{
-                        width: '100%',
-                        padding: '14px',
-                        borderRadius: '16px',
-                        border: '2px solid #00A8BF',
-                        fontSize: '16px',
-                        fontWeight: '800',
-                        textAlign: 'center',
-                        outline: 'none'
-                      }}
-                    />
-                  </div>
-                )}
-
-                {/* 1, 2단계 4지선다 보기 */}
-                {(quizLevel === 1 || quizLevel === 2) && (
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', width: '100%', marginTop: '6px' }}>
-                    {[
-                      { label: quizLevel === 1 ? getWordMeaning(currentWord) : currentWord?.word, isCorrect: true },
-                      { label: quizLevel === 1 ? '바나나' : 'Banana', isCorrect: false },
-                      { label: quizLevel === 1 ? '학교' : 'School', isCorrect: false },
-                      { label: quizLevel === 1 ? '물' : 'Water', isCorrect: false }
-                    ].map((opt, i) => (
                       <button
-                        key={i}
-                        onClick={() => {
-                          setSelectedAnswer(i);
-                          setIsAnswerChecked(true);
-                          setIsQuizCorrect(opt.isCorrect);
-                        }}
+                        type="button"
+                        onClick={handleRestartQuizLevel}
                         style={{
-                          padding: '14px 10px',
-                          borderRadius: '14px',
-                          border: selectedAnswer === i ? (opt.isCorrect ? '2px solid #10B981' : '2px solid #EF4444') : '1.5px solid #E2E8F0',
-                          background: selectedAnswer === i ? (opt.isCorrect ? '#D1FAE5' : '#FEE2E2') : '#F8FAFC',
-                          color: selectedAnswer === i ? (opt.isCorrect ? '#065F46' : '#991B1B') : '#334155',
-                          fontSize: '14px',
+                          width: '100%',
+                          padding: '11px',
+                          borderRadius: '16px',
+                          border: '1.5px solid #CBD5E1',
+                          background: '#FFFFFF',
+                          color: '#475569',
                           fontWeight: '800',
+                          fontSize: '13px',
                           cursor: 'pointer'
                         }}
                       >
-                        {opt.label}
+                        🔄 이번 단계 다시 풀기
                       </button>
-                    ))}
+
+                      <button
+                        type="button"
+                        onClick={() => setCurrentTab('deck')}
+                        style={{
+                          width: '100%',
+                          padding: '11px',
+                          borderRadius: '16px',
+                          border: '1.5px solid #E2E8F0',
+                          background: '#F8FAFC',
+                          color: '#008294',
+                          fontWeight: '800',
+                          fontSize: '13px',
+                          cursor: 'pointer'
+                        }}
+                      >
+                        🎴 단어 플래시카드로 이동
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  /* 🎯 문제 카드 박스 */
+                  <div style={{
+                    background: '#FFFFFF',
+                    borderRadius: '24px',
+                    padding: '20px 18px',
+                    border: '1.5px solid #E2E8F0',
+                    boxShadow: '0 8px 24px rgba(0,0,0,0.03)',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    gap: '12px'
+                  }}>
+                    {/* 상단 문항 번호 & 점수 뱃지 */}
+                    <div style={{ width: '100%', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <span style={{ fontSize: '13px', fontWeight: '900', color: '#00A8BF', background: '#E6FAFC', padding: '3px 10px', borderRadius: '10px' }}>
+                        Question {quizIndex + 1} / {totalQuizCount}
+                      </span>
+                      <span style={{ fontSize: '12px', fontWeight: '900', color: '#F59E0B', background: '#FEF3C7', padding: '3px 10px', borderRadius: '10px' }}>
+                        ⭐ {quizScore}점
+                      </span>
+                    </div>
+
+                    {/* 1단계 소리 퀴즈 */}
+                    {quizLevel === 1 && (
+                      <div style={{ textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px', margin: '4px 0' }}>
+                        <button
+                          type="button"
+                          onClick={() => handlePlaySound(currentQuizWord?.word)}
+                          style={{
+                            width: '64px',
+                            height: '64px',
+                            borderRadius: '50%',
+                            border: 'none',
+                            background: 'linear-gradient(135deg, #00C7E5 0%, #00A8BF 100%)',
+                            color: '#FFF',
+                            fontSize: '28px',
+                            cursor: 'pointer',
+                            boxShadow: '0 8px 20px rgba(0, 168, 191, 0.35)',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center'
+                          }}
+                        >
+                          🔊
+                        </button>
+                        <div style={{ fontSize: '13px', fontWeight: '800', color: '#64748B' }}>
+                          발음을 듣고 알맞은 뜻을 고르세요
+                        </div>
+                      </div>
+                    )}
+
+                    {/* 2단계 스펠링 퀴즈 */}
+                    {quizLevel === 2 && (
+                      <div style={{ textAlign: 'center', margin: '6px 0' }}>
+                        <div style={{ fontSize: '22px', fontWeight: '900', color: '#1E293B', marginBottom: '2px' }}>
+                          {getWordMeaning(currentQuizWord)}
+                        </div>
+                        <div style={{ fontSize: '12px', color: '#64748B', fontWeight: '700' }}>
+                          알맞은 영단어 스펠링을 선택하세요
+                        </div>
+                      </div>
+                    )}
+
+                    {/* 3단계 발음 퀴즈 */}
+                    {quizLevel === 3 && (
+                      <div style={{ textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px', width: '100%' }}>
+                        <div style={{ fontSize: '26px', fontWeight: '900', color: '#1E293B' }}>
+                          {currentQuizWord?.word}
+                        </div>
+                        <div style={{ fontSize: '13px', color: '#64748B', fontWeight: '700' }}>
+                          {getWordMeaning(currentQuizWord)}
+                        </div>
+
+                        <button
+                          type="button"
+                          onClick={toggleRecording}
+                          style={{
+                            padding: '10px 20px',
+                            borderRadius: '16px',
+                            border: 'none',
+                            background: isRecording ? '#EF4444' : 'linear-gradient(135deg, #00C7E5 0%, #00A8BF 100%)',
+                            color: '#FFF',
+                            fontWeight: '900',
+                            fontSize: '14px',
+                            cursor: 'pointer',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '6px',
+                            boxShadow: '0 4px 12px rgba(0,168,191,0.25)'
+                          }}
+                        >
+                          {isRecording ? '⏹️ 녹음 중단' : '🎙️ 발음 시작'}
+                        </button>
+
+                        {recordedScore !== null && (
+                          <div style={{
+                            marginTop: '4px',
+                            padding: '8px 14px',
+                            borderRadius: '12px',
+                            background: recordedScore >= 70 ? '#DCFCE7' : '#FEF3C7',
+                            color: recordedScore >= 70 ? '#15803D' : '#B45309',
+                            fontWeight: '900',
+                            fontSize: '13px'
+                          }}>
+                            {recordedScore >= 70 ? `🎉 ${recordedScore}점! 발음 합격!` : `💡 ${recordedScore}점! 다시 도전하거나 다음 문제로 이동하세요.`}
+                          </div>
+                        )}
+                      </div>
+                    )}
+
+                    {/* 4단계 직접 쓰기 퀴즈 */}
+                    {quizLevel === 4 && (
+                      <form onSubmit={handleSubmitTyping} style={{ width: '100%', textAlign: 'center', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                        <div style={{ fontSize: '22px', fontWeight: '900', color: '#1E293B' }}>
+                          {getWordMeaning(currentQuizWord)}
+                        </div>
+                        <input
+                          type="text"
+                          placeholder="영단어 스펠링 직접 입력"
+                          value={typingInput}
+                          onChange={(e) => setTypingInput(e.target.value)}
+                          disabled={isAnswerChecked}
+                          style={{
+                            width: '100%',
+                            padding: '12px',
+                            borderRadius: '14px',
+                            border: isAnswerChecked ? (isQuizCorrect ? '2px solid #10B981' : '2px solid #EF4444') : '2px solid #00A8BF',
+                            fontSize: '15px',
+                            fontWeight: '800',
+                            textAlign: 'center',
+                            outline: 'none',
+                            background: isAnswerChecked ? (isQuizCorrect ? '#D1FAE5' : '#FEE2E2') : '#FFFFFF'
+                          }}
+                        />
+                        {!isAnswerChecked && (
+                          <button
+                            type="submit"
+                            style={{
+                              padding: '10px',
+                              borderRadius: '12px',
+                              border: 'none',
+                              background: 'linear-gradient(135deg, #00C7E5 0%, #00A8BF 100%)',
+                              color: '#FFF',
+                              fontWeight: '900',
+                              fontSize: '13px',
+                              cursor: 'pointer'
+                            }}
+                          >
+                            정답 확인
+                          </button>
+                        )}
+                      </form>
+                    )}
+
+                    {/* 1, 2단계 4지선다 보기 그리드 */}
+                    {(quizLevel === 1 || quizLevel === 2) && (
+                      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', width: '100%', marginTop: '2px' }}>
+                        {quizOptions.map((opt, i) => {
+                          const isSelected = selectedAnswer === i;
+                          let bg = '#F8FAFC';
+                          let border = '1.5px solid #E2E8F0';
+                          let color = '#334155';
+
+                          if (isAnswerChecked) {
+                            if (opt.isCorrect) {
+                              bg = '#D1FAE5';
+                              border = '2px solid #10B981';
+                              color = '#065F46';
+                            } else if (isSelected && !opt.isCorrect) {
+                              bg = '#FEE2E2';
+                              border = '2px solid #EF4444';
+                              color = '#991B1B';
+                            }
+                          } else if (isSelected) {
+                            bg = '#E6FAFC';
+                            border = '2px solid #00A8BF';
+                            color = '#008294';
+                          }
+
+                          return (
+                            <button
+                              key={i}
+                              type="button"
+                              onClick={() => handleSelectQuizOption(i, opt)}
+                              disabled={isAnswerChecked}
+                              style={{
+                                padding: '12px 8px',
+                                borderRadius: '14px',
+                                border,
+                                background: bg,
+                                color,
+                                fontSize: '13px',
+                                fontWeight: '800',
+                                cursor: isAnswerChecked ? 'default' : 'pointer',
+                                transition: 'all 0.15s ease',
+                                textAlign: 'center',
+                                wordBreak: 'keep-all'
+                              }}
+                            >
+                              {opt.label}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    )}
+
+                    {/* 🎯 정답 피드백 배너 & [다음 문제로 이동 ➔] 버튼 */}
+                    {(isAnswerChecked || quizLevel === 3) && (
+                      <div style={{
+                        width: '100%',
+                        marginTop: '8px',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: '8px',
+                        animation: 'fadeIn 0.2s ease'
+                      }}>
+                        {/* 정답 / 오답 상태 뱃지 */}
+                        {isAnswerChecked && (
+                          <div style={{
+                            width: '100%',
+                            padding: '10px 14px',
+                            borderRadius: '14px',
+                            background: isQuizCorrect ? '#D1FAE5' : '#FEE2E2',
+                            border: isQuizCorrect ? '1.5px solid #86EFAC' : '1.5px solid #FECACA',
+                            color: isQuizCorrect ? '#065F46' : '#991B1B',
+                            fontWeight: '900',
+                            fontSize: '13px',
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            alignItems: 'center'
+                          }}>
+                            <span>{isQuizCorrect ? '🎉 정답입니다! (+10점)' : '❌ 아쉬워요!'}</span>
+                            {!isQuizCorrect && (
+                              <span style={{ fontSize: '12px', fontWeight: '800' }}>
+                                정답: <strong>{quizLevel === 1 ? getWordMeaning(currentQuizWord) : currentQuizWord?.word}</strong>
+                              </span>
+                            )}
+                          </div>
+                        )}
+
+                        {/* 👉 [다음 문제로 이동 ➔] 버튼 */}
+                        <button
+                          type="button"
+                          onClick={handleNextQuizQuestion}
+                          style={{
+                            width: '100%',
+                            padding: '12px',
+                            borderRadius: '16px',
+                            border: 'none',
+                            background: 'linear-gradient(135deg, #00C7E5 0%, #00A8BF 100%)',
+                            color: '#FFFFFF',
+                            fontWeight: '900',
+                            fontSize: '14px',
+                            cursor: 'pointer',
+                            boxShadow: '0 4px 14px rgba(0, 168, 191, 0.3)',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            gap: '6px'
+                          }}
+                        >
+                          <span>다음 문제로 이동</span>
+                          <span style={{ fontSize: '16px' }}>➔</span>
+                        </button>
+                      </div>
+                    )}
+
                   </div>
                 )}
-
               </div>
-            </div>
-          )}
+            );
+          })()}
 
           {/* ═══════════════════════════════════════════════════════
               TAB 5: 👤 PROFILE (내 정보 & 진도 통계 뷰)
