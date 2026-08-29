@@ -465,6 +465,87 @@ export default function ModernStudyPage() {
     };
   };
 
+  // 🌊 실시간 오디오 파형(Waveform) 시각화 애니메이션 엔진
+  useEffect(() => {
+    let animId;
+    if (!isRecording) {
+      if (animFrameRef.current) cancelAnimationFrame(animFrameRef.current);
+      return;
+    }
+
+    const startVisualizer = () => {
+      if (!canvasRef.current) return;
+      const canvas = canvasRef.current;
+      const ctx = canvas.getContext('2d');
+      if (!ctx) return;
+
+      const bufferLength = analyserRef.current ? analyserRef.current.frequencyBinCount : 32;
+      const dataArray = new Uint8Array(bufferLength);
+      let tick = 0;
+
+      const draw = () => {
+        if (!canvasRef.current) return;
+        tick += 0.15;
+
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        let hasAudioData = false;
+        if (analyserRef.current) {
+          analyserRef.current.getByteFrequencyData(dataArray);
+          for (let i = 0; i < bufferLength; i++) {
+            if (dataArray[i] > 10) {
+              hasAudioData = true;
+              break;
+            }
+          }
+        }
+
+        const barCount = 26;
+        const barWidth = canvas.width / barCount;
+
+        for (let i = 0; i < barCount; i++) {
+          let barHeight;
+          if (hasAudioData && analyserRef.current) {
+            const dataIndex = Math.floor((i / barCount) * bufferLength);
+            barHeight = Math.max(4, (dataArray[dataIndex] / 255) * canvas.height * 0.9);
+          } else {
+            // 마이크 대기 및 녹음 중 역동적인 음성 파동 애니메이션
+            const wave1 = Math.sin(tick + i * 0.45) * 0.5 + 0.5;
+            const wave2 = Math.cos(tick * 1.2 + i * 0.7) * 0.5 + 0.5;
+            barHeight = Math.max(5, ((wave1 + wave2) / 2) * (canvas.height * 0.8));
+          }
+
+          const hue = 165 + i * 4; // vibrant teal -> cyan -> sky blue
+          ctx.fillStyle = `hsl(${hue}, 90%, 48%)`;
+
+          const x = i * barWidth;
+          const y = (canvas.height - barHeight) / 2;
+          const w = Math.max(2.5, barWidth - 2);
+
+          ctx.beginPath();
+          if (ctx.roundRect) {
+            ctx.roundRect(x, y, w, barHeight, 3);
+            ctx.fill();
+          } else {
+            ctx.fillRect(x, y, w, barHeight);
+          }
+        }
+
+        animId = requestAnimationFrame(draw);
+        animFrameRef.current = animId;
+      };
+
+      draw();
+    };
+
+    const timeoutId = setTimeout(startVisualizer, 50);
+
+    return () => {
+      clearTimeout(timeoutId);
+      if (animId) cancelAnimationFrame(animId);
+    };
+  }, [isRecording]);
+
   // 1. 세션 및 로컬 사용자 데이터 로드
   useEffect(() => {
     initAudioUnlock();
@@ -806,11 +887,12 @@ export default function ModernStudyPage() {
       padding: '16px 10px',
       fontFamily: '"Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif'
     }}>
-      {/* 📱 모바일 스마트폰 컨테이너 */}
+      {/* 📱 모바일 스마트폰 컨테이너 (고정 규격으로 화면 확장 방지) */}
       <div style={{
         width: '100%',
         maxWidth: '430px',
-        minHeight: '740px',
+        height: '840px',
+        maxHeight: '94vh',
         background: '#FFFFFF',
         borderRadius: '36px',
         boxShadow: '0 25px 60px -15px rgba(0, 168, 191, 0.22), 0 0 0 1px rgba(255, 255, 255, 0.8) inset',
@@ -1109,7 +1191,7 @@ export default function ModernStudyPage() {
                 style={{
                   perspective: '1000px',
                   width: '100%',
-                  height: '340px',
+                  height: '280px',
                   cursor: 'pointer'
                 }}
               >
@@ -1127,15 +1209,15 @@ export default function ModernStudyPage() {
                     width: '100%',
                     height: '100%',
                     backfaceVisibility: 'hidden',
-                    borderRadius: '32px',
+                    borderRadius: '28px',
                     background: 'linear-gradient(135deg, #00C7E5 0%, #00A8BF 50%, #0284C7 100%)',
                     color: '#FFFFFF',
-                    padding: '16px 18px',
+                    padding: '14px 16px',
                     display: 'flex',
                     flexDirection: 'column',
                     alignItems: 'center',
                     justifyContent: 'space-between',
-                    boxShadow: '0 18px 36px rgba(0, 168, 191, 0.35)',
+                    boxShadow: '0 14px 30px rgba(0, 168, 191, 0.32)',
                     border: '1px solid rgba(255, 255, 255, 0.4)'
                   }}>
                     {/* 상단 뱃지 & 카테고리 */}
@@ -1143,8 +1225,8 @@ export default function ModernStudyPage() {
                       <span style={{
                         background: 'rgba(255, 255, 255, 0.25)',
                         backdropFilter: 'blur(8px)',
-                        borderRadius: '12px',
-                        padding: '3px 10px',
+                        borderRadius: '10px',
+                        padding: '2px 8px',
                         fontSize: '11px',
                         fontWeight: '800'
                       }}>
@@ -1154,8 +1236,8 @@ export default function ModernStudyPage() {
                       <span style={{
                         background: 'rgba(255, 255, 255, 0.25)',
                         backdropFilter: 'blur(8px)',
-                        borderRadius: '12px',
-                        padding: '3px 10px',
+                        borderRadius: '10px',
+                        padding: '2px 8px',
                         fontSize: '11px',
                         fontWeight: '800',
                         display: 'flex',
@@ -1168,17 +1250,16 @@ export default function ModernStudyPage() {
 
                     {/* 🖼️ 중앙 고화질 단어 일러스트 이미지 */}
                     <div style={{
-                      width: '110px',
-                      height: '110px',
-                      borderRadius: '24px',
+                      width: '88px',
+                      height: '88px',
+                      borderRadius: '20px',
                       background: '#FFFFFF',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
-                      padding: '8px',
-                      boxShadow: '0 10px 24px rgba(0, 0, 0, 0.14)',
-                      border: '2px solid rgba(255, 255, 255, 0.9)',
-                      margin: '2px 0'
+                      padding: '6px',
+                      boxShadow: '0 8px 18px rgba(0, 0, 0, 0.12)',
+                      border: '2px solid rgba(255, 255, 255, 0.9)'
                     }}>
                       <img
                         src={getWordImgSrc(currentWord)}
@@ -1194,15 +1275,15 @@ export default function ModernStudyPage() {
 
                     {/* 영단어 & 발음기호 & 뜻 */}
                     <div style={{ textAlign: 'center' }}>
-                      <div style={{ fontSize: '30px', fontWeight: '900', letterSpacing: '-0.5px', lineHeight: 1.1, textShadow: '0 2px 6px rgba(0,0,0,0.1)' }}>
+                      <div style={{ fontSize: '26px', fontWeight: '900', letterSpacing: '-0.3px', lineHeight: 1.1, textShadow: '0 2px 4px rgba(0,0,0,0.1)' }}>
                         {currentWord?.word}
                       </div>
 
-                      <div style={{ fontSize: '13px', opacity: 0.9, fontWeight: '700', margin: '2px 0 6px 0' }}>
+                      <div style={{ fontSize: '12px', opacity: 0.9, fontWeight: '700', margin: '2px 0 4px 0' }}>
                         {currentWord?.phonics || '/---/'}
                       </div>
 
-                      <div style={{ fontSize: '17px', fontWeight: '900', background: 'rgba(255, 255, 255, 0.22)', padding: '4px 16px', borderRadius: '14px', display: 'inline-block' }}>
+                      <div style={{ fontSize: '15px', fontWeight: '900', background: 'rgba(255, 255, 255, 0.22)', padding: '3px 14px', borderRadius: '12px', display: 'inline-block' }}>
                         {getWordMeaning(currentWord)}
                       </div>
                     </div>
@@ -1219,20 +1300,20 @@ export default function ModernStudyPage() {
                     height: '100%',
                     backfaceVisibility: 'hidden',
                     transform: 'rotateY(180deg)',
-                    borderRadius: '32px',
+                    borderRadius: '28px',
                     background: 'linear-gradient(135deg, #60A5FA 0%, #A78BFA 100%)',
                     color: '#FFFFFF',
-                    padding: '20px 18px',
+                    padding: '16px 16px',
                     display: 'flex',
                     flexDirection: 'column',
                     alignItems: 'center',
                     justifyContent: 'space-between',
-                    boxShadow: '0 18px 36px rgba(96, 165, 250, 0.35)',
+                    boxShadow: '0 14px 30px rgba(96, 165, 250, 0.32)',
                     border: '1px solid rgba(255, 255, 255, 0.4)'
                   }}>
                     {/* 상단 미니 썸네일 & 단어 */}
                     <div style={{ display: 'flex', alignItems: 'center', gap: '10px', width: '100%' }}>
-                      <div style={{ width: '48px', height: '48px', borderRadius: '14px', background: '#FFFFFF', padding: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 4px 10px rgba(0,0,0,0.1)' }}>
+                      <div style={{ width: '42px', height: '42px', borderRadius: '12px', background: '#FFFFFF', padding: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 4px 10px rgba(0,0,0,0.1)' }}>
                         <img
                           src={getWordImgSrc(currentWord)}
                           alt={currentWord?.word}
@@ -1241,20 +1322,20 @@ export default function ModernStudyPage() {
                         />
                       </div>
                       <div>
-                        <div style={{ fontSize: '18px', fontWeight: '900' }}>{currentWord?.word}</div>
-                        <div style={{ fontSize: '12px', opacity: 0.9, fontWeight: '700' }}>{getWordMeaning(currentWord)}</div>
+                        <div style={{ fontSize: '17px', fontWeight: '900' }}>{currentWord?.word}</div>
+                        <div style={{ fontSize: '11px', opacity: 0.9, fontWeight: '700' }}>{getWordMeaning(currentWord)}</div>
                       </div>
                     </div>
 
                     {/* 중앙 예문 카드 */}
-                    <div style={{ width: '100%', background: 'rgba(255, 255, 255, 0.18)', borderRadius: '20px', padding: '16px', backdropFilter: 'blur(8px)', textAlign: 'center' }}>
-                      <div style={{ fontSize: '11px', fontWeight: '900', letterSpacing: '0.5px', opacity: 0.85, marginBottom: '6px' }}>
+                    <div style={{ width: '100%', background: 'rgba(255, 255, 255, 0.18)', borderRadius: '18px', padding: '12px', backdropFilter: 'blur(8px)', textAlign: 'center' }}>
+                      <div style={{ fontSize: '10px', fontWeight: '900', letterSpacing: '0.5px', opacity: 0.85, marginBottom: '4px' }}>
                         📝 EXAMPLE SENTENCE
                       </div>
-                      <div style={{ fontSize: '15px', fontWeight: '900', lineHeight: 1.35, marginBottom: '8px' }}>
+                      <div style={{ fontSize: '14px', fontWeight: '900', lineHeight: 1.3, marginBottom: '6px' }}>
                         "{example.en}"
                       </div>
-                      <div style={{ fontSize: '13px', opacity: 0.95, fontWeight: '700', lineHeight: 1.35, color: '#FEF08A' }}>
+                      <div style={{ fontSize: '12px', opacity: 0.95, fontWeight: '700', lineHeight: 1.3, color: '#FEF08A' }}>
                         {example.trans}
                       </div>
                     </div>
@@ -1266,158 +1347,13 @@ export default function ModernStudyPage() {
                 </div>
               </div>
 
-              {/* 🎙️ 실시간 파형 캔버스 (녹음 중일 때 표시) */}
-              {isRecording && (
-                <div style={{
-                  width: '100%',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  alignItems: 'center',
-                  gap: '6px',
-                  background: '#FEF2F2',
-                  padding: '12px',
-                  borderRadius: '20px',
-                  border: '1.5px solid #FECACA',
-                  boxShadow: '0 4px 12px rgba(239, 68, 68, 0.12)'
-                }}>
-                  <canvas ref={canvasRef} width={280} height={40} style={{ borderRadius: '10px', background: '#FFFFFF' }} />
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                    <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#EF4444' }}></span>
-                    <span style={{ fontSize: '12px', color: '#DC2626', fontWeight: '900' }}>
-                      🎙️ 음성 녹음 중... "{currentWord?.word}" 발음해 보세요!
-                    </span>
-                  </div>
-                </div>
-              )}
-
-              {/* 🎯 AI 발음 평가 & 코칭 피드백 카드 (녹음 완료 시 노출) */}
-              {recordedScore !== null && !isRecording && (
-                <div style={{
-                  width: '100%',
-                  background: recordedScore >= 85 ? '#F0FDF4' : recordedScore >= 65 ? '#F0F9FF' : '#FFFBEB',
-                  borderRadius: '24px',
-                  padding: '16px 18px',
-                  border: recordedScore >= 85 ? '2px solid #86EFAC' : recordedScore >= 65 ? '2px solid #BAE6FD' : '2px solid #FDE68A',
-                  boxShadow: '0 8px 24px rgba(0,0,0,0.04)',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: '10px'
-                }}>
-                  {/* 상단 점수 뱃지 & 인식 텍스트 */}
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '6px' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                      <span style={{
-                        fontSize: '22px',
-                        fontWeight: '900',
-                        color: recordedScore >= 85 ? '#16A34A' : recordedScore >= 65 ? '#0284C7' : '#D97706'
-                      }}>
-                        {recordedScore}점
-                      </span>
-                      <span style={{
-                        fontSize: '11px',
-                        fontWeight: '800',
-                        padding: '3px 8px',
-                        borderRadius: '10px',
-                        background: recordedScore >= 85 ? '#DCFCE7' : recordedScore >= 65 ? '#E0F2FE' : '#FEF3C7',
-                        color: recordedScore >= 85 ? '#15803D' : recordedScore >= 65 ? '#0369A1' : '#B45309'
-                      }}>
-                        {recordedScore >= 85 ? '🌟 원어민급 발음' : recordedScore >= 65 ? '👍 합격 수준' : '💡 연습 필요'}
-                      </span>
-                    </div>
-
-                    {recognizedText && (
-                      <span style={{ fontSize: '11px', fontWeight: '700', color: '#64748B' }}>
-                        인식된 발음: <strong style={{ color: '#1E293B' }}>"{recognizedText}"</strong>
-                      </span>
-                    )}
-                  </div>
-
-                  {/* AI 입모양/혀위치 교정 코칭 피드백 */}
-                  {(() => {
-                    const tip = getAIPronunciationGuideTip(currentWord?.word, recordedScore, currentLang);
-                    if (!tip) return null;
-                    return (
-                      <div style={{
-                        background: '#FFFFFF',
-                        borderRadius: '16px',
-                        padding: '12px',
-                        border: `1px solid ${tip.border}`,
-                        display: 'flex',
-                        gap: '8px',
-                        alignItems: 'flex-start'
-                      }}>
-                        <span style={{ fontSize: '20px' }}>{tip.icon}</span>
-                        <div>
-                          <div style={{ fontSize: '12px', fontWeight: '900', color: tip.color, marginBottom: '2px' }}>
-                            {tip.title}
-                          </div>
-                          <div style={{ fontSize: '11px', fontWeight: '700', color: '#475569', lineHeight: 1.35 }}>
-                            {tip.text}
-                          </div>
-                        </div>
-                      </div>
-                    );
-                  })()}
-
-                  {/* 오디오 다시듣기 & 원어민 비교 버튼 그룹 */}
-                  <div style={{ display: 'flex', gap: '8px', width: '100%', marginTop: '2px' }}>
-                    {recordedAudioUrl && (
-                      <button
-                        type="button"
-                        onClick={playUserRecordedAudio}
-                        style={{
-                          flex: 1,
-                          padding: '9px 12px',
-                          borderRadius: '14px',
-                          border: '1.5px solid #CBD5E1',
-                          background: '#FFFFFF',
-                          color: '#1E293B',
-                          fontSize: '12px',
-                          fontWeight: '800',
-                          cursor: 'pointer',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          gap: '4px'
-                        }}
-                      >
-                        {isPlayingUserAudio ? '⏹️ 재생 중...' : '🎧 내 발음 듣기'}
-                      </button>
-                    )}
-
-                    <button
-                      type="button"
-                      onClick={() => handlePlaySound(currentWord?.word)}
-                      style={{
-                        flex: 1,
-                        padding: '9px 12px',
-                        borderRadius: '14px',
-                        border: 'none',
-                        background: 'linear-gradient(135deg, #00C7E5 0%, #00A8BF 100%)',
-                        color: '#FFFFFF',
-                        fontSize: '12px',
-                        fontWeight: '800',
-                        cursor: 'pointer',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        gap: '4px',
-                        boxShadow: '0 4px 10px rgba(0, 168, 191, 0.25)'
-                      }}
-                    >
-                      🔊 원어민 비교
-                    </button>
-                  </div>
-                </div>
-              )}
-
               {/* 🎛️ 하단 4대 액션 서클 버튼 (Sound, Mic, Quiz, Speed) */}
               <div style={{
                 display: 'grid',
                 gridTemplateColumns: 'repeat(4, 1fr)',
-                gap: '12px',
+                gap: '10px',
                 width: '100%',
-                marginTop: '4px'
+                marginTop: '2px'
               }}>
                 {/* 1. Sound */}
                 <button
@@ -1430,14 +1366,14 @@ export default function ModernStudyPage() {
                     gap: '4px',
                     background: '#FFFFFF',
                     border: '1.5px solid #E2E8F0',
-                    borderRadius: '20px',
-                    padding: '12px 6px',
+                    borderRadius: '18px',
+                    padding: '10px 4px',
                     cursor: 'pointer',
-                    boxShadow: '0 4px 12px rgba(0,0,0,0.04)',
+                    boxShadow: '0 4px 10px rgba(0,0,0,0.03)',
                     transition: 'all 0.15s ease'
                   }}
                 >
-                  <div style={{ width: '42px', height: '42px', borderRadius: '50%', background: '#E6FAFC', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '20px' }}>
+                  <div style={{ width: '38px', height: '38px', borderRadius: '50%', background: '#E6FAFC', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '18px' }}>
                     🔊
                   </div>
                   <span style={{ fontSize: '11px', fontWeight: '800', color: '#475569' }}>{currentStrings.soundBtn}</span>
@@ -1454,14 +1390,25 @@ export default function ModernStudyPage() {
                     gap: '4px',
                     background: isRecording ? '#FEE2E2' : '#FFFFFF',
                     border: isRecording ? '1.5px solid #EF4444' : '1.5px solid #E2E8F0',
-                    borderRadius: '20px',
-                    padding: '12px 6px',
+                    borderRadius: '18px',
+                    padding: '10px 4px',
                     cursor: 'pointer',
-                    boxShadow: isRecording ? '0 4px 14px rgba(239, 68, 68, 0.3)' : '0 4px 12px rgba(0,0,0,0.04)',
+                    boxShadow: isRecording ? '0 4px 14px rgba(239, 68, 68, 0.3)' : '0 4px 10px rgba(0,0,0,0.03)',
                     transition: 'all 0.15s ease'
                   }}
                 >
-                  <div style={{ width: '42px', height: '42px', borderRadius: '50%', background: isRecording ? '#EF4444' : '#F0FDF4', color: isRecording ? '#FFF' : '#16A34A', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '20px' }}>
+                  <div style={{
+                    width: '38px',
+                    height: '38px',
+                    borderRadius: '50%',
+                    background: isRecording ? '#EF4444' : '#F0FDF4',
+                    color: isRecording ? '#FFF' : '#16A34A',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontSize: '18px',
+                    animation: isRecording ? 'pulse 1s infinite' : 'none'
+                  }}>
                     🎙️
                   </div>
                   <span style={{ fontSize: '11px', fontWeight: '800', color: isRecording ? '#DC2626' : '#475569' }}>
@@ -1480,14 +1427,14 @@ export default function ModernStudyPage() {
                     gap: '4px',
                     background: '#FFFFFF',
                     border: '1.5px solid #E2E8F0',
-                    borderRadius: '20px',
-                    padding: '12px 6px',
+                    borderRadius: '18px',
+                    padding: '10px 4px',
                     cursor: 'pointer',
-                    boxShadow: '0 4px 12px rgba(0,0,0,0.04)',
+                    boxShadow: '0 4px 10px rgba(0,0,0,0.03)',
                     transition: 'all 0.15s ease'
                   }}
                 >
-                  <div style={{ width: '42px', height: '42px', borderRadius: '50%', background: '#F5EEF8', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '20px' }}>
+                  <div style={{ width: '38px', height: '38px', borderRadius: '50%', background: '#F5EEF8', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '18px' }}>
                     ❓
                   </div>
                   <span style={{ fontSize: '11px', fontWeight: '800', color: '#475569' }}>{currentStrings.quizBtn}</span>
@@ -1504,34 +1451,179 @@ export default function ModernStudyPage() {
                     gap: '4px',
                     background: '#FFFFFF',
                     border: '1.5px solid #E2E8F0',
-                    borderRadius: '20px',
-                    padding: '12px 6px',
+                    borderRadius: '18px',
+                    padding: '10px 4px',
                     cursor: 'pointer',
-                    boxShadow: '0 4px 12px rgba(0,0,0,0.04)',
+                    boxShadow: '0 4px 10px rgba(0,0,0,0.03)',
                     transition: 'all 0.15s ease'
                   }}
                 >
-                  <div style={{ width: '42px', height: '42px', borderRadius: '50%', background: '#EFF6FF', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '16px', fontWeight: '900', color: '#2563EB' }}>
+                  <div style={{ width: '38px', height: '38px', borderRadius: '50%', background: '#EFF6FF', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '15px', fontWeight: '900', color: '#2563EB' }}>
                     {ttsSpeed}x
                   </div>
                   <span style={{ fontSize: '11px', fontWeight: '800', color: '#475569' }}>{currentStrings.speedBtn}</span>
                 </button>
               </div>
 
+              {/* 🎙️ 실시간 파형 캔버스 (녹음 중일 때 표시) */}
+              {isRecording && (
+                <div style={{
+                  width: '100%',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  gap: '6px',
+                  background: '#FEF2F2',
+                  padding: '10px 12px',
+                  borderRadius: '18px',
+                  border: '1.5px solid #FECACA',
+                  boxShadow: '0 4px 12px rgba(239, 68, 68, 0.1)'
+                }}>
+                  <canvas ref={canvasRef} width={280} height={36} style={{ borderRadius: '8px', background: '#FFFFFF', width: '100%', height: '36px' }} />
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                    <span style={{ width: '7px', height: '7px', borderRadius: '50%', background: '#EF4444' }}></span>
+                    <span style={{ fontSize: '11px', color: '#DC2626', fontWeight: '900' }}>
+                      🎙️ 음성 인식 중... "{currentWord?.word}" 발음해 보세요!
+                    </span>
+                  </div>
+                </div>
+              )}
+
+              {/* 🎯 AI 발음 평가 & 코칭 피드백 카드 (녹음 완료 시 노출) */}
+              {recordedScore !== null && !isRecording && (
+                <div style={{
+                  width: '100%',
+                  background: recordedScore >= 85 ? '#F0FDF4' : recordedScore >= 65 ? '#F0F9FF' : '#FFFBEB',
+                  borderRadius: '20px',
+                  padding: '12px 14px',
+                  border: recordedScore >= 85 ? '1.5px solid #86EFAC' : recordedScore >= 65 ? '1.5px solid #BAE6FD' : '1.5px solid #FDE68A',
+                  boxShadow: '0 4px 14px rgba(0,0,0,0.03)',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '8px'
+                }}>
+                  {/* 상단 점수 뱃지 & 인식 텍스트 */}
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '4px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                      <span style={{
+                        fontSize: '18px',
+                        fontWeight: '900',
+                        color: recordedScore >= 85 ? '#16A34A' : recordedScore >= 65 ? '#0284C7' : '#D97706'
+                      }}>
+                        {recordedScore}점
+                      </span>
+                      <span style={{
+                        fontSize: '10px',
+                        fontWeight: '800',
+                        padding: '2px 7px',
+                        borderRadius: '8px',
+                        background: recordedScore >= 85 ? '#DCFCE7' : recordedScore >= 65 ? '#E0F2FE' : '#FEF3C7',
+                        color: recordedScore >= 85 ? '#15803D' : recordedScore >= 65 ? '#0369A1' : '#B45309'
+                      }}>
+                        {recordedScore >= 85 ? '🌟 원어민급' : recordedScore >= 65 ? '👍 합격' : '💡 연습'}
+                      </span>
+                    </div>
+
+                    {recognizedText && (
+                      <span style={{ fontSize: '11px', fontWeight: '700', color: '#64748B' }}>
+                        인식: <strong style={{ color: '#1E293B' }}>"{recognizedText}"</strong>
+                      </span>
+                    )}
+                  </div>
+
+                  {/* AI 입모양/혀위치 교정 코칭 피드백 */}
+                  {(() => {
+                    const tip = getAIPronunciationGuideTip(currentWord?.word, recordedScore, currentLang);
+                    if (!tip) return null;
+                    return (
+                      <div style={{
+                        background: '#FFFFFF',
+                        borderRadius: '12px',
+                        padding: '8px 10px',
+                        border: `1px solid ${tip.border}`,
+                        display: 'flex',
+                        gap: '6px',
+                        alignItems: 'flex-start'
+                      }}>
+                        <span style={{ fontSize: '16px' }}>{tip.icon}</span>
+                        <div>
+                          <div style={{ fontSize: '11px', fontWeight: '900', color: tip.color, marginBottom: '1px' }}>
+                            {tip.title}
+                          </div>
+                          <div style={{ fontSize: '11px', fontWeight: '600', color: '#475569', lineHeight: 1.3 }}>
+                            {tip.text}
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })()}
+
+                  {/* 오디오 다시듣기 & 원어민 비교 버튼 그룹 */}
+                  <div style={{ display: 'flex', gap: '6px', width: '100%' }}>
+                    {recordedAudioUrl && (
+                      <button
+                        type="button"
+                        onClick={playUserRecordedAudio}
+                        style={{
+                          flex: 1,
+                          padding: '7px 10px',
+                          borderRadius: '12px',
+                          border: '1px solid #CBD5E1',
+                          background: '#FFFFFF',
+                          color: '#1E293B',
+                          fontSize: '11px',
+                          fontWeight: '800',
+                          cursor: 'pointer',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          gap: '4px'
+                        }}
+                      >
+                        {isPlayingUserAudio ? '⏹️ 재생 중' : '🎧 내 발음'}
+                      </button>
+                    )}
+
+                    <button
+                      type="button"
+                      onClick={() => handlePlaySound(currentWord?.word)}
+                      style={{
+                        flex: 1,
+                        padding: '7px 10px',
+                        borderRadius: '12px',
+                        border: 'none',
+                        background: 'linear-gradient(135deg, #00C7E5 0%, #00A8BF 100%)',
+                        color: '#FFFFFF',
+                        fontSize: '11px',
+                        fontWeight: '800',
+                        cursor: 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: '4px',
+                        boxShadow: '0 3px 8px rgba(0, 168, 191, 0.2)'
+                      }}
+                    >
+                      🔊 원어민 비교
+                    </button>
+                  </div>
+                </div>
+              )}
+
               {/* 이전 / 다음 내비게이션 바 */}
-              <div style={{ display: 'flex', gap: '10px', width: '100%', marginTop: '6px' }}>
+              <div style={{ display: 'flex', gap: '10px', width: '100%', marginTop: '4px' }}>
                 <button
                   type="button"
                   onClick={handlePrev}
                   style={{
                     flex: 1,
-                    padding: '13px',
-                    borderRadius: '16px',
+                    padding: '11px',
+                    borderRadius: '14px',
                     border: '1.5px solid #E2E8F0',
                     background: '#FFFFFF',
                     color: '#475569',
                     fontWeight: '900',
-                    fontSize: '14px',
+                    fontSize: '13px',
                     cursor: 'pointer'
                   }}
                 >
@@ -1542,15 +1634,15 @@ export default function ModernStudyPage() {
                   onClick={handleNext}
                   style={{
                     flex: 1,
-                    padding: '13px',
-                    borderRadius: '16px',
+                    padding: '11px',
+                    borderRadius: '14px',
                     border: 'none',
                     background: 'linear-gradient(135deg, #00C7E5 0%, #00A8BF 100%)',
                     color: '#FFFFFF',
                     fontWeight: '900',
-                    fontSize: '14px',
+                    fontSize: '13px',
                     cursor: 'pointer',
-                    boxShadow: '0 4px 14px rgba(0, 168, 191, 0.35)'
+                    boxShadow: '0 4px 12px rgba(0, 168, 191, 0.25)'
                   }}
                 >
                   {currentStrings.nextBtn}
