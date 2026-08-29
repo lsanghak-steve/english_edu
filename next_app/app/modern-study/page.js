@@ -225,6 +225,7 @@ export default function ModernStudyPage() {
   const [recordedAudioUrl, setRecordedAudioUrl] = useState(null);
   const [isPlayingUserAudio, setIsPlayingUserAudio] = useState(false);
   const [recordingStatusText, setRecordingStatusText] = useState('');
+  const [showMicGuideModal, setShowMicGuideModal] = useState(false);
   
   const mediaRecorderRef = useRef(null);
   const audioChunksRef = useRef([]);
@@ -551,27 +552,25 @@ export default function ModernStudyPage() {
         try { recognitionRef.current.stop(); } catch(e) {}
       }
       if (mediaRecorderRef.current && mediaRecorderRef.current.state === 'recording') {
-        mediaRecorderRef.current.stop();
+        try { mediaRecorderRef.current.stop(); } catch(e) {}
       }
       setIsRecording(false);
       if (animFrameRef.current) cancelAnimationFrame(animFrameRef.current);
     } else {
       // 녹음 시작
-      try {
-        setRecordedScore(null);
-        setRecognizedText('');
-        setRecordedAudioUrl(null);
-        setRecordingStatusText(currentStrings.recordingHint);
+      setRecordedScore(null);
+      setRecognizedText('');
+      setRecordedAudioUrl(null);
+      setRecordingStatusText(currentStrings.recordingHint);
 
-        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-        mediaRecorderRef.current = new MediaRecorder(stream);
-        audioChunksRef.current = [];
+      const targetWordStr = currentWord?.word || 'Apple';
+      let spokenResult = '';
+      let mediaStreamStarted = false;
+      let speechRecognitionStarted = false;
 
-        const targetWordStr = currentWord?.word || 'Apple';
-        let spokenResult = '';
-
-        // 1. Web Speech API 음성 인식 활성화
-        if (typeof window !== 'undefined' && ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window)) {
+      // 1. Web Speech API 음성 인식 시도
+      if (typeof window !== 'undefined' && ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window)) {
+        try {
           const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
           const recognition = new SpeechRecognition();
           recognition.lang = 'en-US';
@@ -589,73 +588,122 @@ export default function ModernStudyPage() {
             console.log('Speech recognition event', e);
           };
 
-          try {
-            recognition.start();
-            recognitionRef.current = recognition;
-          } catch (e) {}
+          recognition.onend = () => {
+            if (!mediaRecorderRef.current || mediaRecorderRef.current.state !== 'recording') {
+              setIsRecording(false);
+              const finalScore = calculateMatchScore(targetWordStr, spokenResult);
+              setRecordedScore(finalScore);
+              setRecordingStatusText(
+                finalScore >= 85
+                  ? `🎉 ${finalScore}점! 원어민 수준의 완벽한 발음입니다! ⭐`
+                  : finalScore >= 65
+                  ? `👍 ${finalScore}점! 아주 훌륭한 발음입니다! 🌟`
+                  : `💡 ${finalScore}점! 아래 AI 코칭 팁을 보고 다시 도전해 보세요!`
+              );
+            }
+          };
+
+          recognition.start();
+          recognitionRef.current = recognition;
+          speechRecognitionStarted = true;
+        } catch (recErr) {
+          console.log('Speech recognition start fallback', recErr);
         }
+      }
 
-        // 2. MediaRecorder 음성 바이너리 캡처
-        mediaRecorderRef.current.ondataavailable = (e) => {
-          if (e.data.size > 0) audioChunksRef.current.push(e.data);
-        };
+      // 2. MediaRecorder & Web Audio API 파형 시각화 시도
+      try {
+        if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+          const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+          mediaRecorderRef.current = new MediaRecorder(stream);
+          audioChunksRef.current = [];
 
-        mediaRecorderRef.current.onstop = async () => {
-          const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/webm' });
-          const url = URL.createObjectURL(audioBlob);
-          setRecordedAudioUrl(url);
+          mediaRecorderRef.current.ondataavailable = (e) => {
+            if (e.data.size > 0) audioChunksRef.current.push(e.data);
+          };
 
-          // 🎯 발음 일치율 % 계산
-          const finalScore = calculateMatchScore(targetWordStr, spokenResult);
-          setRecordedScore(finalScore);
-          setRecordingStatusText(
-            finalScore >= 85
-              ? `🎉 ${finalScore}점! 원어민 수준의 완벽한 발음입니다! ⭐`
-              : finalScore >= 65
-              ? `👍 ${finalScore}점! 아주 훌륭한 발음입니다! 🌟`
-              : `💡 ${finalScore}점! 아래 AI 코칭 팁을 보고 다시 도전해 보세요!`
-          );
-        };
+          mediaRecorderRef.current.onstop = async () => {
+            const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/webm' });
+            const url = URL.createObjectURL(audioBlob);
+            setRecordedAudioUrl(url);
 
-        mediaRecorderRef.current.start();
+            const finalScore = calculateMatchScore(targetWordStr, spokenResult);
+            setRecordedScore(finalScore);
+            setRecordingStatusText(
+              finalScore >= 85
+                ? `🎉 ${finalScore}점! 원어민 수준의 완벽한 발음입니다! ⭐`
+                : finalScore >= 65
+                ? `👍 ${finalScore}점! 아주 훌륭한 발음입니다! 🌟`
+                : `💡 ${finalScore}점! 아래 AI 코칭 팁을 보고 다시 도전해 보세요!`
+            );
+          };
+
+          mediaRecorderRef.current.start();
+          mediaStreamStarted = true;
+
+          // 오디오 파형 시각화
+          try {
+            const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            audioContextRef.current = audioCtx;
+            const source = audioCtx.createMediaStreamSource(stream);
+            const analyser = audioCtx.createAnalyser();
+            analyser.fftSize = 64;
+            source.connect(analyser);
+            analyserRef.current = analyser;
+
+            const drawWave = () => {
+              if (!canvasRef.current || !analyserRef.current) return;
+              const canvas = canvasRef.current;
+              const ctx = canvas.getContext('2d');
+              const bufferLength = analyserRef.current.frequencyBinCount;
+              const dataArray = new Uint8Array(bufferLength);
+              analyserRef.current.getByteFrequencyData(dataArray);
+
+              ctx.clearRect(0, 0, canvas.width, canvas.height);
+              const barWidth = (canvas.width / bufferLength) * 2.2;
+              let x = 0;
+
+              for (let i = 0; i < bufferLength; i++) {
+                const barHeight = (dataArray[i] / 255) * canvas.height;
+                ctx.fillStyle = `hsl(${i * 12 + 165}, 90%, 45%)`;
+                ctx.fillRect(x, canvas.height - barHeight, barWidth - 1.5, barHeight);
+                x += barWidth;
+              }
+              animFrameRef.current = requestAnimationFrame(drawWave);
+            };
+            drawWave();
+          } catch (ctxErr) {}
+        }
+      } catch (streamErr) {
+        console.warn('getUserMedia stream error', streamErr);
+      }
+
+      if (mediaStreamStarted || speechRecognitionStarted) {
         setIsRecording(true);
-
-        // 3. 실시간 오디오 파형 시각화
-        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        audioContextRef.current = audioCtx;
-        const source = audioCtx.createMediaStreamSource(stream);
-        const analyser = audioCtx.createAnalyser();
-        analyser.fftSize = 64;
-        source.connect(analyser);
-        analyserRef.current = analyser;
-
-        const drawWave = () => {
-          if (!canvasRef.current || !analyserRef.current) return;
-          const canvas = canvasRef.current;
-          const ctx = canvas.getContext('2d');
-          const bufferLength = analyserRef.current.frequencyBinCount;
-          const dataArray = new Uint8Array(bufferLength);
-          analyserRef.current.getByteFrequencyData(dataArray);
-
-          ctx.clearRect(0, 0, canvas.width, canvas.height);
-          const barWidth = (canvas.width / bufferLength) * 2.2;
-          let x = 0;
-
-          for (let i = 0; i < bufferLength; i++) {
-            const barHeight = (dataArray[i] / 255) * canvas.height;
-            ctx.fillStyle = `hsl(${i * 12 + 165}, 90%, 45%)`;
-            ctx.fillRect(x, canvas.height - barHeight, barWidth - 1.5, barHeight);
-            x += barWidth;
-          }
-          animFrameRef.current = requestAnimationFrame(drawWave);
-        };
-        drawWave();
-
-      } catch (err) {
-        alert('마이크 접근 권한이 필요합니다.');
+      } else {
+        // 마이크 권한 차단 또는 미지원 환경 시 안내 모달 띄우기
         setIsRecording(false);
+        setShowMicGuideModal(true);
       }
     }
+  };
+
+  // 🧪 모의 발음 테스트 시뮬레이터 (마이크가 없는 PC 또는 권한 제한 환경용)
+  const runSimulatedPronunciation = () => {
+    setShowMicGuideModal(false);
+    setIsRecording(true);
+    setRecordedScore(null);
+    setRecognizedText('');
+    setRecordingStatusText('🎙️ 모의 발음 채점 진행 중...');
+
+    setTimeout(() => {
+      setIsRecording(false);
+      const target = currentWord?.word || 'Apple';
+      const simScore = Math.floor(Math.random() * 15) + 86; // 86 ~ 100
+      setRecognizedText(target);
+      setRecordedScore(simScore);
+      setRecordingStatusText(`🎉 ${simScore}점! 원어민 수준의 훌륭한 발음입니다! ⭐`);
+    }, 1500);
   };
 
   // 단어 이동 핸들러
@@ -1909,6 +1957,149 @@ export default function ModernStudyPage() {
             );
           })}
         </nav>
+
+        {/* 🎙️ 마이크 권한 안내 & 모의 테스트 모달 */}
+        {showMicGuideModal && (
+          <div style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            background: 'rgba(15, 23, 42, 0.65)',
+            backdropFilter: 'blur(6px)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: '20px',
+            zIndex: 9999
+          }}>
+            <div style={{
+              background: '#FFFFFF',
+              borderRadius: '28px',
+              maxWidth: '380px',
+              width: '100%',
+              padding: '24px 20px',
+              boxShadow: '0 20px 50px rgba(0,0,0,0.25)',
+              textAlign: 'center',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '14px'
+            }}>
+              <div style={{
+                width: '56px',
+                height: '56px',
+                borderRadius: '50%',
+                background: '#FEE2E2',
+                color: '#DC2626',
+                fontSize: '28px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                margin: '0 auto'
+              }}>
+                🎙️
+              </div>
+
+              <div>
+                <div style={{ fontSize: '18px', fontWeight: '900', color: '#1E293B', marginBottom: '6px' }}>
+                  마이크 접근 권한이 필요합니다
+                </div>
+                <div style={{ fontSize: '13px', color: '#64748B', lineHeight: 1.45, fontWeight: '600' }}>
+                  브라우저에서 마이크 사용이 차단되어 있습니다.<br/>
+                  아래 방법으로 마이크를 <strong>허용</strong>해 주세요!
+                </div>
+              </div>
+
+              {/* 권한 허용 안내 3단계 박스 */}
+              <div style={{
+                background: '#F8FAFC',
+                borderRadius: '18px',
+                padding: '14px 16px',
+                textAlign: 'left',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '8px',
+                border: '1px solid #E2E8F0',
+                fontSize: '12px',
+                color: '#334155',
+                fontWeight: '700'
+              }}>
+                <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                  <span style={{ background: '#00A8BF', color: '#FFF', borderRadius: '50%', width: '18px', height: '18px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '11px', flexShrink: 0 }}>1</span>
+                  <span>주소창 좌측의 <strong>🔒(자물쇠)</strong> 또는 <strong>🎛️(설정)</strong> 클릭</span>
+                </div>
+                <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                  <span style={{ background: '#00A8BF', color: '#FFF', borderRadius: '50%', width: '18px', height: '18px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '11px', flexShrink: 0 }}>2</span>
+                  <span>[마이크] 항목을 <strong>'허용'</strong>으로 변경</span>
+                </div>
+                <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                  <span style={{ background: '#00A8BF', color: '#FFF', borderRadius: '50%', width: '18px', height: '18px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '11px', flexShrink: 0 }}>3</span>
+                  <span>새로고침(F5) 후 <strong>[🎙️ 발음녹음]</strong> 다시 클릭</span>
+                </div>
+              </div>
+
+              {/* 액션 버튼 */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginTop: '4px' }}>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowMicGuideModal(false);
+                    toggleRecording();
+                  }}
+                  style={{
+                    width: '100%',
+                    padding: '12px',
+                    borderRadius: '16px',
+                    border: 'none',
+                    background: 'linear-gradient(135deg, #00C7E5 0%, #00A8BF 100%)',
+                    color: '#FFFFFF',
+                    fontWeight: '900',
+                    fontSize: '14px',
+                    cursor: 'pointer',
+                    boxShadow: '0 4px 12px rgba(0, 168, 191, 0.25)'
+                  }}
+                >
+                  🔄 마이크 다시 요청하기
+                </button>
+
+                <button
+                  type="button"
+                  onClick={runSimulatedPronunciation}
+                  style={{
+                    width: '100%',
+                    padding: '11px',
+                    borderRadius: '16px',
+                    border: '1.5px solid #CBD5E1',
+                    background: '#FFFFFF',
+                    color: '#475569',
+                    fontWeight: '800',
+                    fontSize: '13px',
+                    cursor: 'pointer'
+                  }}
+                >
+                  ✨ 체험용 발음 평가 실행 (모의 테스트)
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setShowMicGuideModal(false)}
+                  style={{
+                    background: 'none',
+                    border: 'none',
+                    color: '#94A3B8',
+                    fontSize: '12px',
+                    fontWeight: '700',
+                    cursor: 'pointer',
+                    padding: '4px'
+                  }}
+                >
+                  닫기
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
 
       </div>
     </div>
