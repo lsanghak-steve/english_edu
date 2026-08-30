@@ -260,12 +260,15 @@ export default function ModernStudyPage() {
   const [isQuizFinished, setIsQuizFinished] = useState(false);
   const [levelTransitionToast, setLevelTransitionToast] = useState('');
 
-  // 👤 내 정보 수정 모드 상태
+  // 👤 내 정보 및 학부모 정보 수정 모드 상태
   const [isEditingProfile, setIsEditingProfile] = useState(false);
   const [editName, setEditName] = useState('');
   const [editGradeLevel, setEditGradeLevel] = useState('중등단어');
   const [editDailyCount, setEditDailyCount] = useState('20');
   const [editPin, setEditPin] = useState('1234');
+  const [editParentName, setEditParentName] = useState('이상학');
+  const [editParentPhone, setEditParentPhone] = useState('010-4006-9050');
+  const [editParentPin, setEditParentPin] = useState('0815');
   const [isSavingProfile, setIsSavingProfile] = useState(false);
   const [profileSaveSuccess, setProfileSaveSuccess] = useState(false);
 
@@ -1236,16 +1239,19 @@ export default function ModernStudyPage() {
     setTypingInput('');
   };
 
-  // 👤 내 정보 수정 모달/폼 열기
+  // 👤 내 정보 & 학부모 정보 수정 모달/폼 열기
   const handleOpenEditProfile = () => {
     setEditName(currentUser?.name || '이상학');
     setEditGradeLevel(currentUser?.studyGradeLevel || currentUser?.study_grade_level || '중등단어');
     setEditDailyCount(String(currentUser?.dailyWordCount || currentUser?.daily_word_count || '20'));
     setEditPin(currentUser?.pin || '1234');
+    setEditParentName(currentUser?.parentName || currentUser?.parent_name || '이상학');
+    setEditParentPhone(currentUser?.parentPhone || currentUser?.parent_phone || '010-4006-9050');
+    setEditParentPin(currentUser?.parentPin || currentUser?.parent_pin || '0815');
     setIsEditingProfile(true);
   };
 
-  // 💾 내 정보 저장 처리 (로컬 + Cloud DB 동기화)
+  // 💾 내 정보 & 학부모 정보 저장 처리 (로컬 + Cloud DB 동기화)
   const handleSaveProfile = async (e) => {
     if (e) e.preventDefault();
     if (!editName.trim()) {
@@ -1261,12 +1267,21 @@ export default function ModernStudyPage() {
       study_grade_level: editGradeLevel,
       dailyWordCount: String(editDailyCount),
       daily_word_count: parseInt(editDailyCount, 10),
-      pin: editPin.trim() || '1234'
+      pin: editPin.trim() || '1234',
+      parentName: editParentName.trim() || '이상학',
+      parent_name: editParentName.trim() || '이상학',
+      parentPhone: editParentPhone.trim() || '010-4006-9050',
+      parent_phone: editParentPhone.trim() || '010-4006-9050',
+      parentPin: editParentPin.trim() || '0815',
+      parent_pin: editParentPin.trim() || '0815'
     };
 
     // 1. 로컬 저장소 즉시 업데이트
     setCurrentUser(updatedUser);
     try {
+      localStorage.setItem('flipvoca_parent_name', editParentName.trim() || '이상학');
+      localStorage.setItem('flipvoca_parent_phone', editParentPhone.trim() || '010-4006-9050');
+      localStorage.setItem('flipvoca_parent_pin', editParentPin.trim() || '0815');
       localStorage.setItem('english_edu_current_user', JSON.stringify(updatedUser));
       sessionStorage.setItem('english_edu_current_user', JSON.stringify(updatedUser));
     } catch(e) {}
@@ -1281,7 +1296,10 @@ export default function ModernStudyPage() {
             name: updatedUser.name,
             study_grade_level: editGradeLevel,
             daily_word_count: parseInt(editDailyCount, 10),
-            pin: editPin.trim() || '1234'
+            pin: editPin.trim() || '1234',
+            parent_name: editParentName.trim() || '이상학',
+            parent_phone: editParentPhone.trim() || '010-4006-9050',
+            parent_pin: editParentPin.trim() || '0815'
           })
           .eq('student_id', studentId);
       }
@@ -2953,7 +2971,7 @@ export default function ModernStudyPage() {
                     </div>
                   </div>
 
-                  {/* 세부 설정 요약 카드 */}
+                  {/* 세부 설정 및 학부모 정보 요약 카드 */}
                   <div style={{
                     background: '#F8FAFC',
                     borderRadius: '18px',
@@ -2972,8 +2990,21 @@ export default function ModernStudyPage() {
                       <strong style={{ color: '#00A8BF', fontWeight: '900' }}>매일 {currentUser?.dailyWordCount || 20}단어</strong>
                     </div>
                     <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12.5px' }}>
-                      <span style={{ color: '#64748B', fontWeight: '700' }}>🔒 비밀번호(PIN)</span>
+                      <span style={{ color: '#64748B', fontWeight: '700' }}>🔒 학생 비밀번호(PIN)</span>
                       <strong style={{ color: '#64748B', fontWeight: '800' }}>● ● ● ●</strong>
+                    </div>
+                    <div style={{ height: '1px', background: '#E2E8F0', margin: '2px 0' }} />
+                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12.5px' }}>
+                      <span style={{ color: '#64748B', fontWeight: '700' }}>👨‍👩‍👧 학부모 성함</span>
+                      <strong style={{ color: '#2563EB', fontWeight: '900' }}>{currentUser?.parentName || currentUser?.parent_name || '이상학'} 학부모님</strong>
+                    </div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12.5px' }}>
+                      <span style={{ color: '#64748B', fontWeight: '700' }}>📞 학부모 연락처</span>
+                      <strong style={{ color: '#334155', fontWeight: '800' }}>{currentUser?.parentPhone || currentUser?.parent_phone || '010-4006-9050'}</strong>
+                    </div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12.5px' }}>
+                      <span style={{ color: '#64748B', fontWeight: '700' }}>🔑 학부모 로그인 PIN</span>
+                      <strong style={{ color: '#2563EB', fontWeight: '800' }}>{currentUser?.parentPin || currentUser?.parent_pin || '0815'}</strong>
                     </div>
                   </div>
 
@@ -2989,7 +3020,7 @@ export default function ModernStudyPage() {
                     </div>
                   </div>
 
-                  {/* ✏️ [내 정보 수정하기] 버튼 */}
+                  {/* ✏️ [내 정보 & 학부모 정보 수정하기] 버튼 */}
                   <button
                     type="button"
                     onClick={handleOpenEditProfile}
@@ -3011,7 +3042,7 @@ export default function ModernStudyPage() {
                     }}
                   >
                     <span>✏️</span>
-                    <span>학생 정보 & 학습 과정 수정하기</span>
+                    <span>학생 및 학부모 로그인 정보 수정하기</span>
                   </button>
 
                   {/* 🚪 로그아웃 버튼 */}
@@ -3030,11 +3061,11 @@ export default function ModernStudyPage() {
                       cursor: 'pointer'
                     }}
                   >
-                    🚪 로그아웃 및 다른 학생으로 로그인
+                    🚪 로그아웃 및 다른 계정으로 로그인
                   </button>
                 </div>
               ) : (
-                /* 2. ✏️ 내 정보 수정 모드 (인터랙티브 폼) */
+                /* 2. ✏️ 내 정보 & 학부모 정보 수정 모드 (인터랙티브 폼) */
                 <form
                   onSubmit={handleSaveProfile}
                   style={{
@@ -3051,7 +3082,7 @@ export default function ModernStudyPage() {
                 >
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1.5px solid #F1F5F9', paddingBottom: '10px' }}>
                     <h3 style={{ margin: 0, fontSize: '17px', fontWeight: '900', color: '#1E293B', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                      <span>✏️</span> 학생 정보 & 학습 과정 수정
+                      <span>✏️</span> 학생 및 학부모 정보 수정
                     </h3>
                     <button
                       type="button"
@@ -3071,10 +3102,15 @@ export default function ModernStudyPage() {
                     </button>
                   </div>
 
+                  {/* ━━━━ 1. 👤 학생 정보 설정 ━━━━ */}
+                  <div style={{ fontSize: '13px', fontWeight: '900', color: '#008294', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                    <span>👤</span> 1. 학생 기본 정보
+                  </div>
+
                   {/* 1) 학생 이름 입력 */}
                   <div>
-                    <label style={{ display: 'block', fontSize: '12.5px', fontWeight: '800', color: '#334155', marginBottom: '6px' }}>
-                      👤 학생 이름
+                    <label style={{ display: 'block', fontSize: '12px', fontWeight: '800', color: '#334155', marginBottom: '6px' }}>
+                      학생 이름
                     </label>
                     <input
                       type="text"
@@ -3097,8 +3133,8 @@ export default function ModernStudyPage() {
 
                   {/* 2) 학습 과정 / 학년 선택 */}
                   <div>
-                    <label style={{ display: 'block', fontSize: '12.5px', fontWeight: '800', color: '#334155', marginBottom: '6px' }}>
-                      📚 학습 과정 (단어 난이도)
+                    <label style={{ display: 'block', fontSize: '12px', fontWeight: '800', color: '#334155', marginBottom: '6px' }}>
+                      학습 과정 (단어 난이도)
                     </label>
                     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '6px' }}>
                       {[
@@ -3135,8 +3171,8 @@ export default function ModernStudyPage() {
 
                   {/* 3) 하루 목표 단어 수 선택 */}
                   <div>
-                    <label style={{ display: 'block', fontSize: '12.5px', fontWeight: '800', color: '#334155', marginBottom: '6px' }}>
-                      ⚡ 하루 목표 단어 수
+                    <label style={{ display: 'block', fontSize: '12px', fontWeight: '800', color: '#334155', marginBottom: '6px' }}>
+                      하루 목표 단어 수
                     </label>
                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '6px' }}>
                       {['10', '20', '30', '50'].map((count) => {
@@ -3165,10 +3201,10 @@ export default function ModernStudyPage() {
                     </div>
                   </div>
 
-                  {/* 4) 4자리 PIN 비밀번호 */}
+                  {/* 4) 학생 4자리 PIN 비밀번호 */}
                   <div>
-                    <label style={{ display: 'block', fontSize: '12.5px', fontWeight: '800', color: '#334155', marginBottom: '6px' }}>
-                      🔒 비밀번호 (4자리 PIN)
+                    <label style={{ display: 'block', fontSize: '12px', fontWeight: '800', color: '#334155', marginBottom: '6px' }}>
+                      학생 비밀번호 (4자리 PIN)
                     </label>
                     <input
                       type="text"
@@ -3184,6 +3220,87 @@ export default function ModernStudyPage() {
                         fontSize: '14px',
                         fontWeight: '800',
                         color: '#1E293B',
+                        outline: 'none',
+                        boxSizing: 'border-box'
+                      }}
+                    />
+                  </div>
+
+                  <div style={{ height: '1.5px', background: '#F1F5F9', margin: '4px 0' }} />
+
+                  {/* ━━━━ 2. 👨‍👩‍👧 학부모 로그인 & 알림 정보 ━━━━ */}
+                  <div style={{ fontSize: '13px', fontWeight: '900', color: '#2563EB', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                    <span>👨‍👩‍👧</span> 2. 학부모 로그인 & 안심 알림 정보
+                  </div>
+
+                  {/* 5) 학부모 성함 */}
+                  <div>
+                    <label style={{ display: 'block', fontSize: '12px', fontWeight: '800', color: '#334155', marginBottom: '6px' }}>
+                      학부모 성함
+                    </label>
+                    <input
+                      type="text"
+                      value={editParentName}
+                      onChange={(e) => setEditParentName(e.target.value)}
+                      placeholder="학부모 성함 (예: 이상학)"
+                      style={{
+                        width: '100%',
+                        padding: '11px 14px',
+                        borderRadius: '14px',
+                        border: '1.5px solid #CBD5E1',
+                        fontSize: '14px',
+                        fontWeight: '800',
+                        color: '#1E293B',
+                        outline: 'none',
+                        boxSizing: 'border-box'
+                      }}
+                    />
+                  </div>
+
+                  {/* 6) 학부모 연락처 */}
+                  <div>
+                    <label style={{ display: 'block', fontSize: '12px', fontWeight: '800', color: '#334155', marginBottom: '6px' }}>
+                      학부모 연락처 (안심 알림톡 수신)
+                    </label>
+                    <input
+                      type="text"
+                      value={editParentPhone}
+                      onChange={(e) => setEditParentPhone(e.target.value)}
+                      placeholder="예: 010-4006-9050"
+                      style={{
+                        width: '100%',
+                        padding: '11px 14px',
+                        borderRadius: '14px',
+                        border: '1.5px solid #CBD5E1',
+                        fontSize: '14px',
+                        fontWeight: '800',
+                        color: '#1E293B',
+                        outline: 'none',
+                        boxSizing: 'border-box'
+                      }}
+                    />
+                  </div>
+
+                  {/* 7) 학부모 로그인 PIN 번호 */}
+                  <div>
+                    <label style={{ display: 'block', fontSize: '12px', fontWeight: '800', color: '#334155', marginBottom: '6px' }}>
+                      학부모 전용 로그인 비밀번호 (PIN)
+                    </label>
+                    <input
+                      type="text"
+                      maxLength={6}
+                      value={editParentPin}
+                      onChange={(e) => setEditParentPin(e.target.value)}
+                      placeholder="예: 0815"
+                      style={{
+                        width: '100%',
+                        padding: '11px 14px',
+                        borderRadius: '14px',
+                        border: '1.5px solid #93C5FD',
+                        background: '#EFF6FF',
+                        fontSize: '14px',
+                        fontWeight: '800',
+                        color: '#1E40AF',
                         outline: 'none',
                         boxSizing: 'border-box'
                       }}
@@ -3208,7 +3325,7 @@ export default function ModernStudyPage() {
                         boxShadow: '0 4px 14px rgba(16, 185, 129, 0.3)'
                       }}
                     >
-                      {isSavingProfile ? '저장 중...' : '💾 변경사항 저장 완료'}
+                      {isSavingProfile ? '저장 중...' : '💾 전체 정보 저장 완료'}
                     </button>
                     <button
                       type="button"

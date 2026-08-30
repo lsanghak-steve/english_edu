@@ -195,9 +195,14 @@ export default function ModernLoginPage() {
   const [parentPinInput, setParentPinInput] = useState('');
   const [showParentPassword, setShowParentPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(true);
-  const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [loginSuccessToast, setLoginSuccessToast] = useState('');
+  
+  // ⚙️ 학부모 로그인 정보 & PIN 변경 모달 상태
+  const [showEditParentModal, setShowEditParentModal] = useState(false);
+  const [editParentName, setEditParentName] = useState('');
+  const [editParentPhone, setEditParentPhone] = useState('010-4006-9050');
+  const [editParentPin, setEditParentPin] = useState('0815');
 
   // 🎯 기본 학생 목록 (폴백용)
   const defaultStudents = [
@@ -311,19 +316,62 @@ export default function ModernLoginPage() {
       return;
     }
 
-    if (cleanParentPin && cleanParentPin !== '0815' && cleanParentPin !== '1234') {
+    const savedCustomPin = typeof window !== 'undefined' ? localStorage.getItem('flipvoca_parent_pin') : null;
+    const isValidPin = !cleanParentPin || cleanParentPin === '0815' || cleanParentPin === '1234' || (savedCustomPin && cleanParentPin === savedCustomPin);
+
+    if (!isValidPin) {
       setErrorMessage(currentStrings.errWrongParentPin);
       return;
     }
 
-    setIsLoading(true);
-    localStorage.setItem('flipvoca_parent_logged_in', 'true');
-    localStorage.setItem('flipvoca_parent_name', cleanParentName);
+    try {
+      localStorage.setItem('flipvoca_parent_logged_in', 'true');
+      localStorage.setItem('flipvoca_parent_name', cleanParentName);
+      if (cleanParentPin) {
+        localStorage.setItem('flipvoca_parent_pin', cleanParentPin);
+      }
+    } catch(e) {}
 
     setLoginSuccessToast(`👨‍👩‍👧 ${cleanParentName} ${currentStrings.parentLoginSuccess}`);
     setTimeout(() => {
       router.push('/?tab=parent');
     }, 700);
+  };
+
+  // 💾 학부모 로그인 정보 & PIN 즉시 변경 처리
+  const handleSaveParentInfoFromLogin = (e) => {
+    if (e) e.preventDefault();
+    if (!editParentName.trim()) {
+      alert('학부모 성함을 입력해 주세요.');
+      return;
+    }
+    const cleanPName = editParentName.trim();
+    const cleanPPhone = editParentPhone.trim() || '010-4006-9050';
+    const cleanPPin = editParentPin.trim() || '0815';
+
+    try {
+      localStorage.setItem('flipvoca_parent_name', cleanPName);
+      localStorage.setItem('flipvoca_parent_phone', cleanPPhone);
+      localStorage.setItem('flipvoca_parent_pin', cleanPPin);
+
+      const currStr = localStorage.getItem('english_edu_current_user');
+      if (currStr) {
+        const parsed = JSON.parse(currStr);
+        parsed.parentName = cleanPName;
+        parsed.parent_name = cleanPName;
+        parsed.parentPhone = cleanPPhone;
+        parsed.parent_phone = cleanPPhone;
+        parsed.parentPin = cleanPPin;
+        parsed.parent_pin = cleanPPin;
+        localStorage.setItem('english_edu_current_user', JSON.stringify(parsed));
+      }
+    } catch(e) {}
+
+    setParentNameInput(cleanPName);
+    setParentPinInput(cleanPPin);
+    setShowEditParentModal(false);
+    setLoginSuccessToast('✨ 학부모 로그인 정보 및 PIN이 성공적으로 변경되었습니다!');
+    setTimeout(() => setLoginSuccessToast(''), 3500);
   };
 
   return (
@@ -911,7 +959,6 @@ export default function ModernLoginPage() {
               {/* 📊 학부모 로그인 버튼 */}
               <button
                 type="submit"
-                disabled={isLoading}
                 style={{
                   width: '100%',
                   padding: '16px',
@@ -931,8 +978,148 @@ export default function ModernLoginPage() {
                   marginTop: '4px'
                 }}
               >
-                {isLoading ? '⏳ ...' : currentStrings.parentLoginBtn}
+                {currentStrings.parentLoginBtn}
               </button>
+
+              {/* ⚙️ 학부모 로그인 정보 / PIN 변경 버튼 & 토글 폼 */}
+              <div style={{ marginTop: '6px' }}>
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (!showEditParentModal) {
+                      setEditParentName(parentNameInput || '이상학');
+                      setEditParentPhone(localStorage.getItem('flipvoca_parent_phone') || '010-4006-9050');
+                      setEditParentPin(parentPinInput || '0815');
+                    }
+                    setShowEditParentModal(prev => !prev);
+                  }}
+                  style={{
+                    width: '100%',
+                    padding: '10px',
+                    borderRadius: '12px',
+                    border: '1.5px dashed #93C5FD',
+                    background: '#EFF6FF',
+                    color: '#2563EB',
+                    fontWeight: '800',
+                    fontSize: '12px',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '6px'
+                  }}
+                >
+                  <span>⚙️</span>
+                  <span>{showEditParentModal ? '학부모 정보 변경창 닫기 ✕' : '학부모 성함 / 비밀번호(PIN) 변경하기'}</span>
+                </button>
+
+                {showEditParentModal && (
+                  <div style={{
+                    marginTop: '10px',
+                    background: '#FFFFFF',
+                    borderRadius: '18px',
+                    padding: '16px',
+                    border: '1.5px solid #93C5FD',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: '12px',
+                    boxShadow: '0 4px 14px rgba(37, 99, 235, 0.08)',
+                    animation: 'fadeIn 0.2s ease'
+                  }}>
+                    <div style={{ fontSize: '13px', fontWeight: '900', color: '#1E40AF', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                      <span>📝</span> 학부모 로그인 정보 수정
+                    </div>
+
+                    <div>
+                      <label style={{ display: 'block', fontSize: '11px', fontWeight: '800', color: '#475569', marginBottom: '4px' }}>
+                        학부모 성함
+                      </label>
+                      <input
+                        type="text"
+                        value={editParentName}
+                        onChange={(e) => setEditParentName(e.target.value)}
+                        placeholder="학부모 성함 (예: 이상학)"
+                        style={{
+                          width: '100%',
+                          padding: '10px 12px',
+                          borderRadius: '10px',
+                          border: '1px solid #CBD5E1',
+                          fontSize: '13px',
+                          fontWeight: '700',
+                          outline: 'none',
+                          boxSizing: 'border-box'
+                        }}
+                      />
+                    </div>
+
+                    <div>
+                      <label style={{ display: 'block', fontSize: '11px', fontWeight: '800', color: '#475569', marginBottom: '4px' }}>
+                        학부모 연락처
+                      </label>
+                      <input
+                        type="text"
+                        value={editParentPhone}
+                        onChange={(e) => setEditParentPhone(e.target.value)}
+                        placeholder="예: 010-4006-9050"
+                        style={{
+                          width: '100%',
+                          padding: '10px 12px',
+                          borderRadius: '10px',
+                          border: '1px solid #CBD5E1',
+                          fontSize: '13px',
+                          fontWeight: '700',
+                          outline: 'none',
+                          boxSizing: 'border-box'
+                        }}
+                      />
+                    </div>
+
+                    <div>
+                      <label style={{ display: 'block', fontSize: '11px', fontWeight: '800', color: '#475569', marginBottom: '4px' }}>
+                        새 학부모 PIN 번호
+                      </label>
+                      <input
+                        type="text"
+                        maxLength={6}
+                        value={editParentPin}
+                        onChange={(e) => setEditParentPin(e.target.value)}
+                        placeholder="새 PIN 입력 (예: 0815)"
+                        style={{
+                          width: '100%',
+                          padding: '10px 12px',
+                          borderRadius: '10px',
+                          border: '1px solid #93C5FD',
+                          background: '#EFF6FF',
+                          fontSize: '13px',
+                          fontWeight: '800',
+                          color: '#1E40AF',
+                          outline: 'none',
+                          boxSizing: 'border-box'
+                        }}
+                      />
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={handleSaveParentInfoFromLogin}
+                      style={{
+                        width: '100%',
+                        padding: '11px',
+                        borderRadius: '12px',
+                        border: 'none',
+                        background: 'linear-gradient(135deg, #2563EB 0%, #1D4ED8 100%)',
+                        color: '#FFFFFF',
+                        fontWeight: '900',
+                        fontSize: '13px',
+                        cursor: 'pointer',
+                        boxShadow: '0 4px 10px rgba(37, 99, 235, 0.25)'
+                      }}
+                    >
+                      💾 학부모 정보 저장하기
+                    </button>
+                  </div>
+                )}
+              </div>
             </form>
           )}
 
