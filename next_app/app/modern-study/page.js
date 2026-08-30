@@ -1056,6 +1056,58 @@ export default function ModernStudyPage() {
     }
   };
 
+  // 💮 클라우드 DB & localStorage 공식 출석 도장 찍기
+  const handleStampAttendance = async () => {
+    if (!currentUser) return;
+    const studentIdToUse = currentUser.student_id || currentUser.id || 'lsh_20260807_000001';
+    const stampDateKey = todayStr;
+    const stampKey = `english_stamps_${studentIdToUse}`;
+    const stampedWordsKey = `stamped_words_${studentIdToUse}_${stampDateKey}`;
+
+    // 1. 로컬 상태 즉시 출석 완료 반영
+    setStampedDates(prev => prev.includes(stampDateKey) ? prev : [...prev, stampDateKey]);
+    setIsTodayStamped(true);
+
+    try {
+      let stamps = [];
+      try { stamps = JSON.parse(localStorage.getItem(stampKey) || '[]'); } catch(e) {}
+      if (!stamps.includes(stampDateKey)) {
+        stamps.push(stampDateKey);
+        localStorage.setItem(stampKey, JSON.stringify(stamps));
+      }
+      localStorage.setItem(stampedWordsKey, JSON.stringify(words));
+      localStorage.setItem(`today_all_learned_${studentIdToUse}_${stampDateKey}`, JSON.stringify(words));
+    } catch (e) {}
+
+    // 2. Supabase Cloud DB에 외운 단어 및 출석 도장 안전 기록
+    try {
+      if (words && words.length > 0) {
+        const payload = words.map(w => ({
+          student_id: studentIdToUse,
+          word: (w.word || '').replace(/\.png/gi, '').trim(),
+          meaning: w.meaning || '',
+          learned_at: new Date().toISOString()
+        }));
+        await supabase.from('student_learned_words').insert(payload);
+      }
+
+      const { data: existing } = await supabase
+        .from('study_records')
+        .select('id')
+        .eq('student_id', studentIdToUse)
+        .eq('study_date', stampDateKey)
+        .limit(1);
+
+      if (existing && existing.length > 0) {
+        await supabase.from('study_records').update({ is_stamped: true }).eq('id', existing[0].id);
+      } else {
+        await supabase.from('study_records').insert([{ student_id: studentIdToUse, study_date: stampDateKey, is_stamped: true }]);
+      }
+    } catch (dbErr) {
+      console.log('Attendance stamp DB sync notice:', dbErr);
+    }
+  };
+
   const handleNextQuizQuestion = () => {
     const totalCount = words.length || 10;
     if (quizIndex + 1 < totalCount) {
@@ -1065,16 +1117,29 @@ export default function ModernStudyPage() {
       setIsQuizCorrect(null);
       setTypingInput('');
     } else {
-      // 🎉 해당 단계(Level)의 모든 문제 완료 ➔ 자동으로 다음 단계로 직행!
-      if (quizLevel < 4) {
-        const nextLevel = quizLevel + 1;
-        const levelNames = {
-          1: '1단계 🔊 소리 퀴즈',
-          2: '2단계 🔤 스펠링 퀴즈',
-          3: '3단계 🎙️ 발음 퀴즈',
-          4: '4단계 ✍️ 쓰기 퀴즈'
-        };
-        setLevelTransitionToast(`🎉 ${levelNames[quizLevel]} 완수! 다음 ${levelNames[nextLevel]}로 자동 이동합니다! 🚀`);
+      // 💮 1. 2단계 퀴즈 완수 시 ➔ 공식 학습 완료 & 출석 도장 찍기 인정! (3, 4단계는 선택 심화)
+      if (quizLevel === 2) {
+        handleStampAttendance();
+        setIsQuizFinished(true);
+        setLevelTransitionToast('🎉 2단계 퀴즈 완수! 오늘의 공식 출석 도장이 성공적으로 찍혔습니다! 💮');
+        setTimeout(() => setLevelTransitionToast(''), 4500);
+      } else if (quizLevel === 1) {
+        // 1단계 완료 시 ➔ 필수 2단계(스펠링)로 자동 이동
+        const nextLevel = 2;
+        setLevelTransitionToast('🎉 1단계 소리 퀴즈 완수! 필수 2단계(스펠링 퀴즈)로 이동합니다! 🚀');
+        setTimeout(() => setLevelTransitionToast(''), 3500);
+
+        setQuizLevel(nextLevel);
+        setQuizIndex(0);
+        setSelectedAnswer(null);
+        setIsAnswerChecked(false);
+        setIsQuizCorrect(null);
+        setTypingInput('');
+        setIsQuizFinished(false);
+      } else if (quizLevel === 3) {
+        // 3단계(선택) 완료 시 ➔ 4단계(선택)로 자동 이동
+        const nextLevel = 4;
+        setLevelTransitionToast('🎉 3단계 발음 퀴즈 완수! 4단계 쓰기 퀴즈(선택)로 이동합니다! 🚀');
         setTimeout(() => setLevelTransitionToast(''), 3500);
 
         setQuizLevel(nextLevel);
@@ -1085,9 +1150,9 @@ export default function ModernStudyPage() {
         setTypingInput('');
         setIsQuizFinished(false);
       } else {
-        // 4단계까지 모두 완수 시 최종 퀴즈 완료 축하 카드 표시!
+        // 4단계 최종 완수 시
         setIsQuizFinished(true);
-        setLevelTransitionToast('🏆 4단계 퀴즈 마스터를 모두 완수하셨습니다! 축하합니다! 🌟');
+        setLevelTransitionToast('🏆 4단계 심화 퀴즈 마스터를 모두 완수하셨습니다! 축하합니다! 🌟');
         setTimeout(() => setLevelTransitionToast(''), 4000);
       }
     }
@@ -2105,13 +2170,13 @@ export default function ModernStudyPage() {
                   </div>
                 )}
 
-                {/* 퀴즈 단계 선택 뱃지 (1단계~4단계) */}
+                {/* 퀴즈 단계 선택 뱃지 (1단계~4단계: 1, 2단계 필수 / 3, 4단계 선택심화) */}
                 <div style={{ display: 'flex', gap: '6px', overflowX: 'auto', paddingBottom: '2px' }}>
                   {[
-                    { lvl: 1, label: '1단계 🔊 소리' },
-                    { lvl: 2, label: '2단계 🔤 스펠' },
-                    { lvl: 3, label: '3단계 🎙️ 발음' },
-                    { lvl: 4, label: '4단계 ✍️ 쓰기' }
+                    { lvl: 1, label: '1단계 🔊 소리 [필수]' },
+                    { lvl: 2, label: '2단계 🔤 스펠 [필수💮]' },
+                    { lvl: 3, label: '3단계 🎙️ 발음 [선택]' },
+                    { lvl: 4, label: '4단계 ✍️ 쓰기 [선택]' }
                   ].map((item) => (
                     <button
                       key={item.lvl}
@@ -2127,10 +2192,10 @@ export default function ModernStudyPage() {
                       }}
                       style={{
                         flex: 1,
-                        padding: '8px 6px',
+                        padding: '8px 4px',
                         borderRadius: '12px',
                         border: 'none',
-                        fontSize: '11.5px',
+                        fontSize: '11px',
                         fontWeight: '900',
                         cursor: 'pointer',
                         whiteSpace: 'nowrap',
@@ -2145,7 +2210,7 @@ export default function ModernStudyPage() {
                   ))}
                 </div>
 
-                {/* 🏆 퀴즈 완료 축하 카드 */}
+                {/* 🏆 퀴즈 완료 축하 카드 (2단계 완수 시 출석 인정 / 3~4단계 선택 심화) */}
                 {isQuizFinished ? (
                   <div style={{
                     background: '#FFFFFF',
@@ -2159,13 +2224,17 @@ export default function ModernStudyPage() {
                     gap: '14px',
                     textAlign: 'center'
                   }}>
-                    <div style={{ fontSize: '48px', animation: 'bounce 1s infinite' }}>🏆</div>
+                    <div style={{ fontSize: '48px', animation: 'bounce 1s infinite' }}>
+                      {quizLevel === 2 ? '💮' : '🏆'}
+                    </div>
                     <div>
                       <div style={{ fontSize: '20px', fontWeight: '900', color: '#1E293B', marginBottom: '4px' }}>
-                        {quizLevel}단계 퀴즈 마스터 완료!
+                        {quizLevel === 2 ? '🎉 오늘의 학습 완료 & 출석 도장 획득!' : `${quizLevel}단계 퀴즈 완수!`}
                       </div>
                       <div style={{ fontSize: '13px', color: '#64748B', fontWeight: '700' }}>
-                        총 {totalQuizCount}문제 중 정답을 모두 맞히셨습니다!
+                        {quizLevel === 2 
+                          ? '2단계 스펠링 퀴즈까지 완수하여 오늘의 출석 도장이 공식 인정되었습니다! 👏'
+                          : `총 ${totalQuizCount}문제 중 정답을 모두 맞히셨습니다!`}
                       </div>
                     </div>
 
@@ -2178,8 +2247,23 @@ export default function ModernStudyPage() {
                       fontWeight: '900',
                       fontSize: '18px'
                     }}>
-                      ⭐ 획득 점수: {quizScore}점
+                      ⭐ 획득 점수: {quizScore}점 {quizLevel === 2 && '• 💮 출석도장 찍힘!'}
                     </div>
+
+                    {quizLevel === 2 && (
+                      <div style={{
+                        background: '#F0F9FF',
+                        border: '1.5px solid #BAE6FD',
+                        borderRadius: '16px',
+                        padding: '12px 16px',
+                        fontSize: '12px',
+                        color: '#0369A1',
+                        fontWeight: '800',
+                        lineHeight: 1.5
+                      }}>
+                        💡 <strong>3단계(🎙️ 발음 퀴즈)</strong>와 <strong>4단계(✍️ 쓰기 퀴즈)</strong>는 실력 향상을 위한 [선택 심화 학습]입니다. 계속 도전하시겠습니까?
+                      </div>
+                    )}
 
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', width: '100%', marginTop: '6px' }}>
                       {quizLevel < 4 && (
@@ -2191,7 +2275,7 @@ export default function ModernStudyPage() {
                             padding: '13px',
                             borderRadius: '16px',
                             border: 'none',
-                            background: 'linear-gradient(135deg, #00C7E5 0%, #00A8BF 100%)',
+                            background: quizLevel === 2 ? 'linear-gradient(135deg, #059669 0%, #10B981 100%)' : 'linear-gradient(135deg, #00C7E5 0%, #00A8BF 100%)',
                             color: '#FFFFFF',
                             fontWeight: '900',
                             fontSize: '14px',
@@ -2199,9 +2283,27 @@ export default function ModernStudyPage() {
                             boxShadow: '0 4px 12px rgba(0, 168, 191, 0.3)'
                           }}
                         >
-                          🌟 다음 {quizLevel + 1}단계 퀴즈 도전 ➔
+                          {quizLevel === 2 ? '🌟 3단계 심화 발음 퀴즈 도전하기 (선택) ➔' : `🌟 다음 ${quizLevel + 1}단계 퀴즈 도전 ➔`}
                         </button>
                       )}
+
+                      <button
+                        type="button"
+                        onClick={() => setCurrentTab('calendar')}
+                        style={{
+                          width: '100%',
+                          padding: '12px',
+                          borderRadius: '16px',
+                          border: '1.5px solid #00A8BF',
+                          background: '#E6FAFC',
+                          color: '#008294',
+                          fontWeight: '900',
+                          fontSize: '13px',
+                          cursor: 'pointer'
+                        }}
+                      >
+                        📅 오늘 출석 달력 도장 확인하기 💮
+                      </button>
 
                       <button
                         type="button"
@@ -2210,33 +2312,15 @@ export default function ModernStudyPage() {
                           width: '100%',
                           padding: '11px',
                           borderRadius: '16px',
-                          border: '1.5px solid #CBD5E1',
-                          background: '#FFFFFF',
-                          color: '#475569',
-                          fontWeight: '800',
-                          fontSize: '13px',
-                          cursor: 'pointer'
-                        }}
-                      >
-                        🔄 이번 단계 다시 풀기
-                      </button>
-
-                      <button
-                        type="button"
-                        onClick={() => setCurrentTab('deck')}
-                        style={{
-                          width: '100%',
-                          padding: '11px',
-                          borderRadius: '16px',
                           border: '1.5px solid #E2E8F0',
                           background: '#F8FAFC',
-                          color: '#008294',
+                          color: '#64748B',
                           fontWeight: '800',
                           fontSize: '13px',
                           cursor: 'pointer'
                         }}
                       >
-                        🎴 단어 플래시카드로 이동
+                        🎴 오늘의 단어 복습하기
                       </button>
                     </div>
                   </div>
@@ -2547,9 +2631,14 @@ export default function ModernStudyPage() {
                           }}
                         >
                           {quizIndex === totalQuizCount - 1 ? (
-                            quizLevel < 4 ? (
+                            quizLevel === 2 ? (
                               <>
-                                <span>🎉 {quizLevel}단계 완료 (다음 {quizLevel + 1}단계로 자동 이동)</span>
+                                <span>💮 2단계 완수 & 오늘 출석 도장 받기!</span>
+                                <span style={{ fontSize: '16px' }}>➔</span>
+                              </>
+                            ) : quizLevel < 4 ? (
+                              <>
+                                <span>🎉 {quizLevel}단계 완료 (다음 {quizLevel + 1}단계로 이동)</span>
                                 <span style={{ fontSize: '16px' }}>➔</span>
                               </>
                             ) : (
