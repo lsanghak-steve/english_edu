@@ -987,10 +987,8 @@ export default function ModernStudyPage() {
     return [correctOpt, ...wrongOpts].sort(() => Math.random() - 0.5);
   };
 
-  // ✍️ 퀴즈 문제 및 보기 자동 동기화 & 1단계 소리 자동 지속 재생
+  // ✍️ 1. 퀴즈 문제 및 보기 초기화 (문제 전환 시에만 1회 실행)
   useEffect(() => {
-    let repeatSoundTimer = null;
-
     if (currentTab === 'quiz') {
       setSelectedAnswer(null);
       setIsAnswerChecked(false);
@@ -1002,26 +1000,34 @@ export default function ModernStudyPage() {
       if (currentQuizWord) {
         const opts = generateQuizOptions(currentQuizWord, activeWordList, quizLevel);
         setQuizOptions(opts);
+      }
+    }
+  }, [quizIndex, quizLevel, currentTab, words.length, currentLang]);
 
-        // 🔊 1단계 퀴즈일 때 소리를 즉시 재생하고, 정답을 고를 때까지 계속 들려주기!
-        if (quizLevel === 1 && !isQuizFinished && !isAnswerChecked) {
-          setTimeout(() => {
-            handlePlaySound(currentQuizWord.word);
-          }, 150);
+  // 🔊 2. 1단계 퀴즈일 때 지속 소리 재생 (정답 선택 전까지 3.2초마다 자동 반복)
+  useEffect(() => {
+    let repeatSoundTimer = null;
 
-          repeatSoundTimer = setInterval(() => {
-            handlePlaySound(currentQuizWord.word);
-          }, 3200);
-        }
+    if (currentTab === 'quiz' && quizLevel === 1 && !isQuizFinished && !isAnswerChecked) {
+      const activeWordList = words.length > 0 ? words : wordList500Fallback;
+      const currentQuizWord = activeWordList[quizIndex] || activeWordList[0];
+      if (currentQuizWord?.word) {
+        setTimeout(() => {
+          handlePlaySound(currentQuizWord.word);
+        }, 120);
+
+        repeatSoundTimer = setInterval(() => {
+          handlePlaySound(currentQuizWord.word);
+        }, 3200);
       }
     }
 
     return () => {
       if (repeatSoundTimer) clearInterval(repeatSoundTimer);
     };
-  }, [quizIndex, quizLevel, currentTab, isAnswerChecked, isQuizFinished, words.length, currentLang]);
+  }, [quizIndex, quizLevel, currentTab, isAnswerChecked, isQuizFinished, words.length]);
 
-  // ✍️ 퀴즈 인터랙션 핸들러
+  // ✍️ 퀴즈 인터랙션 핸들러 (보기 선택 시 시각 피드백 후 1초 뒤 다음 문제로 자동 전환)
   const handleSelectQuizOption = (optIndex, opt) => {
     if (isAnswerChecked) return;
     setSelectedAnswer(optIndex);
@@ -1030,6 +1036,11 @@ export default function ModernStudyPage() {
     if (opt.isCorrect) {
       setQuizScore(prev => prev + 10);
     }
+
+    // 🚀 정답/오답 확인 후 1.0초 뒤 다음 문제로 자동 이동!
+    setTimeout(() => {
+      handleNextQuizQuestion();
+    }, 1000);
   };
 
   const handleSubmitTyping = (e) => {
@@ -2259,47 +2270,33 @@ export default function ModernStudyPage() {
                         display: 'flex',
                         flexDirection: 'column',
                         alignItems: 'center',
-                        gap: '8px',
-                        margin: '2px 0',
+                        gap: '10px',
+                        margin: '8px 0',
                         width: '100%'
                       }}>
-                        {/* 🖼️ 단어 일러스트 미니 썸네일 */}
+                        {/* 🔤 영단어 & 발음기호 표시 */}
                         <div style={{
-                          width: '76px',
-                          height: '76px',
-                          borderRadius: '20px',
                           background: '#F8FAFC',
                           border: '2px solid #E2E8F0',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          padding: '6px',
-                          boxShadow: '0 4px 12px rgba(0,0,0,0.04)'
+                          borderRadius: '22px',
+                          padding: '16px 28px',
+                          boxShadow: '0 4px 14px rgba(0,0,0,0.03)',
+                          minWidth: '220px'
                         }}>
-                          <img
-                            src={getWordImgSrc(currentQuizWord)}
-                            alt={currentQuizWord?.word}
-                            onError={(e) => handleImageError(e, currentQuizWord?.word)}
-                            style={{ width: '100%', height: '100%', objectFit: 'contain' }}
-                          />
-                        </div>
-
-                        {/* 🔤 영단어 & 발음기호 표시 (단어도 보여줘 요구사항) */}
-                        <div>
                           <div style={{
-                            fontSize: '26px',
+                            fontSize: '28px',
                             fontWeight: '900',
                             color: '#1E293B',
                             letterSpacing: '-0.3px',
-                            lineHeight: 1.15
+                            lineHeight: 1.2
                           }}>
                             {currentQuizWord?.word}
                           </div>
                           <div style={{
-                            fontSize: '12px',
+                            fontSize: '13px',
                             fontWeight: '700',
                             color: '#64748B',
-                            marginTop: '2px'
+                            marginTop: '4px'
                           }}>
                             {currentQuizWord?.phonics || '/---/'}
                           </div>
