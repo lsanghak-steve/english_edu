@@ -241,12 +241,12 @@ export default function ModernStudyPage() {
   const streamRef = useRef(null);
   const spokenResultRef = useRef('');
 
-  // 📅 출석 달력 상태
+  // 📅 출석 달력 상태 (동적 실시간 연/월/일)
   const todayStr = getLocalDateString();
-  const [calendarYear, setCalendarYear] = useState(new Date().getFullYear());
-  const [calendarMonth, setCalendarMonth] = useState(new Date().getMonth());
-  const [stampedDates, setStampedDates] = useState([todayStr, '2026-08-26', '2026-08-25', '2026-08-24', '2026-08-23']);
-  const [isTodayStamped, setIsTodayStamped] = useState(true);
+  const [calendarYear, setCalendarYear] = useState(() => new Date().getFullYear());
+  const [calendarMonth, setCalendarMonth] = useState(() => new Date().getMonth());
+  const [stampedDates, setStampedDates] = useState([]);
+  const [isTodayStamped, setIsTodayStamped] = useState(false);
 
   // ✍️ 퀴즈 상태 (1단계 소리 -> 2단계 스펠 -> 3단계 발음 -> 4단계 쓰기)
   const [quizLevel, setQuizLevel] = useState(1);
@@ -569,6 +569,34 @@ export default function ModernStudyPage() {
       console.error(e);
     }
   }, []);
+
+  // 📅 학생 출석 기록 로드 (로컬 + Supabase 클라우드 동기화)
+  useEffect(() => {
+    if (currentUser) {
+      const sid = currentUser.student_id || currentUser.id || 'lsh_20260807_000001';
+      try {
+        const localStamps = JSON.parse(localStorage.getItem(`english_stamps_${sid}`) || '[]');
+        if (localStamps && localStamps.length > 0) {
+          setStampedDates(localStamps);
+          setIsTodayStamped(localStamps.includes(todayStr));
+        }
+      } catch (e) {}
+
+      supabase
+        .from('study_records')
+        .select('study_date, is_stamped')
+        .eq('student_id', sid)
+        .then(({ data, error }) => {
+          if (!error && data && data.length > 0) {
+            const dbStamps = data.filter(item => item.is_stamped).map(item => item.study_date);
+            setStampedDates(prev => Array.from(new Set([...prev, ...dbStamps])));
+            if (dbStamps.includes(todayStr)) {
+              setIsTodayStamped(true);
+            }
+          }
+        });
+    }
+  }, [currentUser?.id, todayStr]);
 
   // 🔀 Fisher-Yates 무작위 셔플 알고리즘
   const shuffleArray = (arr) => {
@@ -2100,87 +2128,170 @@ export default function ModernStudyPage() {
           {/* ═══════════════════════════════════════════════════════
               TAB 3: 📅 ATTENDANCE CALENDAR (출석 달력 뷰)
              ═══════════════════════════════════════════════════════ */}
-          {currentTab === 'calendar' && (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
-              <div style={{
-                background: '#FFFFFF',
-                borderRadius: '24px',
-                padding: '20px',
-                border: '1.5px solid #E2E8F0',
-                boxShadow: '0 8px 24px rgba(0,0,0,0.03)'
-              }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px' }}>
-                  <h3 style={{ margin: 0, fontSize: '17px', fontWeight: '900', color: '#1E293B' }}>
-                    📅 {calendarYear}년 {calendarMonth + 1}월 출석표
-                  </h3>
-                  <span style={{ fontSize: '11px', fontWeight: '800', color: '#10B981', background: '#D1FAE5', padding: '3px 8px', borderRadius: '10px' }}>
-                    🔥 5일 연속 출석 중
-                  </span>
-                </div>
+          {currentTab === 'calendar' && (() => {
+            const firstDayOfWeek = new Date(calendarYear, calendarMonth, 1).getDay();
+            const totalDaysInMonth = new Date(calendarYear, calendarMonth + 1, 0).getDate();
 
-                {/* 요일 헤더 */}
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', textAlign: 'center', fontWeight: '800', fontSize: '12px', color: '#94A3B8', marginBottom: '8px' }}>
-                  <span style={{ color: '#EF4444' }}>일</span>
-                  <span>월</span>
-                  <span>화</span>
-                  <span>수</span>
-                  <span>목</span>
-                  <span>금</span>
-                  <span style={{ color: '#3B82F6' }}>토</span>
-                </div>
-
-                {/* 달력 날짜 그리드 */}
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: '4px', textAlign: 'center' }}>
-                  {Array.from({ length: 31 }, (_, i) => i + 1).map((d) => {
-                    const dStr = `2026-08-${String(d).padStart(2, '0')}`;
-                    const isStamped = stampedDates.includes(dStr);
-                    const isToday = d === 27;
-
-                    return (
-                      <div
-                        key={d}
+            return (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+                <div style={{
+                  background: '#FFFFFF',
+                  borderRadius: '24px',
+                  padding: '20px',
+                  border: '1.5px solid #E2E8F0',
+                  boxShadow: '0 8px 24px rgba(0,0,0,0.03)'
+                }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          if (calendarMonth === 0) {
+                            setCalendarYear(prev => prev - 1);
+                            setCalendarMonth(11);
+                          } else {
+                            setCalendarMonth(prev => prev - 1);
+                          }
+                        }}
                         style={{
-                          height: '42px',
+                          background: '#F1F5F9',
+                          border: 'none',
+                          borderRadius: '8px',
+                          width: '28px',
+                          height: '28px',
+                          cursor: 'pointer',
+                          fontWeight: '900',
+                          fontSize: '13px',
+                          color: '#475569',
                           display: 'flex',
-                          flexDirection: 'column',
                           alignItems: 'center',
-                          justifyContent: 'center',
-                          borderRadius: '12px',
-                          background: isStamped ? '#E6FAFC' : isToday ? '#F1F5F9' : 'transparent',
-                          border: isToday ? '1.5px solid #00A8BF' : '1px solid transparent',
-                          color: isStamped ? '#008294' : '#334155',
-                          fontWeight: isStamped || isToday ? '900' : '600',
-                          fontSize: '12px'
+                          justifyContent: 'center'
                         }}
                       >
-                        <span>{d}</span>
-                        {isStamped && <span style={{ fontSize: '10px' }}>💮</span>}
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
+                        ◀
+                      </button>
+                      <h3 style={{ margin: 0, fontSize: '17px', fontWeight: '900', color: '#1E293B' }}>
+                        📅 {calendarYear}년 {calendarMonth + 1}월
+                      </h3>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          if (calendarMonth === 11) {
+                            setCalendarYear(prev => prev + 1);
+                            setCalendarMonth(0);
+                          } else {
+                            setCalendarMonth(prev => prev + 1);
+                          }
+                        }}
+                        style={{
+                          background: '#F1F5F9',
+                          border: 'none',
+                          borderRadius: '8px',
+                          width: '28px',
+                          height: '28px',
+                          cursor: 'pointer',
+                          fontWeight: '900',
+                          fontSize: '13px',
+                          color: '#475569',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center'
+                        }}
+                      >
+                        ▶
+                      </button>
+                    </div>
+                    <span style={{
+                      fontSize: '11px',
+                      fontWeight: '800',
+                      color: isTodayStamped ? '#10B981' : '#F59E0B',
+                      background: isTodayStamped ? '#D1FAE5' : '#FEF3C7',
+                      padding: '4px 9px',
+                      borderRadius: '10px'
+                    }}>
+                      {isTodayStamped ? '💮 오늘 출석 완료' : '⏳ 오늘 미완료'}
+                    </span>
+                  </div>
 
-              {/* 출석 도장 안내 카드 */}
-              <div style={{
-                background: 'linear-gradient(135deg, #00C7E5 0%, #00A8BF 100%)',
-                padding: '16px',
-                borderRadius: '20px',
-                color: '#FFFFFF',
-                fontSize: '13px',
-                fontWeight: '700',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '10px'
-              }}>
-                <span style={{ fontSize: '26px' }}>💮</span>
-                <div>
-                  <div style={{ fontWeight: '900', fontSize: '15px' }}>{currentStrings.todayComplete}</div>
-                  <div style={{ fontSize: '12px', opacity: 0.9 }}>매일 단어 10개를 학습하면 도장이 자동으로 찍힙니다.</div>
+                  {/* 요일 헤더 */}
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', textAlign: 'center', fontWeight: '800', fontSize: '12px', color: '#94A3B8', marginBottom: '8px' }}>
+                    <span style={{ color: '#EF4444' }}>일</span>
+                    <span>월</span>
+                    <span>화</span>
+                    <span>수</span>
+                    <span>목</span>
+                    <span>금</span>
+                    <span style={{ color: '#3B82F6' }}>토</span>
+                  </div>
+
+                  {/* 달력 날짜 그리드 */}
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: '4px', textAlign: 'center' }}>
+                    {/* 1일 이전 시작 요일 빈 칸 */}
+                    {Array.from({ length: firstDayOfWeek }).map((_, idx) => (
+                      <div key={`empty-${idx}`} style={{ height: '42px' }} />
+                    ))}
+
+                    {/* 1일 ~ 마지막 날짜 렌더링 */}
+                    {Array.from({ length: totalDaysInMonth }, (_, i) => i + 1).map((d) => {
+                      const mStr = String(calendarMonth + 1).padStart(2, '0');
+                      const dStr = `${calendarYear}-${mStr}-${String(d).padStart(2, '0')}`;
+                      const isStamped = stampedDates.includes(dStr);
+                      const isToday = dStr === todayStr;
+
+                      const dayOfWeek = (firstDayOfWeek + d - 1) % 7;
+                      const isSun = dayOfWeek === 0;
+                      const isSat = dayOfWeek === 6;
+
+                      return (
+                        <div
+                          key={d}
+                          style={{
+                            height: '42px',
+                            display: 'flex',
+                            flexDirection: 'column',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            borderRadius: '12px',
+                            background: isStamped ? '#E6FAFC' : isToday ? '#F1F5F9' : 'transparent',
+                            border: isToday ? '2px solid #00A8BF' : '1px solid transparent',
+                            color: isStamped ? '#008294' : isSun ? '#EF4444' : isSat ? '#3B82F6' : '#334155',
+                            fontWeight: isStamped || isToday ? '900' : '600',
+                            fontSize: '12px',
+                            position: 'relative'
+                          }}
+                        >
+                          <span>{d}</span>
+                          {isStamped && <span style={{ fontSize: '11px', lineHeight: 1 }}>💮</span>}
+                          {isToday && !isStamped && (
+                            <span style={{ fontSize: '8px', color: '#00A8BF', fontWeight: '900', lineHeight: 1 }}>오늘</span>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* 출석 도장 안내 카드 */}
+                <div style={{
+                  background: 'linear-gradient(135deg, #00C7E5 0%, #00A8BF 100%)',
+                  padding: '16px',
+                  borderRadius: '20px',
+                  color: '#FFFFFF',
+                  fontSize: '13px',
+                  fontWeight: '700',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '10px'
+                }}>
+                  <span style={{ fontSize: '26px' }}>💮</span>
+                  <div>
+                    <div style={{ fontWeight: '900', fontSize: '15px' }}>{currentStrings.todayComplete}</div>
+                    <div style={{ fontSize: '12px', opacity: 0.9 }}>매일 단어 10개를 학습하면 도장이 자동으로 찍힙니다.</div>
+                  </div>
                 </div>
               </div>
-            </div>
-          )}
+            );
+          })()}
 
           {/* ═══════════════════════════════════════════════════════
               TAB 4: ✍️ 4-STAGE QUIZ (4단계 퀴즈 마스터 뷰)
