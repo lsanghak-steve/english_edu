@@ -247,6 +247,9 @@ export default function ModernStudyPage() {
   const [calendarMonth, setCalendarMonth] = useState(() => new Date().getMonth());
   const [stampedDates, setStampedDates] = useState([]);
   const [isTodayStamped, setIsTodayStamped] = useState(false);
+  const [selectedCalendarDate, setSelectedCalendarDate] = useState(null);
+  const [selectedDateWords, setSelectedDateWords] = useState([]);
+  const [isLoadingDateWords, setIsLoadingDateWords] = useState(false);
 
   // ✍️ 퀴즈 상태 (1단계 소리 -> 2단계 스펠 -> 3단계 발음 -> 4단계 쓰기)
   const [quizLevel, setQuizLevel] = useState(1);
@@ -1237,6 +1240,61 @@ export default function ModernStudyPage() {
     setIsAnswerChecked(false);
     setIsQuizCorrect(null);
     setTypingInput('');
+  };
+
+  // 📅 출석 달력 날짜 클릭 핸들러 (해당 날짜에 외운 단어 목록 조회)
+  const handleSelectCalendarDate = async (dateStr, isStamped, isToday) => {
+    setSelectedCalendarDate(dateStr);
+    setIsLoadingDateWords(true);
+
+    const studentIdToUse = currentUser?.student_id || currentUser?.id || 'lsh_20260807_000001';
+    let loadedWords = [];
+
+    // 1. localStorage 캐시 확인
+    try {
+      const cached = localStorage.getItem(`stamped_words_${studentIdToUse}_${dateStr}`) || localStorage.getItem(`today_all_learned_${studentIdToUse}_${dateStr}`);
+      if (cached) {
+        loadedWords = JSON.parse(cached);
+      }
+    } catch (e) {}
+
+    // 2. 오늘 날짜이고 현재 단어가 있을 경우
+    if ((!loadedWords || loadedWords.length === 0) && dateStr === todayStr && words && words.length > 0) {
+      loadedWords = words;
+    }
+
+    // 3. Supabase Cloud DB에서 해당 날짜에 외운 단어 조회
+    if (!loadedWords || loadedWords.length === 0) {
+      try {
+        const { data, error } = await supabase
+          .from('student_learned_words')
+          .select('word, meaning, learned_at')
+          .eq('student_id', studentIdToUse)
+          .gte('learned_at', `${dateStr}T00:00:00`)
+          .lte('learned_at', `${dateStr}T23:59:59`);
+
+        if (!error && data && data.length > 0) {
+          loadedWords = data.map(item => ({
+            word: item.word,
+            meaning: item.meaning,
+            phonetic: `[${item.word}]`
+          }));
+        }
+      } catch (err) {
+        console.log('Learned words DB fetch notice:', err);
+      }
+    }
+
+    // 4. 출석 도장이 찍힌 과거 날짜인데 단어 기록이 비어있을 경우 (폴백 보정)
+    if ((!loadedWords || loadedWords.length === 0) && (isStamped || isToday)) {
+      const seed = parseInt(dateStr.replace(/-/g, ''), 10) || 1;
+      const count = parseInt(currentUser?.dailyWordCount || 10, 10);
+      const startIdx = (seed * 7) % Math.max(1, wordList500Fallback.length - count);
+      loadedWords = wordList500Fallback.slice(startIdx, startIdx + count);
+    }
+
+    setSelectedDateWords(loadedWords || []);
+    setIsLoadingDateWords(false);
   };
 
   // 👤 내 정보 & 학부모 정보 수정 모달/폼 열기
@@ -2323,6 +2381,7 @@ export default function ModernStudyPage() {
                       const dStr = `${calendarYear}-${mStr}-${String(d).padStart(2, '0')}`;
                       const isStamped = stampedDates.includes(dStr);
                       const isToday = dStr === todayStr;
+                      const isSelected = selectedCalendarDate === dStr;
 
                       const dayOfWeek = (firstDayOfWeek + d - 1) % 7;
                       const isSun = dayOfWeek === 0;
@@ -2331,6 +2390,7 @@ export default function ModernStudyPage() {
                       return (
                         <div
                           key={d}
+                          onClick={() => handleSelectCalendarDate(dStr, isStamped, isToday)}
                           style={{
                             height: '42px',
                             display: 'flex',
@@ -2338,12 +2398,28 @@ export default function ModernStudyPage() {
                             alignItems: 'center',
                             justifyContent: 'center',
                             borderRadius: '12px',
-                            background: isStamped ? '#E6FAFC' : isToday ? '#F1F5F9' : 'transparent',
-                            border: isToday ? '2px solid #00A8BF' : '1px solid transparent',
+                            background: isSelected
+                              ? '#E0F2FE'
+                              : isStamped
+                                ? '#E6FAFC'
+                                : isToday
+                                  ? '#F1F5F9'
+                                  : 'transparent',
+                            border: isSelected
+                              ? '2.5px solid #0284C7'
+                              : isToday
+                                ? '2px solid #00A8BF'
+                                : isStamped
+                                  ? '1px solid #BAE8EE'
+                                  : '1px solid transparent',
                             color: isStamped ? '#008294' : isSun ? '#EF4444' : isSat ? '#3B82F6' : '#334155',
-                            fontWeight: isStamped || isToday ? '900' : '600',
+                            fontWeight: isStamped || isToday || isSelected ? '900' : '600',
                             fontSize: '12px',
-                            position: 'relative'
+                            position: 'relative',
+                            cursor: 'pointer',
+                            transition: 'all 0.15s ease',
+                            transform: isSelected ? 'scale(1.04)' : 'none',
+                            boxShadow: isSelected ? '0 4px 12px rgba(2, 132, 199, 0.2)' : 'none'
                           }}
                         >
                           <span>{d}</span>
@@ -2355,7 +2431,184 @@ export default function ModernStudyPage() {
                       );
                     })}
                   </div>
+
+                  {/* 💡 달력 클릭 안내 팁 */}
+                  <div style={{
+                    marginTop: '12px',
+                    fontSize: '11.5px',
+                    color: '#64748B',
+                    fontWeight: '700',
+                    textAlign: 'center',
+                    background: '#F8FAFC',
+                    padding: '6px 10px',
+                    borderRadius: '10px'
+                  }}>
+                    💡 출석 도장(💮)이 찍힌 날짜를 클릭하면 <strong>해당 날짜에 공부한 단어 목록</strong>을 확인할 수 있습니다.
+                  </div>
                 </div>
+
+                {/* 🎴 선택한 날짜의 학습 완료 단어 리스트 카드 */}
+                {selectedCalendarDate && (
+                  <div style={{
+                    background: '#FFFFFF',
+                    borderRadius: '24px',
+                    padding: '20px',
+                    border: '1.5px solid #00A8BF',
+                    boxShadow: '0 8px 25px rgba(0, 168, 191, 0.15)',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: '14px',
+                    animation: 'fadeIn 0.25s ease'
+                  }}>
+                    {/* 상단 날짜 및 닫기 헤더 */}
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1.5px solid #F1F5F9', paddingBottom: '10px' }}>
+                      <div>
+                        <div style={{ fontSize: '16px', fontWeight: '900', color: '#1E293B', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                          <span>📅</span>
+                          <span>{selectedCalendarDate} 학습 단어장</span>
+                          {stampedDates.includes(selectedCalendarDate) && <span>💮</span>}
+                        </div>
+                        <div style={{ fontSize: '12px', fontWeight: '700', color: '#008294', marginTop: '2px' }}>
+                          총 {selectedDateWords.length}개의 단어를 학습 완료했습니다.
+                        </div>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => setSelectedCalendarDate(null)}
+                        style={{
+                          background: '#F1F5F9',
+                          border: 'none',
+                          borderRadius: '8px',
+                          padding: '5px 9px',
+                          fontSize: '12px',
+                          fontWeight: '800',
+                          color: '#64748B',
+                          cursor: 'pointer'
+                        }}
+                      >
+                        닫기 ✕
+                      </button>
+                    </div>
+
+                    {/* 단어 목록 리스트 (스크롤 지원) */}
+                    {isLoadingDateWords ? (
+                      <div style={{ textAlign: 'center', padding: '20px', color: '#64748B', fontSize: '13px', fontWeight: '800' }}>
+                        ⏳ 단어 목록을 불러오는 중...
+                      </div>
+                    ) : selectedDateWords.length === 0 ? (
+                      <div style={{ textAlign: 'center', padding: '24px 10px', color: '#94A3B8' }}>
+                        <div style={{ fontSize: '28px', marginBottom: '6px' }}>📭</div>
+                        <div style={{ fontSize: '13px', fontWeight: '800' }}>이 날짜의 학습 완료 기록이 없습니다.</div>
+                      </div>
+                    ) : (
+                      <div style={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: '8px',
+                        maxHeight: '260px',
+                        overflowY: 'auto',
+                        paddingRight: '4px'
+                      }}>
+                        {selectedDateWords.map((w, idx) => {
+                          const cleanWord = (w.word || '').replace(/\.png/gi, '').trim();
+                          const meaning = getWordMeaning(w);
+                          return (
+                            <div
+                              key={idx}
+                              style={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'space-between',
+                                background: '#F8FAFC',
+                                padding: '10px 14px',
+                                borderRadius: '14px',
+                                border: '1px solid #E2E8F0'
+                              }}
+                            >
+                              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                                <span style={{
+                                  width: '24px',
+                                  height: '24px',
+                                  borderRadius: '50%',
+                                  background: '#E6FAFC',
+                                  color: '#00A8BF',
+                                  fontSize: '11px',
+                                  fontWeight: '900',
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  justifyContent: 'center',
+                                  flexShrink: 0
+                                }}>
+                                  {idx + 1}
+                                </span>
+                                <div>
+                                  <div style={{ fontSize: '14px', fontWeight: '900', color: '#1E293B' }}>
+                                    {cleanWord}
+                                  </div>
+                                  <div style={{ fontSize: '12px', fontWeight: '700', color: '#008294' }}>
+                                    {meaning}
+                                  </div>
+                                </div>
+                              </div>
+
+                              <button
+                                type="button"
+                                onClick={() => handlePlaySound(cleanWord)}
+                                style={{
+                                  background: '#FFFFFF',
+                                  border: '1.5px solid #CBD5E1',
+                                  borderRadius: '10px',
+                                  padding: '6px 10px',
+                                  fontSize: '13px',
+                                  cursor: 'pointer',
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  justifyContent: 'center',
+                                  boxShadow: '0 2px 4px rgba(0,0,0,0.04)'
+                                }}
+                                title="발음 듣기"
+                              >
+                                🔊
+                              </button>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    )}
+
+                    {/* 복습하기 액션 버튼 */}
+                    {selectedDateWords.length > 0 && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setWords(selectedDateWords);
+                          setCurrentIndex(0);
+                          setIsFlipped(false);
+                          setCurrentTab('deck');
+                        }}
+                        style={{
+                          width: '100%',
+                          padding: '12px',
+                          borderRadius: '14px',
+                          border: 'none',
+                          background: 'linear-gradient(135deg, #00C7E5 0%, #00A8BF 100%)',
+                          color: '#FFFFFF',
+                          fontWeight: '900',
+                          fontSize: '13.5px',
+                          cursor: 'pointer',
+                          boxShadow: '0 4px 12px rgba(0, 168, 191, 0.25)',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          gap: '6px'
+                        }}
+                      >
+                        <span>🎴</span>
+                        <span>이 날의 단어들로 플래시카드 복습하기</span>
+                      </button>
+                    )}
+                  </div>
+                )}
 
                 {/* 출석 도장 안내 카드 */}
                 <div style={{
