@@ -214,6 +214,7 @@ export default function ModernStudyPage() {
   
   // 📚 단어 데이터 상태
   const [words, setWords] = useState([]);
+  const [isWordsLoading, setIsWordsLoading] = useState(true);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isFlipped, setIsFlipped] = useState(false);
   const [ttsSpeed, setTtsSpeed] = useState(1.0); // 0.7x, 1.0x, 1.4x, 2.0x
@@ -648,13 +649,29 @@ export default function ModernStudyPage() {
         const finalWords = shuffled.slice(0, dailyCount);
 
         setWords(finalWords);
+        setIsWordsLoading(false);
         setCurrentIndex(0);
         setIsFlipped(false);
+
+        // 첫 번째 맞춤 단어 음성 즉시 자동 재생
+        if (finalWords.length > 0 && finalWords[0]?.word) {
+          setTimeout(() => {
+            playUniversalAudio(finalWords[0].word, { rate: ttsSpeed });
+          }, 300);
+        }
       } catch (err) {
         console.warn('Word load error:', err);
         const dailyCount = parseInt(currentUser?.dailyWordCount || 20, 10);
         const shuffledFallback = shuffleArray(wordList500Fallback);
-        setWords(shuffledFallback.slice(0, dailyCount));
+        const finalFallback = shuffledFallback.slice(0, dailyCount);
+        setWords(finalFallback);
+        setIsWordsLoading(false);
+
+        if (finalFallback.length > 0 && finalFallback[0]?.word) {
+          setTimeout(() => {
+            playUniversalAudio(finalFallback[0].word, { rate: ttsSpeed });
+          }, 300);
+        }
       }
     }
 
@@ -675,12 +692,14 @@ export default function ModernStudyPage() {
   };
 
   const currentStrings = studyI18n[currentLang] || studyI18n.ko;
-  const currentWord = words[currentIndex] || wordList500Fallback[0];
+  const currentWord = words[currentIndex] || null;
 
-  // 🔊 TTS 재생 함수
+  // 🔊 TTS 재생 함수 (Apple 하드코딩 제거)
   const handlePlaySound = (wordToPlay) => {
-    const target = wordToPlay || currentWord?.word || 'Apple';
-    playUniversalAudio(target, { rate: ttsSpeed });
+    const target = wordToPlay || currentWord?.word;
+    if (target) {
+      playUniversalAudio(target, { rate: ttsSpeed });
+    }
   };
 
   // ⏱️ 배속 토글 함수 (0.7x -> 1.0x -> 1.4x -> 2.0x)
@@ -689,7 +708,9 @@ export default function ModernStudyPage() {
     const nextIdx = (speeds.indexOf(ttsSpeed) + 1) % speeds.length;
     const nextSpeed = speeds[nextIdx];
     setTtsSpeed(nextSpeed);
-    playUniversalAudio(currentWord?.word || 'Apple', { rate: nextSpeed });
+    if (currentWord?.word) {
+      playUniversalAudio(currentWord.word, { rate: nextSpeed });
+    }
   };
 
   // 🎧 사용자 녹음 음성 재생 / 정지 함수
@@ -1514,6 +1535,25 @@ export default function ModernStudyPage() {
               TAB 2: 🎴 3D FLASHCARD DECK (양면 플립 카드 학습 뷰)
              ═══════════════════════════════════════════════════════ */}
           {currentTab === 'deck' && (
+            isWordsLoading || !currentWord ? (
+              <div style={{
+                width: '100%',
+                height: '320px',
+                borderRadius: '28px',
+                background: 'linear-gradient(135deg, #00C7E5 0%, #00A8BF 50%, #0284C7 100%)',
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '14px',
+                color: '#FFFFFF',
+                boxShadow: '0 14px 30px rgba(0, 168, 191, 0.32)'
+              }}>
+                <div style={{ fontSize: '42px', animation: 'bounce 1s infinite' }}>🎴</div>
+                <div style={{ fontSize: '18px', fontWeight: '900' }}>오늘의 맞춤 단어를 불러오는 중입니다...</div>
+                <div style={{ fontSize: '12px', opacity: 0.9 }}>잠시만 기다려 주세요 ⚡</div>
+              </div>
+            ) : (
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '14px', width: '100%' }}>
               
               {/* 진행률 인디케이터 바 */}
@@ -2054,6 +2094,7 @@ export default function ModernStudyPage() {
               </div>
 
             </div>
+            )
           )}
 
           {/* ═══════════════════════════════════════════════════════
