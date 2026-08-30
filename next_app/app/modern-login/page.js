@@ -253,9 +253,12 @@ export default function ModernLoginPage() {
     let targetUser = targetStudent;
 
     if (!targetUser) {
-      // 1. Supabase DB에서 사용자 조회
+      // 1. Supabase DB에서 사용자 조회 (1.5초 타임아웃 보호)
       try {
-        const { data: dbUsers } = await supabase.from('users').select('*');
+        const queryPromise = supabase.from('users').select('*');
+        const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), 1500));
+        const res = await Promise.race([queryPromise, timeoutPromise]);
+        const dbUsers = res?.data;
         if (dbUsers && dbUsers.length > 0) {
           targetUser = dbUsers.find(u => {
             const uName = removeEmoji(u.name || '').toLowerCase();
@@ -265,7 +268,7 @@ export default function ModernLoginPage() {
           });
         }
       } catch (dbErr) {
-        console.warn('Supabase users query warning', dbErr);
+        console.warn('Supabase users query timeout/fallback', dbErr);
       }
 
       // 2. DB 검색 실패 시 폴백 기본 학생 목록 검색
@@ -316,9 +319,14 @@ export default function ModernLoginPage() {
     } catch(e) {}
 
     setLoginSuccessToast(`🎉 ${userData.name} 학생 로그인 성공! 학습 화면으로 이동합니다.`);
+    
+    // 즉각적이고 확실한 학습 페이지(/modern-study) 화면 전환
     setTimeout(() => {
-      router.push('/modern-study');
-    }, 300);
+      try {
+        router.push('/modern-study');
+      } catch (e) {}
+      window.location.href = '/modern-study';
+    }, 150);
   };
 
   // 👨‍👩‍👧 학부모 ID / 비밀번호 로그인 처리
