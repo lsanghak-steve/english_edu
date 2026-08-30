@@ -25,12 +25,17 @@ const loginI18n = {
     brandTitle: 'FlipVoca',
     programDescription: '초·중·고 5,000 영단어 스마트 학습관 • 3D 플래시카드 & 4단계 퀴즈',
     studentIdLabel: '👤 학생 아이디 / 이름',
-    studentIdPh: '아이디 또는 이름 입력 (예: 김철수)',
+    studentIdPh: '아이디 또는 이름 입력 (예: 이상학)',
     pinLabel: '🔒 비밀번호 (4자리 PIN)',
     pinPh: '비밀번호 입력 (예: 1234)',
     rememberId: '아이디 저장',
     defaultPinHint: '초기 비밀번호: 1234',
     studentLoginBtn: '🚀 로그인 & 오늘의 단어 학습 시작',
+    quickLoginTitle: '👇 빠른 원클릭 간편 로그인',
+    gradeElementary: '초등단어',
+    gradeMiddle: '중등단어',
+    gradeHigh: '고등단어',
+    gradeToeic: '토익단어',
     parentNameLabel: '👨‍👩‍👧 학부모 성함 / 아이디',
     parentNamePh: '예: 이상학 (또는 이상학학부모)',
     parentPinLabel: '🔒 학부모 비밀번호',
@@ -54,14 +59,19 @@ const loginI18n = {
     brandTitle: 'FlipVoca',
     programDescription: '小学/初中/高中 5,000 核心词汇 • 3D 翻转卡片与 4 阶智能测验',
     studentIdLabel: '👤 学生账号 / 姓名',
-    studentIdPh: '请输入学生姓名或账号 (例: 金哲洙)',
+    studentIdPh: '请输入学生姓名或账号 (例: 李尚学)',
     pinLabel: '🔒 密码 (4位 PIN)',
     pinPh: '请输入密码 (例: 1234)',
     rememberId: '记住账号',
     defaultPinHint: '初始密码: 1234',
     studentLoginBtn: '🚀 登录并开始今日单词学习',
+    quickLoginTitle: '👇 快捷一键免密登录',
+    gradeElementary: '小学词汇',
+    gradeMiddle: '初中词汇',
+    gradeHigh: '高中词汇',
+    gradeToeic: '托业/成人',
     parentNameLabel: '👨‍👩‍👧 家长姓名 / 账号',
-    parentNamePh: '例: 李明家长',
+    parentNamePh: '例: 李尚学家长',
     parentPinLabel: '🔒 家长密码',
     parentPinPh: '请输入家长密码 (默认: 0815)',
     parentLoginBtn: '📊 进入家长控制台',
@@ -83,14 +93,19 @@ const loginI18n = {
     brandTitle: 'FlipVoca',
     programDescription: '5 000 Mots Anglais • Flashcards 3D & Quiz Intelligent 4 Niveaux',
     studentIdLabel: '👤 Identifiant / Nom de l\'élève',
-    studentIdPh: 'Entrez votre nom ou ID (Ex: Paul)',
+    studentIdPh: 'Entrez votre nom ou ID (Ex: Sanghak)',
     pinLabel: '🔒 Mot de passe (Code PIN 4 chiffres)',
     pinPh: 'Code PIN (Ex: 1234)',
     rememberId: 'Se souvenir de moi',
     defaultPinHint: 'PIN par défaut: 1234',
     studentLoginBtn: '🚀 Connexion & Démarrer l\'Étude',
+    quickLoginTitle: '👇 Connexion Rapide en 1 Clic',
+    gradeElementary: 'Primaire',
+    gradeMiddle: 'Collège',
+    gradeHigh: 'Lycée',
+    gradeToeic: 'TOEIC/Pro',
     parentNameLabel: '👨‍👩‍👧 Nom du Parent',
-    parentNamePh: 'Ex: M. Dupont',
+    parentNamePh: 'Ex: M. Sanghak',
     parentPinLabel: '🔒 Code PIN Parent',
     parentPinPh: 'Code PIN (Défaut: 0815)',
     parentLoginBtn: '📊 Accéder au Tableau de Bord',
@@ -112,14 +127,19 @@ const loginI18n = {
     brandTitle: 'FlipVoca',
     programDescription: '小・中・高 5,000英単語 • 3Dフラッシュカード＆4段階クイズ学習館',
     studentIdLabel: '👤 生徒ID / お名前',
-    studentIdPh: 'お名前またはID入力 (例: 田中)',
+    studentIdPh: 'お名前またはID入力 (例: イ・サンハク)',
     pinLabel: '🔒 暗証番号 (4桁 PIN)',
     pinPh: 'PIN番号入力 (例: 1234)',
     rememberId: 'IDを保存',
     defaultPinHint: '初期暗証番号: 1234',
     studentLoginBtn: '🚀 ログインして本日の単語学習を開始',
+    quickLoginTitle: '👇 ワンクリック簡単ログイン',
+    gradeElementary: '小学生単語',
+    gradeMiddle: '中学生単語',
+    gradeHigh: '高校生単語',
+    gradeToeic: 'TOEIC/成人',
     parentNameLabel: '👨‍👩‍👧 保護者のお名前',
-    parentNamePh: '例: 田中保護者',
+    parentNamePh: '例: サンハク保護者',
     parentPinLabel: '🔒 保護者暗証番号',
     parentPinPh: '暗証番号入力 (初期値: 0815)',
     parentLoginBtn: '📊 保護者ダッシュボードへ入場',
@@ -141,14 +161,19 @@ const loginI18n = {
     brandTitle: 'FlipVoca',
     programDescription: '5.000 Từ vựng tiếng Anh • Flashcard 3D & Trắc nghiệm 4 cấp độ',
     studentIdLabel: '👤 Tên học sinh / ID',
-    studentIdPh: 'Nhập tên hoặc mã ID (VD: Minh)',
+    studentIdPh: 'Nhập tên hoặc mã ID (VD: Sang-hak)',
     pinLabel: '🔒 Mật khẩu (Mã PIN 4 số)',
     pinPh: 'Nhập mã PIN (VD: 1234)',
     rememberId: 'Ghi nhớ tài khoản',
     defaultPinHint: 'Mã PIN ban đầu: 1234',
     studentLoginBtn: '🚀 Đăng nhập & Bắt đầu học hôm nay',
+    quickLoginTitle: '👇 Đăng nhập nhanh 1 chạm',
+    gradeElementary: 'Tiểu học',
+    gradeMiddle: 'Trung học',
+    gradeHigh: 'Phổ thông',
+    gradeToeic: 'TOEIC',
     parentNameLabel: '👨‍👩‍👧 Tên phụ huynh',
-    parentNamePh: 'VD: Phụ huynh Minh',
+    parentNamePh: 'VD: Phụ huynh Sang-hak',
     parentPinLabel: '🔒 Mã PIN phụ huynh',
     parentPinPh: 'Nhập mã PIN (Mặc định: 0815)',
     parentLoginBtn: '📊 Vào Bảng điều khiển Phụ huynh',
@@ -170,9 +195,22 @@ const loginI18n = {
     brandTitle: 'FlipVoca',
     programDescription: '5,000 अंग्रेजी शब्दावली • 3D फ्लैशकार्ड और 4-स्तरीय स्मार्ट क्विज',
     studentIdLabel: '👤 विद्यार्थी नाम / आईडी',
-    studentIdPh: 'विद्यार्थी का नाम या आईडी दर्ज करें (उदा: राहुल)',
+    studentIdPh: 'विद्यार्थी का नाम या आईडी दर्ज करें (उदा: सांघक)',
     pinLabel: '🔒 पासवर्ड (4 अंकों का PIN)',
     pinPh: 'पासवर्ड PIN (उदा: 1234)',
+    rememberId: 'आईडी याद रखें',
+    defaultPinHint: 'डिफ़ॉल्ट पिन: 1234',
+    studentLoginBtn: '🚀 लॉगिन करें और आज का अध्ययन शुरू करें',
+    quickLoginTitle: '👇 त्वरित एक-क्लिक लॉगिन',
+    gradeElementary: 'प्राथमिक',
+    gradeMiddle: 'माध्यमिक',
+    gradeHigh: 'उच्चतर',
+    gradeToeic: 'TOEIC',
+    parentNameLabel: '👨‍👩‍👧 अभिभावक का नाम',
+    parentNamePh: 'उदा: सांघक अभिभावक',
+    parentPinLabel: '🔒 अभिभावक पासवर्ड (PIN)',
+    parentPinPh: 'पिन दर्ज करें (डिफ़ॉल्ट: 0815)',
+    parentLoginBtn: '📊 अभिभावक डैशबोर्ड',
     errNoId: 'कृपया विद्यार्थी का नाम या आईडी दर्ज करें।',
     errNoPin: 'कृपया पासवर्ड पिन दर्ज करें।',
     errNotFound: 'विद्यार्थी नहीं मिला। कृपया पुनः जाँचें।',
@@ -238,6 +276,42 @@ export default function ModernLoginPage() {
   };
 
   const currentStrings = loginI18n[currentLang] || loginI18n.ko;
+
+  // 🌐 언어별 단어 난이도/과정 텍스트 번역 헬퍼
+  const getLocalizedGrade = (gradeStr) => {
+    if (!gradeStr) return currentStrings.gradeMiddle || '중등단어';
+    if (gradeStr.includes('초등') || gradeStr.includes('Elementary')) return currentStrings.gradeElementary || '초등단어';
+    if (gradeStr.includes('고등') || gradeStr.includes('High')) return currentStrings.gradeHigh || '고등단어';
+    if (gradeStr.includes('토익') || gradeStr.includes('TOEIC')) return currentStrings.gradeToeic || '토익단어';
+    return currentStrings.gradeMiddle || '중등단어';
+  };
+
+  // 🌐 언어별 학생 이름 번역 헬퍼
+  const getLocalizedStudentName = (st) => {
+    if (!st || !st.name) return '';
+    if (currentLang === 'zh') {
+      if (st.name === '이상학') return '李尚学';
+      if (st.name === '이승현') return '李承铉';
+      if (st.name === '이수민') return '李秀敏';
+    } else if (currentLang === 'ja') {
+      if (st.name === '이상학') return 'イ・サンハク';
+      if (st.name === '이승현') return 'イ・スンヒョン';
+      if (st.name === '이수민') return 'イ・スミン';
+    } else if (currentLang === 'fr') {
+      if (st.name === '이상학') return 'Sanghak';
+      if (st.name === '이승현') return 'Seunghyun';
+      if (st.name === '이수민') return 'Soomin';
+    } else if (currentLang === 'vi') {
+      if (st.name === '이상학') return 'Sang-hak';
+      if (st.name === '이승현') return 'Seung-hyun';
+      if (st.name === '이수민') return 'Soo-min';
+    } else if (currentLang === 'hi') {
+      if (st.name === '이상학') return 'सांघक';
+      if (st.name === '이승현') return 'सेउंघ्युन';
+      if (st.name === '이수민') return 'सू-मिन';
+    }
+    return st.name;
+  };
 
   // 🚀 학생 ID / 비밀번호(PIN) 로그인 처리 (즉시 초고속 무중단 로그인)
   const handleStudentSubmit = (e, customUser = null) => {
@@ -791,7 +865,7 @@ export default function ModernLoginPage() {
               {/* ⚡ 원클릭 간편 로그인 학생 선택 카드 */}
               <div style={{ marginTop: '10px', display: 'flex', flexDirection: 'column', gap: '6px' }}>
                 <div style={{ fontSize: '11px', fontWeight: '800', color: '#94A3B8', textAlign: 'center' }}>
-                  👇 빠른 원클릭 로그인
+                  {currentStrings.quickLoginTitle || '👇 빠른 원클릭 간편 로그인'}
                 </div>
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '6px' }}>
                   {defaultStudents.slice(0, 3).map((st) => (
@@ -815,8 +889,8 @@ export default function ModernLoginPage() {
                         transition: 'all 0.15s ease'
                       }}
                     >
-                      <span>{st.name === '이상학' ? '🧑‍🎓' : st.name === '이승현' ? '👦' : '👧'} {st.name}</span>
-                      <span style={{ fontSize: '9.5px', color: '#00A8BF', fontWeight: '700' }}>{st.studyGradeLevel}</span>
+                      <span>{st.name === '이상학' ? '🧑‍🎓' : st.name === '이승현' ? '👦' : '👧'} {getLocalizedStudentName(st)}</span>
+                      <span style={{ fontSize: '9.5px', color: '#00A8BF', fontWeight: '700' }}>{getLocalizedGrade(st.studyGradeLevel)}</span>
                     </button>
                   ))}
                 </div>
