@@ -19,6 +19,7 @@ const loginI18n = {
   ko: {
     headerTagline: '초·중·고 5,000 영단어 스마트 맞춤 학습',
     appSubtitle: 'FlipVoca 3.0 스마트 학습관',
+    smartHubBadge: '스마트 학습관',
     backBtn: '학습 홈 ➔',
     studentTab: '👦 학생 로그인',
     parentTab: '👨‍👩‍👧 학부모 모드',
@@ -53,6 +54,7 @@ const loginI18n = {
   zh: {
     headerTagline: '中小学 5,000 核心英语词汇智能学习馆',
     appSubtitle: 'FlipVoca 3.0 智能词汇学习馆',
+    smartHubBadge: '智能学习馆',
     backBtn: '学习主页 ➔',
     studentTab: '👦 学生登录',
     parentTab: '👨‍👩‍👧 家长模式',
@@ -87,6 +89,7 @@ const loginI18n = {
   fr: {
     headerTagline: '5 000 Mots Anglais • Apprentissage Intelligent',
     appSubtitle: 'FlipVoca 3.0 Smart Learning',
+    smartHubBadge: 'Smart Learning',
     backBtn: 'Accueil ➔',
     studentTab: '👦 Connexion Élève',
     parentTab: '👨‍👩‍👧 Mode Parents',
@@ -121,6 +124,7 @@ const loginI18n = {
   ja: {
     headerTagline: '小・中・高 5,000英単語スマート学習館',
     appSubtitle: 'FlipVoca 3.0 スマート英語学習館',
+    smartHubBadge: 'スマート学習館',
     backBtn: '学習ホーム ➔',
     studentTab: '👦 生徒ログイン',
     parentTab: '👨‍👩‍👧 保護者モード',
@@ -155,6 +159,7 @@ const loginI18n = {
   vi: {
     headerTagline: 'Học 5.000 từ vựng tiếng Anh thông minh',
     appSubtitle: 'FlipVoca 3.0 Học Từ Vựng Thông Minh',
+    smartHubBadge: 'Học Thông Minh',
     backBtn: 'Trang chủ học ➔',
     studentTab: '👦 Đăng nhập Học sinh',
     parentTab: '👨‍👩‍👧 Chế độ Phụ huynh',
@@ -189,6 +194,7 @@ const loginI18n = {
   hi: {
     headerTagline: '5,000 अंग्रेजी शब्दावली स्मार्ट लर्निंग हब',
     appSubtitle: 'FlipVoca 3.0 स्मार्ट लर्निंग प्लेटफॉर्म',
+    smartHubBadge: 'स्मार्ट लर्निंग हब',
     backBtn: 'अध्ययन होम ➔',
     studentTab: '👦 विद्यार्थी लॉगिन',
     parentTab: '👨‍👩‍👧 अभिभावक मोड',
@@ -485,7 +491,7 @@ export default function ModernLoginPage() {
               Flip<span style={{ color: '#00A8BF' }}>Voca</span>
             </span>
             <span style={{ fontSize: '11px', fontWeight: '800', color: '#008294', background: '#E6FAFC', padding: '2px 7px', borderRadius: '8px', border: '1px solid #BAE8EE' }}>
-              스마트 학습관
+              {currentStrings.smartHubBadge || '스마트 학습관'}
             </span>
           </div>
 
