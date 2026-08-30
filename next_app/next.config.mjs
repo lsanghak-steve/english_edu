@@ -2,7 +2,15 @@
 const nextConfig = {
   // Docker 컨테이너 배포 시에만 standalone 적용, Vercel/로컬에서는 네이티브 배포 지원
   ...(process.env.DOCKER_BUILD === 'true' ? { output: 'standalone' } : {}),
-  allowedDevOrigins: ['*.trycloudflare.com', 'localhost:3000'],
+  allowedDevOrigins: [
+    '*.trycloudflare.com',
+    'localhost:3000',
+    '127.0.0.1:3000',
+    '100.76.39.12:3000',
+    '100.76.39.12',
+    '*.ts.net',
+    '*.loca.lt',
+  ],
   images: {
     remotePatterns: [
       {
