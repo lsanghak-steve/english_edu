@@ -507,7 +507,7 @@ export default function ModernStudyPage() {
     };
   };
 
-  // 🌊 실시간 마이크 음성 반응 파형(Waveform) 엔진 (사용자가 발음할 때만 실시간 반응)
+  // 🌊 실시간 마이크 음성 반응 파형(Waveform) 엔진 (실제 음성 + 다이내믹 웨이브 애니메이션)
   useEffect(() => {
     let animId;
     if (!isRecording) {
@@ -516,7 +516,11 @@ export default function ModernStudyPage() {
     }
 
     const startVisualizer = () => {
-      if (!canvasRef.current) return;
+      if (!canvasRef.current) {
+        animId = requestAnimationFrame(startVisualizer);
+        animFrameRef.current = animId;
+        return;
+      }
       const canvas = canvasRef.current;
       const ctx = canvas.getContext('2d');
       if (!ctx) return;
@@ -524,17 +528,28 @@ export default function ModernStudyPage() {
       const bufferLength = analyserRef.current ? analyserRef.current.frequencyBinCount : 32;
       const dataArray = new Uint8Array(bufferLength);
 
-      const draw = () => {
+      const draw = (timestamp) => {
         if (!canvasRef.current) return;
+        const time = timestamp || (typeof performance !== 'undefined' ? performance.now() : Date.now());
 
+        let hasRealAudio = false;
         if (analyserRef.current) {
-          analyserRef.current.getByteFrequencyData(dataArray);
+          try {
+            analyserRef.current.getByteFrequencyData(dataArray);
+            for (let k = 0; k < dataArray.length; k++) {
+              if (dataArray[k] > 6) {
+                hasRealAudio = true;
+                break;
+              }
+            }
+          } catch(e) {}
         }
 
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
         const barCount = 28;
         const barWidth = canvas.width / barCount;
+        const now = time * 0.005;
 
         for (let i = 0; i < barCount; i++) {
           const dataIndex = Math.floor((i / barCount) * bufferLength);
@@ -542,14 +557,26 @@ export default function ModernStudyPage() {
           if (rawVal > maxVolumeRef.current) {
             maxVolumeRef.current = rawVal;
           }
-          
-          // 발음할 때 음성 진폭에 따라 역동적으로 파동 생성 (말하지 않을 때는 3px 평온 상태)
-          const voiceIntensity = rawVal > 6 ? Math.min(1, (rawVal / 180) * 1.4) : 0;
-          const barHeight = Math.max(3, voiceIntensity * canvas.height * 0.95);
 
-          // 음성 강도에 따라 청량한 민트(#00E5FF)에서 선명한 틸(#00A8BF)로 반응
-          const hue = 165 + (i * 3) + (voiceIntensity * 20);
-          const lightness = 45 + (voiceIntensity * 10);
+          let barHeight;
+          let voiceIntensity;
+
+          if (hasRealAudio && rawVal > 6) {
+            // 🎙️ 실제 마이크 음성 감지 시 주파수 강도에 반응
+            voiceIntensity = Math.min(1, (rawVal / 160) * 1.5);
+            barHeight = Math.max(5, voiceIntensity * canvas.height * 0.94);
+          } else {
+            // 🌊 활기찬 다이내믹 사인파 파동 애니메이션 (언제나 생동감 있게 춤추는 파형!)
+            const wave1 = Math.sin(now * 3.2 + i * 0.45);
+            const wave2 = Math.cos(now * 2.1 - i * 0.35);
+            const combined = Math.abs(wave1 * 0.6 + wave2 * 0.4);
+            voiceIntensity = combined * 0.85;
+            barHeight = Math.max(6, combined * (canvas.height * 0.8));
+          }
+
+          // 청량한 에메랄드 민트(#00E5FF)에서 선명한 틸(#00A8BF)로 반응
+          const hue = 165 + (i * 3) + (voiceIntensity * 25);
+          const lightness = 42 + (voiceIntensity * 14);
           ctx.fillStyle = `hsl(${hue}, 95%, ${lightness}%)`;
 
           const x = i * barWidth;
@@ -558,7 +585,7 @@ export default function ModernStudyPage() {
 
           ctx.beginPath();
           if (ctx.roundRect) {
-            ctx.roundRect(x, y, w, barHeight, 3);
+            ctx.roundRect(x, y, w, barHeight, 4);
             ctx.fill();
           } else {
             ctx.fillRect(x, y, w, barHeight);
@@ -569,13 +596,13 @@ export default function ModernStudyPage() {
         animFrameRef.current = animId;
       };
 
-      draw();
+      animId = requestAnimationFrame(draw);
+      animFrameRef.current = animId;
     };
 
-    const timeoutId = setTimeout(startVisualizer, 50);
+    startVisualizer();
 
     return () => {
-      clearTimeout(timeoutId);
       if (animId) cancelAnimationFrame(animId);
     };
   }, [isRecording]);
