@@ -251,6 +251,11 @@ export default function ModernStudyPage() {
   const [selectedDateWords, setSelectedDateWords] = useState([]);
   const [isLoadingDateWords, setIsLoadingDateWords] = useState(false);
 
+  // 🚨 틀린 단어(오답노트) 및 오답 집중 복습 상태
+  const [wrongWords, setWrongWords] = useState([]);
+  const [quizWrongWords, setQuizWrongWords] = useState([]);
+  const [isWrongReviewMode, setIsWrongReviewMode] = useState(false);
+
   // ✍️ 퀴즈 상태 (1단계 소리 -> 2단계 스펠 -> 3단계 발음 -> 4단계 쓰기)
   const [quizLevel, setQuizLevel] = useState(1);
   const [quizIndex, setQuizIndex] = useState(0);
@@ -585,7 +590,7 @@ export default function ModernStudyPage() {
     }
   }, []);
 
-  // 📅 학생 출석 기록 로드 (로컬 + Supabase 클라우드 동기화)
+  // 📅 학생 출석 기록 및 오답 단어 로드 (로컬 + Supabase 클라우드 동기화)
   useEffect(() => {
     if (currentUser) {
       const sid = currentUser.student_id || currentUser.id || 'lsh_20260807_000001';
@@ -594,6 +599,10 @@ export default function ModernStudyPage() {
         if (localStamps && localStamps.length > 0) {
           setStampedDates(localStamps);
           setIsTodayStamped(localStamps.includes(todayStr));
+        }
+        const savedWrong = JSON.parse(localStorage.getItem(`english_wrong_words_${sid}`) || '[]');
+        if (savedWrong && Array.isArray(savedWrong)) {
+          setWrongWords(savedWrong);
         }
       } catch (e) {}
 
@@ -1094,11 +1103,19 @@ export default function ModernStudyPage() {
   // ✍️ 퀴즈 인터랙션 핸들러 (보기 선택 시 시각 피드백 후 1초 뒤 다음 문제로 자동 전환)
   const handleSelectQuizOption = (optIndex, opt) => {
     if (isAnswerChecked) return;
+    const activeWordList = words.length > 0 ? words : wordList500Fallback;
+    const currentQuizWord = activeWordList[quizIndex] || activeWordList[0];
+
     setSelectedAnswer(optIndex);
     setIsAnswerChecked(true);
     setIsQuizCorrect(opt.isCorrect);
     if (opt.isCorrect) {
       setQuizScore(prev => prev + 10);
+    } else {
+      // 🚨 오답 단어 자동 기록
+      if (currentQuizWord) {
+        recordWrongWord(currentQuizWord);
+      }
     }
 
     // 🚀 정답/오답 확인 후 1.0초 뒤 다음 문제로 자동 이동!
@@ -1117,6 +1134,11 @@ export default function ModernStudyPage() {
     setIsQuizCorrect(isMatched);
     if (isMatched) {
       setQuizScore(prev => prev + 10);
+    } else {
+      // 🚨 오답 단어 자동 기록
+      if (currentQuizWord) {
+        recordWrongWord(currentQuizWord);
+      }
     }
   };
 
@@ -1295,6 +1317,89 @@ export default function ModernStudyPage() {
 
     setSelectedDateWords(loadedWords || []);
     setIsLoadingDateWords(false);
+  };
+
+  // 🚨 오답 단어(틀린 단어) 자동 수집 및 보관
+  const recordWrongWord = (wordObj) => {
+    if (!wordObj || !currentUser) return;
+    const cleanWord = (wordObj.word || '').replace(/\.png/gi, '').trim();
+    if (!cleanWord) return;
+
+    const studentIdToUse = currentUser.student_id || currentUser.id || 'lsh_20260807_000001';
+    const key = `english_wrong_words_${studentIdToUse}`;
+
+    setQuizWrongWords(prev => {
+      if (prev.some(w => (w.word || '').toLowerCase() === cleanWord.toLowerCase())) return prev;
+      return [...prev, wordObj];
+    });
+
+    setWrongWords(prev => {
+      if (prev.some(w => (w.word || '').toLowerCase() === cleanWord.toLowerCase())) return prev;
+      const updated = [wordObj, ...prev];
+      try {
+        localStorage.setItem(key, JSON.stringify(updated));
+      } catch (e) {}
+      return updated;
+    });
+  };
+
+  // ✅ 오답노트에서 단어 삭제 (완전 정복)
+  const handleRemoveWrongWord = (wordObj) => {
+    if (!wordObj || !currentUser) return;
+    const cleanWord = (wordObj.word || '').replace(/\.png/gi, '').trim();
+    const studentIdToUse = currentUser.student_id || currentUser.id || 'lsh_20260807_000001';
+    const key = `english_wrong_words_${studentIdToUse}`;
+
+    setWrongWords(prev => {
+      const filtered = prev.filter(w => (w.word || '').toLowerCase() !== cleanWord.toLowerCase());
+      try {
+        localStorage.setItem(key, JSON.stringify(filtered));
+      } catch (e) {}
+      return filtered;
+    });
+    setQuizWrongWords(prev => prev.filter(w => (w.word || '').toLowerCase() !== cleanWord.toLowerCase()));
+  };
+
+  // ⭐ 플래시카드에서 오답노트 토글 (담기/빼기)
+  const handleToggleBookmarkWrong = (wordObj) => {
+    if (!wordObj) return;
+    const cleanWord = (wordObj.word || '').replace(/\.png/gi, '').trim();
+    const isAlreadyWrong = wrongWords.some(w => (w.word || '').toLowerCase() === cleanWord.toLowerCase());
+    if (isAlreadyWrong) {
+      handleRemoveWrongWord(wordObj);
+    } else {
+      recordWrongWord(wordObj);
+    }
+  };
+
+  // 🔥 틀린 단어만 플래시카드로 집중 학습 시작
+  const handleStartWrongWordsFlashcards = () => {
+    if (wrongWords.length === 0) {
+      alert('🎉 현재 틀린 단어가 없습니다! 완벽합니다!');
+      return;
+    }
+    setWords(wrongWords);
+    setCurrentIndex(0);
+    setIsFlipped(false);
+    setIsWrongReviewMode(true);
+    setCurrentTab('deck');
+  };
+
+  // ✍️ 틀린 단어만 퀴즈 풀기 시작
+  const handleStartWrongWordsQuiz = () => {
+    if (wrongWords.length === 0) {
+      alert('🎉 현재 틀린 단어가 없습니다! 완벽합니다!');
+      return;
+    }
+    setWords(wrongWords);
+    setQuizIndex(0);
+    setQuizLevel(1);
+    setIsQuizFinished(false);
+    setSelectedAnswer(null);
+    setIsAnswerChecked(false);
+    setIsQuizCorrect(null);
+    setTypingInput('');
+    setCurrentTab('quiz');
   };
 
   // 👤 내 정보 & 학부모 정보 수정 모달/폼 열기
@@ -1700,6 +1805,64 @@ export default function ModernStudyPage() {
                 </div>
               </div>
 
+              {/* 🚨 CARD 4: Incorrect Words / Mistake Review (오답 집중 학습관) */}
+              <div
+                onClick={handleStartWrongWordsFlashcards}
+                style={{
+                  background: wrongWords.length > 0 
+                    ? 'linear-gradient(135deg, #EF4444 0%, #DC2626 50%, #991B1B 100%)'
+                    : 'linear-gradient(135deg, #64748B 0%, #475569 100%)',
+                  borderRadius: '26px',
+                  padding: '22px 20px',
+                  color: '#FFFFFF',
+                  cursor: 'pointer',
+                  position: 'relative',
+                  boxShadow: wrongWords.length > 0
+                    ? '0 12px 28px rgba(239, 68, 68, 0.35)'
+                    : '0 8px 20px rgba(0, 0, 0, 0.08)',
+                  transition: 'transform 0.2s ease, box-shadow 0.2s ease'
+                }}
+                onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-2px)'; }}
+                onMouseLeave={(e) => { e.currentTarget.style.transform = 'translateY(0)'; }}
+              >
+                <div style={{
+                  position: 'absolute',
+                  top: '18px',
+                  right: '18px',
+                  background: '#FFFFFF',
+                  borderRadius: '12px',
+                  padding: '4px 10px',
+                  color: wrongWords.length > 0 ? '#DC2626' : '#64748B',
+                  fontWeight: '900',
+                  fontSize: '13px',
+                  boxShadow: '0 4px 10px rgba(0,0,0,0.12)'
+                }}>
+                  {wrongWords.length > 0 ? `🚨 ${wrongWords.length}개 오답` : '✨ 0개 (클린)'}
+                </div>
+                <div style={{ fontSize: '20px', fontWeight: '900', marginBottom: '4px', letterSpacing: '-0.3px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                  <span>🚨</span> 틀린 단어 집중 학습관 (오답노트)
+                </div>
+                <div style={{ fontSize: '13px', fontWeight: '600', opacity: 0.9, marginBottom: '14px' }}>
+                  {wrongWords.length > 0
+                    ? `퀴즈에서 틀렸던 ${wrongWords.length}개 단어만 모아서 100% 완벽하게 마스터하세요!`
+                    : '현재 틀린 단어가 없습니다! 실력이 대단해요! 👏'}
+                </div>
+                <div style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                  background: 'rgba(255, 255, 255, 0.25)',
+                  backdropFilter: 'blur(8px)',
+                  padding: '6px 14px',
+                  borderRadius: '20px',
+                  fontSize: '12px',
+                  fontWeight: '900',
+                  border: '1px solid rgba(255, 255, 255, 0.4)'
+                }}>
+                  {wrongWords.length > 0 ? '🔥 틀린 단어 집중 복습 시작 ➔' : '🎴 오답 단어 목록 확인'}
+                </div>
+              </div>
+
             </div>
           )}
 
@@ -1728,10 +1891,86 @@ export default function ModernStudyPage() {
             ) : (
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '14px', width: '100%' }}>
               
+              {/* 오답 복습 모드 배너 or 덱 모드 전환 바 */}
+              {isWrongReviewMode ? (
+                <div style={{
+                  width: '100%',
+                  background: '#FEF2F2',
+                  border: '1.5px solid #FCA5A5',
+                  borderRadius: '16px',
+                  padding: '8px 12px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  boxShadow: '0 4px 10px rgba(239, 68, 68, 0.1)'
+                }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12px', fontWeight: '900', color: '#DC2626' }}>
+                    <span>🚨</span>
+                    <span>틀린 단어 오답 집중 복습 중</span>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setIsWrongReviewMode(false);
+                      window.location.reload();
+                    }}
+                    style={{
+                      background: '#FFFFFF',
+                      border: '1px solid #FECACA',
+                      borderRadius: '8px',
+                      padding: '3px 8px',
+                      fontSize: '11px',
+                      fontWeight: '800',
+                      color: '#B91C1C',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    오늘 단어로 복귀 ✕
+                  </button>
+                </div>
+              ) : (
+                wrongWords.length > 0 && (
+                  <div style={{ width: '100%', display: 'flex', gap: '6px' }}>
+                    <button
+                      type="button"
+                      style={{
+                        flex: 1,
+                        padding: '8px 6px',
+                        borderRadius: '12px',
+                        border: '1.5px solid #00A8BF',
+                        background: '#E6FAFC',
+                        color: '#008294',
+                        fontSize: '11.5px',
+                        fontWeight: '900'
+                      }}
+                    >
+                      📚 오늘 단어 ({words.length})
+                    </button>
+                    <button
+                      type="button"
+                      onClick={handleStartWrongWordsFlashcards}
+                      style={{
+                        flex: 1,
+                        padding: '8px 6px',
+                        borderRadius: '12px',
+                        border: '1.5px solid #FECACA',
+                        background: '#FEF2F2',
+                        color: '#DC2626',
+                        fontSize: '11.5px',
+                        fontWeight: '800',
+                        cursor: 'pointer'
+                      }}
+                    >
+                      🚨 틀린 단어 보기 ({wrongWords.length})
+                    </button>
+                  </div>
+                )
+              )}
+
               {/* 진행률 인디케이터 바 */}
               <div style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 4px' }}>
-                <span style={{ fontSize: '13px', fontWeight: '900', color: '#008294' }}>
-                  단어 {currentIndex + 1} / {words.length || 10}
+                <span style={{ fontSize: '13px', fontWeight: '900', color: isWrongReviewMode ? '#DC2626' : '#008294' }}>
+                  {isWrongReviewMode ? '🚨 오답 단어' : '단어'} {currentIndex + 1} / {words.length || 10}
                 </span>
                 <span style={{ fontSize: '11px', fontWeight: '800', color: '#64748B', background: '#F1F5F9', padding: '3px 8px', borderRadius: '10px' }}>
                   배속: {ttsSpeed}x
@@ -1899,6 +2138,76 @@ export default function ModernStudyPage() {
                   </div>
                 </div>
               </div>
+
+              {/* ⭐ 오답노트 담기 / 오답 완전 정복 버튼 */}
+              {currentWord && (
+                <div style={{ display: 'flex', justifyContent: 'center', width: '100%', marginTop: '-4px' }}>
+                  {isWrongReviewMode ? (
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleRemoveWrongWord(currentWord);
+                        if (words.length <= 1) {
+                          alert('🎉 축하합니다! 모든 오답 단어를 완벽히 정복하셨습니다!');
+                          setIsWrongReviewMode(false);
+                          window.location.reload();
+                        } else {
+                          const remaining = words.filter(w => (w.word || '').toLowerCase() !== (currentWord.word || '').toLowerCase());
+                          setWords(remaining);
+                          setCurrentIndex(prev => Math.min(prev, remaining.length - 1));
+                        }
+                      }}
+                      style={{
+                        padding: '7px 16px',
+                        borderRadius: '20px',
+                        border: '1.5px solid #10B981',
+                        background: '#ECFDF5',
+                        color: '#059669',
+                        fontSize: '12px',
+                        fontWeight: '900',
+                        cursor: 'pointer',
+                        boxShadow: '0 2px 8px rgba(16, 185, 129, 0.2)',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '6px'
+                      }}
+                    >
+                      <span>✅</span> 이 단어 완전 정복! (오답노트에서 삭제)
+                    </button>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleToggleBookmarkWrong(currentWord);
+                      }}
+                      style={{
+                        padding: '6px 14px',
+                        borderRadius: '20px',
+                        border: wrongWords.some(w => (w.word || '').toLowerCase() === (currentWord.word || '').toLowerCase())
+                          ? '1.5px solid #FCA5A5'
+                          : '1.5px solid #CBD5E1',
+                        background: wrongWords.some(w => (w.word || '').toLowerCase() === (currentWord.word || '').toLowerCase())
+                          ? '#FEF2F2'
+                          : '#FFFFFF',
+                        color: wrongWords.some(w => (w.word || '').toLowerCase() === (currentWord.word || '').toLowerCase())
+                          ? '#DC2626'
+                          : '#64748B',
+                        fontSize: '11.5px',
+                        fontWeight: '800',
+                        cursor: 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '5px'
+                      }}
+                    >
+                      <span>{wrongWords.some(w => (w.word || '').toLowerCase() === (currentWord.word || '').toLowerCase()) ? '🚨' : '☆'}</span>
+                      <span>{wrongWords.some(w => (w.word || '').toLowerCase() === (currentWord.word || '').toLowerCase()) ? '오답노트에 보관 중' : '오답노트에 추가하기'}</span>
+                    </button>
+                  )}
+                </div>
+              )}
 
               {/* 🎛️ 하단 5대 액션 서클 버튼 (Sound, Mic, MyVoice, Quiz, Speed) */}
               <div style={{
@@ -2740,6 +3049,60 @@ export default function ModernStudyPage() {
                     }}>
                       ⭐ 획득 점수: {quizScore}점 {quizLevel === 2 && '• 💮 출석도장 찍힘!'}
                     </div>
+
+                    {/* 🚨 이번 퀴즈에서 틀린 단어 집중 복습 알림 섹션 */}
+                    {quizWrongWords.length > 0 && (
+                      <div style={{
+                        width: '100%',
+                        background: '#FEF2F2',
+                        border: '1.5px solid #FCA5A5',
+                        borderRadius: '18px',
+                        padding: '14px',
+                        textAlign: 'left',
+                        boxShadow: '0 4px 14px rgba(239, 68, 68, 0.1)'
+                      }}>
+                        <div style={{ fontSize: '13.5px', fontWeight: '900', color: '#DC2626', marginBottom: '6px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                          <span>🚨</span>
+                          <span>이번 퀴즈에서 헷갈렸던 단어: {quizWrongWords.length}개</span>
+                        </div>
+                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', marginBottom: '10px' }}>
+                          {quizWrongWords.map((w, idx) => (
+                            <span key={idx} style={{ background: '#FFFFFF', border: '1px solid #FECACA', borderRadius: '8px', padding: '3px 8px', fontSize: '11.5px', fontWeight: '800', color: '#B91C1C' }}>
+                              {w.word} ({getWordMeaning(w)})
+                            </span>
+                          ))}
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setWords(quizWrongWords);
+                            setCurrentIndex(0);
+                            setIsFlipped(false);
+                            setIsWrongReviewMode(true);
+                            setCurrentTab('deck');
+                          }}
+                          style={{
+                            width: '100%',
+                            padding: '11px',
+                            borderRadius: '12px',
+                            border: 'none',
+                            background: 'linear-gradient(135deg, #EF4444 0%, #DC2626 100%)',
+                            color: '#FFFFFF',
+                            fontWeight: '900',
+                            fontSize: '13px',
+                            cursor: 'pointer',
+                            boxShadow: '0 4px 10px rgba(239, 68, 68, 0.25)',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            gap: '6px'
+                          }}
+                        >
+                          <span>🔥</span>
+                          <span>틀린 단어 {quizWrongWords.length}개 플래시카드로 바로 복습하기 ➔</span>
+                        </button>
+                      </div>
+                    )}
 
                     {quizLevel === 2 && (
                       <div style={{
