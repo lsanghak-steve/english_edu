@@ -987,8 +987,10 @@ export default function ModernStudyPage() {
     return [correctOpt, ...wrongOpts].sort(() => Math.random() - 0.5);
   };
 
-  // ✍️ 퀴즈 문제 및 보기 자동 동기화
+  // ✍️ 퀴즈 문제 및 보기 자동 동기화 & 1단계 소리 자동 지속 재생
   useEffect(() => {
+    let repeatSoundTimer = null;
+
     if (currentTab === 'quiz') {
       setSelectedAnswer(null);
       setIsAnswerChecked(false);
@@ -1001,14 +1003,23 @@ export default function ModernStudyPage() {
         const opts = generateQuizOptions(currentQuizWord, activeWordList, quizLevel);
         setQuizOptions(opts);
 
-        if (quizLevel === 1) {
+        // 🔊 1단계 퀴즈일 때 소리를 즉시 재생하고, 정답을 고를 때까지 계속 들려주기!
+        if (quizLevel === 1 && !isQuizFinished && !isAnswerChecked) {
           setTimeout(() => {
             handlePlaySound(currentQuizWord.word);
-          }, 300);
+          }, 150);
+
+          repeatSoundTimer = setInterval(() => {
+            handlePlaySound(currentQuizWord.word);
+          }, 3200);
         }
       }
     }
-  }, [quizIndex, quizLevel, currentTab, words.length, currentLang]);
+
+    return () => {
+      if (repeatSoundTimer) clearInterval(repeatSoundTimer);
+    };
+  }, [quizIndex, quizLevel, currentTab, isAnswerChecked, isQuizFinished, words.length, currentLang]);
 
   // ✍️ 퀴즈 인터랙션 핸들러
   const handleSelectQuizOption = (optIndex, opt) => {
@@ -2241,31 +2252,85 @@ export default function ModernStudyPage() {
                       </span>
                     </div>
 
-                    {/* 1단계 소리 퀴즈 */}
+                    {/* 1단계 소리 & 단어 퀴즈 */}
                     {quizLevel === 1 && (
-                      <div style={{ textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px', margin: '4px 0' }}>
+                      <div style={{
+                        textAlign: 'center',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                        gap: '8px',
+                        margin: '2px 0',
+                        width: '100%'
+                      }}>
+                        {/* 🖼️ 단어 일러스트 미니 썸네일 */}
+                        <div style={{
+                          width: '76px',
+                          height: '76px',
+                          borderRadius: '20px',
+                          background: '#F8FAFC',
+                          border: '2px solid #E2E8F0',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          padding: '6px',
+                          boxShadow: '0 4px 12px rgba(0,0,0,0.04)'
+                        }}>
+                          <img
+                            src={getWordImgSrc(currentQuizWord)}
+                            alt={currentQuizWord?.word}
+                            onError={(e) => handleImageError(e, currentQuizWord?.word)}
+                            style={{ width: '100%', height: '100%', objectFit: 'contain' }}
+                          />
+                        </div>
+
+                        {/* 🔤 영단어 & 발음기호 표시 (단어도 보여줘 요구사항) */}
+                        <div>
+                          <div style={{
+                            fontSize: '26px',
+                            fontWeight: '900',
+                            color: '#1E293B',
+                            letterSpacing: '-0.3px',
+                            lineHeight: 1.15
+                          }}>
+                            {currentQuizWord?.word}
+                          </div>
+                          <div style={{
+                            fontSize: '12px',
+                            fontWeight: '700',
+                            color: '#64748B',
+                            marginTop: '2px'
+                          }}>
+                            {currentQuizWord?.phonics || '/---/'}
+                          </div>
+                        </div>
+
+                        {/* 🔊 실시간 재생 중 스피커 펄스 버튼 (소리 계속 들려주고) */}
                         <button
                           type="button"
                           onClick={() => handlePlaySound(currentQuizWord?.word)}
                           style={{
-                            width: '64px',
-                            height: '64px',
-                            borderRadius: '50%',
+                            padding: '7px 16px',
+                            borderRadius: '20px',
                             border: 'none',
                             background: 'linear-gradient(135deg, #00C7E5 0%, #00A8BF 100%)',
                             color: '#FFF',
-                            fontSize: '28px',
+                            fontSize: '12.5px',
+                            fontWeight: '800',
                             cursor: 'pointer',
-                            boxShadow: '0 8px 20px rgba(0, 168, 191, 0.35)',
-                            display: 'flex',
+                            boxShadow: '0 4px 12px rgba(0, 168, 191, 0.3)',
+                            display: 'inline-flex',
                             alignItems: 'center',
-                            justifyContent: 'center'
+                            gap: '6px',
+                            animation: isAnswerChecked ? 'none' : 'pulse 1.8s infinite'
                           }}
                         >
-                          🔊
+                          <span>🔊</span>
+                          <span>{isAnswerChecked ? '소리 다시듣기' : '소리 재생 중 (자동 반복 🔄)'}</span>
                         </button>
-                        <div style={{ fontSize: '13px', fontWeight: '800', color: '#64748B' }}>
-                          발음을 듣고 알맞은 뜻을 고르세요
+
+                        <div style={{ fontSize: '12px', fontWeight: '800', color: '#64748B' }}>
+                          단어와 소리를 확인하고 알맞은 뜻을 고르세요
                         </div>
                       </div>
                     )}
