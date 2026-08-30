@@ -25,9 +25,9 @@ const loginI18n = {
     brandTitle: 'FlipVoca',
     programDescription: '초·중·고 5,000 영단어 스마트 학습관 • 3D 플래시카드 & 4단계 퀴즈',
     studentIdLabel: '👤 학생 아이디 / 이름',
-    studentIdPh: '아이디 또는 이름 입력 (예: 이상학)',
+    studentIdPh: '아이디 또는 이름 입력 (예: 김철수)',
     pinLabel: '🔒 비밀번호 (4자리 PIN)',
-    pinPh: '비밀번호 입력 (기본: 1234 또는 0815)',
+    pinPh: '비밀번호 입력 (예: 1234)',
     rememberId: '아이디 저장',
     defaultPinHint: '초기 비밀번호: 1234',
     studentLoginBtn: '🚀 로그인 & 오늘의 단어 학습 시작',
@@ -39,7 +39,7 @@ const loginI18n = {
     errNoId: '아이디(또는 이름)를 입력해주세요.',
     errNoPin: '비밀번호(또는 4자리 PIN)를 입력해주세요.',
     errNotFound: '등록되지 않은 학생 아이디/이름입니다. 다시 확인해주세요.',
-    errWrongPin: '비밀번호가 올바르지 않습니다. (기본 PIN: 1234 또는 0815)',
+    errWrongPin: '비밀번호가 올바르지 않습니다. (예: 1234)',
     errNoParentName: '학부모 성함을 입력해주세요.',
     errWrongParentPin: '학부모 비밀번호가 올바르지 않습니다. (기본: 0815)',
     loginSuccess: '학생 로그인 성공!',
@@ -54,9 +54,9 @@ const loginI18n = {
     brandTitle: 'FlipVoca',
     programDescription: '小学/初中/高中 5,000 核心词汇 • 3D 翻转卡片与 4 阶智能测验',
     studentIdLabel: '👤 学生账号 / 姓名',
-    studentIdPh: '请输入学生姓名或账号 (例: 李明)',
+    studentIdPh: '请输入学生姓名或账号 (例: 金哲洙)',
     pinLabel: '🔒 密码 (4位 PIN)',
-    pinPh: '请输入密码 (默认: 1234 或 0815)',
+    pinPh: '请输入密码 (例: 1234)',
     rememberId: '记住账号',
     defaultPinHint: '初始密码: 1234',
     studentLoginBtn: '🚀 登录并开始今日单词学习',
@@ -68,7 +68,7 @@ const loginI18n = {
     errNoId: '请输入学生账号或姓名。',
     errNoPin: '请输入密码。',
     errNotFound: '未找到该学生信息，请重新核对。',
-    errWrongPin: '密码不正确。(默认 PIN: 1234 或 0815)',
+    errWrongPin: '密码不正确。(例: 1234)',
     errNoParentName: '请输入家长姓名。',
     errWrongParentPin: '家长密码不正确。(默认: 0815)',
     loginSuccess: '同学登录成功！',
@@ -85,7 +85,7 @@ const loginI18n = {
     studentIdLabel: '👤 Identifiant / Nom de l\'élève',
     studentIdPh: 'Entrez votre nom ou ID (Ex: Paul)',
     pinLabel: '🔒 Mot de passe (Code PIN 4 chiffres)',
-    pinPh: 'Code PIN (Défaut: 1234 ou 0815)',
+    pinPh: 'Code PIN (Ex: 1234)',
     rememberId: 'Se souvenir de moi',
     defaultPinHint: 'PIN par défaut: 1234',
     studentLoginBtn: '🚀 Connexion & Démarrer l\'Étude',
@@ -97,7 +97,7 @@ const loginI18n = {
     errNoId: 'Veuillez saisir votre nom ou identifiant.',
     errNoPin: 'Veuillez saisir votre code PIN.',
     errNotFound: 'Élève non trouvé. Veuillez vérifier.',
-    errWrongPin: 'Code PIN incorrect (Défaut: 1234 ou 0815).',
+    errWrongPin: 'Code PIN incorrect (Ex: 1234).',
     errNoParentName: 'Veuillez saisir le nom du parent.',
     errWrongParentPin: 'Code PIN parent incorrect (Défaut: 0815).',
     loginSuccess: 'Connexion réussie !',
@@ -114,7 +114,7 @@ const loginI18n = {
     studentIdLabel: '👤 生徒ID / お名前',
     studentIdPh: 'お名前またはID入力 (例: 田中)',
     pinLabel: '🔒 暗証番号 (4桁 PIN)',
-    pinPh: 'PIN番号入力 (初期値: 1234 または 0815)',
+    pinPh: 'PIN番号入力 (例: 1234)',
     rememberId: 'IDを保存',
     defaultPinHint: '初期暗証番号: 1234',
     studentLoginBtn: '🚀 ログインして本日の単語学習を開始',
@@ -126,7 +126,7 @@ const loginI18n = {
     errNoId: 'お名前または生徒IDを入力してください。',
     errNoPin: '暗証番号を入力してください。',
     errNotFound: '登録されていない生徒です。再確認してください。',
-    errWrongPin: '暗証番号が正しくありません。(初期値: 1234 または 0815)',
+    errWrongPin: '暗証番号が正しくありません。(例: 1234)',
     errNoParentName: '保護者のお名前を入力してください。',
     errWrongParentPin: '保護者暗証番号が正しくありません。(初期値: 0815)',
     loginSuccess: '生徒ログイン成功！',
@@ -143,7 +143,7 @@ const loginI18n = {
     studentIdLabel: '👤 Tên học sinh / ID',
     studentIdPh: 'Nhập tên hoặc mã ID (VD: Minh)',
     pinLabel: '🔒 Mật khẩu (Mã PIN 4 số)',
-    pinPh: 'Nhập mã PIN (Mặc định: 1234 hoặc 0815)',
+    pinPh: 'Nhập mã PIN (VD: 1234)',
     rememberId: 'Ghi nhớ tài khoản',
     defaultPinHint: 'Mã PIN ban đầu: 1234',
     studentLoginBtn: '🚀 Đăng nhập & Bắt đầu học hôm nay',
@@ -155,7 +155,7 @@ const loginI18n = {
     errNoId: 'Vui lòng nhập tên học sinh hoặc ID.',
     errNoPin: 'Vui lòng nhập mã PIN.',
     errNotFound: 'Không tìm thấy học sinh. Vui lòng kiểm tra lại.',
-    errWrongPin: 'Mã PIN không đúng. (Mặc định: 1234 hoặc 0815)',
+    errWrongPin: 'Mã PIN không đúng. (VD: 1234)',
     errNoParentName: 'Vui lòng nhập tên phụ huynh.',
     errWrongParentPin: 'Mã PIN phụ huynh không đúng (Mặc định: 0815).',
     loginSuccess: 'Đăng nhập học sinh thành công!',
@@ -169,10 +169,14 @@ const loginI18n = {
     parentTab: '👨‍👩‍👧 अभिभावक मोड',
     brandTitle: 'FlipVoca',
     programDescription: '5,000 अंग्रेजी शब्दावली • 3D फ्लैशकार्ड और 4-स्तरीय स्मार्ट क्विज',
+    studentIdLabel: '👤 विद्यार्थी नाम / आईडी',
+    studentIdPh: 'विद्यार्थी का नाम या आईडी दर्ज करें (उदा: राहुल)',
+    pinLabel: '🔒 पासवर्ड (4 अंकों का PIN)',
+    pinPh: 'पासवर्ड PIN (उदा: 1234)',
     errNoId: 'कृपया विद्यार्थी का नाम या आईडी दर्ज करें।',
     errNoPin: 'कृपया पासवर्ड पिन दर्ज करें।',
     errNotFound: 'विद्यार्थी नहीं मिला। कृपया पुनः जाँचें।',
-    errWrongPin: 'पिन गलत है। (डिफ़ॉल्ट PIN: 1234 या 0815)',
+    errWrongPin: 'पिन गलत है (उदा: 1234)',
     errNoParentName: 'कृपया अभिभावक का नाम दर्ज करें।',
     errWrongParentPin: 'अभिभावक पिन गलत है (डिफ़ॉल्ट: 0815)।',
     loginSuccess: 'विद्यार्थी लॉगिन सफल!',
@@ -695,20 +699,36 @@ export default function ModernLoginPage() {
                   </span>
                   <button
                     type="button"
-                    onClick={() => setShowPassword(!showPassword)}
+                    tabIndex={-1}
+                    onMouseDown={(e) => e.preventDefault()}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      setShowPassword((prev) => !prev);
+                    }}
+                    title={showPassword ? '비밀번호 숨기기' : '비밀번호 표시'}
                     style={{
                       position: 'absolute',
-                      right: '14px',
+                      right: '8px',
                       top: '50%',
                       transform: 'translateY(-50%)',
-                      background: 'none',
-                      border: 'none',
+                      background: showPassword ? '#E6FAFC' : '#F1F5F9',
+                      border: showPassword ? '1px solid #00A8BF' : '1px solid #CBD5E1',
+                      borderRadius: '10px',
+                      width: '34px',
+                      height: '34px',
                       cursor: 'pointer',
-                      fontSize: '16px',
-                      padding: 0
+                      fontSize: '15px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      padding: 0,
+                      zIndex: 10,
+                      boxShadow: '0 2px 5px rgba(0,0,0,0.05)',
+                      transition: 'all 0.15s ease'
                     }}
                   >
-                    {showPassword ? '🙈' : '👁️'}
+                    {showPassword ? '👁️' : '🙈'}
                   </button>
                 </div>
               </div>
@@ -889,20 +909,36 @@ export default function ModernLoginPage() {
                   </span>
                   <button
                     type="button"
-                    onClick={() => setShowParentPassword(!showParentPassword)}
+                    tabIndex={-1}
+                    onMouseDown={(e) => e.preventDefault()}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      setShowParentPassword((prev) => !prev);
+                    }}
+                    title={showParentPassword ? '비밀번호 숨기기' : '비밀번호 표시'}
                     style={{
                       position: 'absolute',
-                      right: '14px',
+                      right: '8px',
                       top: '50%',
                       transform: 'translateY(-50%)',
-                      background: 'none',
-                      border: 'none',
+                      background: showParentPassword ? '#E0F2FE' : '#F1F5F9',
+                      border: showParentPassword ? '1px solid #38BDF8' : '1px solid #CBD5E1',
+                      borderRadius: '10px',
+                      width: '34px',
+                      height: '34px',
                       cursor: 'pointer',
-                      fontSize: '16px',
-                      padding: 0
+                      fontSize: '15px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      padding: 0,
+                      zIndex: 10,
+                      boxShadow: '0 2px 5px rgba(0,0,0,0.05)',
+                      transition: 'all 0.15s ease'
                     }}
                   >
-                    {showParentPassword ? '🙈' : '👁️'}
+                    {showParentPassword ? '👁️' : '🙈'}
                   </button>
                 </div>
               </div>
