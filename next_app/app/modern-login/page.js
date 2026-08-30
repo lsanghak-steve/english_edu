@@ -234,69 +234,51 @@ export default function ModernLoginPage() {
 
   const currentStrings = loginI18n[currentLang] || loginI18n.ko;
 
-  // 🚀 학생 ID / 비밀번호(PIN) 로그인 처리 (100% 무중단 즉시 로그인)
-  const handleStudentSubmit = async (e, customUser = null) => {
-    if (e && e.preventDefault) e.preventDefault();
+  // 🚀 학생 ID / 비밀번호(PIN) 로그인 처리 (0ms 즉시 초고속 무중단 로그인)
+  const handleStudentSubmit = (e, customUser = null) => {
+    if (e) {
+      if (e.preventDefault) e.preventDefault();
+      if (e.stopPropagation) e.stopPropagation();
+    }
     setErrorMessage('');
 
     const targetStudent = customUser;
-    // 이름이나 비밀번호가 비어있어도 첫 번째 기본 학생(이상학/김철수)으로 즉시 로그인 허용
-    const cleanInputId = targetStudent ? targetStudent.name : (userIdInput.trim() || '이상학');
+    const inputName = userIdInput.trim();
+    const cleanInputId = targetStudent ? targetStudent.name : (inputName || '이상학');
     const cleanPin = targetStudent ? (targetStudent.studentPin || targetStudent.pin || '1234') : (passwordInput.trim() || '1234');
 
     setIsLoading(true);
 
+    // 1. 등록 학생 목록에서 찾기
     let targetUser = targetStudent;
-
     if (!targetUser) {
-      // 1. Supabase DB에서 사용자 조회 (1초 타임아웃 보호)
-      try {
-        const queryPromise = supabase.from('users').select('*');
-        const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), 1000));
-        const res = await Promise.race([queryPromise, timeoutPromise]);
-        const dbUsers = res?.data;
-        if (dbUsers && dbUsers.length > 0) {
-          targetUser = dbUsers.find(u => {
-            const uName = removeEmoji(u.name || '').toLowerCase();
-            const uStudentId = String(u.student_id || u.id || '').toLowerCase();
-            const query = cleanInputId.toLowerCase();
-            return uName === query || uStudentId === query || uName.includes(query) || query.includes(uName);
-          });
-        }
-      } catch (dbErr) {
-        console.warn('Supabase users query timeout/fallback', dbErr);
-      }
-
-      // 2. DB 검색 실패 시 폴백 기본 학생 목록 검색
-      if (!targetUser) {
-        targetUser = defaultStudents.find(u => {
-          const uName = removeEmoji(u.name || '').toLowerCase();
-          const uStudentId = String(u.student_id || u.id || '').toLowerCase();
-          const query = cleanInputId.toLowerCase();
-          return uName === query || uStudentId === query || uName.includes(query) || query.includes(uName);
-        });
-      }
-
-      // 3. 입력된 이름으로 즉시 로그인 허용 (게스트 폴백)
-      if (!targetUser) {
-        targetUser = {
-          id: 'lsh_20260807_000001',
-          student_id: 'lsh_20260807_000001',
-          name: cleanInputId,
-          grade: '대학생 및 성인',
-          avatar: '대학생 및 성인',
-          studyGradeLevel: '중등단어',
-          dailyWordCount: '20'
-        };
-      }
+      targetUser = defaultStudents.find(u => {
+        const uName = removeEmoji(u.name || '').toLowerCase();
+        const uStudentId = String(u.student_id || u.id || '').toLowerCase();
+        const query = cleanInputId.toLowerCase();
+        return uName === query || uStudentId === query || uName.includes(query) || query.includes(uName);
+      });
     }
 
-    // 아이디 저장 옵션
-    if (rememberMe && !targetStudent && userIdInput.trim()) {
+    // 2. 미등록 이름이라도 바로 입장 가능하도록 게스트 계정 즉시 생성
+    if (!targetUser) {
+      targetUser = {
+        id: `stu_${Date.now()}`,
+        student_id: `stu_${Date.now()}`,
+        name: cleanInputId,
+        grade: '대학생 및 성인',
+        avatar: '대학생 및 성인',
+        studyGradeLevel: '중등단어',
+        dailyWordCount: '20'
+      };
+    }
+
+    // 3. 아이디 저장 옵션
+    if (rememberMe && !targetStudent && inputName) {
       try { localStorage.setItem('flipvoca_saved_login_id', cleanInputId); } catch(e) {}
     }
 
-    // 세션 정보 생성 및 저장 (localStorage + sessionStorage 이중 백업)
+    // 4. 세션 정보 즉시 저장 (localStorage + sessionStorage 이중 보관)
     const rawGrade = String(targetUser.grade || targetUser.avatar || '중등단어').replace('[PENDING]', '').replace('[APPROVED]', '').trim();
     const userData = {
       id: targetUser.student_id || targetUser.id || 'lsh_20260807_000001',
@@ -315,9 +297,10 @@ export default function ModernLoginPage() {
       sessionStorage.setItem('english_edu_current_user', JSON.stringify(userData));
     } catch(e) {}
 
-    setLoginSuccessToast(`🎉 ${userData.name} 학생 로그인 성공! 학습 화면으로 이동합니다.`);
-    
-    // 즉시 지체 없이 학습 페이지(/modern-study)로 직행
+    // 5. 비동기 네트워크 지연 없이 0ms 즉시 학습 페이지로 직행!
+    try {
+      router.push('/modern-study');
+    } catch (err) {}
     window.location.href = '/modern-study';
   };
 
@@ -739,8 +722,8 @@ export default function ModernLoginPage() {
 
               {/* 🚀 로그인 버튼 */}
               <button
-                type="submit"
-                disabled={isLoading}
+                type="button"
+                onClick={(e) => handleStudentSubmit(e)}
                 style={{
                   width: '100%',
                   padding: '16px',
@@ -760,7 +743,7 @@ export default function ModernLoginPage() {
                   marginTop: '4px'
                 }}
               >
-                {isLoading ? '⏳ ...' : currentStrings.studentLoginBtn}
+                {currentStrings.studentLoginBtn}
               </button>
 
               {/* ⚡ 원클릭 간편 로그인 학생 선택 카드 */}
