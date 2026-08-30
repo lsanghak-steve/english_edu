@@ -260,6 +260,15 @@ export default function ModernStudyPage() {
   const [isQuizFinished, setIsQuizFinished] = useState(false);
   const [levelTransitionToast, setLevelTransitionToast] = useState('');
 
+  // 👤 내 정보 수정 모드 상태
+  const [isEditingProfile, setIsEditingProfile] = useState(false);
+  const [editName, setEditName] = useState('');
+  const [editGradeLevel, setEditGradeLevel] = useState('중등단어');
+  const [editDailyCount, setEditDailyCount] = useState('20');
+  const [editPin, setEditPin] = useState('1234');
+  const [isSavingProfile, setIsSavingProfile] = useState(false);
+  const [profileSaveSuccess, setProfileSaveSuccess] = useState(false);
+
   // 🎯 학생 친화적 발음 유사도 점수(0~100점) 판정 알고리즘
   const calculateMatchScore = (targetStr, spokenStr) => {
     if (!targetStr) return 0;
@@ -1225,6 +1234,65 @@ export default function ModernStudyPage() {
     setIsAnswerChecked(false);
     setIsQuizCorrect(null);
     setTypingInput('');
+  };
+
+  // 👤 내 정보 수정 모달/폼 열기
+  const handleOpenEditProfile = () => {
+    setEditName(currentUser?.name || '이상학');
+    setEditGradeLevel(currentUser?.studyGradeLevel || currentUser?.study_grade_level || '중등단어');
+    setEditDailyCount(String(currentUser?.dailyWordCount || currentUser?.daily_word_count || '20'));
+    setEditPin(currentUser?.pin || '1234');
+    setIsEditingProfile(true);
+  };
+
+  // 💾 내 정보 저장 처리 (로컬 + Cloud DB 동기화)
+  const handleSaveProfile = async (e) => {
+    if (e) e.preventDefault();
+    if (!editName.trim()) {
+      alert('학생 이름을 입력해 주세요.');
+      return;
+    }
+    setIsSavingProfile(true);
+
+    const updatedUser = {
+      ...currentUser,
+      name: editName.trim(),
+      studyGradeLevel: editGradeLevel,
+      study_grade_level: editGradeLevel,
+      dailyWordCount: String(editDailyCount),
+      daily_word_count: parseInt(editDailyCount, 10),
+      pin: editPin.trim() || '1234'
+    };
+
+    // 1. 로컬 저장소 즉시 업데이트
+    setCurrentUser(updatedUser);
+    try {
+      localStorage.setItem('english_edu_current_user', JSON.stringify(updatedUser));
+      sessionStorage.setItem('english_edu_current_user', JSON.stringify(updatedUser));
+    } catch(e) {}
+
+    // 2. Cloud DB(Supabase) 동기화
+    try {
+      const studentId = updatedUser.student_id || updatedUser.id;
+      if (studentId) {
+        await supabase
+          .from('students')
+          .update({
+            name: updatedUser.name,
+            study_grade_level: editGradeLevel,
+            daily_word_count: parseInt(editDailyCount, 10),
+            pin: editPin.trim() || '1234'
+          })
+          .eq('student_id', studentId);
+      }
+    } catch(err) {
+      console.log('Profile DB update sync notice:', err);
+    }
+
+    setIsSavingProfile(false);
+    setIsEditingProfile(false);
+    setProfileSaveSuccess(true);
+    setTimeout(() => setProfileSaveSuccess(false), 3500);
   };
 
   // 🖼️ 고화질 단어 이미지 로드 및 스마트 폴백 시스템
@@ -2818,72 +2886,349 @@ export default function ModernStudyPage() {
           {/* ═══════════════════════════════════════════════════════
               TAB 5: 👤 PROFILE (내 정보 & 진도 통계 뷰)
              ═══════════════════════════════════════════════════════ */}
+          {/* ═══════════════════════════════════════════════════════
+              TAB 5: 👤 PROFILE (내 정보 & 진도 통계 & 정보 수정 뷰)
+             ═══════════════════════════════════════════════════════ */}
           {currentTab === 'profile' && (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
-              <div style={{
-                background: '#FFFFFF',
-                borderRadius: '24px',
-                padding: '24px 20px',
-                border: '1.5px solid #E2E8F0',
-                boxShadow: '0 8px 24px rgba(0,0,0,0.03)',
-                display: 'flex',
-                flexDirection: 'column',
-                gap: '16px'
-              }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+              
+              {/* ✨ 저장 성공 알림 배너 */}
+              {profileSaveSuccess && (
+                <div style={{
+                  background: 'linear-gradient(135deg, #ECFDF5 0%, #D1FAE5 100%)',
+                  border: '1.5px solid #6EE7B7',
+                  color: '#065F46',
+                  padding: '12px 16px',
+                  borderRadius: '18px',
+                  fontSize: '13px',
+                  fontWeight: '900',
+                  textAlign: 'center',
+                  boxShadow: '0 4px 14px rgba(16, 185, 129, 0.25)',
+                  animation: 'fadeIn 0.3s ease'
+                }}>
+                  ✨ 학생 정보 및 학습 과정이 성공적으로 변경되었습니다!
+                </div>
+              )}
+
+              {/* 1. 정보 수정 모드가 아닐 때 (기본 내 정보 보기) */}
+              {!isEditingProfile ? (
+                <div style={{
+                  background: '#FFFFFF',
+                  borderRadius: '24px',
+                  padding: '24px 20px',
+                  border: '1.5px solid #E2E8F0',
+                  boxShadow: '0 8px 24px rgba(0,0,0,0.03)',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '16px'
+                }}>
+                  {/* 상단 프로필 헤더 */}
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+                    <div style={{
+                      width: '60px',
+                      height: '60px',
+                      borderRadius: '50%',
+                      background: 'linear-gradient(135deg, #00C7E5 0%, #00A8BF 100%)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontSize: '28px',
+                      boxShadow: '0 6px 16px rgba(0,168,191,0.25)',
+                      flexShrink: 0
+                    }}>
+                      🧑‍🎓
+                    </div>
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap' }}>
+                        <h3 style={{ margin: 0, fontSize: '20px', fontWeight: '900', color: '#1E293B' }}>
+                          {currentUser?.name || '이상학'} 학생
+                        </h3>
+                        <span style={{ fontSize: '11px', fontWeight: '800', background: '#F1F5F9', color: '#64748B', padding: '2px 7px', borderRadius: '6px' }}>
+                          ID: {currentUser?.student_id || currentUser?.id || 'lsh_20260807'}
+                        </span>
+                      </div>
+                      <div style={{ fontSize: '12.5px', fontWeight: '800', color: '#008294', marginTop: '3px' }}>
+                        🎯 {currentUser?.studyGradeLevel || '중등단어'} • 목표 {currentUser?.dailyWordCount || 20}단어/일
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* 세부 설정 요약 카드 */}
                   <div style={{
-                    width: '60px',
-                    height: '60px',
-                    borderRadius: '50%',
-                    background: 'linear-gradient(135deg, #00C7E5 0%, #00A8BF 100%)',
+                    background: '#F8FAFC',
+                    borderRadius: '18px',
+                    padding: '14px 16px',
+                    border: '1px solid #E2E8F0',
                     display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    fontSize: '28px',
-                    boxShadow: '0 6px 16px rgba(0,168,191,0.25)'
+                    flexDirection: 'column',
+                    gap: '8px'
                   }}>
-                    🧑‍🎓
+                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12.5px' }}>
+                      <span style={{ color: '#64748B', fontWeight: '700' }}>📚 현재 학습 과정</span>
+                      <strong style={{ color: '#0F172A', fontWeight: '900' }}>{currentUser?.studyGradeLevel || '중등단어'}</strong>
+                    </div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12.5px' }}>
+                      <span style={{ color: '#64748B', fontWeight: '700' }}>⚡ 하루 목표 학습량</span>
+                      <strong style={{ color: '#00A8BF', fontWeight: '900' }}>매일 {currentUser?.dailyWordCount || 20}단어</strong>
+                    </div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12.5px' }}>
+                      <span style={{ color: '#64748B', fontWeight: '700' }}>🔒 비밀번호(PIN)</span>
+                      <strong style={{ color: '#64748B', fontWeight: '800' }}>● ● ● ●</strong>
+                    </div>
                   </div>
-                  <div>
-                    <h3 style={{ margin: 0, fontSize: '20px', fontWeight: '900', color: '#1E293B' }}>
-                      {currentUser?.name || '이상학'} 학생
-                    </h3>
-                    <span style={{ fontSize: '12px', fontWeight: '800', color: '#008294' }}>
-                      🎯 {currentUser?.studyGradeLevel || '초등단어'} • 목표 {currentUser?.dailyWordCount || 10}단어/일
-                    </span>
-                  </div>
-                </div>
 
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
-                  <div style={{ background: '#F8FAFC', padding: '14px', borderRadius: '16px', border: '1px solid #E2E8F0', textAlign: 'center' }}>
-                    <div style={{ fontSize: '22px', fontWeight: '900', color: '#00A8BF' }}>10</div>
-                    <div style={{ fontSize: '11px', fontWeight: '700', color: '#64748B' }}>오늘 학습 단어</div>
+                  {/* 학습 통계 그리드 */}
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
+                    <div style={{ background: '#E6FAFC', padding: '14px', borderRadius: '16px', border: '1px solid #BAE6FD', textAlign: 'center' }}>
+                      <div style={{ fontSize: '22px', fontWeight: '900', color: '#00A8BF' }}>{words.length || 20}개</div>
+                      <div style={{ fontSize: '11px', fontWeight: '800', color: '#0369A1' }}>오늘 배당된 단어</div>
+                    </div>
+                    <div style={{ background: '#ECFDF5', padding: '14px', borderRadius: '16px', border: '1px solid #A7F3D0', textAlign: 'center' }}>
+                      <div style={{ fontSize: '22px', fontWeight: '900', color: '#059669' }}>{stampedDates.length || 0}일</div>
+                      <div style={{ fontSize: '11px', fontWeight: '800', color: '#065F46' }}>총 출석 도장</div>
+                    </div>
                   </div>
-                  <div style={{ background: '#F8FAFC', padding: '14px', borderRadius: '16px', border: '1px solid #E2E8F0', textAlign: 'center' }}>
-                    <div style={{ fontSize: '22px', fontWeight: '900', color: '#10B981' }}>5일</div>
-                    <div style={{ fontSize: '11px', fontWeight: '700', color: '#64748B' }}>연속 출석 달성</div>
-                  </div>
-                </div>
 
-                <button
-                  type="button"
-                  onClick={handleLogout}
+                  {/* ✏️ [내 정보 수정하기] 버튼 */}
+                  <button
+                    type="button"
+                    onClick={handleOpenEditProfile}
+                    style={{
+                      width: '100%',
+                      padding: '13px',
+                      borderRadius: '16px',
+                      border: 'none',
+                      background: 'linear-gradient(135deg, #00C7E5 0%, #00A8BF 100%)',
+                      color: '#FFFFFF',
+                      fontWeight: '900',
+                      fontSize: '14px',
+                      cursor: 'pointer',
+                      boxShadow: '0 4px 14px rgba(0,168,191,0.25)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '6px'
+                    }}
+                  >
+                    <span>✏️</span>
+                    <span>학생 정보 & 학습 과정 수정하기</span>
+                  </button>
+
+                  {/* 🚪 로그아웃 버튼 */}
+                  <button
+                    type="button"
+                    onClick={handleLogout}
+                    style={{
+                      width: '100%',
+                      padding: '12px',
+                      borderRadius: '16px',
+                      border: '1.5px solid #FECACA',
+                      background: '#FEF2F2',
+                      color: '#DC2626',
+                      fontWeight: '800',
+                      fontSize: '13px',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    🚪 로그아웃 및 다른 학생으로 로그인
+                  </button>
+                </div>
+              ) : (
+                /* 2. ✏️ 내 정보 수정 모드 (인터랙티브 폼) */
+                <form
+                  onSubmit={handleSaveProfile}
                   style={{
-                    width: '100%',
-                    padding: '14px',
-                    borderRadius: '16px',
-                    border: 'none',
-                    background: '#EF4444',
-                    color: '#FFFFFF',
-                    fontWeight: '900',
-                    fontSize: '14px',
-                    cursor: 'pointer',
-                    marginTop: '8px'
+                    background: '#FFFFFF',
+                    borderRadius: '24px',
+                    padding: '24px 20px',
+                    border: '2px solid #00A8BF',
+                    boxShadow: '0 10px 30px rgba(0, 168, 191, 0.15)',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: '16px',
+                    animation: 'fadeIn 0.2s ease'
                   }}
                 >
-                  🚪 로그아웃 및 다른 학생으로 로그인
-                </button>
-              </div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1.5px solid #F1F5F9', paddingBottom: '10px' }}>
+                    <h3 style={{ margin: 0, fontSize: '17px', fontWeight: '900', color: '#1E293B', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                      <span>✏️</span> 학생 정보 & 학습 과정 수정
+                    </h3>
+                    <button
+                      type="button"
+                      onClick={() => setIsEditingProfile(false)}
+                      style={{
+                        background: '#F1F5F9',
+                        border: 'none',
+                        borderRadius: '8px',
+                        padding: '4px 8px',
+                        fontSize: '12px',
+                        fontWeight: '800',
+                        color: '#64748B',
+                        cursor: 'pointer'
+                      }}
+                    >
+                      닫기 ✕
+                    </button>
+                  </div>
+
+                  {/* 1) 학생 이름 입력 */}
+                  <div>
+                    <label style={{ display: 'block', fontSize: '12.5px', fontWeight: '800', color: '#334155', marginBottom: '6px' }}>
+                      👤 학생 이름
+                    </label>
+                    <input
+                      type="text"
+                      value={editName}
+                      onChange={(e) => setEditName(e.target.value)}
+                      placeholder="이름 입력 (예: 이상학)"
+                      style={{
+                        width: '100%',
+                        padding: '11px 14px',
+                        borderRadius: '14px',
+                        border: '1.5px solid #CBD5E1',
+                        fontSize: '14px',
+                        fontWeight: '800',
+                        color: '#1E293B',
+                        outline: 'none',
+                        boxSizing: 'border-box'
+                      }}
+                    />
+                  </div>
+
+                  {/* 2) 학습 과정 / 학년 선택 */}
+                  <div>
+                    <label style={{ display: 'block', fontSize: '12.5px', fontWeight: '800', color: '#334155', marginBottom: '6px' }}>
+                      📚 학습 과정 (단어 난이도)
+                    </label>
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '6px' }}>
+                      {[
+                        { key: '초등단어', label: '🌱 초등단어 (기초 800)' },
+                        { key: '중등단어', label: '🚀 중등단어 (핵심 1800)' },
+                        { key: '고등단어', label: '🎯 고등/수능 (심화 2000)' },
+                        { key: '토익단어', label: '💼 토익/성인 (실전 2000)' }
+                      ].map((item) => {
+                        const isSelected = editGradeLevel === item.key;
+                        return (
+                          <button
+                            key={item.key}
+                            type="button"
+                            onClick={() => setEditGradeLevel(item.key)}
+                            style={{
+                              padding: '10px 8px',
+                              borderRadius: '12px',
+                              border: isSelected ? '2px solid #00A8BF' : '1.5px solid #E2E8F0',
+                              background: isSelected ? '#E6FAFC' : '#F8FAFC',
+                              color: isSelected ? '#008294' : '#475569',
+                              fontWeight: isSelected ? '900' : '700',
+                              fontSize: '11.5px',
+                              cursor: 'pointer',
+                              textAlign: 'center',
+                              transition: 'all 0.15s ease'
+                            }}
+                          >
+                            {item.label}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+
+                  {/* 3) 하루 목표 단어 수 선택 */}
+                  <div>
+                    <label style={{ display: 'block', fontSize: '12.5px', fontWeight: '800', color: '#334155', marginBottom: '6px' }}>
+                      ⚡ 하루 목표 단어 수
+                    </label>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '6px' }}>
+                      {['10', '20', '30', '50'].map((count) => {
+                        const isSelected = String(editDailyCount) === count;
+                        return (
+                          <button
+                            key={count}
+                            type="button"
+                            onClick={() => setEditDailyCount(count)}
+                            style={{
+                              padding: '10px 4px',
+                              borderRadius: '12px',
+                              border: isSelected ? '2px solid #00A8BF' : '1.5px solid #E2E8F0',
+                              background: isSelected ? '#E6FAFC' : '#F8FAFC',
+                              color: isSelected ? '#008294' : '#475569',
+                              fontWeight: isSelected ? '900' : '700',
+                              fontSize: '13px',
+                              cursor: 'pointer',
+                              textAlign: 'center'
+                            }}
+                          >
+                            {count}개
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+
+                  {/* 4) 4자리 PIN 비밀번호 */}
+                  <div>
+                    <label style={{ display: 'block', fontSize: '12.5px', fontWeight: '800', color: '#334155', marginBottom: '6px' }}>
+                      🔒 비밀번호 (4자리 PIN)
+                    </label>
+                    <input
+                      type="text"
+                      maxLength={6}
+                      value={editPin}
+                      onChange={(e) => setEditPin(e.target.value)}
+                      placeholder="예: 1234"
+                      style={{
+                        width: '100%',
+                        padding: '11px 14px',
+                        borderRadius: '14px',
+                        border: '1.5px solid #CBD5E1',
+                        fontSize: '14px',
+                        fontWeight: '800',
+                        color: '#1E293B',
+                        outline: 'none',
+                        boxSizing: 'border-box'
+                      }}
+                    />
+                  </div>
+
+                  {/* 저장 및 취소 버튼 그룹 */}
+                  <div style={{ display: 'flex', gap: '8px', marginTop: '6px' }}>
+                    <button
+                      type="submit"
+                      disabled={isSavingProfile}
+                      style={{
+                        flex: 1,
+                        padding: '13px',
+                        borderRadius: '16px',
+                        border: 'none',
+                        background: 'linear-gradient(135deg, #10B981 0%, #059669 100%)',
+                        color: '#FFFFFF',
+                        fontWeight: '900',
+                        fontSize: '14px',
+                        cursor: 'pointer',
+                        boxShadow: '0 4px 14px rgba(16, 185, 129, 0.3)'
+                      }}
+                    >
+                      {isSavingProfile ? '저장 중...' : '💾 변경사항 저장 완료'}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setIsEditingProfile(false)}
+                      style={{
+                        padding: '13px 18px',
+                        borderRadius: '16px',
+                        border: '1.5px solid #CBD5E1',
+                        background: '#FFFFFF',
+                        color: '#64748B',
+                        fontWeight: '800',
+                        fontSize: '13px',
+                        cursor: 'pointer'
+                      }}
+                    >
+                      취소
+                    </button>
+                  </div>
+                </form>
+              )}
             </div>
           )}
 
