@@ -21,6 +21,8 @@ const loginI18n = {
     appSubtitle: 'FlipVoca 3.0 스마트 학습관',
     smartHubBadge: '스마트 학습관',
     backBtn: '학습 홈 ➔',
+    langSelectTitle: '🌐 언어 선택',
+    langSelectSub: '6개 글로벌 언어',
     studentTab: '👦 학생 로그인',
     parentTab: '👨‍👩‍👧 학부모 모드',
     brandTitle: 'FlipVoca',
@@ -42,6 +44,16 @@ const loginI18n = {
     parentPinLabel: '🔒 학부모 비밀번호',
     parentPinPh: '비밀번호 입력 (기본: 0815)',
     parentLoginBtn: '📊 학부모 대시보드 입장',
+    parentEditOpenBtn: '학부모 성함 / 비밀번호(PIN) 변경하기',
+    parentEditCloseBtn: '학부모 정보 변경창 닫기 ✕',
+    parentEditModalTitle: '학부모 로그인 정보 수정',
+    parentEditNameLabel: '학부모 성함',
+    parentEditNamePh: '학부모 성함 (예: 이상학)',
+    parentEditPhoneLabel: '학부모 연락처',
+    parentEditPhonePh: '예: 010-4006-9050',
+    parentEditPinLabel: '새 비밀번호 (4자리 PIN)',
+    parentEditPinPh: '예: 0815',
+    parentEditSaveBtn: '💾 변경사항 즉시 저장하기',
     errNoId: '아이디(또는 이름)를 입력해주세요.',
     errNoPin: '비밀번호(또는 4자리 PIN)를 입력해주세요.',
     errNotFound: '등록되지 않은 학생 아이디/이름입니다. 다시 확인해주세요.',
@@ -56,6 +68,8 @@ const loginI18n = {
     appSubtitle: 'FlipVoca 3.0 智能词汇学习馆',
     smartHubBadge: '智能学习馆',
     backBtn: '学习主页 ➔',
+    langSelectTitle: '🌐 语言选择',
+    langSelectSub: '支持 6 种语言',
     studentTab: '👦 学生登录',
     parentTab: '👨‍👩‍👧 家长模式',
     brandTitle: 'FlipVoca',
@@ -77,6 +91,16 @@ const loginI18n = {
     parentPinLabel: '🔒 家长密码',
     parentPinPh: '请输入家长密码 (默认: 0815)',
     parentLoginBtn: '📊 进入家长控制台',
+    parentEditOpenBtn: '修改家长姓名 / 密码(PIN)',
+    parentEditCloseBtn: '关闭修改窗口 ✕',
+    parentEditModalTitle: '修改家长登录信息',
+    parentEditNameLabel: '家长姓名',
+    parentEditNamePh: '例: 李尚学家长',
+    parentEditPhoneLabel: '联系电话',
+    parentEditPhonePh: '例: 010-4006-9050',
+    parentEditPinLabel: '新密码 (4位 PIN)',
+    parentEditPinPh: '例: 0815',
+    parentEditSaveBtn: '💾 立即保存修改',
     errNoId: '请输入学生账号或姓名。',
     errNoPin: '请输入密码。',
     errNotFound: '未找到该学生信息，请重新核对。',
@@ -91,6 +115,8 @@ const loginI18n = {
     appSubtitle: 'FlipVoca 3.0 Smart Learning',
     smartHubBadge: 'Smart Learning',
     backBtn: 'Accueil ➔',
+    langSelectTitle: '🌐 Choisir la Langue',
+    langSelectSub: '6 Langues Globales',
     studentTab: '👦 Connexion Élève',
     parentTab: '👨‍👩‍👧 Mode Parents',
     brandTitle: 'FlipVoca',
@@ -112,6 +138,16 @@ const loginI18n = {
     parentPinLabel: '🔒 Code PIN Parent',
     parentPinPh: 'Code PIN (Défaut: 0815)',
     parentLoginBtn: '📊 Accéder au Tableau de Bord',
+    parentEditOpenBtn: 'Modifier Nom / PIN Parent',
+    parentEditCloseBtn: 'Fermer la fenêtre ✕',
+    parentEditModalTitle: 'Modifier les informations du parent',
+    parentEditNameLabel: 'Nom du Parent',
+    parentEditNamePh: 'Ex: M. Sanghak',
+    parentEditPhoneLabel: 'Numéro de téléphone',
+    parentEditPhonePh: 'Ex: 010-4006-9050',
+    parentEditPinLabel: 'Nouveau Code PIN (4 chiffres)',
+    parentEditPinPh: 'Ex: 0815',
+    parentEditSaveBtn: '💾 Enregistrer les modifications',
     errNoId: 'Veuillez saisir votre nom ou identifiant.',
     errNoPin: 'Veuillez saisir votre code PIN.',
     errNotFound: 'Élève non trouvé. Veuillez vérifier.',
@@ -126,6 +162,8 @@ const loginI18n = {
     appSubtitle: 'FlipVoca 3.0 スマート英語学習館',
     smartHubBadge: 'スマート学習館',
     backBtn: '学習ホーム ➔',
+    langSelectTitle: '🌐 言語選択',
+    langSelectSub: '6言語対応',
     studentTab: '👦 生徒ログイン',
     parentTab: '👨‍👩‍👧 保護者モード',
     brandTitle: 'FlipVoca',
@@ -147,6 +185,16 @@ const loginI18n = {
     parentPinLabel: '🔒 保護者暗証番号',
     parentPinPh: '暗証番号入力 (初期値: 0815)',
     parentLoginBtn: '📊 保護者ダッシュボードへ入場',
+    parentEditOpenBtn: '保護者のお名前・暗証番号変更',
+    parentEditCloseBtn: '変更画面を閉じる ✕',
+    parentEditModalTitle: '保護者ログイン情報変更',
+    parentEditNameLabel: '保護者のお名前',
+    parentEditNamePh: '例: サンハク保護者',
+    parentEditPhoneLabel: '電話番号',
+    parentEditPhonePh: '例: 010-4006-9050',
+    parentEditPinLabel: '新しい暗証番号 (4桁 PIN)',
+    parentEditPinPh: '例: 0815',
+    parentEditSaveBtn: '💾 変更内容を保存する',
     errNoId: 'お名前または生徒IDを入力してください。',
     errNoPin: '暗証番号を入力してください。',
     errNotFound: '登録されていない生徒です。再確認してください。',
@@ -161,6 +209,8 @@ const loginI18n = {
     appSubtitle: 'FlipVoca 3.0 Học Từ Vựng Thông Minh',
     smartHubBadge: 'Học Thông Minh',
     backBtn: 'Trang chủ học ➔',
+    langSelectTitle: '🌐 Chọn Ngôn Ngữ',
+    langSelectSub: '6 Ngôn ngữ toàn cầu',
     studentTab: '👦 Đăng nhập Học sinh',
     parentTab: '👨‍👩‍👧 Chế độ Phụ huynh',
     brandTitle: 'FlipVoca',
@@ -182,6 +232,16 @@ const loginI18n = {
     parentPinLabel: '🔒 Mã PIN phụ huynh',
     parentPinPh: 'Nhập mã PIN (Mặc định: 0815)',
     parentLoginBtn: '📊 Vào Bảng điều khiển Phụ huynh',
+    parentEditOpenBtn: 'Đổi Tên / Mã PIN Phụ huynh',
+    parentEditCloseBtn: 'Đóng cửa sổ ✕',
+    parentEditModalTitle: 'Chỉnh sửa thông tin phụ huynh',
+    parentEditNameLabel: 'Tên phụ huynh',
+    parentEditNamePh: 'VD: Phụ huynh Sang-hak',
+    parentEditPhoneLabel: 'Số điện thoại',
+    parentEditPhonePh: 'VD: 010-4006-9050',
+    parentEditPinLabel: 'Mã PIN mới (4 số)',
+    parentEditPinPh: 'VD: 0815',
+    parentEditSaveBtn: '💾 Lưu thay đổi ngay',
     errNoId: 'Vui lòng nhập tên học sinh hoặc ID.',
     errNoPin: 'Vui lòng nhập mã PIN.',
     errNotFound: 'Không tìm thấy học sinh. Vui lòng kiểm tra lại.',
@@ -196,6 +256,8 @@ const loginI18n = {
     appSubtitle: 'FlipVoca 3.0 स्मार्ट लर्निंग प्लेटफॉर्म',
     smartHubBadge: 'स्मार्ट लर्निंग हब',
     backBtn: 'अध्ययन होम ➔',
+    langSelectTitle: '🌐 भाषा चुनें',
+    langSelectSub: '6 भाषाएँ समर्थित',
     studentTab: '👦 विद्यार्थी लॉगिन',
     parentTab: '👨‍👩‍👧 अभिभावक मोड',
     brandTitle: 'FlipVoca',
@@ -217,6 +279,16 @@ const loginI18n = {
     parentPinLabel: '🔒 अभिभावक पासवर्ड (PIN)',
     parentPinPh: 'पिन दर्ज करें (डिफ़ॉल्ट: 0815)',
     parentLoginBtn: '📊 अभिभावक डैशबोर्ड',
+    parentEditOpenBtn: 'अभिभावक नाम / पासवर्ड(PIN) बदलें',
+    parentEditCloseBtn: 'खिड़की बंद करें ✕',
+    parentEditModalTitle: 'अभिभावक लॉगिन जानकारी संपादित करें',
+    parentEditNameLabel: 'अभिभावक का नाम',
+    parentEditNamePh: 'उदा: सांघक अभिभावक',
+    parentEditPhoneLabel: 'फोन नंबर',
+    parentEditPhonePh: 'उदा: 010-4006-9050',
+    parentEditPinLabel: 'नया पासवर्ड PIN (4 अंक)',
+    parentEditPinPh: 'उदा: 0815',
+    parentEditSaveBtn: '💾 तुरंत बदलाव सहेजें',
     errNoId: 'कृपया विद्यार्थी का नाम या आईडी दर्ज करें।',
     errNoPin: 'कृपया पासवर्ड पिन दर्ज करें।',
     errNotFound: 'विद्यार्थी नहीं मिला। कृपया पुनः जाँचें।',
@@ -536,10 +608,10 @@ export default function ModernLoginPage() {
               padding: '0 2px'
             }}>
               <span style={{ fontSize: '12px', fontWeight: '800', color: '#64748B', display: 'flex', alignItems: 'center', gap: '5px' }}>
-                <span style={{ fontSize: '14px' }}>🌐</span> Language / 언어 선택
+                <span style={{ fontSize: '14px' }}>🌐</span> {currentStrings.langSelectTitle || '언어 선택 (Language)'}
               </span>
               <span style={{ fontSize: '11px', fontWeight: '700', color: '#94A3B8' }}>
-                6 Global Languages
+                {currentStrings.langSelectSub || '6 Global Languages'}
               </span>
             </div>
 
@@ -1090,7 +1162,7 @@ export default function ModernLoginPage() {
                   }}
                 >
                   <span>⚙️</span>
-                  <span>{showEditParentModal ? '학부모 정보 변경창 닫기 ✕' : '학부모 성함 / 비밀번호(PIN) 변경하기'}</span>
+                  <span>{showEditParentModal ? (currentStrings.parentEditCloseBtn || '학부모 정보 변경창 닫기 ✕') : (currentStrings.parentEditOpenBtn || '학부모 성함 / 비밀번호(PIN) 변경하기')}</span>
                 </button>
 
                 {showEditParentModal && (
@@ -1107,18 +1179,18 @@ export default function ModernLoginPage() {
                     animation: 'fadeIn 0.2s ease'
                   }}>
                     <div style={{ fontSize: '13px', fontWeight: '900', color: '#1E40AF', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                      <span>📝</span> 학부모 로그인 정보 수정
+                      <span>📝</span> {currentStrings.parentEditModalTitle || '학부모 로그인 정보 수정'}
                     </div>
 
                     <div>
                       <label style={{ display: 'block', fontSize: '11px', fontWeight: '800', color: '#475569', marginBottom: '4px' }}>
-                        학부모 성함
+                        {currentStrings.parentEditNameLabel || '학부모 성함'}
                       </label>
                       <input
                         type="text"
                         value={editParentName}
                         onChange={(e) => setEditParentName(e.target.value)}
-                        placeholder="학부모 성함 (예: 이상학)"
+                        placeholder={currentStrings.parentEditNamePh || '학부모 성함 (예: 이상학)'}
                         style={{
                           width: '100%',
                           padding: '10px 12px',
@@ -1134,13 +1206,13 @@ export default function ModernLoginPage() {
 
                     <div>
                       <label style={{ display: 'block', fontSize: '11px', fontWeight: '800', color: '#475569', marginBottom: '4px' }}>
-                        학부모 연락처
+                        {currentStrings.parentEditPhoneLabel || '학부모 연락처'}
                       </label>
                       <input
                         type="text"
                         value={editParentPhone}
                         onChange={(e) => setEditParentPhone(e.target.value)}
-                        placeholder="예: 010-4006-9050"
+                        placeholder={currentStrings.parentEditPhonePh || '예: 010-4006-9050'}
                         style={{
                           width: '100%',
                           padding: '10px 12px',
@@ -1156,14 +1228,14 @@ export default function ModernLoginPage() {
 
                     <div>
                       <label style={{ display: 'block', fontSize: '11px', fontWeight: '800', color: '#475569', marginBottom: '4px' }}>
-                        새 학부모 PIN 번호
+                        {currentStrings.parentEditPinLabel || '새 학부모 PIN 번호'}
                       </label>
                       <input
                         type="text"
                         maxLength={6}
                         value={editParentPin}
                         onChange={(e) => setEditParentPin(e.target.value)}
-                        placeholder="새 PIN 입력 (예: 0815)"
+                        placeholder={currentStrings.parentEditPinPh || '새 PIN 입력 (예: 0815)'}
                         style={{
                           width: '100%',
                           padding: '10px 12px',
@@ -1195,7 +1267,7 @@ export default function ModernLoginPage() {
                         boxShadow: '0 4px 10px rgba(37, 99, 235, 0.25)'
                       }}
                     >
-                      💾 학부모 정보 저장하기
+                      {currentStrings.parentEditSaveBtn || '💾 학부모 정보 저장하기'}
                     </button>
                   </div>
                 )}
