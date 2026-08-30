@@ -234,7 +234,7 @@ export default function ModernLoginPage() {
 
   const currentStrings = loginI18n[currentLang] || loginI18n.ko;
 
-  // 🚀 학생 ID / 비밀번호(PIN) 로그인 처리 (0ms 즉시 초고속 무중단 로그인)
+  // 🚀 학생 ID / 비밀번호(PIN) 로그인 처리 (즉시 초고속 무중단 로그인)
   const handleStudentSubmit = (e, customUser = null) => {
     if (e) {
       if (e.preventDefault) e.preventDefault();
@@ -245,9 +245,6 @@ export default function ModernLoginPage() {
     const targetStudent = customUser;
     const inputName = userIdInput.trim();
     const cleanInputId = targetStudent ? targetStudent.name : (inputName || '이상학');
-    const cleanPin = targetStudent ? (targetStudent.studentPin || targetStudent.pin || '1234') : (passwordInput.trim() || '1234');
-
-    setIsLoading(true);
 
     // 1. 등록 학생 목록에서 찾기
     let targetUser = targetStudent;
@@ -297,11 +294,8 @@ export default function ModernLoginPage() {
       sessionStorage.setItem('english_edu_current_user', JSON.stringify(userData));
     } catch(e) {}
 
-    // 5. 비동기 네트워크 지연 없이 0ms 즉시 학습 페이지로 직행!
-    try {
-      router.push('/modern-study');
-    } catch (err) {}
-    window.location.href = '/modern-study';
+    // 5. 학습 페이지(/modern-study)로 즉시 이동
+    router.push('/modern-study');
   };
 
   // 👨‍👩‍👧 학부모 ID / 비밀번호 로그인 처리
