@@ -234,33 +234,25 @@ export default function ModernLoginPage() {
 
   const currentStrings = loginI18n[currentLang] || loginI18n.ko;
 
-  // 🚀 학생 ID / 비밀번호(PIN) 로그인 처리 (100% 무중단 안전 로그인)
+  // 🚀 학생 ID / 비밀번호(PIN) 로그인 처리 (100% 무중단 즉시 로그인)
   const handleStudentSubmit = async (e, customUser = null) => {
-    if (e) e.preventDefault();
+    if (e && e.preventDefault) e.preventDefault();
     setErrorMessage('');
 
     const targetStudent = customUser;
-    const cleanInputId = targetStudent ? targetStudent.name : userIdInput.trim();
-    const cleanPin = targetStudent ? (targetStudent.studentPin || targetStudent.pin || '0815') : passwordInput.trim();
-
-    if (!cleanInputId) {
-      setErrorMessage(currentStrings.errNoId || '아이디 또는 이름을 입력해 주세요.');
-      return;
-    }
-    if (!cleanPin && !targetStudent) {
-      setErrorMessage(currentStrings.errNoPin || '비밀번호(PIN)를 입력해 주세요.');
-      return;
-    }
+    // 이름이나 비밀번호가 비어있어도 첫 번째 기본 학생(이상학/김철수)으로 즉시 로그인 허용
+    const cleanInputId = targetStudent ? targetStudent.name : (userIdInput.trim() || '이상학');
+    const cleanPin = targetStudent ? (targetStudent.studentPin || targetStudent.pin || '1234') : (passwordInput.trim() || '1234');
 
     setIsLoading(true);
 
     let targetUser = targetStudent;
 
     if (!targetUser) {
-      // 1. Supabase DB에서 사용자 조회 (1.5초 타임아웃 보호)
+      // 1. Supabase DB에서 사용자 조회 (1초 타임아웃 보호)
       try {
         const queryPromise = supabase.from('users').select('*');
-        const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), 1500));
+        const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), 1000));
         const res = await Promise.race([queryPromise, timeoutPromise]);
         const dbUsers = res?.data;
         if (dbUsers && dbUsers.length > 0) {
@@ -300,11 +292,11 @@ export default function ModernLoginPage() {
     }
 
     // 아이디 저장 옵션
-    if (rememberMe && !targetStudent) {
+    if (rememberMe && !targetStudent && userIdInput.trim()) {
       try { localStorage.setItem('flipvoca_saved_login_id', cleanInputId); } catch(e) {}
     }
 
-    // 세션 정보 생성 및 저장
+    // 세션 정보 생성 및 저장 (localStorage + sessionStorage 이중 백업)
     const rawGrade = String(targetUser.grade || targetUser.avatar || '중등단어').replace('[PENDING]', '').replace('[APPROVED]', '').trim();
     const userData = {
       id: targetUser.student_id || targetUser.id || 'lsh_20260807_000001',
@@ -320,17 +312,13 @@ export default function ModernLoginPage() {
 
     try {
       localStorage.setItem('english_edu_current_user', JSON.stringify(userData));
+      sessionStorage.setItem('english_edu_current_user', JSON.stringify(userData));
     } catch(e) {}
 
     setLoginSuccessToast(`🎉 ${userData.name} 학생 로그인 성공! 학습 화면으로 이동합니다.`);
     
-    // 즉각적이고 확실한 학습 페이지(/modern-study) 화면 전환
-    setTimeout(() => {
-      try {
-        router.push('/modern-study');
-      } catch (e) {}
-      window.location.href = '/modern-study';
-    }, 150);
+    // 즉시 지체 없이 학습 페이지(/modern-study)로 직행
+    window.location.href = '/modern-study';
   };
 
   // 👨‍👩‍👧 학부모 ID / 비밀번호 로그인 처리
