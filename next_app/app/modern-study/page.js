@@ -31,6 +31,8 @@ const studyI18n = {
     quizSubtitle: '소리 ➔ 스펠링 ➔ 발음 ➔ 쓰기 4단계 퀴즈 마스터',
     startQuizBtn: '퀴즈 도전하기 ➔',
     soundBtn: '소리듣기',
+    wordSoundBtn: '단어듣기',
+    exampleSoundBtn: '예문듣기',
     micBtn: '발음녹음',
     speedBtn: '속도조절',
     quizBtn: '퀴즈도전',
@@ -62,6 +64,8 @@ const studyI18n = {
     quizSubtitle: '听音 ➔ 拼写 ➔ 发音 ➔ 听写 四阶通关',
     startQuizBtn: '进入测验 ➔',
     soundBtn: '发音',
+    wordSoundBtn: '读单词',
+    exampleSoundBtn: '读例句',
     micBtn: '录音',
     speedBtn: '语速',
     quizBtn: '测验',
@@ -93,6 +97,8 @@ const studyI18n = {
     quizSubtitle: 'Écoute ➔ Orthographe ➔ Prononciation ➔ Écriture',
     startQuizBtn: 'Lancer le Quiz ➔',
     soundBtn: 'Son',
+    wordSoundBtn: 'Écouter Mot',
+    exampleSoundBtn: 'Écouter Exemple',
     micBtn: 'Micro',
     speedBtn: 'Vitesse',
     quizBtn: 'Quiz',
@@ -124,6 +130,8 @@ const studyI18n = {
     quizSubtitle: '音声 ➔ スペル ➔ 発音 ➔ タイピング 4段階マスター',
     startQuizBtn: 'クイズに挑戦 ➔',
     soundBtn: '音声',
+    wordSoundBtn: '単語再生',
+    exampleSoundBtn: '例文再生',
     micBtn: '録音',
     speedBtn: '速度',
     quizBtn: 'クイズ',
@@ -155,6 +163,8 @@ const studyI18n = {
     quizSubtitle: 'Âm thanh ➔ Đánh vần ➔ Phát âm ➔ Viết từ',
     startQuizBtn: 'Làm bài kiểm tra ➔',
     soundBtn: 'Phát âm',
+    wordSoundBtn: 'Nghe từ',
+    exampleSoundBtn: 'Nghe câu ví dụ',
     micBtn: 'Ghi âm',
     speedBtn: 'Tốc độ',
     quizBtn: 'Quiz',
@@ -186,6 +196,8 @@ const studyI18n = {
     quizSubtitle: 'ध्वनि ➔ स्पेलिंग ➔ उच्चारण ➔ लेखन',
     startQuizBtn: 'क्विज शुरू करें ➔',
     soundBtn: 'ध्वनि',
+    wordSoundBtn: 'शब्द सुनें',
+    exampleSoundBtn: 'उदाहरण सुनें',
     micBtn: 'माइक',
     speedBtn: 'गति',
     quizBtn: 'क्विज',
@@ -746,11 +758,62 @@ export default function ModernStudyPage() {
   const currentStrings = studyI18n[currentLang] || studyI18n.ko;
   const currentWord = words[currentIndex] || null;
 
-  // 🔊 TTS 재생 함수 (Apple 하드코딩 제거)
-  const handlePlaySound = (wordToPlay) => {
-    const target = wordToPlay || currentWord?.word;
-    if (target) {
-      playUniversalAudio(target, { rate: ttsSpeed });
+  // 🌐 다국어 단어 뜻 헬퍼
+  const getWordMeaning = (w) => {
+    if (!w) return '';
+    if (currentLang === 'zh') return w.meaning_zh || w.meaning;
+    if (currentLang === 'fr') return w.meaning_fr || w.meaning;
+    if (currentLang === 'ja') return w.meaning_ja || w.meaning;
+    if (currentLang === 'vi') return w.meaning_vi || w.meaning;
+    if (currentLang === 'hi') return w.meaning_hi || w.meaning;
+    return w.meaning || '';
+  };
+
+  // 🌐 다국어 예문 헬퍼
+  const getExampleSentences = (w) => {
+    if (!w) return { en: '', trans: '' };
+    const en = w.example_en || w.exampleEn || 'I love learning new words.';
+    let trans = w.example_ko || w.exampleKo || '나는 새로운 단어를 배우는 것을 좋아해요.';
+    if (currentLang === 'zh') trans = w.example_zh || trans;
+    if (currentLang === 'fr') trans = w.example_fr || trans;
+    if (currentLang === 'ja') trans = w.example_ja || trans;
+    if (currentLang === 'vi') trans = w.example_vi || trans;
+    if (currentLang === 'hi') trans = w.example_hi || trans;
+    return { en, trans };
+  };
+
+  const example = getExampleSentences(currentWord);
+
+  // 🔊 TTS 스마트 재생 함수 (단어 / 예문 통합 지원)
+  const handlePlaySound = (textToPlay) => {
+    if (typeof textToPlay === 'string' && textToPlay.trim()) {
+      playUniversalAudio(textToPlay, { rate: ttsSpeed });
+      return;
+    }
+    // 카드가 뒷면(예문 화면)이면 예문을 원어민 발음으로 읽어줌!
+    if (isFlipped && example?.en) {
+      playUniversalAudio(example.en, { rate: ttsSpeed });
+    } else if (currentWord?.word) {
+      playUniversalAudio(currentWord.word, { rate: ttsSpeed });
+    }
+  };
+
+  // 🔊 예문 직접 재생 함수 (이벤트 전파 방지)
+  const handlePlayExampleSound = (e) => {
+    if (e && e.stopPropagation) e.stopPropagation();
+    if (example?.en) {
+      playUniversalAudio(example.en, { rate: ttsSpeed });
+    }
+  };
+
+  // 🎴 3D 카드 플립 핸들러 (뒷면으로 뒤집힐 때 원어민 목소리로 예문 자동 읽기!)
+  const handleFlipCard = () => {
+    const nextFlipped = !isFlipped;
+    setIsFlipped(nextFlipped);
+    if (nextFlipped && example?.en) {
+      playUniversalAudio(example.en, { rate: ttsSpeed });
+    } else if (!nextFlipped && currentWord?.word) {
+      playUniversalAudio(currentWord.word, { rate: ttsSpeed });
     }
   };
 
@@ -1001,28 +1064,7 @@ export default function ModernStudyPage() {
     }
   };
 
-  // 다국어 뜻 헬퍼
-  const getWordMeaning = (w) => {
-    if (!w) return '';
-    if (currentLang === 'zh') return w.meaning_zh || w.meaning;
-    if (currentLang === 'fr') return w.meaning_fr || w.meaning;
-    if (currentLang === 'ja') return w.meaning_ja || w.meaning;
-    if (currentLang === 'vi') return w.meaning_vi || w.meaning;
-    if (currentLang === 'hi') return w.meaning_hi || w.meaning;
-    return w.meaning || '';
-  };
 
-  const getExampleSentences = (w) => {
-    if (!w) return { en: '', trans: '' };
-    const en = w.example_en || w.exampleEn || 'I love learning new words.';
-    let trans = w.example_ko || w.exampleKo || '나는 새로운 단어를 배우는 것을 좋아해요.';
-    if (currentLang === 'zh') trans = w.example_zh || trans;
-    if (currentLang === 'fr') trans = w.example_fr || trans;
-    if (currentLang === 'ja') trans = w.example_ja || trans;
-    if (currentLang === 'vi') trans = w.example_vi || trans;
-    if (currentLang === 'hi') trans = w.example_hi || trans;
-    return { en, trans };
-  };
 
   // 🔀 퀴즈 4지선다 보기 무작위 생성기
   const generateQuizOptions = (targetWord, allWords, level) => {
@@ -1514,7 +1556,7 @@ export default function ModernStudyPage() {
     }
   };
 
-  const example = getExampleSentences(currentWord);
+
 
   return (
     <div style={{
@@ -1979,7 +2021,7 @@ export default function ModernStudyPage() {
 
               {/* 🎴 3D 플립 카드 컨테이너 */}
               <div
-                onClick={() => setIsFlipped(!isFlipped)}
+                onClick={handleFlipCard}
                 style={{
                   perspective: '1000px',
                   width: '100%',
@@ -2085,7 +2127,7 @@ export default function ModernStudyPage() {
                     </div>
                   </div>
 
-                  {/* 카드 뒷면 (Back Face - 예문 & 해석) */}
+                  {/* 카드 뒷면 (Back Face - 예문 & 해석 & 예문 음성 듣기) */}
                   <div style={{
                     position: 'absolute',
                     width: '100%',
@@ -2119,12 +2161,50 @@ export default function ModernStudyPage() {
                       </div>
                     </div>
 
-                    {/* 중앙 예문 카드 */}
-                    <div style={{ width: '100%', background: 'rgba(255, 255, 255, 0.18)', borderRadius: '18px', padding: '12px', backdropFilter: 'blur(8px)', textAlign: 'center' }}>
-                      <div style={{ fontSize: '10px', fontWeight: '900', letterSpacing: '0.5px', opacity: 0.85, marginBottom: '4px' }}>
-                        📝 EXAMPLE SENTENCE
+                    {/* 중앙 예문 카드 (터치 시 예문 원어민 발음 재생) */}
+                    <div
+                      onClick={handlePlayExampleSound}
+                      style={{
+                        width: '100%',
+                        background: 'rgba(255, 255, 255, 0.22)',
+                        borderRadius: '18px',
+                        padding: '12px 14px',
+                        backdropFilter: 'blur(8px)',
+                        textAlign: 'center',
+                        border: '1.5px solid rgba(255, 255, 255, 0.4)',
+                        cursor: 'pointer',
+                        boxShadow: '0 4px 12px rgba(0,0,0,0.06)',
+                        transition: 'all 0.15s ease'
+                      }}
+                      title="클릭하여 예문 듣기"
+                    >
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '4px' }}>
+                        <span style={{ fontSize: '10px', fontWeight: '900', letterSpacing: '0.5px', opacity: 0.9 }}>
+                          📝 EXAMPLE SENTENCE
+                        </span>
+                        <button
+                          type="button"
+                          onClick={handlePlayExampleSound}
+                          style={{
+                            background: '#FFFFFF',
+                            color: '#4F46E5',
+                            border: 'none',
+                            borderRadius: '10px',
+                            padding: '3px 8px',
+                            fontSize: '11px',
+                            fontWeight: '900',
+                            cursor: 'pointer',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '3px',
+                            boxShadow: '0 2px 6px rgba(0,0,0,0.1)'
+                          }}
+                        >
+                          <span>🔊</span>
+                          <span>{currentStrings.exampleSoundBtn || '예문듣기'}</span>
+                        </button>
                       </div>
-                      <div style={{ fontSize: '14px', fontWeight: '900', lineHeight: 1.3, marginBottom: '6px' }}>
+                      <div style={{ fontSize: '14px', fontWeight: '900', lineHeight: 1.3, marginBottom: '6px', textShadow: '0 1px 2px rgba(0,0,0,0.1)' }}>
                         "{example.en}"
                       </div>
                       <div style={{ fontSize: '12px', opacity: 0.95, fontWeight: '700', lineHeight: 1.3, color: '#FEF08A' }}>
@@ -2217,28 +2297,31 @@ export default function ModernStudyPage() {
                 width: '100%',
                 marginTop: '2px'
               }}>
-                {/* 1. Sound */}
+                {/* 1. Sound (단어 / 예문 스마트 재생) */}
                 <button
                   type="button"
-                  onClick={() => handlePlaySound(currentWord?.word)}
+                  onClick={() => handlePlaySound()}
                   style={{
                     display: 'flex',
                     flexDirection: 'column',
                     alignItems: 'center',
                     gap: '4px',
-                    background: '#FFFFFF',
-                    border: '1.5px solid #E2E8F0',
+                    background: isFlipped ? '#EFF6FF' : '#FFFFFF',
+                    border: isFlipped ? '1.5px solid #60A5FA' : '1.5px solid #E2E8F0',
                     borderRadius: '16px',
                     padding: '8px 2px',
                     cursor: 'pointer',
-                    boxShadow: '0 4px 10px rgba(0,0,0,0.03)',
+                    boxShadow: isFlipped ? '0 4px 12px rgba(96, 165, 250, 0.25)' : '0 4px 10px rgba(0,0,0,0.03)',
                     transition: 'all 0.15s ease'
                   }}
+                  title={isFlipped ? '예문 듣기' : '단어 듣기'}
                 >
-                  <div style={{ width: '36px', height: '36px', borderRadius: '50%', background: '#E6FAFC', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '17px' }}>
+                  <div style={{ width: '36px', height: '36px', borderRadius: '50%', background: isFlipped ? '#DBEAFE' : '#E6FAFC', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '17px' }}>
                     🔊
                   </div>
-                  <span style={{ fontSize: '10px', fontWeight: '800', color: '#475569' }}>{currentStrings.soundBtn}</span>
+                  <span style={{ fontSize: '10px', fontWeight: '800', color: isFlipped ? '#2563EB' : '#475569' }}>
+                    {isFlipped ? (currentStrings.exampleSoundBtn || '예문듣기') : (currentStrings.wordSoundBtn || '단어듣기')}
+                  </span>
                 </button>
 
                 {/* 2. Mic */}
