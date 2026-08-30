@@ -3,7 +3,8 @@
 import { useState, useEffect } from 'react';
 import supabase from '../../lib/supabaseClient.js';
 import wordList500Fallback from '../../data/wordsData.js';
-import { t } from '../../lib/i18n.js';
+import { t, getLocalDateString } from '../../lib/i18n.js';
+import { playUniversalAudio } from '../../lib/audioPlayer.js';
 
 const removeEmoji = (str) => {
   if (!str) return '';
@@ -13,11 +14,13 @@ const removeEmoji = (str) => {
 };
 
 export default function CalendarSection({ currentUser, onSelectDateToStudy, currentLang = 'ko' }) {
-  const [currentYear, setCurrentYear] = useState(2026);
-  const [currentMonth, setCurrentMonth] = useState(7); // 0-based: 7 = 8월
+  const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
+  const [currentMonth, setCurrentMonth] = useState(new Date().getMonth()); // 0-based
   const [stamps, setStamps] = useState([]);
   const [selectedStampWords, setSelectedStampWords] = useState(null);
   const [selectedDateStr, setSelectedDateStr] = useState('');
+
+  const todayDateStr = getLocalDateString();
 
   const studentName = currentUser ? removeEmoji(currentUser.name) : (currentLang === 'zh' ? '学生' : (currentLang === 'fr' ? 'Élève' : '학생'));
   const userId = currentUser ? currentUser.id : 'guest';
@@ -122,43 +125,76 @@ export default function CalendarSection({ currentUser, onSelectDateToStudy, curr
     // 🎯 이미 도장이 찍힌 날짜에 실제 공부한 단어 데이터 정밀 로드
     let savedWords = [];
     try {
-      savedWords = JSON.parse(localStorage.getItem(`stamped_words_${userId}_${fullDateStr}`) || localStorage.getItem(`stamped_words_${studentCode}_${fullDateStr}`) || localStorage.getItem(`daily_random_words_${userId}_${fullDateStr}`) || localStorage.getItem(`daily_random_words_${studentCode}_${fullDateStr}`) || '[]');
+      const keys = [
+        `today_all_learned_${userId}_${fullDateStr}`,
+        `today_all_learned_${studentCode}_${fullDateStr}`,
+        `stamped_words_${userId}_${fullDateStr}`,
+        `stamped_words_${studentCode}_${fullDateStr}`,
+        `daily_random_set_${userId}_${fullDateStr}`,
+        `daily_random_set_${studentCode}_${fullDateStr}`,
+        `daily_random_words_${userId}_${fullDateStr}`,
+        `daily_random_words_${studentCode}_${fullDateStr}`
+      ];
+      const wordMap = new Map();
+      keys.forEach(k => {
+        const str = localStorage.getItem(k);
+        if (str) {
+          try {
+            const arr = JSON.parse(str);
+            if (Array.isArray(arr)) {
+              arr.forEach(w => {
+                const clean = (w.word || '').replace(/\.png/gi, '').trim().toLowerCase();
+                if (clean && !wordMap.has(clean)) {
+                  wordMap.set(clean, w);
+                }
+              });
+            }
+          } catch(e) {}
+        }
+      });
+      if (wordMap.size > 0) {
+        savedWords = Array.from(wordMap.values());
+      }
     } catch (e) {
       savedWords = [];
     }
 
     // Supabase DB에서 해당 날짜에 저장된 학습 단어 비동기 보정 로드
-    if (!savedWords || savedWords.length === 0) {
-      const loadDbDateWords = async () => {
-        try {
-          const queryIds = [userId, studentCode, studentName].filter(Boolean);
-          const { data: dbLearned } = await supabase
-            .from('student_learned_words')
-            .select('word, meaning, learned_at')
-            .or(queryIds.map(id => `student_id.eq.${id}`).join(','))
-            .gte('learned_at', `${fullDateStr}T00:00:00`)
-            .lte('learned_at', `${fullDateStr}T23:59:59`);
+    const loadDbDateWords = async () => {
+      try {
+        const queryIds = [userId, studentCode, studentName].filter(Boolean);
+        const { data: dbLearned } = await supabase
+          .from('student_learned_words')
+          .select('word, meaning, learned_at')
+          .or(queryIds.map(id => `student_id.eq.${id}`).join(','))
+          .gte('learned_at', `${fullDateStr}T00:00:00`)
+          .lte('learned_at', `${fullDateStr}T23:59:59`);
 
-          if (dbLearned && dbLearned.length > 0) {
-            const map = new Map();
-            dbLearned.forEach(item => {
-              if (item.word && !map.has(item.word.toLowerCase())) {
-                map.set(item.word.toLowerCase(), { word: item.word, meaning: item.meaning || '' });
-              }
-            });
-            const actualList = Array.from(map.values());
-            if (actualList.length > 0) {
-              setSelectedStampWords(actualList);
-              try {
-                localStorage.setItem(`stamped_words_${userId}_${fullDateStr}`, JSON.stringify(actualList));
-              } catch (e) {}
-              return;
+        if (dbLearned && dbLearned.length > 0) {
+          const map = new Map();
+          (savedWords || []).forEach(w => {
+            const clean = (w.word || '').replace(/\.png/gi, '').trim().toLowerCase();
+            if (clean) map.set(clean, w);
+          });
+          dbLearned.forEach(item => {
+            const clean = (item.word || '').replace(/\.png/gi, '').trim().toLowerCase();
+            if (clean && !map.has(clean)) {
+              map.set(clean, { word: item.word, meaning: item.meaning || '' });
             }
+          });
+          const actualList = Array.from(map.values());
+          if (actualList.length > 0) {
+            setSelectedStampWords(actualList);
+            try {
+              localStorage.setItem(`stamped_words_${userId}_${fullDateStr}`, JSON.stringify(actualList));
+              localStorage.setItem(`today_all_learned_${userId}_${fullDateStr}`, JSON.stringify(actualList));
+            } catch (e) {}
+            return;
           }
-        } catch (err) {}
-      };
-      loadDbDateWords();
-    }
+        }
+      } catch (err) {}
+    };
+    loadDbDateWords();
 
     setSelectedDateStr(fullDateStr);
     setSelectedStampWords(savedWords && savedWords.length > 0 ? savedWords : []);
@@ -166,13 +202,7 @@ export default function CalendarSection({ currentUser, onSelectDateToStudy, curr
 
   // TTS 발음 듣기
   const playAudio = (text) => {
-    if ('speechSynthesis' in window) {
-      window.speechSynthesis.cancel();
-      const utterance = new SpeechSynthesisUtterance(text);
-      utterance.lang = 'en-US';
-      utterance.rate = 0.85;
-      window.speechSynthesis.speak(utterance);
-    }
+    playUniversalAudio(text, { rate: 0.85, lang: 'en' });
   };
 
   const weekdays = currentLang === 'zh'
@@ -200,9 +230,43 @@ export default function CalendarSection({ currentUser, onSelectDateToStudy, curr
   return (
     <div style={{ background: '#FFFFFF', borderRadius: '24px', padding: '24px', border: '1px solid #E9ECEF', boxShadow: '0 8px 20px rgba(0,0,0,0.04)', width: '100%', textAlign: 'center' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', flexWrap: 'wrap', gap: '8px' }}>
-        <h2 style={{ margin: 0, color: '#2C3E50', fontSize: '20px', fontWeight: '900' }}>
-          {calendarTitle}
-        </h2>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+          <h2 style={{ margin: 0, color: '#2C3E50', fontSize: '20px', fontWeight: '900' }}>
+            {calendarTitle}
+          </h2>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+            <button
+              type="button"
+              onClick={() => {
+                if (currentMonth === 0) {
+                  setCurrentYear(prev => prev - 1);
+                  setCurrentMonth(11);
+                } else {
+                  setCurrentMonth(prev => prev - 1);
+                }
+              }}
+              style={{ background: '#F1F5F9', border: '1px solid #CBD5E1', padding: '4px 8px', borderRadius: '8px', cursor: 'pointer', fontWeight: 'bold', fontSize: '12px' }}
+              title="이전 달"
+            >
+              ◀
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                if (currentMonth === 11) {
+                  setCurrentYear(prev => prev + 1);
+                  setCurrentMonth(0);
+                } else {
+                  setCurrentMonth(prev => prev + 1);
+                }
+              }}
+              style={{ background: '#F1F5F9', border: '1px solid #CBD5E1', padding: '4px 8px', borderRadius: '8px', cursor: 'pointer', fontWeight: 'bold', fontSize: '12px' }}
+              title="다음 달"
+            >
+              ▶
+            </button>
+          </div>
+        </div>
         <span style={{ fontSize: '13px', background: '#E8F8F5', color: '#16A085', padding: '6px 12px', borderRadius: '12px', fontWeight: 'bold' }}>
           {attendanceBadgeText}
         </span>
@@ -234,6 +298,7 @@ export default function CalendarSection({ currentUser, onSelectDateToStudy, curr
           const dayStr = String(day).padStart(2, '0');
           const dateKey = `${currentYear}-${monthStr}-${dayStr}`;
           const isStamped = stamps.includes(dateKey);
+          const isToday = dateKey === todayDateStr;
 
           return (
             <div
@@ -243,8 +308,10 @@ export default function CalendarSection({ currentUser, onSelectDateToStudy, curr
                 minHeight: '68px',
                 padding: '6px',
                 borderRadius: '14px',
-                border: isStamped ? '2px solid #2ECC71' : '1px dashed #BDC3C7',
-                background: isStamped ? '#E8F8F5' : '#FFFFFF',
+                border: isToday
+                  ? '2.5px solid #3498DB'
+                  : (isStamped ? '2px solid #2ECC71' : '1px dashed #BDC3C7'),
+                background: isStamped ? '#E8F8F5' : (isToday ? '#F0F8FF' : '#FFFFFF'),
                 cursor: 'pointer',
                 display: 'flex',
                 flexDirection: 'column',
@@ -255,9 +322,16 @@ export default function CalendarSection({ currentUser, onSelectDateToStudy, curr
               }}
               className="hover-card"
             >
-              <span style={{ fontSize: '14px', fontWeight: 'bold', color: (idx % 7 === 0) ? '#E74C3C' : (idx % 7 === 6) ? '#3498DB' : '#2C3E50', alignSelf: 'flex-start' }}>
-                {day}
-              </span>
+              <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%', alignItems: 'center' }}>
+                <span style={{ fontSize: '14px', fontWeight: 'bold', color: (idx % 7 === 0) ? '#E74C3C' : (idx % 7 === 6) ? '#3498DB' : '#2C3E50' }}>
+                  {day}
+                </span>
+                {isToday && (
+                  <span style={{ fontSize: '9px', background: '#3498DB', color: 'white', padding: '1px 4px', borderRadius: '4px', fontWeight: '900' }}>
+                    TODAY
+                  </span>
+                )}
+              </div>
 
               {isStamped ? (
                 <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
@@ -268,7 +342,7 @@ export default function CalendarSection({ currentUser, onSelectDateToStudy, curr
                 </div>
               ) : (
                 <span style={{ fontSize: '11px', color: '#3498DB', fontWeight: 'bold', background: '#EBF5FB', padding: '2px 6px', borderRadius: '6px' }}>
-                  ✏️ {currentLang === 'zh' ? '去学习' : (currentLang === 'fr' ? 'Étudier' : '학습하기')}
+                  ✏️ {isToday ? (currentLang === 'zh' ? '今日学习' : (currentLang === 'fr' ? "Aujourd'hui" : '오늘학습')) : (currentLang === 'zh' ? '去学习' : (currentLang === 'fr' ? 'Étudier' : '학습하기'))}
                 </span>
               )}
             </div>

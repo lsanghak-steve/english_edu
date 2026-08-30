@@ -285,6 +285,36 @@ async function syncAllToNotion() {
           object: 'block',
           type: 'bulleted_list_item',
           bulleted_list_item: { rich_text: [{ type: 'text', text: { content: '조치: 안전한 이벤트 콜백 교체 및 Day 6 쿼리 안전성 강화' } }] }
+        },
+        {
+          object: 'block',
+          type: 'heading_3',
+          heading_3: { rich_text: [{ type: 'text', text: { content: '9. 학생 로그인 다음 학습 화면 미전환 이슈 (✅ 해결 완료)' } }] }
+        },
+        {
+          object: 'block',
+          type: 'bulleted_list_item',
+          bulleted_list_item: { rich_text: [{ type: 'text', text: { content: '원인: 학생별 설정 PIN 불일치 및 입력 유효성 엄격성으로 인해 로그인 화면 고정' } }] }
+        },
+        {
+          object: 'block',
+          type: 'bulleted_list_item',
+          bulleted_list_item: { rich_text: [{ type: 'text', text: { content: '조치: ⚡ 원클릭 학생 선택 칩 도입, 공통 기본 PIN(1234/0000) 유연화 및 클릭 즉시 학습 페이지 무조건 진입 보장' } }] }
+        },
+        {
+          object: 'block',
+          type: 'heading_3',
+          heading_3: { rich_text: [{ type: 'text', text: { content: '10. 오답 학습 완료 후 오늘 학습 단어 유실/덮어쓰기 이슈 (✅ 해결 완료)' } }] }
+        },
+        {
+          object: 'block',
+          type: 'bulleted_list_item',
+          bulleted_list_item: { rich_text: [{ type: 'text', text: { content: '원인: 오답 단어 복습 모드 진입 시 words 상태가 오답 목록(3개)으로 교체되어 출석 저장 시 기존 20개 단어를 덮어씀' } }] }
+        },
+        {
+          object: 'block',
+          type: 'bulleted_list_item',
+          bulleted_list_item: { rich_text: [{ type: 'text', text: { content: '조치: 오늘 학습한 모든 정규 단어 + 오답 복습 단어 다중 누적 병합(Merge) 보존 및 원본 단어 자동 복귀 핸들러 구축' } }] }
         }
       ]
     },

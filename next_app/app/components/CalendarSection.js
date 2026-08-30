@@ -125,43 +125,76 @@ export default function CalendarSection({ currentUser, onSelectDateToStudy, curr
     // 🎯 이미 도장이 찍힌 날짜에 실제 공부한 단어 데이터 정밀 로드
     let savedWords = [];
     try {
-      savedWords = JSON.parse(localStorage.getItem(`stamped_words_${userId}_${fullDateStr}`) || localStorage.getItem(`stamped_words_${studentCode}_${fullDateStr}`) || localStorage.getItem(`daily_random_words_${userId}_${fullDateStr}`) || localStorage.getItem(`daily_random_words_${studentCode}_${fullDateStr}`) || '[]');
+      const keys = [
+        `today_all_learned_${userId}_${fullDateStr}`,
+        `today_all_learned_${studentCode}_${fullDateStr}`,
+        `stamped_words_${userId}_${fullDateStr}`,
+        `stamped_words_${studentCode}_${fullDateStr}`,
+        `daily_random_set_${userId}_${fullDateStr}`,
+        `daily_random_set_${studentCode}_${fullDateStr}`,
+        `daily_random_words_${userId}_${fullDateStr}`,
+        `daily_random_words_${studentCode}_${fullDateStr}`
+      ];
+      const wordMap = new Map();
+      keys.forEach(k => {
+        const str = localStorage.getItem(k);
+        if (str) {
+          try {
+            const arr = JSON.parse(str);
+            if (Array.isArray(arr)) {
+              arr.forEach(w => {
+                const clean = (w.word || '').replace(/\.png/gi, '').trim().toLowerCase();
+                if (clean && !wordMap.has(clean)) {
+                  wordMap.set(clean, w);
+                }
+              });
+            }
+          } catch(e) {}
+        }
+      });
+      if (wordMap.size > 0) {
+        savedWords = Array.from(wordMap.values());
+      }
     } catch (e) {
       savedWords = [];
     }
 
     // Supabase DB에서 해당 날짜에 저장된 학습 단어 비동기 보정 로드
-    if (!savedWords || savedWords.length === 0) {
-      const loadDbDateWords = async () => {
-        try {
-          const queryIds = [userId, studentCode, studentName].filter(Boolean);
-          const { data: dbLearned } = await supabase
-            .from('student_learned_words')
-            .select('word, meaning, learned_at')
-            .or(queryIds.map(id => `student_id.eq.${id}`).join(','))
-            .gte('learned_at', `${fullDateStr}T00:00:00`)
-            .lte('learned_at', `${fullDateStr}T23:59:59`);
+    const loadDbDateWords = async () => {
+      try {
+        const queryIds = [userId, studentCode, studentName].filter(Boolean);
+        const { data: dbLearned } = await supabase
+          .from('student_learned_words')
+          .select('word, meaning, learned_at')
+          .or(queryIds.map(id => `student_id.eq.${id}`).join(','))
+          .gte('learned_at', `${fullDateStr}T00:00:00`)
+          .lte('learned_at', `${fullDateStr}T23:59:59`);
 
-          if (dbLearned && dbLearned.length > 0) {
-            const map = new Map();
-            dbLearned.forEach(item => {
-              if (item.word && !map.has(item.word.toLowerCase())) {
-                map.set(item.word.toLowerCase(), { word: item.word, meaning: item.meaning || '' });
-              }
-            });
-            const actualList = Array.from(map.values());
-            if (actualList.length > 0) {
-              setSelectedStampWords(actualList);
-              try {
-                localStorage.setItem(`stamped_words_${userId}_${fullDateStr}`, JSON.stringify(actualList));
-              } catch (e) {}
-              return;
+        if (dbLearned && dbLearned.length > 0) {
+          const map = new Map();
+          (savedWords || []).forEach(w => {
+            const clean = (w.word || '').replace(/\.png/gi, '').trim().toLowerCase();
+            if (clean) map.set(clean, w);
+          });
+          dbLearned.forEach(item => {
+            const clean = (item.word || '').replace(/\.png/gi, '').trim().toLowerCase();
+            if (clean && !map.has(clean)) {
+              map.set(clean, { word: item.word, meaning: item.meaning || '' });
             }
+          });
+          const actualList = Array.from(map.values());
+          if (actualList.length > 0) {
+            setSelectedStampWords(actualList);
+            try {
+              localStorage.setItem(`stamped_words_${userId}_${fullDateStr}`, JSON.stringify(actualList));
+              localStorage.setItem(`today_all_learned_${userId}_${fullDateStr}`, JSON.stringify(actualList));
+            } catch (e) {}
+            return;
           }
-        } catch (err) {}
-      };
-      loadDbDateWords();
-    }
+        }
+      } catch (err) {}
+    };
+    loadDbDateWords();
 
     setSelectedDateStr(fullDateStr);
     setSelectedStampWords(savedWords && savedWords.length > 0 ? savedWords : []);

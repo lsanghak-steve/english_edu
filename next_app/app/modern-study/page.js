@@ -269,6 +269,7 @@ export default function ModernStudyPage() {
   const [wrongWords, setWrongWords] = useState([]);
   const [quizWrongWords, setQuizWrongWords] = useState([]);
   const [isWrongReviewMode, setIsWrongReviewMode] = useState(false);
+  const [originalDailyWords, setOriginalDailyWords] = useState([]);
 
   // ✍️ 퀴즈 상태 (1단계 소리 -> 2단계 스펠 -> 3단계 발음 -> 4단계 쓰기)
   const [quizLevel, setQuizLevel] = useState(1);
@@ -532,28 +533,29 @@ export default function ModernStudyPage() {
         if (!canvasRef.current) return;
         const time = timestamp || (typeof performance !== 'undefined' ? performance.now() : Date.now());
 
-        let hasRealAudio = false;
+        let sum = 0;
         if (analyserRef.current) {
           try {
             analyserRef.current.getByteFrequencyData(dataArray);
             for (let k = 0; k < dataArray.length; k++) {
-              if (dataArray[k] > 6) {
-                hasRealAudio = true;
-                break;
-              }
+              sum += dataArray[k];
             }
           } catch(e) {}
         }
+
+        const avgVal = sum / Math.max(1, dataArray.length);
+        const isSpeaking = avgVal > 3.5; // 마이크 실제 소리/목소리 감지 임계치
 
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
         const barCount = 28;
         const barWidth = canvas.width / barCount;
-        const now = time * 0.005;
+        const now = time * 0.004;
 
         for (let i = 0; i < barCount; i++) {
           const dataIndex = Math.floor((i / barCount) * bufferLength);
           const rawVal = dataArray[dataIndex] || 0; // 마이크 실시간 음성 주파수 값 (0~255)
+
           if (rawVal > maxVolumeRef.current) {
             maxVolumeRef.current = rawVal;
           }
@@ -561,23 +563,21 @@ export default function ModernStudyPage() {
           let barHeight;
           let voiceIntensity;
 
-          if (hasRealAudio && rawVal > 6) {
-            // 🎙️ 실제 마이크 음성 감지 시 주파수 강도에 반응
-            voiceIntensity = Math.min(1, (rawVal / 160) * 1.5);
+          if (isSpeaking && rawVal > 3) {
+            // 🎙️ 목소리/소리가 들릴 때: 실시간 주파수와 음량에 따라 역동적으로 파형이 춤춤!
+            voiceIntensity = Math.min(1, Math.max(0.12, (rawVal / 130) * 1.7));
             barHeight = Math.max(5, voiceIntensity * canvas.height * 0.94);
+            
+            // 소리 크기에 따라 화려한 네온 시안(#00F5D4) ~ 에메랄드 틸(#00A8BF) 색상 발광
+            const hue = 170 + (i * 2.5) + (voiceIntensity * 30);
+            const lightness = 45 + (voiceIntensity * 15);
+            ctx.fillStyle = `hsl(${hue}, 95%, ${lightness}%)`;
           } else {
-            // 🌊 활기찬 다이내믹 사인파 파동 애니메이션 (언제나 생동감 있게 춤추는 파형!)
-            const wave1 = Math.sin(now * 3.2 + i * 0.45);
-            const wave2 = Math.cos(now * 2.1 - i * 0.35);
-            const combined = Math.abs(wave1 * 0.6 + wave2 * 0.4);
-            voiceIntensity = combined * 0.85;
-            barHeight = Math.max(6, combined * (canvas.height * 0.8));
+            // 🤫 소리가 없을 때(무음/대기): 조용하게 대기하는 3px 베이스라인 점선
+            const gentlePulse = Math.sin(now * 2.0 + i * 0.2) * 0.5 + 0.5;
+            barHeight = 3.5 + gentlePulse * 1.5;
+            ctx.fillStyle = 'rgba(0, 168, 191, 0.35)';
           }
-
-          // 청량한 에메랄드 민트(#00E5FF)에서 선명한 틸(#00A8BF)로 반응
-          const hue = 165 + (i * 3) + (voiceIntensity * 25);
-          const lightness = 42 + (voiceIntensity * 14);
-          ctx.fillStyle = `hsl(${hue}, 95%, ${lightness}%)`;
 
           const x = i * barWidth;
           const y = (canvas.height - barHeight) / 2;
@@ -585,7 +585,7 @@ export default function ModernStudyPage() {
 
           ctx.beginPath();
           if (ctx.roundRect) {
-            ctx.roundRect(x, y, w, barHeight, 4);
+            ctx.roundRect(x, y, w, barHeight, 3);
             ctx.fill();
           } else {
             ctx.fillRect(x, y, w, barHeight);
@@ -744,15 +744,59 @@ export default function ModernStudyPage() {
         const shuffled = shuffleArray(unlearnedWords);
         const finalWords = shuffled.slice(0, dailyCount);
 
-        setWords(finalWords);
+        const studentCode = currentUser?.student_id || currentUser?.id || 'lsh_20260807_000001';
+        const dailySetKey = `daily_random_set_${studentCode}_${todayStr}`;
+        const stampedWordsKey = `stamped_words_${studentCode}_${todayStr}`;
+        const todayAllKey = `today_all_learned_${studentCode}_${todayStr}`;
+
+        // 오늘 이미 로드된 세트가 있다면 유지
+        let effectiveWords = finalWords;
+        try {
+          const cachedDaily = localStorage.getItem(dailySetKey);
+          if (cachedDaily) {
+            const parsed = JSON.parse(cachedDaily);
+            if (Array.isArray(parsed) && parsed.length >= dailyCount) {
+              effectiveWords = parsed;
+            }
+          }
+        } catch(e) {}
+
+        setWords(effectiveWords);
+        setOriginalDailyWords(effectiveWords);
         setIsWordsLoading(false);
         setCurrentIndex(0);
         setIsFlipped(false);
 
+        // 데일리 세트 및 출석 단어장 누적 안전 저장
+        try {
+          localStorage.setItem(dailySetKey, JSON.stringify(effectiveWords));
+
+          let prevList = [];
+          try {
+            const p1 = localStorage.getItem(stampedWordsKey);
+            const p2 = localStorage.getItem(todayAllKey);
+            if (p1) prevList = prevList.concat(JSON.parse(p1));
+            if (p2) prevList = prevList.concat(JSON.parse(p2));
+          } catch(e) {}
+
+          const wMap = new Map();
+          prevList.forEach(w => {
+            const clean = (w.word || '').toLowerCase().trim();
+            if (clean) wMap.set(clean, w);
+          });
+          effectiveWords.forEach(w => {
+            const clean = (w.word || '').toLowerCase().trim();
+            if (clean && !wMap.has(clean)) wMap.set(clean, w);
+          });
+          const mergedList = Array.from(wMap.values());
+          localStorage.setItem(stampedWordsKey, JSON.stringify(mergedList));
+          localStorage.setItem(todayAllKey, JSON.stringify(mergedList));
+        } catch(e) {}
+
         // 첫 번째 맞춤 단어 음성 즉시 자동 재생
-        if (finalWords.length > 0 && finalWords[0]?.word) {
+        if (effectiveWords.length > 0 && effectiveWords[0]?.word) {
           setTimeout(() => {
-            playUniversalAudio(finalWords[0].word, { rate: ttsSpeed });
+            playUniversalAudio(effectiveWords[0].word, { rate: ttsSpeed });
           }, 300);
         }
       } catch (err) {
@@ -761,6 +805,7 @@ export default function ModernStudyPage() {
         const shuffledFallback = shuffleArray(wordList500Fallback);
         const finalFallback = shuffledFallback.slice(0, dailyCount);
         setWords(finalFallback);
+        setOriginalDailyWords(finalFallback);
         setIsWordsLoading(false);
 
         if (finalFallback.length > 0 && finalFallback[0]?.word) {
@@ -775,6 +820,20 @@ export default function ModernStudyPage() {
       loadWords();
     }
   }, [currentUser?.studyGradeLevel, currentUser?.dailyWordCount, currentUser?.id]);
+
+  // 🔊 🎴 플래시카드 단어 자동 발음 재생 엔진 (단어 전환, 덱 진입, 셔플, 오답 모드 등 100% 자동 재생)
+  useEffect(() => {
+    if (currentTab === 'deck' && words && words.length > 0 && !isWordsLoading && !isFlipped) {
+      const curWordObj = words[currentIndex] || wordList500Fallback[currentIndex];
+      const wordStr = curWordObj ? (typeof curWordObj === 'string' ? curWordObj : curWordObj.word) : '';
+      if (wordStr) {
+        const timer = setTimeout(() => {
+          playUniversalAudio(wordStr, { rate: ttsSpeed });
+        }, 120);
+        return () => clearTimeout(timer);
+      }
+    }
+  }, [currentIndex, currentTab, isWordsLoading, isWrongReviewMode, words.length, isFlipped]);
 
   // 🔀 단어 실시간 수동 셔플 함수
   const handleShuffleWords = () => {
@@ -1206,12 +1265,6 @@ export default function ModernStudyPage() {
     setRecordingStatusText('');
     const newIdx = currentIndex > 0 ? currentIndex - 1 : (words.length > 0 ? words.length - 1 : 0);
     setCurrentIndex(newIdx);
-    const targetWord = words[newIdx] || wordList500Fallback[newIdx];
-    if (targetWord && targetWord.word) {
-      setTimeout(() => {
-        handlePlaySound(targetWord.word);
-      }, 80);
-    }
   };
 
   const handleNext = async () => {
@@ -1225,12 +1278,6 @@ export default function ModernStudyPage() {
     if (currentIndex + 1 < totalCount) {
       const newIdx = currentIndex + 1;
       setCurrentIndex(newIdx);
-      const targetWord = words[newIdx] || wordList500Fallback[newIdx];
-      if (targetWord && targetWord.word) {
-        setTimeout(() => {
-          handlePlaySound(targetWord.word);
-        }, 80);
-      }
     } else {
       // 🎉 마지막 단어 학습 완료 ➔ 퀴즈로 바로 전환!
       try {
@@ -1386,10 +1433,39 @@ export default function ModernStudyPage() {
     const stampDateKey = todayStr;
     const stampKey = `english_stamps_${studentIdToUse}`;
     const stampedWordsKey = `stamped_words_${studentIdToUse}_${stampDateKey}`;
+    const todayAllKey = `today_all_learned_${studentIdToUse}_${stampDateKey}`;
+    const dailySetKey = `daily_random_set_${studentIdToUse}_${stampDateKey}`;
 
     // 1. 로컬 상태 즉시 출석 완료 반영
     setStampedDates(prev => prev.includes(stampDateKey) ? prev : [...prev, stampDateKey]);
     setIsTodayStamped(true);
+
+    // 2. 단어 목록 누적 보존 (오답 복습 등으로 덮어쓰여지는 현상 완벽 방지)
+    let allAccumulated = [];
+    try {
+      const c1 = localStorage.getItem(stampedWordsKey);
+      const c2 = localStorage.getItem(todayAllKey);
+      const c3 = localStorage.getItem(dailySetKey);
+      if (c1) allAccumulated = allAccumulated.concat(JSON.parse(c1));
+      if (c2) allAccumulated = allAccumulated.concat(JSON.parse(c2));
+      if (c3) allAccumulated = allAccumulated.concat(JSON.parse(c3));
+    } catch(e) {}
+
+    const wordMap = new Map();
+    allAccumulated.forEach(w => {
+      const clean = (w.word || '').replace(/\.png/gi, '').trim().toLowerCase();
+      if (clean) wordMap.set(clean, w);
+    });
+    (originalDailyWords || []).forEach(w => {
+      const clean = (w.word || '').replace(/\.png/gi, '').trim().toLowerCase();
+      if (clean && !wordMap.has(clean)) wordMap.set(clean, w);
+    });
+    (words || []).forEach(w => {
+      const clean = (w.word || '').replace(/\.png/gi, '').trim().toLowerCase();
+      if (clean && !wordMap.has(clean)) wordMap.set(clean, w);
+    });
+
+    const finalAccumulatedWords = Array.from(wordMap.values());
 
     try {
       let stamps = [];
@@ -1398,14 +1474,14 @@ export default function ModernStudyPage() {
         stamps.push(stampDateKey);
         localStorage.setItem(stampKey, JSON.stringify(stamps));
       }
-      localStorage.setItem(stampedWordsKey, JSON.stringify(words));
-      localStorage.setItem(`today_all_learned_${studentIdToUse}_${stampDateKey}`, JSON.stringify(words));
+      localStorage.setItem(stampedWordsKey, JSON.stringify(finalAccumulatedWords));
+      localStorage.setItem(todayAllKey, JSON.stringify(finalAccumulatedWords));
     } catch (e) {}
 
-    // 2. Supabase Cloud DB에 외운 단어 및 출석 도장 안전 기록
+    // 3. Supabase Cloud DB에 외운 단어 및 출석 도장 안전 기록
     try {
-      if (words && words.length > 0) {
-        const payload = words.map(w => ({
+      if (finalAccumulatedWords && finalAccumulatedWords.length > 0) {
+        const payload = finalAccumulatedWords.map(w => ({
           student_id: studentIdToUse,
           word: (w.word || '').replace(/\.png/gi, '').trim(),
           meaning: w.meaning || '',
@@ -1502,6 +1578,7 @@ export default function ModernStudyPage() {
   };
 
   // 📅 출석 달력 날짜 클릭 핸들러 (해당 날짜에 외운 단어 목록 조회)
+  // 📅 출석 달력 날짜 클릭 핸들러 (해당 날짜에 외운 단어 목록 조회)
   const handleSelectCalendarDate = async (dateStr, isStamped, isToday) => {
     setSelectedCalendarDate(dateStr);
     setIsLoadingDateWords(true);
@@ -1509,45 +1586,93 @@ export default function ModernStudyPage() {
     const studentIdToUse = currentUser?.student_id || currentUser?.id || 'lsh_20260807_000001';
     let loadedWords = [];
 
-    // 1. localStorage 캐시 확인
+    // 1. localStorage 캐시 확인 (오늘 전체 학습 단어 + 출석 단어 + 데일리 세트 통합 병합)
     try {
-      const cached = localStorage.getItem(`stamped_words_${studentIdToUse}_${dateStr}`) || localStorage.getItem(`today_all_learned_${studentIdToUse}_${dateStr}`);
-      if (cached) {
-        loadedWords = JSON.parse(cached);
+      const keys = [
+        `today_all_learned_${studentIdToUse}_${dateStr}`,
+        `stamped_words_${studentIdToUse}_${dateStr}`,
+        `daily_random_set_${studentIdToUse}_${dateStr}`
+      ];
+      const wordMap = new Map();
+      keys.forEach(k => {
+        const str = localStorage.getItem(k);
+        if (str) {
+          try {
+            const arr = JSON.parse(str);
+            if (Array.isArray(arr)) {
+              arr.forEach(w => {
+                const clean = (w.word || '').replace(/\.png/gi, '').trim().toLowerCase();
+                if (clean && !wordMap.has(clean)) {
+                  wordMap.set(clean, w);
+                }
+              });
+            }
+          } catch(e) {}
+        }
+      });
+      if (wordMap.size > 0) {
+        loadedWords = Array.from(wordMap.values());
       }
     } catch (e) {}
 
-    // 2. 오늘 날짜이고 현재 단어가 있을 경우
-    if ((!loadedWords || loadedWords.length === 0) && dateStr === todayStr && words && words.length > 0) {
-      loadedWords = words;
+    // 2. 오늘 날짜이고 현재 단어 또는 정규 단어가 있을 경우 병합 보완
+    if (dateStr === todayStr) {
+      const wordMap = new Map();
+      loadedWords.forEach(w => {
+        const clean = (w.word || '').replace(/\.png/gi, '').trim().toLowerCase();
+        if (clean) wordMap.set(clean, w);
+      });
+      (originalDailyWords || []).forEach(w => {
+        const clean = (w.word || '').replace(/\.png/gi, '').trim().toLowerCase();
+        if (clean && !wordMap.has(clean)) {
+          wordMap.set(clean, w);
+        }
+      });
+      (words || []).forEach(w => {
+        const clean = (w.word || '').replace(/\.png/gi, '').trim().toLowerCase();
+        if (clean && !wordMap.has(clean)) {
+          wordMap.set(clean, w);
+        }
+      });
+      loadedWords = Array.from(wordMap.values());
     }
 
-    // 3. Supabase Cloud DB에서 해당 날짜에 외운 단어 조회
-    if (!loadedWords || loadedWords.length === 0) {
-      try {
-        const { data, error } = await supabase
-          .from('student_learned_words')
-          .select('word, meaning, learned_at')
-          .eq('student_id', studentIdToUse)
-          .gte('learned_at', `${dateStr}T00:00:00`)
-          .lte('learned_at', `${dateStr}T23:59:59`);
+    // 3. Supabase Cloud DB에서 해당 날짜에 외운 단어 조회 및 병합
+    try {
+      const { data, error } = await supabase
+        .from('student_learned_words')
+        .select('word, meaning, learned_at')
+        .eq('student_id', studentIdToUse)
+        .gte('learned_at', `${dateStr}T00:00:00`)
+        .lte('learned_at', `${dateStr}T23:59:59`);
 
-        if (!error && data && data.length > 0) {
-          loadedWords = data.map(item => ({
-            word: item.word,
-            meaning: item.meaning,
-            phonetic: `[${item.word}]`
-          }));
-        }
-      } catch (err) {
-        console.log('Learned words DB fetch notice:', err);
+      if (!error && data && data.length > 0) {
+        const wordMap = new Map();
+        loadedWords.forEach(w => {
+          const clean = (w.word || '').replace(/\.png/gi, '').trim().toLowerCase();
+          if (clean) wordMap.set(clean, w);
+        });
+
+        data.forEach(item => {
+          const clean = (item.word || '').replace(/\.png/gi, '').trim().toLowerCase();
+          if (clean && !wordMap.has(clean)) {
+            wordMap.set(clean, {
+              word: item.word,
+              meaning: item.meaning || '',
+              phonetic: `[${item.word}]`
+            });
+          }
+        });
+        loadedWords = Array.from(wordMap.values());
       }
+    } catch (err) {
+      console.log('Learned words DB fetch notice:', err);
     }
 
     // 4. 출석 도장이 찍힌 과거 날짜인데 단어 기록이 비어있을 경우 (폴백 보정)
     if ((!loadedWords || loadedWords.length === 0) && (isStamped || isToday)) {
       const seed = parseInt(dateStr.replace(/-/g, ''), 10) || 1;
-      const count = parseInt(currentUser?.dailyWordCount || 10, 10);
+      const count = parseInt(currentUser?.dailyWordCount || 20, 10);
       const startIdx = (seed * 7) % Math.max(1, wordList500Fallback.length - count);
       loadedWords = wordList500Fallback.slice(startIdx, startIdx + count);
     }
@@ -1615,6 +1740,9 @@ export default function ModernStudyPage() {
       alert('🎉 현재 틀린 단어가 없습니다! 완벽합니다!');
       return;
     }
+    if (!isWrongReviewMode && words.length > 0 && words.length !== wrongWords.length) {
+      setOriginalDailyWords(words);
+    }
     setWords(wrongWords);
     setCurrentIndex(0);
     setIsFlipped(false);
@@ -1628,6 +1756,9 @@ export default function ModernStudyPage() {
       alert('🎉 현재 틀린 단어가 없습니다! 완벽합니다!');
       return;
     }
+    if (!isWrongReviewMode && words.length > 0 && words.length !== wrongWords.length) {
+      setOriginalDailyWords(words);
+    }
     setWords(wrongWords);
     setQuizIndex(0);
     setQuizLevel(1);
@@ -1636,7 +1767,27 @@ export default function ModernStudyPage() {
     setIsAnswerChecked(false);
     setIsQuizCorrect(null);
     setTypingInput('');
+    setIsWrongReviewMode(true);
     setCurrentTab('quiz');
+  };
+
+  // 🔄 오답 복습 모드 종료 및 오늘의 정규 학습 단어로 복귀
+  const handleExitWrongReview = () => {
+    setIsWrongReviewMode(false);
+    const studentIdToUse = currentUser?.student_id || currentUser?.id || 'lsh_20260807_000001';
+    let restored = originalDailyWords;
+    if (!restored || restored.length === 0) {
+      try {
+        const cached = localStorage.getItem(`daily_random_set_${studentIdToUse}_${todayStr}`) || localStorage.getItem(`stamped_words_${studentIdToUse}_${todayStr}`);
+        if (cached) restored = JSON.parse(cached);
+      } catch(e) {}
+    }
+    if (restored && restored.length > 0) {
+      setWords(restored);
+    }
+    setCurrentIndex(0);
+    setIsFlipped(false);
+    setCurrentTab('deck');
   };
 
   // 👤 내 정보 & 학부모 정보 수정 모달/폼 열기
@@ -2147,10 +2298,7 @@ export default function ModernStudyPage() {
                   </div>
                   <button
                     type="button"
-                    onClick={() => {
-                      setIsWrongReviewMode(false);
-                      window.location.reload();
-                    }}
+                    onClick={handleExitWrongReview}
                     style={{
                       background: '#FFFFFF',
                       border: '1px solid #FECACA',
@@ -2425,8 +2573,7 @@ export default function ModernStudyPage() {
                         handleRemoveWrongWord(currentWord);
                         if (words.length <= 1) {
                           alert('🎉 축하합니다! 모든 오답 단어를 완벽히 정복하셨습니다!');
-                          setIsWrongReviewMode(false);
-                          window.location.reload();
+                          handleExitWrongReview();
                         } else {
                           const remaining = words.filter(w => (w.word || '').toLowerCase() !== (currentWord.word || '').toLowerCase());
                           setWords(remaining);
