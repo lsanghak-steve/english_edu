@@ -13,7 +13,8 @@ import ParentDashboard from './components/ParentDashboard.js';
 import StatsSection from './components/StatsSection.js';
 import Day6ReviewSection from './components/Day6ReviewSection.js';
 import LeaderboardSection from './components/LeaderboardSection.js';
-import { t, translateGradeLevel } from '../lib/i18n.js';
+import { t, translateGradeLevel, getLocalDateString } from '../lib/i18n.js';
+import { playUniversalAudio, initAudioUnlock } from '../lib/audioPlayer.js';
 
 export default function Home() {
   const [currentUser, setCurrentUser] = useState(null);
@@ -24,6 +25,7 @@ export default function Home() {
   const [currentLang, setCurrentLang] = useState('ko');
 
   useEffect(() => {
+    initAudioUnlock();
     try {
       const savedLang = localStorage.getItem('steve_voca_learning_lang');
       if (savedLang) setCurrentLang(savedLang);
@@ -34,8 +36,8 @@ export default function Home() {
     document.title = `${t('app_title', currentLang)} - ${t('app_subtitle', currentLang)}`;
   }, [currentLang]);
 
-  // 달력에서 선택한 학습 날짜 (기본: 오늘 날짜 YYYY-MM-DD)
-  const todayStr = new Date().toISOString().split('T')[0];
+  // 📅 달력에서 선택한 학습 날짜 (기본: 로컬 사용자 기준 오늘 날짜 YYYY-MM-DD)
+  const todayStr = getLocalDateString();
   const [targetStudyDate, setTargetStudyDate] = useState(todayStr);
 
   // 단어 목록 데이터는 항상 Supabase 클라우드 DB에서 실시간으로 로드
@@ -81,14 +83,8 @@ export default function Home() {
     try {
       localStorage.setItem('steve_voca_tts_speed', String(newSpeed));
     } catch (e) {}
-    if ('speechSynthesis' in window) {
-      window.speechSynthesis.cancel();
-      const testMsg = newSpeed === 0.7 ? "Slow mode" : newSpeed === 1.4 ? "Fast mode" : newSpeed === 2.0 ? "Super fast mode" : "Normal mode";
-      const utterance = new SpeechSynthesisUtterance(testMsg);
-      utterance.lang = 'en-US';
-      utterance.rate = newSpeed;
-      window.speechSynthesis.speak(utterance);
-    }
+    const testMsg = newSpeed === 0.7 ? "Slow mode" : newSpeed === 1.4 ? "Fast mode" : newSpeed === 2.0 ? "Super fast mode" : "Normal mode";
+    playUniversalAudio(testMsg, { rate: newSpeed });
   };
   const [pronunciationScore, setPronunciationScore] = useState(null);
   const [userAudioRecordings, setUserAudioRecordings] = useState({});
@@ -557,15 +553,18 @@ export default function Home() {
         }
 
         if (dbUser) {
-          const cloudGrade = dbUser.avatar || dbUser.grade || currentUser.grade || '초등 3학년';
+          const rawAvatar = String(dbUser.avatar || dbUser.grade || '').trim();
+          const cleanCloudGrade = rawAvatar.replace('[PENDING]', '').replace('[APPROVED]', '').replace('[REJECTED]', '').trim();
+          const cloudGrade = cleanCloudGrade || currentUser.grade || currentUser.avatar || '초등 5학년';
           const cloudLevel = dbUser.study_grade_level || '초등단어';
           const cloudCount = String(dbUser.daily_word_count || '10');
 
-          const curGrade = currentUser.grade || currentUser.avatar || '초등 3학년';
+          const rawCurGrade = String(currentUser.grade || currentUser.avatar || '').trim();
+          const curGrade = rawCurGrade.replace('[PENDING]', '').replace('[APPROVED]', '').replace('[REJECTED]', '').trim() || '초등 5학년';
           const curLevel = currentUser.studyGradeLevel || currentUser.study_grade_level || '초등단어';
           const curCount = String(currentUser.dailyWordCount || currentUser.daily_word_count || '10');
 
-          if (cloudLevel !== curLevel || cloudCount !== curCount || (dbUser.avatar && dbUser.avatar !== curGrade)) {
+          if (cloudLevel !== curLevel || cloudCount !== curCount || (cleanCloudGrade && cleanCloudGrade !== curGrade)) {
             console.log(`🔄 [실시간 프로필 동기화] 레벨: ${curLevel} -> ${cloudLevel}, 목표: ${curCount} -> ${cloudCount}, 학년: ${curGrade} -> ${cloudGrade}`);
             const updatedUser = {
               ...currentUser,
@@ -800,6 +799,41 @@ export default function Home() {
     }
   }, [safeActiveWords.length, currentIndex]);
 
+  // ⚡ [초고속 이미지 프리로딩 엔진] 오늘 학습 세트(10~20단어)의 모든 고화질 단어 이미지를 백그라운드 브라우저 RAM 캐시에 사전 탑재
+  useEffect(() => {
+    if (!safeActiveWords || safeActiveWords.length === 0 || typeof window === 'undefined') return;
+
+    // 1. 현재 학습 단어 + 전후 단어 3개 최우선 즉시 프리로드 (High Priority)
+    [currentIndex, currentIndex + 1, currentIndex + 2, currentIndex - 1].forEach((idx) => {
+      if (idx >= 0 && idx < safeActiveWords.length) {
+        const wObj = safeActiveWords[idx];
+        const src = getWordImgSrc(wObj);
+        if (src) {
+          const preImg = new Image();
+          preImg.fetchPriority = 'high';
+          preImg.decoding = 'async';
+          preImg.src = src;
+        }
+      }
+    });
+
+    // 2. 나머지 모든 단어 이미지도 백그라운드에서 병렬 프리로드
+    const timer = setTimeout(() => {
+      safeActiveWords.forEach((wObj, i) => {
+        if (i !== currentIndex) {
+          const src = getWordImgSrc(wObj);
+          if (src) {
+            const preImg = new Image();
+            preImg.decoding = 'async';
+            preImg.src = src;
+          }
+        }
+      });
+    }, 50);
+
+    return () => clearTimeout(timer);
+  }, [safeActiveWords, currentIndex]);
+
   const currentWord = (safeActiveWords && safeActiveWords.length > 0)
     ? (safeActiveWords[currentIndex] || safeActiveWords[0])
     : null;
@@ -911,66 +945,16 @@ export default function Home() {
             : (isRealSentenceKo ? rawExampleKo : `나는 멋진 ${cleanMeaningStr}을(를) 본다.`)))));
 
 
-  const globalAudioRef = useRef(null);
-
   const playWordAudio = useCallback((wordText) => {
     const text = (wordText || cleanWordStr || '').replace(/\.png/gi, '').trim();
-    if (!text || typeof window === 'undefined') return;
-
-    // 1순위: 고음질 스튜디오 원어민 MP3 음원 즉시 재생
-    try {
-      if (globalAudioRef.current) {
-        globalAudioRef.current.pause();
-        globalAudioRef.current.currentTime = 0;
-      }
-      const audioUrl = `https://dict.youdao.com/dictvoice?audio=${encodeURIComponent(text)}&type=2`;
-      const audio = new Audio(audioUrl);
-      audio.playbackRate = ttsSpeed;
-      globalAudioRef.current = audio;
-
-      const playPromise = audio.play();
-      if (playPromise !== undefined) {
-        playPromise.catch(() => {
-          speakWebSpeech(text, ttsSpeed);
-        });
-      }
-    } catch (e) {
-      speakWebSpeech(text, ttsSpeed);
-    }
-
-    function speakWebSpeech(speechText, speechSpeed) {
-      if ('speechSynthesis' in window) {
-        try {
-          window.speechSynthesis.cancel();
-          window.speechSynthesis.resume();
-          const utterance = new SpeechSynthesisUtterance(speechText);
-          utterance.lang = 'en-US';
-          utterance.rate = speechSpeed;
-
-          const voices = window.speechSynthesis.getVoices();
-          if (voices && voices.length > 0) {
-            const enVoice = voices.find(v => v.lang.startsWith('en') && (v.name.includes('Google') || v.name.includes('Natural') || v.name.includes('Zira') || v.name.includes('Samantha') || v.name.includes('US'))) || voices.find(v => v.lang.startsWith('en'));
-            if (enVoice) utterance.voice = enVoice;
-          }
-
-          window.speechSynthesis.speak(utterance);
-        } catch (err) {}
-      }
-    }
+    if (!text) return;
+    playUniversalAudio(text, { rate: ttsSpeed, lang: 'en' });
   }, [cleanWordStr, ttsSpeed]);
 
   const playSentenceAudio = useCallback((sentenceText) => {
     const textToSpeak = sentenceText || displayExampleEn;
-    if (typeof window !== 'undefined' && 'speechSynthesis' in window && textToSpeak) {
-      try {
-        window.speechSynthesis.cancel();
-        window.speechSynthesis.resume();
-        const utterance = new SpeechSynthesisUtterance(textToSpeak);
-        utterance.lang = 'en-US';
-        utterance.rate = ttsSpeed;
-        window.speechSynthesis.speak(utterance);
-      } catch (err) {}
-    }
+    if (!textToSpeak) return;
+    playUniversalAudio(textToSpeak, { rate: ttsSpeed, lang: 'en' });
   }, [displayExampleEn, ttsSpeed]);
 
   useEffect(() => {
@@ -1061,19 +1045,47 @@ export default function Home() {
     const bufferLength = analyserRef.current.frequencyBinCount;
     const dataArray = new Uint8Array(bufferLength);
 
-    const draw = () => {
-      if (!analyserRef.current) return;
+    const draw = (timestamp) => {
+      if (!analyserRef.current || !canvasRef.current) return;
       analyserRef.current.getByteFrequencyData(dataArray);
 
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      const barWidth = (canvas.width / bufferLength) * 2.2;
-      let x = 0;
+      let sum = 0;
+      for (let k = 0; k < dataArray.length; k++) sum += dataArray[k];
+      const avg = sum / Math.max(1, dataArray.length);
+      const isSpeaking = avg > 3.5;
 
-      for (let i = 0; i < bufferLength; i++) {
-        const barHeight = (dataArray[i] / 255) * canvas.height;
-        ctx.fillStyle = `hsl(${i * 12 + 160}, 85%, 55%)`;
-        ctx.fillRect(x, canvas.height - barHeight, barWidth - 2, barHeight);
-        x += barWidth;
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      const barCount = 28;
+      const barWidth = canvas.width / barCount;
+      const now = (timestamp || Date.now()) * 0.004;
+
+      for (let i = 0; i < barCount; i++) {
+        const dataIndex = Math.floor((i / barCount) * bufferLength);
+        const rawVal = dataArray[dataIndex] || 0;
+
+        let barHeight;
+        if (isSpeaking && rawVal > 3) {
+          const voiceIntensity = Math.min(1, Math.max(0.12, (rawVal / 130) * 1.7));
+          barHeight = Math.max(5, voiceIntensity * canvas.height * 0.94);
+          const hue = 170 + (i * 2.5) + (voiceIntensity * 30);
+          ctx.fillStyle = `hsl(${hue}, 95%, ${45 + voiceIntensity * 15}%)`;
+        } else {
+          const gentlePulse = Math.sin(now * 2.0 + i * 0.2) * 0.5 + 0.5;
+          barHeight = 3.5 + gentlePulse * 1.5;
+          ctx.fillStyle = 'rgba(0, 168, 191, 0.35)';
+        }
+
+        const x = i * barWidth;
+        const y = (canvas.height - barHeight) / 2;
+        const w = Math.max(2.5, barWidth - 2.5);
+
+        ctx.beginPath();
+        if (ctx.roundRect) {
+          ctx.roundRect(x, y, w, barHeight, 3);
+          ctx.fill();
+        } else {
+          ctx.fillRect(x, y, w, barHeight);
+        }
       }
 
       animFrameRef.current = requestAnimationFrame(draw);
@@ -1615,39 +1627,46 @@ export default function Home() {
 
   return (
     <main className="app-container">
-      {mainTab !== 'parent' && (
-        <UserManager currentUser={currentUser} setCurrentUser={setCurrentUser} onLogout={handleLogout} currentLang={currentLang} />
-      )}
+      {/* 👤 현재 로그인된 학생 정보 및 계정 관리 헤더 바 */}
+      <UserManager
+        currentUser={currentUser}
+        setCurrentUser={setCurrentUser}
+        onLogout={handleLogout}
+        currentLang={currentLang}
+      />
 
       {mainTab !== 'parent' && (
-        <div style={{
-          width: '100%',
-          background: '#FFFFFF',
-          border: '2px solid #EBF5FB',
-          borderRadius: '16px',
-          padding: '10px 14px',
-          display: 'flex',
-          justify: 'space-around',
-          alignItems: 'center',
-          boxShadow: '0 4px 10px rgba(0,0,0,0.03)',
-          gap: '8px',
-          flexWrap: 'wrap'
-        }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-            <span style={{ fontSize: '12px', fontWeight: 'bold', color: '#E67E22', background: '#FEF5E7', padding: '4px 10px', borderRadius: '10px', border: '1px solid #FADBD8' }}>
-              📅 [{targetStudyDate}] {currentLang === 'zh' ? '学习进行中' : (currentLang === 'fr' ? 'Étude en cours' : (currentLang === 'ja' ? '学習進行中' : (currentLang === 'vi' ? 'Đang học' : (currentLang === 'hi' ? 'अध्ययन जारी' : '학습 진행 중'))))}
-            </span>
-
-            <button
-              onClick={() => setShowTodayAllModal(true)}
-              style={{ background: '#27AE60', color: 'white', border: 'none', padding: '4px 10px', borderRadius: '10px', fontWeight: 'bold', fontSize: '12px', cursor: 'pointer', boxShadow: '0 2px 4px rgba(39,174,96,0.2)' }}
-              title="오늘 1회차+2회차 등 지금까지 공부한 모든 단어 리스트 한눈에 보기"
-            >
-              📖 {t('today_all_learned_btn', currentLang)} ({todayAllLearnedWords.length || safeActiveWords.length}{t('words_count_unit', currentLang)})
-            </button>
+        <div className="action-buttons-toolbar">
+          {/* 1. 날짜 및 학습 진행 상태 배지 */}
+          <div
+            className="action-btn-item"
+            style={{
+              border: '1.5px solid #FADBD8',
+              background: '#FEF5E7',
+              color: '#D35400'
+            }}
+          >
+            📅 [{targetStudyDate}] {currentLang === 'zh' ? '学习中' : (currentLang === 'fr' ? 'En cours' : (currentLang === 'ja' ? '学習中' : (currentLang === 'vi' ? 'Đang học' : (currentLang === 'hi' ? 'अध्ययन' : '학습 진행'))))}
           </div>
 
+          {/* 2. 오늘 누적 학습 단어 모달 버튼 */}
           <button
+            className="action-btn-item"
+            onClick={() => setShowTodayAllModal(true)}
+            style={{
+              border: 'none',
+              background: '#27AE60',
+              color: 'white',
+              boxShadow: '0 2px 6px rgba(39,174,96,0.2)'
+            }}
+            title="오늘 1회차+2회차 등 지금까지 공부한 모든 단어 리스트 한눈에 보기"
+          >
+            📖 {t('today_all_learned_btn', currentLang)} ({todayAllLearnedWords.length || safeActiveWords.length}{t('words_count_unit', currentLang)})
+          </button>
+
+          {/* 3. 1차 녹음 미션 바로가기 버튼 */}
+          <button
+            className="action-btn-item"
             onClick={() => {
               setMainTab('flashcard');
               setTimeout(() => {
@@ -1656,76 +1675,49 @@ export default function Home() {
               }, 100);
             }}
             style={{
-              flex: 1,
-              minWidth: '120px',
-              padding: '8px 12px',
-              borderRadius: '12px',
-              border: hasRecorded ? '2px solid #2ECC71' : '1px solid #3498DB',
+              border: hasRecorded ? '2px solid #2ECC71' : '1.5px solid #3498DB',
               background: hasRecorded ? '#E8F8F5' : '#EBF5FB',
               color: hasRecorded ? '#27AE60' : '#2980B9',
-              fontWeight: 'bold',
-              fontSize: '13px',
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: '6px'
+              boxShadow: '0 2px 6px rgba(52,152,219,0.15)'
             }}
           >
             {hasRecorded
-              ? (currentLang === 'zh' ? '✅ 录音任务完成 🎙️' : (currentLang === 'fr' ? '✅ Enregistrement fait 🎙️' : (currentLang === 'ja' ? '✅ 録音完了 🎙️' : (currentLang === 'vi' ? '✅ Đã ghi âm 🎙️' : (currentLang === 'hi' ? '✅ रिकॉर्डिंग पूर्ण 🎙️' : '✅ 1차 녹음 완료 🎙️')))))
-              : (currentLang === 'zh' ? '🎙️ 发音录音任务 ➔' : (currentLang === 'fr' ? '🎙️ Mission Enreg. ➔' : (currentLang === 'ja' ? '🎙️ 発音録音ミッション ➔' : (currentLang === 'vi' ? '🎙️ Ghi âm phát âm ➔' : (currentLang === 'hi' ? '🎙️ उच्चारण रिकॉर्डिंग ➔' : '🎙️ 1차 녹음 미션 ➔')))))}
+              ? (currentLang === 'zh' ? '✅ 录音完成 🎙️' : (currentLang === 'fr' ? '✅ Enreg. fait 🎙️' : (currentLang === 'ja' ? '✅ 録音完了 🎙️' : (currentLang === 'vi' ? '✅ Đã ghi âm 🎙️' : (currentLang === 'hi' ? '✅ रिकॉर्डिंग पूर्ण 🎙️' : '✅ 1차 녹음 완료 🎙️')))))
+              : (currentLang === 'zh' ? '🎙️ 1次录音 ➔' : (currentLang === 'fr' ? '🎙️ Enregistrement ➔' : (currentLang === 'ja' ? '🎙️ 1次録音 ➔' : (currentLang === 'vi' ? '🎙️ Ghi âm ➔' : (currentLang === 'hi' ? '🎙️ रिकॉर्डिंग ➔' : '🎙️ 1차 녹음 ➔')))))}
           </button>
 
+          {/* 4. 2단계 스펠링 퀴즈 바로가기 버튼 */}
           <button
+            className="action-btn-item"
             onClick={() => setMainTab('quiz')}
             style={{
-              flex: 1,
-              minWidth: '120px',
-              padding: '8px 12px',
-              borderRadius: '12px',
-              border: isQuizL2Done ? '2px solid #2ECC71' : '1px solid #9B59B6',
+              border: isQuizL2Done ? '2px solid #2ECC71' : '1.5px solid #9B59B6',
               background: isQuizL2Done ? '#E8F8F5' : '#F5EEF8',
               color: isQuizL2Done ? '#27AE60' : '#8E44AD',
-              fontWeight: 'bold',
-              fontSize: '13px',
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: '6px'
+              boxShadow: '0 2px 6px rgba(155,89,182,0.15)'
             }}
           >
             {isQuizL2Done
-              ? (currentLang === 'zh' ? '✅ 测验过关 (签到印章💮)' : (currentLang === 'fr' ? '✅ Quiz validé (Tampon💮)' : (currentLang === 'ja' ? '✅ クイズ合格 (出席スタンプ💮)' : (currentLang === 'vi' ? '✅ Đã hoàn thành (Con dấu💮)' : (currentLang === 'hi' ? '✅ क्विज सफल (उपस्थिति मुहर💮)' : '✅ 퀴즈 완수 (출석도장💮)')))))
-              : (currentLang === 'zh' ? '🧩 2关拼写测验 ➔' : (currentLang === 'fr' ? '🧩 Niveau 2 Quiz ➔' : (currentLang === 'ja' ? '🧩 第2段階スペルクイズ ➔' : (currentLang === 'vi' ? '🧩 Trắc nghiệm Cấp 2 ➔' : (currentLang === 'hi' ? '🧩 स्तर 2 वर्तनी क्विज ➔' : '🧩 2단계 스펠링 퀴즈 ➔')))))}
+              ? (currentLang === 'zh' ? '✅ 测验过关 💮' : (currentLang === 'fr' ? '✅ Quiz validé 💮' : (currentLang === 'ja' ? '✅ クイズ合格 💮' : (currentLang === 'vi' ? '✅ Đã đạt 💮' : (currentLang === 'hi' ? '✅ क्विज सफल 💮' : '✅ 퀴즈 완수 💮')))))
+              : (currentLang === 'zh' ? '🧩 2关拼写 ➔' : (currentLang === 'fr' ? '🧩 Quiz N2 ➔' : (currentLang === 'ja' ? '🧩 2段階クイズ ➔' : (currentLang === 'vi' ? '🧩 Cấp 2 ➔' : (currentLang === 'hi' ? '🧩 क्विज 2 ➔' : '🧩 2단계 퀴즈 ➔')))))}
           </button>
 
+          {/* 5. 다음 단어 세트 로드 버튼 */}
           <button
+            className="action-btn-item action-btn-item-full"
             onClick={handleLoadNextWordSet}
             style={{
-              flex: 1,
-              minWidth: '140px',
-              padding: '8px 14px',
-              borderRadius: '12px',
               border: '2px solid #E67E22',
-              background: '#FEF5E7',
+              background: 'linear-gradient(135deg, #FEF5E7 0%, #FDEBD0 100%)',
               color: '#D35400',
-              fontWeight: 'bold',
-              fontSize: '13px',
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: '6px',
+              fontWeight: '900',
               boxShadow: '0 2px 6px rgba(230,126,34,0.2)'
             }}
           >
-            🚀 {currentLang === 'zh' ? '加载下一组单词 ➔' : (currentLang === 'fr' ? 'Charger mots suivants ➔' : (currentLang === 'ja' ? '次の単語セットを学習 ➔' : (currentLang === 'vi' ? 'Học bộ từ tiếp theo ➔' : (currentLang === 'hi' ? 'अगला शब्द सेट लोड करें ➔' : '다음 단어 학습 ➔'))))}
+            🚀 {currentLang === 'zh' ? '下一组单词 ➔' : (currentLang === 'fr' ? 'Mots suivants ➔' : (currentLang === 'ja' ? '次の単語 ➔' : (currentLang === 'vi' ? 'Từ tiếp theo ➔' : (currentLang === 'hi' ? 'अगला शब्द ➔' : '다음 단어 학습 ➔'))))}
           </button>
         </div>
       )}
-
       {/* 📖 오늘 공부한 전체 단어 팝업 모달 */}
       {showTodayAllModal && (
         <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 2200 }}>
@@ -2181,35 +2173,25 @@ export default function Home() {
             </h1>
           </header>
 
-          {/* 🌐 글로벌 학습 언어 선택 (한국어 🇰🇷 vs 중국어 🇨🇳) & 🎛️ TTS 음성 속도 조율 컨트롤러 */}
-          <div style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: '12px',
-            background: '#FFFFFF',
-            padding: '10px 16px',
-            borderRadius: '20px',
-            border: '2px solid #E2E8F0',
-            boxShadow: '0 4px 12px rgba(0,0,0,0.03)',
-            margin: '14px auto 16px auto',
-            maxWidth: '820px',
-            flexWrap: 'wrap'
-          }}>
-            {/* 🌐 6개 국어 학습 언어 스위처 */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: '4px', borderRight: '2px solid #E2E8F0', paddingRight: '12px', flexWrap: 'wrap' }}>
-              <span style={{ fontSize: '13px', fontWeight: '900', color: '#2B6CB0' }}>🌐 {t('lang_label', currentLang)}</span>
+          {/* 🌐 글로벌 학습 언어 선택 & 🎛️ TTS 음성 속도 조율 컨트롤러 */}
+          <div className="lang-speed-toolbar">
+            {/* 1행: 🌐 6개 국어 학습 언어 스위처 */}
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px', flexWrap: 'wrap', width: '100%' }}>
+              <span style={{ fontSize: '13px', fontWeight: '900', color: '#2B6CB0', display: 'inline-flex', alignItems: 'center', gap: '4px', marginRight: '4px' }}>
+                🌐 {t('lang_label', currentLang)}
+              </span>
               <button
                 onClick={() => handleLangChange('ko')}
                 style={{
-                  padding: '5px 8px',
-                  borderRadius: '8px',
-                  fontSize: '11px',
+                  padding: '6px 10px',
+                  borderRadius: '10px',
+                  fontSize: '12px',
                   fontWeight: 'bold',
                   border: currentLang === 'ko' ? '2px solid #3182CE' : '1px solid #CBD5E0',
                   background: currentLang === 'ko' ? '#EBF8FF' : '#FFFFFF',
                   color: currentLang === 'ko' ? '#2B6CB0' : '#4A5568',
-                  cursor: 'pointer'
+                  cursor: 'pointer',
+                  transition: 'all 0.15s ease'
                 }}
               >
                 🇰🇷 한국어
@@ -2217,14 +2199,15 @@ export default function Home() {
               <button
                 onClick={() => handleLangChange('zh')}
                 style={{
-                  padding: '5px 8px',
-                  borderRadius: '8px',
-                  fontSize: '11px',
+                  padding: '6px 10px',
+                  borderRadius: '10px',
+                  fontSize: '12px',
                   fontWeight: 'bold',
                   border: currentLang === 'zh' ? '2px solid #E53E3E' : '1px solid #CBD5E0',
                   background: currentLang === 'zh' ? '#FFF5F5' : '#FFFFFF',
                   color: currentLang === 'zh' ? '#C53030' : '#4A5568',
-                  cursor: 'pointer'
+                  cursor: 'pointer',
+                  transition: 'all 0.15s ease'
                 }}
               >
                 🇨🇳 中文
@@ -2232,14 +2215,15 @@ export default function Home() {
               <button
                 onClick={() => handleLangChange('fr')}
                 style={{
-                  padding: '5px 8px',
-                  borderRadius: '8px',
-                  fontSize: '11px',
+                  padding: '6px 10px',
+                  borderRadius: '10px',
+                  fontSize: '12px',
                   fontWeight: 'bold',
                   border: currentLang === 'fr' ? '2px solid #3182CE' : '1px solid #CBD5E0',
                   background: currentLang === 'fr' ? '#EBF8FF' : '#FFFFFF',
                   color: currentLang === 'fr' ? '#2B6CB0' : '#4A5568',
-                  cursor: 'pointer'
+                  cursor: 'pointer',
+                  transition: 'all 0.15s ease'
                 }}
               >
                 🇫🇷 Français
@@ -2247,14 +2231,15 @@ export default function Home() {
               <button
                 onClick={() => handleLangChange('ja')}
                 style={{
-                  padding: '5px 8px',
-                  borderRadius: '8px',
-                  fontSize: '11px',
+                  padding: '6px 10px',
+                  borderRadius: '10px',
+                  fontSize: '12px',
                   fontWeight: 'bold',
                   border: currentLang === 'ja' ? '2px solid #E53E3E' : '1px solid #CBD5E0',
                   background: currentLang === 'ja' ? '#FFF5F5' : '#FFFFFF',
                   color: currentLang === 'ja' ? '#C53030' : '#4A5568',
-                  cursor: 'pointer'
+                  cursor: 'pointer',
+                  transition: 'all 0.15s ease'
                 }}
               >
                 🇯🇵 日本語
@@ -2262,14 +2247,15 @@ export default function Home() {
               <button
                 onClick={() => handleLangChange('vi')}
                 style={{
-                  padding: '5px 8px',
-                  borderRadius: '8px',
-                  fontSize: '11px',
+                  padding: '6px 10px',
+                  borderRadius: '10px',
+                  fontSize: '12px',
                   fontWeight: 'bold',
                   border: currentLang === 'vi' ? '2px solid #D69E2E' : '1px solid #CBD5E0',
                   background: currentLang === 'vi' ? '#FEFCBF' : '#FFFFFF',
                   color: currentLang === 'vi' ? '#B7791F' : '#4A5568',
-                  cursor: 'pointer'
+                  cursor: 'pointer',
+                  transition: 'all 0.15s ease'
                 }}
               >
                 🇻🇳 Tiếng Việt
@@ -2277,51 +2263,64 @@ export default function Home() {
               <button
                 onClick={() => handleLangChange('hi')}
                 style={{
-                  padding: '5px 8px',
-                  borderRadius: '8px',
-                  fontSize: '11px',
+                  padding: '6px 10px',
+                  borderRadius: '10px',
+                  fontSize: '12px',
                   fontWeight: 'bold',
                   border: currentLang === 'hi' ? '2px solid #DD6B20' : '1px solid #CBD5E0',
                   background: currentLang === 'hi' ? '#FEEBC8' : '#FFFFFF',
                   color: currentLang === 'hi' ? '#C05621' : '#4A5568',
-                  cursor: 'pointer'
+                  cursor: 'pointer',
+                  transition: 'all 0.15s ease'
                 }}
               >
                 🇮🇳 हिन्दी
               </button>
             </div>
 
-            <span style={{ fontSize: '13px', fontWeight: 'bold', color: '#4A5568', display: 'flex', alignItems: 'center', gap: '4px' }}>
-              {t('speed_label', currentLang)}
-            </span>
+            {/* 2행: 🎛️ 발음 재생 속도 컨트롤러 (밑으로 깔끔하게 배치) */}
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '8px',
+              flexWrap: 'wrap',
+              width: '100%',
+              paddingTop: '8px',
+              borderTop: '1px dashed #E2E8F0'
+            }}>
+              <span style={{ fontSize: '13px', fontWeight: '900', color: '#4A5568', display: 'inline-flex', alignItems: 'center', gap: '4px', marginRight: '4px' }}>
+                🎛️ {t('speed_label', currentLang)}
+              </span>
 
-            <button
-              onClick={() => handleSpeedChange(0.7)}
-              className={`btn-speed-item ${ttsSpeed === 0.7 ? 'active' : ''}`}
-            >
-              {t('speed_slow', currentLang)}
-            </button>
+              <button
+                onClick={() => handleSpeedChange(0.7)}
+                className={`btn-speed-item ${ttsSpeed === 0.7 ? 'active' : ''}`}
+              >
+                {t('speed_slow', currentLang)}
+              </button>
 
-            <button
-              onClick={() => handleSpeedChange(1.0)}
-              className={`btn-speed-item ${ttsSpeed === 1.0 ? 'active' : ''}`}
-            >
-              {t('speed_normal', currentLang)}
-            </button>
+              <button
+                onClick={() => handleSpeedChange(1.0)}
+                className={`btn-speed-item ${ttsSpeed === 1.0 ? 'active' : ''}`}
+              >
+                {t('speed_normal', currentLang)}
+              </button>
 
-            <button
-              onClick={() => handleSpeedChange(1.4)}
-              className={`btn-speed-item ${ttsSpeed === 1.4 ? 'active' : ''}`}
-            >
-              {t('speed_fast', currentLang)}
-            </button>
+              <button
+                onClick={() => handleSpeedChange(1.4)}
+                className={`btn-speed-item ${ttsSpeed === 1.4 ? 'active' : ''}`}
+              >
+                {t('speed_fast', currentLang)}
+              </button>
 
-            <button
-              onClick={() => handleSpeedChange(2.0)}
-              className={`btn-speed-item ${ttsSpeed === 2.0 ? 'active' : ''}`}
-            >
-              {t('speed_super_fast', currentLang)}
-            </button>
+              <button
+                onClick={() => handleSpeedChange(2.0)}
+                className={`btn-speed-item ${ttsSpeed === 2.0 ? 'active' : ''}`}
+              >
+                {t('speed_super_fast', currentLang)}
+              </button>
+            </div>
           </div>
 
           {(!currentWord || safeActiveWords.length === 0) ? (
@@ -2350,7 +2349,10 @@ export default function Home() {
                   <img
                     src={getWordImgSrc(currentWord)}
                     alt={cleanWordStr}
-                    style={{ width: '100%', height: '100%', objectFit: 'contain', padding: '6px' }}
+                    loading="eager"
+                    fetchPriority="high"
+                    decoding="async"
+                    style={{ width: '100%', height: '100%', objectFit: 'contain', padding: '6px', willChange: 'transform' }}
                     onError={(e) => handleImageError(e, cleanWordStr)}
                   />
                 </div>
@@ -2378,7 +2380,10 @@ export default function Home() {
                   <img
                     src={getWordImgSrc(currentWord)}
                     alt={cleanWordStr}
-                    style={{ width: '100%', height: '100%', objectFit: 'contain', padding: '6px' }}
+                    loading="eager"
+                    fetchPriority="high"
+                    decoding="async"
+                    style={{ width: '100%', height: '100%', objectFit: 'contain', padding: '6px', willChange: 'transform' }}
                     onError={(e) => handleImageError(e, cleanWordStr)}
                   />
                 </div>

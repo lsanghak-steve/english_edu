@@ -1074,6 +1074,7 @@ export default function ModernStudyPage() {
           }
           const analyser = audioCtx.createAnalyser();
           analyser.fftSize = 64;
+          analyser.smoothingTimeConstant = 0.45;
           const source = audioCtx.createMediaStreamSource(stream);
           source.connect(analyser);
 

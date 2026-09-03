@@ -1045,19 +1045,47 @@ export default function Home() {
     const bufferLength = analyserRef.current.frequencyBinCount;
     const dataArray = new Uint8Array(bufferLength);
 
-    const draw = () => {
-      if (!analyserRef.current) return;
+    const draw = (timestamp) => {
+      if (!analyserRef.current || !canvasRef.current) return;
       analyserRef.current.getByteFrequencyData(dataArray);
 
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      const barWidth = (canvas.width / bufferLength) * 2.2;
-      let x = 0;
+      let sum = 0;
+      for (let k = 0; k < dataArray.length; k++) sum += dataArray[k];
+      const avg = sum / Math.max(1, dataArray.length);
+      const isSpeaking = avg > 3.5;
 
-      for (let i = 0; i < bufferLength; i++) {
-        const barHeight = (dataArray[i] / 255) * canvas.height;
-        ctx.fillStyle = `hsl(${i * 12 + 160}, 85%, 55%)`;
-        ctx.fillRect(x, canvas.height - barHeight, barWidth - 2, barHeight);
-        x += barWidth;
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      const barCount = 28;
+      const barWidth = canvas.width / barCount;
+      const now = (timestamp || Date.now()) * 0.004;
+
+      for (let i = 0; i < barCount; i++) {
+        const dataIndex = Math.floor((i / barCount) * bufferLength);
+        const rawVal = dataArray[dataIndex] || 0;
+
+        let barHeight;
+        if (isSpeaking && rawVal > 3) {
+          const voiceIntensity = Math.min(1, Math.max(0.12, (rawVal / 130) * 1.7));
+          barHeight = Math.max(5, voiceIntensity * canvas.height * 0.94);
+          const hue = 170 + (i * 2.5) + (voiceIntensity * 30);
+          ctx.fillStyle = `hsl(${hue}, 95%, ${45 + voiceIntensity * 15}%)`;
+        } else {
+          const gentlePulse = Math.sin(now * 2.0 + i * 0.2) * 0.5 + 0.5;
+          barHeight = 3.5 + gentlePulse * 1.5;
+          ctx.fillStyle = 'rgba(0, 168, 191, 0.35)';
+        }
+
+        const x = i * barWidth;
+        const y = (canvas.height - barHeight) / 2;
+        const w = Math.max(2.5, barWidth - 2.5);
+
+        ctx.beginPath();
+        if (ctx.roundRect) {
+          ctx.roundRect(x, y, w, barHeight, 3);
+          ctx.fill();
+        } else {
+          ctx.fillRect(x, y, w, barHeight);
+        }
       }
 
       animFrameRef.current = requestAnimationFrame(draw);
