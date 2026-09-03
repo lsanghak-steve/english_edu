@@ -140,6 +140,21 @@ async function syncAllToNotion() {
           object: 'block',
           type: 'to_do',
           to_do: { checked: false, rich_text: [{ type: 'text', text: { content: '[대기중] 오프라인 PWA (프로그레시브 웹앱) 설치 지원' } }] }
+        },
+        {
+          object: 'block',
+          type: 'to_do',
+          to_do: { checked: false, rich_text: [{ type: 'text', text: { content: '[대기중] 소셜 로그인(구글, 카카오, 네이버) 및 일반 아이디/비밀번호 로그인 추가' } }] }
+        },
+        {
+          object: 'block',
+          type: 'to_do',
+          to_do: { checked: false, rich_text: [{ type: 'text', text: { content: '[대기중] 개인정보처리방침(Privacy Policy) 및 이용약관 고지 체계 추가' } }] }
+        },
+        {
+          object: 'block',
+          type: 'to_do',
+          to_do: { checked: false, rich_text: [{ type: 'text', text: { content: '[대기중] 고객 문의사항(1:1 문의 / Contact Us) 접수 및 관리자 연동 추가' } }] }
         }
       ]
     },
