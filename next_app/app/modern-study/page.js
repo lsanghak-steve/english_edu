@@ -7,6 +7,12 @@ import supabase from '../../lib/supabaseClient.js';
 import wordList500Fallback from '../../data/wordsData.js';
 import { playUniversalAudio, initAudioUnlock } from '../../lib/audioPlayer.js';
 import { getLocalDateString } from '../../lib/i18n.js';
+import WordListSection from '../components/WordListSection.js';
+import PersonalVocabSection from '../components/PersonalVocabSection.js';
+import Day6ReviewSection from '../components/Day6ReviewSection.js';
+import StatsSection from '../components/StatsSection.js';
+import LeaderboardSection from '../components/LeaderboardSection.js';
+import ParentDashboard from '../components/ParentDashboard.js';
 
 // 학생/학부모 이름 이모지 제거 헬퍼
 const removeEmoji = (str) => {
@@ -226,6 +232,7 @@ export default function ModernStudyPage() {
   
   // 📚 단어 데이터 상태
   const [words, setWords] = useState([]);
+  const [allLevelWords, setAllLevelWords] = useState([]);
   const [isWordsLoading, setIsWordsLoading] = useState(true);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isFlipped, setIsFlipped] = useState(false);
@@ -611,6 +618,13 @@ export default function ModernStudyPage() {
   useEffect(() => {
     initAudioUnlock();
     try {
+      if (typeof window !== 'undefined') {
+        const params = new URLSearchParams(window.location.search);
+        const tabParam = params.get('tab');
+        if (tabParam) {
+          setCurrentTab(tabParam);
+        }
+      }
       const savedLang = localStorage.getItem('steve_voca_lang') || localStorage.getItem('flipvoca_lang');
       if (savedLang && studyI18n[savedLang]) {
         setCurrentLang(savedLang);
@@ -762,6 +776,7 @@ export default function ModernStudyPage() {
         } catch(e) {}
 
         setWords(effectiveWords);
+        setAllLevelWords(chosenWords.length > 0 ? chosenWords : wordList500Fallback);
         setOriginalDailyWords(effectiveWords);
         setIsWordsLoading(false);
         setCurrentIndex(0);
@@ -805,6 +820,7 @@ export default function ModernStudyPage() {
         const shuffledFallback = shuffleArray(wordList500Fallback);
         const finalFallback = shuffledFallback.slice(0, dailyCount);
         setWords(finalFallback);
+        setAllLevelWords(wordList500Fallback);
         setOriginalDailyWords(finalFallback);
         setIsWordsLoading(false);
 
@@ -2249,6 +2265,188 @@ export default function ModernStudyPage() {
                   border: '1px solid rgba(255, 255, 255, 0.4)'
                 }}>
                   {wrongWords.length > 0 ? '🔥 틀린 단어 집중 복습 시작 ➔' : '🎴 오답 단어 목록 확인'}
+                </div>
+              </div>
+
+              {/* ━━━━ ✨ 스마트 전체 학습관 & 리포트 허브 (All-in-One Learning Hub) ━━━━ */}
+              <div style={{ marginTop: '4px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 2px' }}>
+                  <div style={{ fontSize: '15px', fontWeight: '900', color: '#1E293B', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                    <span>✨</span> 스마트 전체 학습관 & 리포트
+                  </div>
+                  <span style={{ fontSize: '11px', fontWeight: '800', color: '#00A8BF', background: '#E6FAFC', padding: '3px 8px', borderRadius: '10px' }}>
+                    6대 필수 코스
+                  </span>
+                </div>
+
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '10px' }}>
+                  {/* 1. 전체 단어 목록 & PDF 워크시트 */}
+                  <div
+                    onClick={() => setCurrentTab('wordlist')}
+                    style={{
+                      background: '#FFFFFF',
+                      borderRadius: '20px',
+                      padding: '16px 14px',
+                      border: '1.5px solid #E2E8F0',
+                      boxShadow: '0 4px 14px rgba(0,0,0,0.03)',
+                      cursor: 'pointer',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: '8px',
+                      transition: 'all 0.15s ease'
+                    }}
+                    onMouseEnter={(e) => { e.currentTarget.style.borderColor = '#00A8BF'; e.currentTarget.style.transform = 'translateY(-2px)'; }}
+                    onMouseLeave={(e) => { e.currentTarget.style.borderColor = '#E2E8F0'; e.currentTarget.style.transform = 'translateY(0)'; }}
+                  >
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <span style={{ fontSize: '24px' }}>📋</span>
+                      <span style={{ fontSize: '10px', fontWeight: '800', background: '#EFF6FF', color: '#2563EB', padding: '2px 8px', borderRadius: '10px' }}>PDF 인쇄</span>
+                    </div>
+                    <div>
+                      <div style={{ fontSize: '14px', fontWeight: '900', color: '#1E293B' }}>전체 단어 목록</div>
+                      <div style={{ fontSize: '11px', fontWeight: '600', color: '#64748B', marginTop: '2px' }}>DB 단어 & 6종 시험지</div>
+                    </div>
+                  </div>
+
+                  {/* 2. 나만의 단어장 */}
+                  <div
+                    onClick={() => setCurrentTab('myvocab')}
+                    style={{
+                      background: '#FFFFFF',
+                      borderRadius: '20px',
+                      padding: '16px 14px',
+                      border: '1.5px solid #E2E8F0',
+                      boxShadow: '0 4px 14px rgba(0,0,0,0.03)',
+                      cursor: 'pointer',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: '8px',
+                      transition: 'all 0.15s ease'
+                    }}
+                    onMouseEnter={(e) => { e.currentTarget.style.borderColor = '#F59E0B'; e.currentTarget.style.transform = 'translateY(-2px)'; }}
+                    onMouseLeave={(e) => { e.currentTarget.style.borderColor = '#E2E8F0'; e.currentTarget.style.transform = 'translateY(0)'; }}
+                  >
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <span style={{ fontSize: '24px' }}>⭐</span>
+                      <span style={{ fontSize: '10px', fontWeight: '800', background: '#FEF3C7', color: '#D97706', padding: '2px 8px', borderRadius: '10px' }}>개인 맞춤</span>
+                    </div>
+                    <div>
+                      <div style={{ fontSize: '14px', fontWeight: '900', color: '#1E293B' }}>나만의 단어장</div>
+                      <div style={{ fontSize: '11px', fontWeight: '600', color: '#64748B', marginTop: '2px' }}>북마크 & 단어 등록</div>
+                    </div>
+                  </div>
+
+                  {/* 3. 6일차 주간 총복습 */}
+                  <div
+                    onClick={() => setCurrentTab('day6')}
+                    style={{
+                      background: '#FFFFFF',
+                      borderRadius: '20px',
+                      padding: '16px 14px',
+                      border: '1.5px solid #E2E8F0',
+                      boxShadow: '0 4px 14px rgba(0,0,0,0.03)',
+                      cursor: 'pointer',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: '8px',
+                      transition: 'all 0.15s ease'
+                    }}
+                    onMouseEnter={(e) => { e.currentTarget.style.borderColor = '#8B5CF6'; e.currentTarget.style.transform = 'translateY(-2px)'; }}
+                    onMouseLeave={(e) => { e.currentTarget.style.borderColor = '#E2E8F0'; e.currentTarget.style.transform = 'translateY(0)'; }}
+                  >
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <span style={{ fontSize: '24px' }}>🔁</span>
+                      <span style={{ fontSize: '10px', fontWeight: '800', background: '#F5F3FF', color: '#7C3AED', padding: '2px 8px', borderRadius: '10px' }}>주말 복습</span>
+                    </div>
+                    <div>
+                      <div style={{ fontSize: '14px', fontWeight: '900', color: '#1E293B' }}>6일차 주간 총복습</div>
+                      <div style={{ fontSize: '11px', fontWeight: '600', color: '#64748B', marginTop: '2px' }}>주간 누적 퀴즈 도전</div>
+                    </div>
+                  </div>
+
+                  {/* 4. 학습 통계 리포트 */}
+                  <div
+                    onClick={() => setCurrentTab('stats')}
+                    style={{
+                      background: '#FFFFFF',
+                      borderRadius: '20px',
+                      padding: '16px 14px',
+                      border: '1.5px solid #E2E8F0',
+                      boxShadow: '0 4px 14px rgba(0,0,0,0.03)',
+                      cursor: 'pointer',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: '8px',
+                      transition: 'all 0.15s ease'
+                    }}
+                    onMouseEnter={(e) => { e.currentTarget.style.borderColor = '#10B981'; e.currentTarget.style.transform = 'translateY(-2px)'; }}
+                    onMouseLeave={(e) => { e.currentTarget.style.borderColor = '#E2E8F0'; e.currentTarget.style.transform = 'translateY(0)'; }}
+                  >
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <span style={{ fontSize: '24px' }}>📊</span>
+                      <span style={{ fontSize: '10px', fontWeight: '800', background: '#ECFDF5', color: '#059669', padding: '2px 8px', borderRadius: '10px' }}>성장 칭호</span>
+                    </div>
+                    <div>
+                      <div style={{ fontSize: '14px', fontWeight: '900', color: '#1E293B' }}>학습 통계 리포트</div>
+                      <div style={{ fontSize: '11px', fontWeight: '600', color: '#64748B', marginTop: '2px' }}>누적 단어 & 성취도</div>
+                    </div>
+                  </div>
+
+                  {/* 5. 명예의 전당 (리더보드) */}
+                  <div
+                    onClick={() => setCurrentTab('leaderboard')}
+                    style={{
+                      background: '#FFFFFF',
+                      borderRadius: '20px',
+                      padding: '16px 14px',
+                      border: '1.5px solid #E2E8F0',
+                      boxShadow: '0 4px 14px rgba(0,0,0,0.03)',
+                      cursor: 'pointer',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: '8px',
+                      transition: 'all 0.15s ease'
+                    }}
+                    onMouseEnter={(e) => { e.currentTarget.style.borderColor = '#EA580C'; e.currentTarget.style.transform = 'translateY(-2px)'; }}
+                    onMouseLeave={(e) => { e.currentTarget.style.borderColor = '#E2E8F0'; e.currentTarget.style.transform = 'translateY(0)'; }}
+                  >
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <span style={{ fontSize: '24px' }}>🏆</span>
+                      <span style={{ fontSize: '10px', fontWeight: '800', background: '#FFF7ED', color: '#EA580C', padding: '2px 8px', borderRadius: '10px' }}>실시간 랭킹</span>
+                    </div>
+                    <div>
+                      <div style={{ fontSize: '14px', fontWeight: '900', color: '#1E293B' }}>명예의 전당</div>
+                      <div style={{ fontSize: '11px', fontWeight: '600', color: '#64748B', marginTop: '2px' }}>전국 리그 & 연속 출석</div>
+                    </div>
+                  </div>
+
+                  {/* 6. 학부모 대시보드 */}
+                  <div
+                    onClick={() => setCurrentTab('parent')}
+                    style={{
+                      background: '#FFFFFF',
+                      borderRadius: '20px',
+                      padding: '16px 14px',
+                      border: '1.5px solid #E2E8F0',
+                      boxShadow: '0 4px 14px rgba(0,0,0,0.03)',
+                      cursor: 'pointer',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: '8px',
+                      transition: 'all 0.15s ease'
+                    }}
+                    onMouseEnter={(e) => { e.currentTarget.style.borderColor = '#3B82F6'; e.currentTarget.style.transform = 'translateY(-2px)'; }}
+                    onMouseLeave={(e) => { e.currentTarget.style.borderColor = '#E2E8F0'; e.currentTarget.style.transform = 'translateY(0)'; }}
+                  >
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <span style={{ fontSize: '24px' }}>👨‍👩‍👧</span>
+                      <span style={{ fontSize: '10px', fontWeight: '800', background: '#EFF6FF', color: '#2563EB', padding: '2px 8px', borderRadius: '10px' }}>안심 케어</span>
+                    </div>
+                    <div>
+                      <div style={{ fontSize: '14px', fontWeight: '900', color: '#1E293B' }}>학부모 대시보드</div>
+                      <div style={{ fontSize: '11px', fontWeight: '600', color: '#64748B', marginTop: '2px' }}>자녀 출석 & 칭찬하기</div>
+                    </div>
+                  </div>
                 </div>
               </div>
 
@@ -4388,6 +4586,298 @@ export default function ModernStudyPage() {
                   </div>
                 </form>
               )}
+            </div>
+          )}
+
+          {/* ═══════════════════════════════════════════════════════
+              TAB 6: 📋 WORD LIST & PDF WORKSHEETS (전체 단어 목록 & 인쇄)
+             ═══════════════════════════════════════════════════════ */}
+          {currentTab === 'wordlist' && (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+              <div style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                padding: '4px 0 10px 0',
+                borderBottom: '1px solid #E2E8F0',
+                position: 'sticky',
+                top: 0,
+                background: 'rgba(255, 255, 255, 0.95)',
+                backdropFilter: 'blur(8px)',
+                zIndex: 10
+              }}>
+                <button
+                  type="button"
+                  onClick={() => setCurrentTab('dashboard')}
+                  style={{
+                    background: '#F1F5F9',
+                    border: '1.5px solid #CBD5E1',
+                    borderRadius: '12px',
+                    padding: '6px 14px',
+                    fontSize: '12px',
+                    fontWeight: '800',
+                    color: '#475569',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '4px'
+                  }}
+                >
+                  <span>←</span> <span>홈으로</span>
+                </button>
+                <span style={{ fontSize: '15px', fontWeight: '900', color: '#1E293B' }}>
+                  📋 전체 단어 목록 & PDF
+                </span>
+              </div>
+              <WordListSection
+                words={allLevelWords && allLevelWords.length > 0 ? allLevelWords : (words.length > 0 ? words : wordList500Fallback)}
+                activeWords={words && words.length > 0 ? words : wordList500Fallback}
+                onPlayAudio={(text) => handlePlaySound(text)}
+                userAudioRecordings={userAudioRecordings}
+                currentLang={currentLang}
+              />
+            </div>
+          )}
+
+          {/* ═══════════════════════════════════════════════════════
+              TAB 7: ⭐ PERSONAL VOCAB & WRONG ANSWERS (나만의 단어장)
+             ═══════════════════════════════════════════════════════ */}
+          {currentTab === 'myvocab' && (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+              <div style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                padding: '4px 0 10px 0',
+                borderBottom: '1px solid #E2E8F0',
+                position: 'sticky',
+                top: 0,
+                background: 'rgba(255, 255, 255, 0.95)',
+                backdropFilter: 'blur(8px)',
+                zIndex: 10
+              }}>
+                <button
+                  type="button"
+                  onClick={() => setCurrentTab('dashboard')}
+                  style={{
+                    background: '#F1F5F9',
+                    border: '1.5px solid #CBD5E1',
+                    borderRadius: '12px',
+                    padding: '6px 14px',
+                    fontSize: '12px',
+                    fontWeight: '800',
+                    color: '#475569',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '4px'
+                  }}
+                >
+                  <span>←</span> <span>홈으로</span>
+                </button>
+                <span style={{ fontSize: '15px', fontWeight: '900', color: '#1E293B' }}>
+                  ⭐ 나만의 단어장
+                </span>
+              </div>
+              <PersonalVocabSection
+                currentUser={currentUser}
+                onPlayAudio={(text) => handlePlaySound(text)}
+                initialTab="custom"
+                currentLang={currentLang}
+              />
+            </div>
+          )}
+
+          {/* ═══════════════════════════════════════════════════════
+              TAB 8: 🔁 DAY 6 WEEKLY REVIEW (6일차 주간 총복습)
+             ═══════════════════════════════════════════════════════ */}
+          {currentTab === 'day6' && (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+              <div style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                padding: '4px 0 10px 0',
+                borderBottom: '1px solid #E2E8F0',
+                position: 'sticky',
+                top: 0,
+                background: 'rgba(255, 255, 255, 0.95)',
+                backdropFilter: 'blur(8px)',
+                zIndex: 10
+              }}>
+                <button
+                  type="button"
+                  onClick={() => setCurrentTab('dashboard')}
+                  style={{
+                    background: '#F1F5F9',
+                    border: '1.5px solid #CBD5E1',
+                    borderRadius: '12px',
+                    padding: '6px 14px',
+                    fontSize: '12px',
+                    fontWeight: '800',
+                    color: '#475569',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '4px'
+                  }}
+                >
+                  <span>←</span> <span>홈으로</span>
+                </button>
+                <span style={{ fontSize: '15px', fontWeight: '900', color: '#1E293B' }}>
+                  🔁 6일차 주간 총복습
+                </span>
+              </div>
+              <Day6ReviewSection
+                currentUser={currentUser}
+                safeActiveWords={words && words.length > 0 ? words : wordList500Fallback}
+                onQuizComplete={() => setCurrentTab('calendar')}
+                currentLang={currentLang}
+              />
+            </div>
+          )}
+
+          {/* ═══════════════════════════════════════════════════════
+              TAB 9: 📊 STATS & REPORT (학습 통계 리포트)
+             ═══════════════════════════════════════════════════════ */}
+          {currentTab === 'stats' && (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+              <div style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                padding: '4px 0 10px 0',
+                borderBottom: '1px solid #E2E8F0',
+                position: 'sticky',
+                top: 0,
+                background: 'rgba(255, 255, 255, 0.95)',
+                backdropFilter: 'blur(8px)',
+                zIndex: 10
+              }}>
+                <button
+                  type="button"
+                  onClick={() => setCurrentTab('dashboard')}
+                  style={{
+                    background: '#F1F5F9',
+                    border: '1.5px solid #CBD5E1',
+                    borderRadius: '12px',
+                    padding: '6px 14px',
+                    fontSize: '12px',
+                    fontWeight: '800',
+                    color: '#475569',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '4px'
+                  }}
+                >
+                  <span>←</span> <span>홈으로</span>
+                </button>
+                <span style={{ fontSize: '15px', fontWeight: '900', color: '#1E293B' }}>
+                  📊 학습 통계 리포트
+                </span>
+              </div>
+              <StatsSection
+                currentUser={currentUser}
+                totalWordCount={allLevelWords.length || words.length || 500}
+                onNavigateTab={(tab) => setCurrentTab(tab)}
+                currentLang={currentLang}
+              />
+            </div>
+          )}
+
+          {/* ═══════════════════════════════════════════════════════
+              TAB 10: 🏆 LEADERBOARD (명예의 전당 / 랭킹)
+             ═══════════════════════════════════════════════════════ */}
+          {currentTab === 'leaderboard' && (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+              <div style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                padding: '4px 0 10px 0',
+                borderBottom: '1px solid #E2E8F0',
+                position: 'sticky',
+                top: 0,
+                background: 'rgba(255, 255, 255, 0.95)',
+                backdropFilter: 'blur(8px)',
+                zIndex: 10
+              }}>
+                <button
+                  type="button"
+                  onClick={() => setCurrentTab('dashboard')}
+                  style={{
+                    background: '#F1F5F9',
+                    border: '1.5px solid #CBD5E1',
+                    borderRadius: '12px',
+                    padding: '6px 14px',
+                    fontSize: '12px',
+                    fontWeight: '800',
+                    color: '#475569',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '4px'
+                  }}
+                >
+                  <span>←</span> <span>홈으로</span>
+                </button>
+                <span style={{ fontSize: '15px', fontWeight: '900', color: '#1E293B' }}>
+                  🏆 명예의 전당 (리더보드)
+                </span>
+              </div>
+              <LeaderboardSection
+                currentUser={currentUser}
+                currentLang={currentLang}
+              />
+            </div>
+          )}
+
+          {/* ═══════════════════════════════════════════════════════
+              TAB 11: 👨‍👩‍👧 PARENT DASHBOARD (학부모 안심 대시보드)
+             ═══════════════════════════════════════════════════════ */}
+          {currentTab === 'parent' && (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+              <div style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                padding: '4px 0 10px 0',
+                borderBottom: '1px solid #E2E8F0',
+                position: 'sticky',
+                top: 0,
+                background: 'rgba(255, 255, 255, 0.95)',
+                backdropFilter: 'blur(8px)',
+                zIndex: 10
+              }}>
+                <button
+                  type="button"
+                  onClick={() => setCurrentTab('dashboard')}
+                  style={{
+                    background: '#F1F5F9',
+                    border: '1.5px solid #CBD5E1',
+                    borderRadius: '12px',
+                    padding: '6px 14px',
+                    fontSize: '12px',
+                    fontWeight: '800',
+                    color: '#475569',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '4px'
+                  }}
+                >
+                  <span>←</span> <span>홈으로</span>
+                </button>
+                <span style={{ fontSize: '15px', fontWeight: '900', color: '#1E293B' }}>
+                  👨‍👩‍👧 학부모 안심 대시보드
+                </span>
+              </div>
+              <ParentDashboard
+                currentUser={currentUser}
+                onLogout={handleLogout}
+                currentLang={currentLang}
+              />
             </div>
           )}
 

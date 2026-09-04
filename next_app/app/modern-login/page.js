@@ -486,7 +486,7 @@ export default function ModernLoginPage() {
 
     setLoginSuccessToast(`👨‍👩‍👧 ${cleanParentName} ${currentStrings.parentLoginSuccess}`);
     setTimeout(() => {
-      router.push('/?tab=parent');
+      router.push('/modern-study?tab=parent');
     }, 700);
   };
 
