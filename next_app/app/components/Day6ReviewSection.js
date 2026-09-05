@@ -552,7 +552,7 @@ export default function Day6ReviewSection({ currentUser, safeActiveWords, onQuiz
               <span>{currentLang === 'zh' ? '请选择 Day 6 复习模式' : (currentLang === 'fr' ? 'Choisissez le mode de révision' : 'Day 6 복습 방식을 선택해 주세요')}</span>
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', alignItems: 'stretch' }}>
               {/* 모드 1: 20단어 랜덤 퀴즈 카드 */}
               <div
                 onClick={() => setSelectedMode('random20')}
@@ -564,7 +564,12 @@ export default function Day6ReviewSection({ currentUser, safeActiveWords, onQuiz
                   cursor: 'pointer',
                   boxShadow: selectedMode === 'random20' ? '0 6px 16px rgba(108,92,231,0.2)' : 'none',
                   transition: 'all 0.2s ease',
-                  position: 'relative'
+                  position: 'relative',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  justifyContent: 'space-between',
+                  minHeight: '175px',
+                  boxSizing: 'border-box'
                 }}
               >
                 {selectedMode === 'random20' && (
@@ -572,12 +577,14 @@ export default function Day6ReviewSection({ currentUser, safeActiveWords, onQuiz
                     ✓
                   </span>
                 )}
-                <div style={{ fontSize: '28px', marginBottom: '6px' }}>🎲</div>
-                <div style={{ fontSize: '16px', fontWeight: '900', color: '#2C3E50', marginBottom: '4px' }}>
-                  1. 20단어 랜덤 총복습
-                </div>
-                <div style={{ fontSize: '12px', color: '#6C5CE7', fontWeight: 'bold', marginBottom: '6px' }}>
-                  한글 뜻 + 영단어 스펠링 체크
+                <div>
+                  <div style={{ fontSize: '28px', marginBottom: '6px' }}>🎲</div>
+                  <div style={{ fontSize: '16px', fontWeight: '900', color: '#2C3E50', marginBottom: '4px' }}>
+                    1. 20단어 랜덤 총복습
+                  </div>
+                  <div style={{ fontSize: '12px', color: '#6C5CE7', fontWeight: 'bold', marginBottom: '6px' }}>
+                    한글 뜻 + 영단어 스펠링 체크
+                  </div>
                 </div>
                 <div style={{ fontSize: '12px', color: '#7F8C8D', lineHeight: 1.4 }}>
                   공부한 단어 풀에서 20개를 랜덤 추출하여 뜻과 스펠링을 종합 점검합니다.
@@ -595,7 +602,12 @@ export default function Day6ReviewSection({ currentUser, safeActiveWords, onQuiz
                   cursor: 'pointer',
                   boxShadow: selectedMode === 'wrong_focus' ? '0 6px 16px rgba(231,76,60,0.2)' : 'none',
                   transition: 'all 0.2s ease',
-                  position: 'relative'
+                  position: 'relative',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  justifyContent: 'space-between',
+                  minHeight: '175px',
+                  boxSizing: 'border-box'
                 }}
               >
                 {selectedMode === 'wrong_focus' && (
@@ -603,12 +615,14 @@ export default function Day6ReviewSection({ currentUser, safeActiveWords, onQuiz
                     ✓
                   </span>
                 )}
-                <div style={{ fontSize: '28px', marginBottom: '6px' }}>🚨</div>
-                <div style={{ fontSize: '16px', fontWeight: '900', color: '#2C3E50', marginBottom: '4px' }}>
-                  2. 주간 오답 집중 탈출
-                </div>
-                <div style={{ fontSize: '12px', color: '#C0392B', fontWeight: 'bold', marginBottom: '6px' }}>
-                  기존 오답 우선 복습 (10문항)
+                <div>
+                  <div style={{ fontSize: '28px', marginBottom: '6px' }}>🚨</div>
+                  <div style={{ fontSize: '16px', fontWeight: '900', color: '#2C3E50', marginBottom: '4px' }}>
+                    2. 주간 오답 집중 탈출
+                  </div>
+                  <div style={{ fontSize: '12px', color: '#C0392B', fontWeight: 'bold', marginBottom: '6px' }}>
+                    기존 오답 우선 복습 (10문항)
+                  </div>
                 </div>
                 <div style={{ fontSize: '12px', color: '#7F8C8D', lineHeight: 1.4 }}>
                   최근 5일간 틀렸던 오답 단어를 1순위로 선별하여 약점을 집중 공략합니다.
@@ -809,7 +823,7 @@ export default function Day6ReviewSection({ currentUser, safeActiveWords, onQuiz
                     const isSelected = selectedOption === opt || (isSpelling && typedSpelling.trim().toLowerCase() === opt.toLowerCase());
 
                     let btnStyle = {
-                      padding: '16px',
+                      padding: '16px 20px',
                       borderRadius: '16px',
                       border: '2px solid #BDC3C7',
                       background: '#FFFFFF',
@@ -821,7 +835,10 @@ export default function Day6ReviewSection({ currentUser, safeActiveWords, onQuiz
                       transition: 'all 0.2s ease',
                       display: 'flex',
                       alignItems: 'center',
-                      justifyContent: 'space-between'
+                      justifyContent: 'space-between',
+                      minHeight: '62px',
+                      width: '100%',
+                      boxSizing: 'border-box'
                     };
 
                     if (isSelected) {
