@@ -602,53 +602,6 @@ export default function StudentLoginPage({ onLoginSuccess, onParentLoginSuccess,
           </div>
         ) : loginMode === 'account' ? (
           <form onSubmit={handleStudentLoginSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-            {/* ⚡ 등록된 학생 원클릭 간편 선택 바 */}
-            {users.length > 0 && (
-              <div style={{ textAlign: 'left', marginBottom: '2px' }}>
-                <div style={{ fontSize: '12px', fontWeight: '800', color: '#64748B', marginBottom: '8px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                  <span>⚡ {currentLang === 'zh' ? '点击学生姓名一键登录' : currentLang === 'fr' ? 'Connexion rapide élève' : '빠른 학생 선택 (원클릭 입장)'}</span>
-                  <span style={{ fontSize: '11px', color: '#94A3B8' }}>{users.length}명 등록됨</span>
-                </div>
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', marginBottom: '6px' }}>
-                  {users.map(u => {
-                    const uClean = removeEmoji(u.name || '');
-                    const isSelected = studentNameInput === uClean;
-                    const avatarEmoji = u.grade?.includes('성인') || u.grade?.includes('대학') ? '🧑' : u.grade?.includes('3학년') ? '👧' : '👦';
-                    return (
-                      <button
-                        key={u.id || u.student_id || uClean}
-                        type="button"
-                        onClick={() => {
-                          setStudentNameInput(uClean);
-                          const pin = u.studentPin || u.pin || '1234';
-                          setPinInput(pin);
-                          onLoginSuccess(u);
-                        }}
-                        style={{
-                          padding: '7px 11px',
-                          borderRadius: '12px',
-                          border: isSelected ? '2px solid #3498DB' : '1.5px solid #E2E8F0',
-                          background: isSelected ? '#EBF5FB' : '#F8FAFC',
-                          color: isSelected ? '#2980B9' : '#334155',
-                          fontSize: '12.5px',
-                          fontWeight: '800',
-                          cursor: 'pointer',
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: '4px',
-                          transition: 'all 0.15s ease',
-                          boxShadow: '0 2px 4px rgba(0,0,0,0.03)'
-                        }}
-                        title={`${uClean} (${u.grade || ''})`}
-                      >
-                        <span>{avatarEmoji}</span>
-                        <span>{uClean}</span>
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
-            )}
 
             <div style={{ textAlign: 'left' }}>
               <label style={{ display: 'block', fontSize: '13px', fontWeight: 'bold', color: '#34495E', marginBottom: '6px' }}>

@@ -939,40 +939,6 @@ export default function ModernLoginPage() {
               >
                 {currentStrings.studentLoginBtn}
               </button>
-
-              {/* ⚡ 원클릭 간편 로그인 학생 선택 카드 */}
-              <div style={{ marginTop: '10px', display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                <div style={{ fontSize: '11px', fontWeight: '800', color: '#94A3B8', textAlign: 'center' }}>
-                  {currentStrings.quickLoginTitle || '👇 빠른 원클릭 간편 로그인'}
-                </div>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '6px' }}>
-                  {defaultStudents.slice(0, 3).map((st) => (
-                    <button
-                      key={st.id}
-                      type="button"
-                      onClick={(e) => handleStudentSubmit(e, st)}
-                      style={{
-                        padding: '8px 4px',
-                        borderRadius: '12px',
-                        border: '1.5px solid #E2E8F0',
-                        background: '#FFFFFF',
-                        color: '#334155',
-                        fontWeight: '800',
-                        fontSize: '11.5px',
-                        cursor: 'pointer',
-                        display: 'flex',
-                        flexDirection: 'column',
-                        alignItems: 'center',
-                        gap: '2px',
-                        transition: 'all 0.15s ease'
-                      }}
-                    >
-                      <span>{st.name === '이상학' ? '🧑‍🎓' : st.name === '이승현' ? '👦' : '👧'} {getLocalizedStudentName(st)}</span>
-                      <span style={{ fontSize: '9.5px', color: '#00A8BF', fontWeight: '700' }}>{getLocalizedGrade(st.studyGradeLevel)}</span>
-                    </button>
-                  ))}
-                </div>
-              </div>
             </form>
           )}
 
