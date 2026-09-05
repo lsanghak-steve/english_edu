@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import supabase from '../../lib/supabaseClient.js';
 import wordList500Fallback from '../../data/wordsData.js';
 import { t, getLocalDateString } from '../../lib/i18n.js';
@@ -331,24 +331,60 @@ export default function Day6ReviewSection({ currentUser, safeActiveWords, onQuiz
     setQuizMode('quiz_active');
   };
 
-  // 3. 답변 선택 처리 (4지선다 클릭)
-  const handleSelectOption = (opt) => {
-    if (isAnswerChecked) return;
-    setSelectedOption(opt);
-    setTypedSpelling(opt);
-  };
+  const timerRef = useRef(null);
+  const isMovingRef = useRef(false);
 
-  // 4. 정답 확인
-  const handleCheckAnswer = () => {
-    if (isAnswerChecked) return;
+  // 컴포넌트 언마운트 시 타이머 정리
+  useEffect(() => {
+    return () => {
+      if (timerRef.current) {
+        clearTimeout(timerRef.current);
+        timerRef.current = null;
+      }
+    };
+  }, []);
+
+  // 3. 답변 선택 처리 (보기 클릭 시 자동 정답 체크 및 1.4초 후 다음 문제 자동 이동)
+  const handleSelectOption = (opt) => {
+    if (isAnswerChecked || isMovingRef.current) return;
     const currentQ = quizQuestions[currentQIndex];
     if (!currentQ) return;
 
-    let userAns = selectedOption;
+    setSelectedOption(opt);
+    setTypedSpelling(opt);
+
+    // 정답 판정
+    let correct = false;
     if (currentQ.type === 'spelling') {
-      userAns = (typedSpelling || selectedOption || '').trim();
+      correct = opt.toLowerCase() === currentQ.correctAnswer.toLowerCase();
+    } else {
+      correct = opt === currentQ.correctAnswer || opt === currentQ.correctMeaning;
     }
 
+    setIsCorrect(correct);
+    setIsAnswerChecked(true);
+
+    if (correct) {
+      setScore(prev => prev + 1);
+    }
+
+    // 🔊 정답 단어 음성 발음 재생
+    playUniversalAudio(currentQ.word);
+
+    // ⏱️ 자동으로 1.4초 후 다음 문제로 자동 이동
+    if (timerRef.current) clearTimeout(timerRef.current);
+    timerRef.current = setTimeout(() => {
+      handleNextQuestion();
+    }, 1400);
+  };
+
+  // 4. 수동 정답 확인 (타이핑 입력 제출 등)
+  const handleCheckAnswer = () => {
+    if (isAnswerChecked || isMovingRef.current) return;
+    const currentQ = quizQuestions[currentQIndex];
+    if (!currentQ) return;
+
+    let userAns = (typedSpelling || selectedOption || '').trim();
     if (!userAns) return;
 
     let correct = false;
@@ -358,24 +394,43 @@ export default function Day6ReviewSection({ currentUser, safeActiveWords, onQuiz
       correct = userAns === currentQ.correctAnswer || userAns === currentQ.correctMeaning;
     }
 
+    setSelectedOption(userAns);
     setIsCorrect(correct);
     setIsAnswerChecked(true);
 
     if (correct) {
       setScore(prev => prev + 1);
     }
+
+    // 🔊 정답 단어 음성 발음 재생
+    playUniversalAudio(currentQ.word);
+
+    // ⏱️ 타이핑 제출 후에도 1.4초 후 다음 문제 자동 이동
+    if (timerRef.current) clearTimeout(timerRef.current);
+    timerRef.current = setTimeout(() => {
+      handleNextQuestion();
+    }, 1400);
   };
 
   // 5. 다음 문제 이동 또는 최종 주간 왕도장(🏵️) 수여 완료
   const handleNextQuestion = async () => {
+    if (timerRef.current) {
+      clearTimeout(timerRef.current);
+      timerRef.current = null;
+    }
+    if (isMovingRef.current) return;
+    isMovingRef.current = true;
+
     if (currentQIndex + 1 < quizQuestions.length) {
       setCurrentQIndex(prev => prev + 1);
       setSelectedOption(null);
       setTypedSpelling('');
       setIsAnswerChecked(false);
+      isMovingRef.current = false;
     } else {
       setQuizMode('quiz_completed');
       setIsWeeklyMasterDone(true);
+      isMovingRef.current = false;
 
       const finalScorePct = Math.round((score / quizQuestions.length) * 100);
 
@@ -452,10 +507,10 @@ export default function Day6ReviewSection({ currentUser, safeActiveWords, onQuiz
           WEEKLY REVIEW DAY 6
         </span>
         <h2 style={{ margin: '10px 0 6px 0', fontSize: '24px', fontWeight: '900' }}>
-          🗓️ {currentLang === 'zh' ? 'Day 6 周综合错题复习测验' : (currentLang === 'fr' ? 'Day 6 Quiz de Révision Hebdomadaire' : 'Day 6 주간 종합 오답 복습 퀴즈 데이')}
+          🗓️ {currentLang === 'zh' ? 'Day 6 周综合复习测验' : (currentLang === 'fr' ? 'Day 6 Quiz de Révision Hebdomadaire' : 'Day 6 주간 종합 복습 퀴즈 데이')}
         </h2>
         <p style={{ margin: 0, fontSize: '14px', opacity: 0.9 }}>
-          {currentLang === 'zh' ? '集中攻克本周所学错题，彻底消灭记忆盲区的专属复习日！' : (currentLang === 'fr' ? 'Journée spéciale pour réviser et éliminer toutes les erreurs de la semaine !' : '월~금 5일간 공부한 누적 단어 중 오답 단어를 콕 찍어 탈출하는 주간 검증 데이!')}
+          {currentLang === 'zh' ? '本周所学单词综合总复习（随机20题 & 重点错题脱出）的专属复习日！' : (currentLang === 'fr' ? 'Journée spéciale de révision générale hebdomadaire (20 questions aléatoires & erreurs ciblées) !' : '한 주간 공부한 단어들을 종합 총복습(20단어 랜덤 퀴즈 & 오답 집중 탈출)하는 주간 검증 데이!')}
         </p>
       </div>
 
@@ -836,44 +891,57 @@ export default function Day6ReviewSection({ currentUser, safeActiveWords, onQuiz
             );
           })()}
 
-          {/* 하단 제어 버튼 */}
+          {/* 하단 제어 및 자동 이동 안내 영역 */}
           {!isAnswerChecked ? (
-            <button
-              onClick={handleCheckAnswer}
-              disabled={!selectedOption && !typedSpelling.trim()}
-              style={{
-                width: '100%',
-                padding: '16px',
-                borderRadius: '16px',
-                background: (selectedOption || typedSpelling.trim()) ? '#6C5CE7' : '#BDC3C7',
-                color: 'white',
-                border: 'none',
-                fontSize: '17px',
-                fontWeight: 'bold',
-                cursor: (selectedOption || typedSpelling.trim()) ? 'pointer' : 'not-allowed'
-              }}
-            >
-              {currentLang === 'zh' ? '确认答案 ➔' : (currentLang === 'fr' ? 'Vérifier la réponse ➔' : '정답 확인 ➔')}
-            </button>
+            <div style={{ textAlign: 'center' }}>
+              <p style={{ margin: '0 0 10px 0', fontSize: '13px', color: '#7F8C8D', fontWeight: 'bold' }}>
+                💡 보기를 클릭하면 <strong>즉시 자동으로 정답이 체크</strong>되며 다음 문제로 넘어갑니다.
+              </p>
+              {currentQ.type === 'spelling' && typedSpelling.trim() && (
+                <button
+                  onClick={handleCheckAnswer}
+                  style={{
+                    width: '100%',
+                    padding: '16px',
+                    borderRadius: '16px',
+                    background: '#6C5CE7',
+                    color: 'white',
+                    border: 'none',
+                    fontSize: '17px',
+                    fontWeight: 'bold',
+                    cursor: 'pointer',
+                    boxShadow: '0 4px 12px rgba(108,92,231,0.3)'
+                  }}
+                >
+                  ✍️ 직접 입력한 스펠링 정답 확인 ➔
+                </button>
+              )}
+            </div>
           ) : (
-            <button
-              onClick={handleNextQuestion}
-              style={{
-                width: '100%',
-                padding: '16px',
-                borderRadius: '16px',
-                background: '#2ECC71',
-                color: 'white',
-                border: 'none',
-                fontSize: '17px',
-                fontWeight: 'bold',
-                cursor: 'pointer'
-              }}
-            >
-              {currentQIndex + 1 < quizQuestions.length
-                ? (currentLang === 'zh' ? '下一道复习题 ➔' : (currentLang === 'fr' ? 'Question suivante ➔' : '다음 복습 문제로 이동 ➔'))
-                : (currentLang === 'zh' ? '🏵️ 领取 Day 6 周复习王印 ➔' : (currentLang === 'fr' ? '🏵️ Recevoir le Grand Tampon ➔' : '🏵️ Day 6 주간 복습 완수 도장 받기 ➔'))}
-            </button>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+              <div style={{ fontSize: '13px', color: '#27AE60', fontWeight: 'bold', textAlign: 'center' }}>
+                ⏱️ 1초 후 다음 문제로 자동 이동합니다... (또는 아래 버튼 즉시 클릭)
+              </div>
+              <button
+                onClick={handleNextQuestion}
+                style={{
+                  width: '100%',
+                  padding: '16px',
+                  borderRadius: '16px',
+                  background: '#2ECC71',
+                  color: 'white',
+                  border: 'none',
+                  fontSize: '17px',
+                  fontWeight: 'bold',
+                  cursor: 'pointer',
+                  boxShadow: '0 4px 12px rgba(46,204,113,0.3)'
+                }}
+              >
+                {currentQIndex + 1 < quizQuestions.length
+                  ? (currentLang === 'zh' ? '立即进入下一题 ➔' : (currentLang === 'fr' ? 'Question suivante immédiate ➔' : '바로 다음 문제로 이동 ➔'))
+                  : (currentLang === 'zh' ? '🏵️ 立即领取 Day 6 周复习王印 ➔' : (currentLang === 'fr' ? '🏵️ Recevoir le Grand Tampon ➔' : '🏵️ Day 6 주간 복습 완수 도장 받기 ➔'))}
+              </button>
+            </div>
           )}
         </div>
       )}
