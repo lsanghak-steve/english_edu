@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useState, useCallback, useRef, useEffect } from 'react';
 import wordList500Fallback from '../data/wordsData.js';
@@ -107,7 +107,7 @@ export default function Home() {
     const curHasRec = overrides.hasRecorded !== undefined ? overrides.hasRecorded : hasRecorded;
 
     // 🎯 [5번 미개발 요구사항] 세부 저장 단계 한국어 명칭 자동 생성
-    let detailStageText = `1단계 플래시카드 단어 #${curIdx + 1} 학습 중 🎴`;
+    let detailStageText = `1단계 플래시카드 단어 #${curIdx + 1} 학습 중 📘`;
     if (curQuizLevels.includes(4)) {
       detailStageText = `4단계 주관식 타이핑 퀴즈 최고 난이도 완수 ✍️`;
     } else if (curQuizLevels.includes(3)) {
@@ -897,12 +897,12 @@ export default function Home() {
       }
       if (notice.type === 'resume_word') {
         const num = notice.index || (curIdx + 1);
-        if (lang === 'zh') return `▶ [继续学习] 从上次学习位置 (单词 #${num}) 继续学习！🎴`;
-        if (lang === 'fr') return `▶ [Reprendre] Reprise depuis la position précédente (Mot #${num}) ! 🎴`;
-        if (lang === 'ja') return `▶ [続きから学習] 前回の学習位置 (単語 #${num}) から続きを学習します！🎴`;
-        if (lang === 'vi') return `▶ [Tiếp tục học] Tiếp tục từ vị trí trước (Từ #${num})! 🎴`;
-        if (lang === 'hi') return `▶ [अध्ययन जारी रखें] पिछले स्थान (शब्द #${num}) से सीखना जारी रखें! 🎴`;
-        return `▶ [이어서 학습] 이전 학습 위치 (단어 #${num})부터 이어서 학습합니다! 🎴`;
+        if (lang === 'zh') return `▶ [继续学习] 从上次学习位置 (单词 #${num}) 继续学习！📘`;
+        if (lang === 'fr') return `▶ [Reprendre] Reprise depuis la position précédente (Mot #${num}) ! 📘`;
+        if (lang === 'ja') return `▶ [続きから学習] 前回の学習位置 (単語 #${num}) から続きを学習します！📘`;
+        if (lang === 'vi') return `▶ [Tiếp tục học] Tiếp tục từ vị trí trước (Từ #${num})! 📘`;
+        if (lang === 'hi') return `▶ [अध्ययन जारी रखें] पिछले स्थान (शब्द #${num}) से सीखना जारी रखें! 📘`;
+        return `▶ [이어서 학습] 이전 학습 위치 (단어 #${num})부터 이어서 학습합니다! 📘`;
       }
     }
     return notice;

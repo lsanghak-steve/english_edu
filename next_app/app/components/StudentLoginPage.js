@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useState, useEffect } from 'react';
 import supabase from '../../lib/supabaseClient.js';
@@ -511,7 +511,7 @@ export default function StudentLoginPage({ onLoginSuccess, onParentLoginSuccess,
           </div>
         </div>
 
-        {/* 🎴 FlipVoca 공식 3D 심볼 & 로고 헤더 */}
+        {/* 📘 FlipVoca 공식 3D 심볼 & 로고 헤더 */}
         <div style={{
           display: 'flex',
           flexDirection: 'column',

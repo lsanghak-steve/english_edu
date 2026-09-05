@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useState } from 'react';
 import Link from 'next/link';
@@ -342,7 +342,7 @@ export default function LandingZhPage() {
             
             {/* Feature 1 */}
             <div style={{ background: '#F8FAFC', borderRadius: '20px', padding: '28px', border: '2px solid #E2E8F0' }}>
-              <div style={{ fontSize: '36px', marginBottom: '14px' }}>🎴</div>
+              <div style={{ fontSize: '36px', marginBottom: '14px' }}>📘</div>
               <h3 style={{ fontSize: '20px', fontWeight: '900', color: '#1E293B', marginBottom: '8px' }}>
                 1. 5,000 原创插画图解
               </h3>

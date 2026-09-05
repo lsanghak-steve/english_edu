@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
@@ -733,7 +733,7 @@ export default function ModernLoginPage() {
           paddingBottom: '20px'
         }}>
 
-          {/* 🎴 FlipVoca 공식 로고 & 슬로건 */}
+          {/* 📘 FlipVoca 공식 로고 & 슬로건 */}
           <div style={{
             display: 'flex',
             flexDirection: 'column',

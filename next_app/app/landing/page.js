@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useState } from 'react';
 import Link from 'next/link';
@@ -260,7 +260,7 @@ export default function LandingPage() {
 
           <div className="grid-4">
             <div className="apple-card">
-              <div className="apple-card-icon">🎴</div>
+              <div className="apple-card-icon">📘</div>
               <h3>플래시카드 & 🎚️ 속도 조절</h3>
               <p>원어민 음성을 <strong>0.75x(느리게) / 1.0x(보통) / 1.25x(빠르게)</strong>로 맞춤 청취.</p>
             </div>
@@ -392,10 +392,10 @@ export default function LandingPage() {
             </div>
 
             <div className="apple-pdf-card">
-              <span className="pdf-tag">🎴 양식 4</span>
+              <span className="pdf-tag">📘 양식 4</span>
               <h4>절취선 단어 카드</h4>
               <p>오프라인 실물 단어 카드</p>
-              <button className="btn-apple-action" onClick={() => alert('🎴 [단어 카드] 미리보기')}>미리보기 ➔</button>
+              <button className="btn-apple-action" onClick={() => alert('📘 [단어 카드] 미리보기')}>미리보기 ➔</button>
             </div>
 
             <div className="apple-pdf-card">

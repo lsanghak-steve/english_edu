@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useState, useEffect, useRef, useCallback } from 'react';
 import Link from 'next/link';
@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import supabase from '../../lib/supabaseClient.js';
 import wordList500Fallback from '../../data/wordsData.js';
 import { playUniversalAudio, initAudioUnlock } from '../../lib/audioPlayer.js';
-import { getLocalDateString } from '../../lib/i18n.js';
+import { getLocalDateString, t } from '../../lib/i18n.js';
 import WordListSection from '../components/WordListSection.js';
 import PersonalVocabSection from '../components/PersonalVocabSection.js';
 import Day6ReviewSection from '../components/Day6ReviewSection.js';
@@ -237,6 +237,12 @@ export default function ModernStudyPage() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isFlipped, setIsFlipped] = useState(false);
   const [ttsSpeed, setTtsSpeed] = useState(1.0); // 0.7x, 1.0x, 1.4x, 2.0x
+  const [studyRound, setStudyRound] = useState(1);
+  const [todayAllLearnedWords, setTodayAllLearnedWords] = useState([]);
+  const [showTodayAllModal, setShowTodayAllModal] = useState(false);
+  const [hasRecorded, setHasRecorded] = useState(false);
+  const [completedQuizLevels, setCompletedQuizLevels] = useState([]);
+  const [resumeNotice, setResumeNotice] = useState(null);
 
   // 🎙️ 녹음 & 발음 체크 상태
   const [isRecording, setIsRecording] = useState(false);
@@ -677,6 +683,18 @@ export default function ModernStudyPage() {
             }
           }
         });
+      try {
+        const todayAllKey = `today_all_learned_${sid}_${todayStr}`;
+        const savedTodayAll = JSON.parse(localStorage.getItem(todayAllKey) || '[]');
+        if (savedTodayAll && Array.isArray(savedTodayAll) && savedTodayAll.length > 0) {
+          setTodayAllLearnedWords(savedTodayAll);
+        }
+        const recKey = `record_mission_${sid}_${todayStr}`;
+        setHasRecorded(localStorage.getItem(recKey) === 'true');
+        const quizKey = `quiz_mission_${sid}_${todayStr}`;
+        const storedQuiz = JSON.parse(localStorage.getItem(quizKey) || '[]');
+        setCompletedQuizLevels(Array.isArray(storedQuiz) ? storedQuiz : []);
+      } catch (e) {}
     }
   }, [currentUser?.id, todayStr]);
 
@@ -806,6 +824,7 @@ export default function ModernStudyPage() {
           const mergedList = Array.from(wMap.values());
           localStorage.setItem(stampedWordsKey, JSON.stringify(mergedList));
           localStorage.setItem(todayAllKey, JSON.stringify(mergedList));
+          setTodayAllLearnedWords(mergedList);
         } catch(e) {}
 
         // 첫 번째 맞춤 단어 음성 즉시 자동 재생
@@ -837,7 +856,7 @@ export default function ModernStudyPage() {
     }
   }, [currentUser?.studyGradeLevel, currentUser?.dailyWordCount, currentUser?.id]);
 
-  // 🔊 🎴 플래시카드 단어 자동 발음 재생 엔진 (단어 전환, 덱 진입, 셔플, 오답 모드 등 100% 자동 재생)
+  // 🔊 📘 플래시카드 단어 자동 발음 재생 엔진 (단어 전환, 덱 진입, 셔플, 오답 모드 등 100% 자동 재생)
   useEffect(() => {
     if (currentTab === 'deck' && words && words.length > 0 && !isWordsLoading && !isFlipped) {
       const curWordObj = words[currentIndex] || wordList500Fallback[currentIndex];
@@ -913,7 +932,7 @@ export default function ModernStudyPage() {
     }
   };
 
-  // 🎴 3D 카드 플립 핸들러 (뒷면으로 뒤집힐 때 원어민 목소리로 예문 자동 읽기!)
+  // 📘 3D 카드 플립 핸들러 (뒷면으로 뒤집힐 때 원어민 목소리로 예문 자동 읽기!)
   const handleFlipCard = () => {
     const nextFlipped = !isFlipped;
     setIsFlipped(nextFlipped);
@@ -1150,6 +1169,16 @@ export default function ModernStudyPage() {
               ? `👍 ${finalScore}점! 아주 훌륭한 발음입니다! 🌟`
               : `💡 ${finalScore}점! 아래 AI 코칭 팁을 보고 다시 도전해 보세요!`
           );
+
+          if (finalScore >= 65) {
+            setHasRecorded(true);
+            const studentId = currentUser?.student_id || currentUser?.id;
+            if (studentId) {
+              try {
+                localStorage.setItem(`record_mission_${studentId}_${todayStr}`, 'true');
+              } catch (e) {}
+            }
+          }
 
           // 퀴즈 3단계(발음 퀴즈) 모드일 때 자동 채점 및 합격 처리
           if (currentTab === 'quiz' && quizLevel === 3) {
@@ -1533,6 +1562,19 @@ export default function ModernStudyPage() {
       setIsQuizCorrect(null);
       setTypingInput('');
     } else {
+      // 퀴즈 레벨 완수 기록 보존
+      const finishedLvl = quizLevel;
+      setCompletedQuizLevels(prev => {
+        const nextLevels = Array.from(new Set([...prev, finishedLvl]));
+        const studentId = currentUser?.student_id || currentUser?.id;
+        if (studentId) {
+          try {
+            localStorage.setItem(`quiz_mission_${studentId}_${todayStr}`, JSON.stringify(nextLevels));
+          } catch (e) {}
+        }
+        return nextLevels;
+      });
+
       // 💮 1. 2단계 퀴즈 완수 시 ➔ 공식 학습 완료 & 출석 도장 찍기 인정! (3, 4단계는 선택 심화)
       if (quizLevel === 2) {
         handleStampAttendance();
@@ -1807,6 +1849,88 @@ export default function ModernStudyPage() {
     setCurrentTab('deck');
   };
 
+  // 🚀 다음 단어 세트 로드 (Round 2, 3... 미학습 단어 즉시 가져오기)
+  const handleLoadNextWordSet = () => {
+    if (!currentUser) return;
+    const studentIdToUse = currentUser.student_id || currentUser.id || 'lsh_20260807_000001';
+    const dailyCount = parseInt(currentUser.dailyWordCount || currentUser.daily_word_count || 20, 10);
+    const learnedKey = `learned_words_${studentIdToUse}`;
+    const todayAllKey = `today_all_learned_${studentIdToUse}_${todayStr}`;
+    const dailySetKey = `daily_random_set_${studentIdToUse}_${todayStr}`;
+    const stampedWordsKey = `stamped_words_${studentIdToUse}_${todayStr}`;
+
+    let learnedList = [];
+    try {
+      learnedList = JSON.parse(localStorage.getItem(learnedKey) || '[]');
+    } catch (e) {
+      learnedList = [];
+    }
+
+    const currentWordsStr = words.map(w => (typeof w === 'string' ? w : w.word).toLowerCase().trim());
+    const updatedLearned = [...new Set([...learnedList, ...currentWordsStr])];
+    try {
+      localStorage.setItem(learnedKey, JSON.stringify(updatedLearned));
+    } catch (e) {}
+
+    const pool = allLevelWords && allLevelWords.length > 0 ? allLevelWords : wordList500Fallback;
+    let unlearned = pool.filter(w => {
+      const wStr = (typeof w === 'string' ? w : w.word || '').toLowerCase().trim();
+      return !updatedLearned.includes(wStr);
+    });
+
+    if (unlearned.length < dailyCount) {
+      try {
+        localStorage.setItem(learnedKey, JSON.stringify([]));
+      } catch (e) {}
+      unlearned = [...pool];
+    }
+
+    const shuffled = shuffleArray(unlearned);
+    const nextSet = shuffled.slice(0, dailyCount);
+
+    setWords(nextSet);
+    setOriginalDailyWords(nextSet);
+    try {
+      localStorage.setItem(dailySetKey, JSON.stringify(nextSet));
+    } catch (e) {}
+
+    // 오늘 전체 누적 단어장에 안전 병합
+    const wordMap = new Map();
+    (todayAllLearnedWords || []).forEach(w => {
+      const c = (w.word || '').toLowerCase().trim();
+      if (c) wordMap.set(c, w);
+    });
+    nextSet.forEach(w => {
+      const c = (w.word || '').toLowerCase().trim();
+      if (c && !wordMap.has(c)) wordMap.set(c, w);
+    });
+    const updatedTodayAll = Array.from(wordMap.values());
+    setTodayAllLearnedWords(updatedTodayAll);
+    try {
+      localStorage.setItem(todayAllKey, JSON.stringify(updatedTodayAll));
+      localStorage.setItem(stampedWordsKey, JSON.stringify(updatedTodayAll));
+    } catch (e) {}
+
+    const nextRound = studyRound + 1;
+    setStudyRound(nextRound);
+    setCurrentIndex(0);
+    setIsFlipped(false);
+    setRecordedScore(null);
+    setRecognizedText('');
+    setRecordedAudioUrl(null);
+    setIsWrongReviewMode(false);
+    setCurrentTab('deck');
+
+    // 🔊 안내 음성 및 토스트
+    if ('speechSynthesis' in window) {
+      window.speechSynthesis.cancel();
+      const utterance = new SpeechSynthesisUtterance(`Round ${nextRound} loaded!`);
+      utterance.lang = 'en-US';
+      utterance.rate = 1.0;
+      window.speechSynthesis.speak(utterance);
+    }
+  };
+
   // 👤 내 정보 & 학부모 정보 수정 모달/폼 열기
   const handleOpenEditProfile = () => {
     setEditName(currentUser?.name || '이상학');
@@ -2076,7 +2200,7 @@ export default function ModernStudyPage() {
                 </div>
               </div>
 
-              {/* 🎴 CARD 1: Day 1 Vocabulary (오늘의 단어 학습 카드) */}
+              {/* 📘 CARD 1: Day 1 Vocabulary (오늘의 단어 학습 카드) */}
               <div
                 onClick={() => { setCurrentTab('deck'); handlePlaySound(currentWord?.word); }}
                 style={{
@@ -2264,7 +2388,7 @@ export default function ModernStudyPage() {
                   fontWeight: '900',
                   border: '1px solid rgba(255, 255, 255, 0.4)'
                 }}>
-                  {wrongWords.length > 0 ? '🔥 틀린 단어 집중 복습 시작 ➔' : '🎴 오답 단어 목록 확인'}
+                  {wrongWords.length > 0 ? '🔥 틀린 단어 집중 복습 시작 ➔' : '📘 오답 단어 목록 확인'}
                 </div>
               </div>
 
@@ -2454,29 +2578,449 @@ export default function ModernStudyPage() {
           )}
 
           {/* ═══════════════════════════════════════════════════════
-              TAB 2: 🎴 3D FLASHCARD DECK (양면 플립 카드 학습 뷰)
+              TAB 2: 📘 3D FLASHCARD DECK (양면 플립 카드 학습 뷰)
              ═══════════════════════════════════════════════════════ */}
           {currentTab === 'deck' && (
             isWordsLoading || !currentWord ? (
               <div style={{
                 width: '100%',
-                height: '320px',
+                minHeight: '340px',
                 borderRadius: '28px',
-                background: 'linear-gradient(135deg, #00C7E5 0%, #00A8BF 50%, #0284C7 100%)',
+                background: '#FFFFFF',
+                border: '2px solid #E2E8F0',
                 display: 'flex',
                 flexDirection: 'column',
                 alignItems: 'center',
                 justifyContent: 'center',
                 gap: '14px',
-                color: '#FFFFFF',
-                boxShadow: '0 14px 30px rgba(0, 168, 191, 0.32)'
+                color: '#1E293B',
+                boxShadow: '0 8px 24px rgba(0, 0, 0, 0.04)',
+                padding: '30px 20px',
+                textAlign: 'center'
               }}>
-                <div style={{ fontSize: '42px', animation: 'bounce 1s infinite' }}>🎴</div>
-                <div style={{ fontSize: '18px', fontWeight: '900' }}>오늘의 맞춤 단어를 불러오는 중입니다...</div>
-                <div style={{ fontSize: '12px', opacity: 0.9 }}>잠시만 기다려 주세요 ⚡</div>
+                <div style={{ fontSize: '46px', animation: 'bounce 1s infinite' }}>📖</div>
+                <div style={{ fontSize: '18px', fontWeight: '900', color: '#008294' }}>
+                  {currentUser?.name ? `${currentUser.name} 님의 ` : ''}맞춤 영단어 로딩 중...
+                </div>
+                <div style={{ fontSize: '13px', color: '#64748B', fontWeight: '600' }}>
+                  오늘 학습할 단어를 안전하게 불러오고 있습니다. 잠시만 기다려 주세요! ⚡
+                </div>
+                <div style={{
+                  width: '36px',
+                  height: '36px',
+                  border: '4px solid #E2E8F0',
+                  borderTop: '4px solid #00A8BF',
+                  borderRadius: '50%',
+                  animation: 'spin 1s linear infinite'
+                }} />
+                <style jsx>{`
+                  @keyframes spin {
+                    0% { transform: rotate(0deg); }
+                    100% { transform: rotate(360deg); }
+                  }
+                `}</style>
               </div>
             ) : (
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '14px', width: '100%' }}>
+              
+              {/* 🚀 상단 퀵 액션 툴바 (Action Buttons Toolbar) */}
+              <div style={{
+                width: '100%',
+                background: '#FFFFFF',
+                border: '1.5px solid #E2E8F0',
+                borderRadius: '20px',
+                padding: '10px 12px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '8px',
+                flexWrap: 'wrap',
+                boxShadow: '0 4px 12px rgba(0,0,0,0.03)'
+              }}>
+                {/* 1. 날짜 및 회차 배지 */}
+                <div style={{
+                  padding: '7px 14px',
+                  borderRadius: '12px',
+                  border: '1.5px solid #FADBD8',
+                  background: '#FEF5E7',
+                  color: '#D35400',
+                  fontSize: '12px',
+                  fontWeight: '900',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '4px'
+                }}>
+                  📅 [{todayStr}] {studyRound > 1 ? `제${studyRound}회차` : '학습 진행'}
+                </div>
+
+                {/* 2. 오늘 누적 학습 단어 모달 버튼 */}
+                <button
+                  type="button"
+                  onClick={() => setShowTodayAllModal(true)}
+                  style={{
+                    padding: '7px 14px',
+                    borderRadius: '12px',
+                    border: 'none',
+                    background: '#10B981',
+                    color: '#FFFFFF',
+                    fontSize: '12px',
+                    fontWeight: '900',
+                    cursor: 'pointer',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '5px',
+                    boxShadow: '0 2px 8px rgba(16, 185, 129, 0.25)'
+                  }}
+                  title="오늘 지금까지 학습한 모든 단어 리스트 한눈에 보기"
+                >
+                  📖 오늘 누적 단어 ({todayAllLearnedWords.length > 0 ? todayAllLearnedWords.length : words.length}개)
+                </button>
+
+                {/* 3. 1차 발음 녹음 바로가기 */}
+                <button
+                  type="button"
+                  onClick={() => {
+                    const el = document.getElementById('record-btn-trigger');
+                    if (el) el.scrollIntoView({ behavior: 'smooth' });
+                  }}
+                  style={{
+                    padding: '7px 14px',
+                    borderRadius: '12px',
+                    border: hasRecorded ? '1.5px solid #10B981' : '1.5px solid #38BDF8',
+                    background: hasRecorded ? '#ECFDF5' : '#F0F9FF',
+                    color: hasRecorded ? '#059669' : '#0284C7',
+                    fontSize: '12px',
+                    fontWeight: '900',
+                    cursor: 'pointer',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '4px'
+                  }}
+                >
+                  {hasRecorded ? '✅ 1차 녹음 완료 🎙️' : '🎙️ 1차 녹음 ➔'}
+                </button>
+
+                {/* 4. 2단계 스펠링 퀴즈 바로가기 */}
+                <button
+                  type="button"
+                  onClick={() => {
+                    setQuizLevel(2);
+                    setCurrentTab('quiz');
+                  }}
+                  style={{
+                    padding: '7px 14px',
+                    borderRadius: '12px',
+                    border: completedQuizLevels.includes(2) ? '1.5px solid #10B981' : '1.5px solid #C084FC',
+                    background: completedQuizLevels.includes(2) ? '#ECFDF5' : '#FAF5FF',
+                    color: completedQuizLevels.includes(2) ? '#059669' : '#7E22CE',
+                    fontSize: '12px',
+                    fontWeight: '900',
+                    cursor: 'pointer',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '4px'
+                  }}
+                >
+                  {completedQuizLevels.includes(2) ? '✅ 퀴즈 완수 💮' : '🧩 2단계 퀴즈 ➔'}
+                </button>
+
+                {/* 5. 다음 단어 세트 로드 버튼 */}
+                <button
+                  type="button"
+                  onClick={handleLoadNextWordSet}
+                  style={{
+                    padding: '7px 16px',
+                    borderRadius: '12px',
+                    border: '1.5px solid #FB923C',
+                    background: 'linear-gradient(135deg, #FFF7ED 0%, #FFEDD5 100%)',
+                    color: '#C2410C',
+                    fontSize: '12px',
+                    fontWeight: '900',
+                    cursor: 'pointer',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '4px',
+                    boxShadow: '0 2px 8px rgba(234, 88, 12, 0.2)'
+                  }}
+                >
+                  🚀 다음 단어 학습 ➔
+                </button>
+              </div>
+
+              {/* 🌟 7단계 학습 단계별 비주얼 스테퍼 바 (Duolingo 3D Style) */}
+              {(() => {
+                let progressPct = Math.round(((currentIndex + 1) / Math.max(words.length, 1)) * 30);
+                if (hasRecorded) progressPct += 20;
+                if (completedQuizLevels.includes(1)) progressPct += 25;
+                if (completedQuizLevels.includes(2)) progressPct = 100;
+
+                return (
+                  <div style={{
+                    width: '100%',
+                    background: '#FFFFFF',
+                    border: '1.5px solid #E2E8F0',
+                    borderBottom: '4px solid #CBD5E1',
+                    borderRadius: '22px',
+                    padding: '14px 16px',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: '10px',
+                    boxShadow: '0 4px 14px rgba(0,0,0,0.03)'
+                  }}>
+                    {/* 상단 텍스트 및 다시 학습 버튼 */}
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '8px' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <span style={{
+                          background: '#10B981',
+                          border: '1px solid #059669',
+                          borderBottom: '3px solid #047857',
+                          color: '#FFFFFF',
+                          fontSize: '11px',
+                          fontWeight: '900',
+                          padding: '3px 10px',
+                          borderRadius: '10px'
+                        }}>
+                          ⚡ 학습 진행도
+                        </span>
+                        <span style={{ fontSize: '13px', fontWeight: '800', color: '#1E293B' }}>
+                          {completedQuizLevels.includes(2)
+                            ? '💮 오늘의 2단계 퀴즈와 출석 도장을 모두 완수했습니다!'
+                            : hasRecorded
+                            ? '🎙️ 1차 발음 녹음 완료! 퀴즈 단계로 이동해 보세요!'
+                            : `단어 #${currentIndex + 1} 학습 중 (${currentIndex + 1}/${words.length})`}
+                        </span>
+                      </div>
+
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setCurrentIndex(0);
+                          setIsFlipped(false);
+                        }}
+                        style={{
+                          background: '#FFFFFF',
+                          color: '#EF4444',
+                          border: '1.5px solid #FCA5A5',
+                          borderBottom: '3px solid #EF4444',
+                          padding: '4px 12px',
+                          borderRadius: '10px',
+                          fontSize: '11px',
+                          fontWeight: '900',
+                          cursor: 'pointer'
+                        }}
+                        title="현재 세트 단어를 1번 카드부터 다시 공부합니다"
+                      >
+                        🔄 처음부터 다시
+                      </button>
+                    </div>
+
+                    {/* 실시간 진도율 프로그레스 바 */}
+                    <div style={{ width: '100%', background: '#F1F5F9', borderRadius: '12px', height: '16px', position: 'relative', overflow: 'hidden', border: '1px solid #E2E8F0' }}>
+                      <div style={{
+                        width: `${Math.min(Math.max(progressPct, 6), 100)}%`,
+                        height: '100%',
+                        background: progressPct >= 100
+                          ? 'linear-gradient(90deg, #F59E0B 0%, #D97706 100%)'
+                          : 'linear-gradient(90deg, #10B981 0%, #059669 100%)',
+                        borderRadius: '12px',
+                        transition: 'width 0.4s ease'
+                      }} />
+                      <span style={{
+                        position: 'absolute',
+                        top: 0,
+                        left: 0,
+                        right: 0,
+                        bottom: 0,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        fontSize: '10.5px',
+                        fontWeight: '900',
+                        color: progressPct > 45 ? '#FFFFFF' : '#475569',
+                        textShadow: progressPct > 45 ? '0 1px 2px rgba(0,0,0,0.4)' : 'none'
+                      }}>
+                        🔥 오늘 목표의 {progressPct}% 완수!
+                      </span>
+                    </div>
+
+                    {/* 7단계 원클릭 스테퍼 버튼 그룹 */}
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '4px', flexWrap: 'wrap' }}>
+                      {/* 1. 단어보기 */}
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setCurrentTab('deck');
+                          setIsFlipped(false);
+                        }}
+                        style={{
+                          flex: 1,
+                          minWidth: '64px',
+                          textAlign: 'center',
+                          padding: '6px 2px',
+                          borderRadius: '10px',
+                          border: currentTab === 'deck' && !isFlipped ? '1.5px solid #00A8BF' : '1.5px solid #E2E8F0',
+                          borderBottom: currentTab === 'deck' && !isFlipped ? '3px solid #008294' : '3px solid #CBD5E1',
+                          background: currentTab === 'deck' && !isFlipped ? '#E6FAFC' : '#FFFFFF',
+                          color: currentTab === 'deck' && !isFlipped ? '#008294' : '#64748B',
+                          fontSize: '10px',
+                          fontWeight: '900',
+                          cursor: 'pointer'
+                        }}
+                      >
+                        1.단어보기 ({currentIndex + 1}/{words.length})
+                      </button>
+
+                      {/* 2. 뜻익히기 */}
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setCurrentTab('deck');
+                          setIsFlipped(true);
+                        }}
+                        style={{
+                          flex: 1,
+                          minWidth: '64px',
+                          textAlign: 'center',
+                          padding: '6px 2px',
+                          borderRadius: '10px',
+                          border: currentTab === 'deck' && isFlipped ? '1.5px solid #00A8BF' : '1.5px solid #E2E8F0',
+                          borderBottom: currentTab === 'deck' && isFlipped ? '3px solid #008294' : '3px solid #CBD5E1',
+                          background: currentTab === 'deck' && isFlipped ? '#E6FAFC' : '#FFFFFF',
+                          color: currentTab === 'deck' && isFlipped ? '#008294' : '#64748B',
+                          fontSize: '10px',
+                          fontWeight: '900',
+                          cursor: 'pointer'
+                        }}
+                      >
+                        2.뜻익히기 💡
+                      </button>
+
+                      {/* 3. 발음녹음 */}
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setCurrentTab('deck');
+                          const el = document.getElementById('record-btn-trigger');
+                          if (el) el.scrollIntoView({ behavior: 'smooth' });
+                        }}
+                        style={{
+                          flex: 1,
+                          minWidth: '64px',
+                          textAlign: 'center',
+                          padding: '6px 2px',
+                          borderRadius: '10px',
+                          border: hasRecorded ? '1.5px solid #10B981' : '1.5px solid #E2E8F0',
+                          borderBottom: hasRecorded ? '3px solid #059669' : '3px solid #CBD5E1',
+                          background: hasRecorded ? '#ECFDF5' : '#FFFFFF',
+                          color: hasRecorded ? '#059669' : '#64748B',
+                          fontSize: '10px',
+                          fontWeight: '900',
+                          cursor: 'pointer'
+                        }}
+                      >
+                        3.발음녹음 {hasRecorded ? '✅' : '⏳'}
+                      </button>
+
+                      {/* 4. 스펠퀴즈 */}
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setQuizLevel(1);
+                          setCurrentTab('quiz');
+                        }}
+                        style={{
+                          flex: 1,
+                          minWidth: '64px',
+                          textAlign: 'center',
+                          padding: '6px 2px',
+                          borderRadius: '10px',
+                          border: completedQuizLevels.includes(1) ? '1.5px solid #10B981' : (currentTab === 'quiz' && quizLevel === 1 ? '1.5px solid #0284C7' : '1.5px solid #E2E8F0'),
+                          borderBottom: completedQuizLevels.includes(1) ? '3px solid #059669' : (currentTab === 'quiz' && quizLevel === 1 ? '3px solid #0369A1' : '3px solid #CBD5E1'),
+                          background: completedQuizLevels.includes(1) ? '#ECFDF5' : (currentTab === 'quiz' && quizLevel === 1 ? '#E0F2FE' : '#FFFFFF'),
+                          color: completedQuizLevels.includes(1) ? '#059669' : (currentTab === 'quiz' && quizLevel === 1 ? '#0369A1' : '#64748B'),
+                          fontSize: '10px',
+                          fontWeight: '900',
+                          cursor: 'pointer'
+                        }}
+                      >
+                        4.스펠퀴즈 {completedQuizLevels.includes(1) ? '✅' : '⏳'}
+                      </button>
+
+                      {/* 5. 녹음퀴즈 */}
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setQuizLevel(2);
+                          setCurrentTab('quiz');
+                        }}
+                        style={{
+                          flex: 1,
+                          minWidth: '64px',
+                          textAlign: 'center',
+                          padding: '6px 2px',
+                          borderRadius: '10px',
+                          border: completedQuizLevels.includes(2) ? '1.5px solid #10B981' : (currentTab === 'quiz' && quizLevel === 2 ? '1.5px solid #059669' : '1.5px solid #E2E8F0'),
+                          borderBottom: completedQuizLevels.includes(2) ? '3px solid #047857' : (currentTab === 'quiz' && quizLevel === 2 ? '3px solid #047857' : '3px solid #CBD5E1'),
+                          background: completedQuizLevels.includes(2) ? '#ECFDF5' : (currentTab === 'quiz' && quizLevel === 2 ? '#D1FAE5' : '#FFFFFF'),
+                          color: completedQuizLevels.includes(2) ? '#059669' : (currentTab === 'quiz' && quizLevel === 2 ? '#047857' : '#64748B'),
+                          fontSize: '10px',
+                          fontWeight: '900',
+                          cursor: 'pointer'
+                        }}
+                      >
+                        5.녹음퀴즈 {completedQuizLevels.includes(2) ? '✅' : '⏳'}
+                      </button>
+
+                      {/* 6. 쓰기퀴즈 */}
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setQuizLevel(4);
+                          setCurrentTab('quiz');
+                        }}
+                        style={{
+                          flex: 1,
+                          minWidth: '64px',
+                          textAlign: 'center',
+                          padding: '6px 2px',
+                          borderRadius: '10px',
+                          border: completedQuizLevels.includes(4) ? '1.5px solid #10B981' : (currentTab === 'quiz' && quizLevel === 4 ? '1.5px solid #7C3AED' : '1.5px solid #E2E8F0'),
+                          borderBottom: completedQuizLevels.includes(4) ? '3px solid #059669' : (currentTab === 'quiz' && quizLevel === 4 ? '3px solid #6D28D9' : '3px solid #CBD5E1'),
+                          background: completedQuizLevels.includes(4) ? '#ECFDF5' : (currentTab === 'quiz' && quizLevel === 4 ? '#EDE9FE' : '#FFFFFF'),
+                          color: completedQuizLevels.includes(4) ? '#059669' : (currentTab === 'quiz' && quizLevel === 4 ? '#6D28D9' : '#64748B'),
+                          fontSize: '10px',
+                          fontWeight: '900',
+                          cursor: 'pointer'
+                        }}
+                      >
+                        6.쓰기퀴즈 {completedQuizLevels.includes(4) ? '✅' : '⏳'}
+                      </button>
+
+                      {/* 7. 출석도장 */}
+                      <button
+                        type="button"
+                        onClick={() => setCurrentTab('calendar')}
+                        style={{
+                          flex: 1,
+                          minWidth: '64px',
+                          textAlign: 'center',
+                          padding: '6px 2px',
+                          borderRadius: '10px',
+                          border: completedQuizLevels.includes(2) ? '1.5px solid #10B981' : '1.5px solid #E2E8F0',
+                          borderBottom: completedQuizLevels.includes(2) ? '3px solid #059669' : '3px solid #CBD5E1',
+                          background: completedQuizLevels.includes(2) ? '#10B981' : '#FFFFFF',
+                          color: completedQuizLevels.includes(2) ? '#FFFFFF' : '#64748B',
+                          fontSize: '10px',
+                          fontWeight: '900',
+                          cursor: 'pointer'
+                        }}
+                      >
+                        7.출석도장 {completedQuizLevels.includes(2) ? '완료 💮' : '대기'}
+                      </button>
+                    </div>
+                  </div>
+                );
+              })()}
               
               {/* 오답 복습 모드 배너 or 덱 모드 전환 바 */}
               {isWrongReviewMode ? (
@@ -2561,7 +3105,7 @@ export default function ModernStudyPage() {
                 </span>
               </div>
 
-              {/* 🎴 3D 플립 카드 컨테이너 */}
+              {/* 📘 3D 플립 카드 컨테이너 */}
               <div
                 onClick={handleFlipCard}
                 style={{
@@ -2867,6 +3411,7 @@ export default function ModernStudyPage() {
 
                 {/* 2. Mic */}
                 <button
+                  id="record-btn-trigger"
                   type="button"
                   onClick={toggleRecording}
                   style={{
@@ -3380,7 +3925,7 @@ export default function ModernStudyPage() {
                   </div>
                 </div>
 
-                {/* 🎴 선택한 날짜의 학습 완료 단어 리스트 카드 */}
+                {/* 📘 선택한 날짜의 학습 완료 단어 리스트 카드 */}
                 {selectedCalendarDate && (
                   <div style={{
                     background: '#FFFFFF',
@@ -3536,7 +4081,7 @@ export default function ModernStudyPage() {
                           gap: '6px'
                         }}
                       >
-                        <span>🎴</span>
+                        <span>📘</span>
                         <span>이 날의 단어들로 플래시카드 복습하기</span>
                       </button>
                     )}
@@ -3798,7 +4343,7 @@ export default function ModernStudyPage() {
                           cursor: 'pointer'
                         }}
                       >
-                        🎴 오늘의 단어 복습하기
+                        📘 오늘의 단어 복습하기
                       </button>
                     </div>
                   </div>
@@ -4901,7 +5446,7 @@ export default function ModernStudyPage() {
         }}>
           {[
             { key: 'dashboard', icon: '🏠', label: currentStrings.navHome },
-            { key: 'deck', icon: '🎴', label: currentStrings.navDeck },
+            { key: 'deck', icon: '📘', label: currentStrings.navDeck },
             { key: 'calendar', icon: '📅', label: currentStrings.navCalendar },
             { key: 'quiz', icon: '✍️', label: currentStrings.navQuiz },
             { key: 'profile', icon: '👤', label: currentStrings.navProfile }
@@ -5084,6 +5629,181 @@ export default function ModernStudyPage() {
                   닫기
                 </button>
               </div>
+            </div>
+          </div>
+        )}
+
+        {/* 📖 오늘 공부한 전체 누적 단어 팝업 모달 */}
+        {showTodayAllModal && (
+          <div style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            background: 'rgba(15, 23, 42, 0.65)',
+            backdropFilter: 'blur(6px)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 9999,
+            padding: '16px'
+          }}>
+            <div style={{
+              background: '#FFFFFF',
+              borderRadius: '28px',
+              padding: '24px',
+              width: '100%',
+              maxWidth: '480px',
+              boxShadow: '0 20px 45px rgba(0, 0, 0, 0.25)',
+              maxHeight: '85vh',
+              display: 'flex',
+              flexDirection: 'column',
+              animation: 'fadeIn 0.2s ease',
+              border: '1.5px solid #E2E8F0'
+            }}>
+              {/* 모달 헤더 */}
+              <div style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                paddingBottom: '14px',
+                borderBottom: '2px dashed #E2E8F0',
+                marginBottom: '14px'
+              }}>
+                <div>
+                  <h3 style={{ margin: 0, color: '#1E293B', fontSize: '18px', fontWeight: '900', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                    <span>📖</span> [{todayStr}] 오늘 누적 학습 단어
+                  </h3>
+                  <div style={{ fontSize: '12px', color: '#059669', fontWeight: '800', marginTop: '3px' }}>
+                    🔥 총 {(todayAllLearnedWords && todayAllLearnedWords.length > 0 ? todayAllLearnedWords.length : words.length)}개 단어 학습 중! (제{studyRound}회차)
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setShowTodayAllModal(false)}
+                  style={{
+                    background: '#F1F5F9',
+                    border: '1.5px solid #CBD5E1',
+                    width: '32px',
+                    height: '32px',
+                    borderRadius: '10px',
+                    fontWeight: '900',
+                    cursor: 'pointer',
+                    color: '#64748B',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center'
+                  }}
+                >
+                  ✕
+                </button>
+              </div>
+
+              {/* 단어 리스트 스크롤 영역 */}
+              <div style={{
+                flex: 1,
+                overflowY: 'auto',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '8px',
+                paddingRight: '4px',
+                marginBottom: '16px'
+              }}>
+                {(todayAllLearnedWords && todayAllLearnedWords.length > 0 ? todayAllLearnedWords : words).map((item, i) => {
+                  const wordStr = (typeof item === 'string' ? item : item.word || '').replace(/\.png/gi, '').trim();
+                  const phonics = typeof item === 'string' ? '' : (item.phonics || item.phonetic || '');
+                  const meaningDisplay = getWordMeaning(item);
+
+                  return (
+                    <div
+                      key={i}
+                      style={{
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                        padding: '10px 14px',
+                        background: '#F8FAFC',
+                        borderRadius: '16px',
+                        border: '1.5px solid #E2E8F0',
+                        transition: 'all 0.15s ease'
+                      }}
+                    >
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                        <span style={{
+                          fontWeight: '900',
+                          color: '#00A8BF',
+                          fontSize: '12px',
+                          background: '#E6FAFC',
+                          padding: '2px 8px',
+                          borderRadius: '8px'
+                        }}>
+                          #{i + 1}
+                        </span>
+                        <div>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                            <span style={{ fontWeight: '900', color: '#1E293B', fontSize: '15px' }}>
+                              {wordStr}
+                            </span>
+                            {phonics && (
+                              <span style={{ fontSize: '11px', color: '#64748B', fontWeight: '600' }}>
+                                {phonics}
+                              </span>
+                            )}
+                          </div>
+                          {meaningDisplay && (
+                            <div style={{ color: '#DC2626', fontSize: '13px', fontWeight: '800', marginTop: '2px' }}>
+                              {meaningDisplay}
+                            </div>
+                          )}
+                        </div>
+                      </div>
+
+                      <button
+                        type="button"
+                        onClick={() => handlePlaySound(wordStr)}
+                        style={{
+                          background: 'linear-gradient(135deg, #00C7E5 0%, #00A8BF 100%)',
+                          color: '#FFFFFF',
+                          border: 'none',
+                          borderRadius: '50%',
+                          width: '34px',
+                          height: '34px',
+                          cursor: 'pointer',
+                          fontSize: '14px',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          boxShadow: '0 2px 6px rgba(0, 168, 191, 0.3)',
+                          flexShrink: 0
+                        }}
+                      >
+                        🔊
+                      </button>
+                    </div>
+                  );
+                })}
+              </div>
+
+              {/* 하단 닫기 버튼 */}
+              <button
+                type="button"
+                onClick={() => setShowTodayAllModal(false)}
+                style={{
+                  width: '100%',
+                  background: 'linear-gradient(135deg, #1E293B 0%, #0F172A 100%)',
+                  color: '#FFFFFF',
+                  border: 'none',
+                  padding: '13px',
+                  borderRadius: '16px',
+                  fontWeight: '900',
+                  fontSize: '14px',
+                  cursor: 'pointer',
+                  boxShadow: '0 4px 14px rgba(15, 23, 42, 0.25)'
+                }}
+              >
+                닫기
+              </button>
             </div>
           </div>
         )}
