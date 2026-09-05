@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import { useState, useEffect, useRef, useCallback } from 'react';
 import Link from 'next/link';
@@ -315,7 +315,7 @@ export default function ModernStudyPage() {
     const cleanSpoken = (spokenStr || '').toLowerCase().replace(/[^a-z]/g, '');
 
     if (!cleanSpoken || cleanSpoken.trim() === '') {
-      return 50; // 마이크 감지되었으나 단어 미인식 시 기본 격려 점수
+      return 60; // 마이크 감지되었으나 단어 미인식 시 기본 격려 점수
     }
 
     // 1. 완전 일치
@@ -323,10 +323,10 @@ export default function ModernStudyPage() {
 
     // 2. 포함 관계 (예: "an apple", "the cat")
     if (cleanSpoken.includes(cleanTarget) || cleanTarget.includes(cleanSpoken)) {
-      return 95;
+      return 98;
     }
 
-    // 3. 음소 정규화 매칭 (ph/f, ck/k, th/t, z/s 등)
+    // 3. 음소 정규화 매칭 (ph/f, ck/k, th/t, z/s, v/b, r/l 등)
     const normalizePhonetics = (s) => {
       return s
         .replace(/ph/g, 'f')
@@ -337,14 +337,16 @@ export default function ModernStudyPage() {
         .replace(/z/g, 's')
         .replace(/x/g, 'ks')
         .replace(/th/g, 't')
+        .replace(/v/g, 'b')
+        .replace(/r/g, 'l')
         .replace(/[aeiouy]+/g, 'a');
     };
 
     const normTarget = normalizePhonetics(cleanTarget);
     const normSpoken = normalizePhonetics(cleanSpoken);
 
-    if (normTarget === normSpoken) return 92;
-    if (normSpoken.includes(normTarget) || normTarget.includes(normSpoken)) return 88;
+    if (normTarget === normSpoken) return 95;
+    if (normSpoken.includes(normTarget) || normTarget.includes(normSpoken)) return 92;
 
     // 4. 레벤슈타인 편집 거리 기반 점수 산출
     let m = cleanTarget.length, n = cleanSpoken.length;
@@ -359,13 +361,15 @@ export default function ModernStudyPage() {
       }
     }
     const dist = dp[m][n];
-    if (dist === 1) return 88;
-    if (dist === 2) return 78;
-    if (dist === 3) return 65;
+    if (dist === 1) return 92;
+    if (dist === 2) return 85;
+    if (dist === 3) return 78;
+    if (dist === 4 && Math.max(m, n) >= 5) return 70;
 
     const maxLen = Math.max(cleanTarget.length, cleanSpoken.length, 1);
-    const similarity = Math.max(0, 1 - dist / maxLen);
-    return Math.max(45, Math.round(similarity * 100));
+    const rawRatio = Math.max(0, (maxLen - dist) / maxLen);
+    const boostedScore = Math.round(55 + (rawRatio * 45));
+    return Math.max(50, Math.min(100, boostedScore));
   };
 
   // 🤖 AI 발음 교정 가이드 팁 엔진 (다국어 지원)
@@ -374,7 +378,7 @@ export default function ModernStudyPage() {
     const cleanWord = targetWordStr.toLowerCase().trim();
 
     if (score !== null && score !== undefined) {
-      if (score >= 85) {
+      if (score >= 80) {
         return {
           icon: '🎉',
           title: lang === 'zh' ? '🤖 AI 发音完美赞赏！' : (lang === 'fr' ? '🤖 Félicitations IA !' : (lang === 'ja' ? '🤖 AI 発音パーフェクト称賛！' : (lang === 'vi' ? '🤖 AI Khen ngợi phát âm hoàn hảo!' : (lang === 'hi' ? '🤖 AI उत्कृष्ट उच्चारण प्रशंसा!' : '🤖 AI 발음 완벽 칭찬!')))),
@@ -394,21 +398,21 @@ export default function ModernStudyPage() {
           border: '#A7F3D0'
         };
       }
-      if (score >= 65) {
+      if (score >= 55) {
         return {
           icon: '👍',
           title: lang === 'zh' ? '🤖 AI 发音合格赞赏！' : (lang === 'fr' ? '🤖 Bravo, validé !' : (lang === 'ja' ? '🤖 AI 合格称賛！' : (lang === 'vi' ? '🤖 AI Khen ngợi đạt chuẩn!' : (lang === 'hi' ? '🤖 AI सफल उच्चारण प्रशंसा!' : '🤖 AI 발음 통과 칭찬!')))),
           text: lang === 'zh'
-            ? `[${targetWordStr}] 恭喜达到65分以上合格标准！发音清晰响亮，继续保持！🌟`
+            ? `[${targetWordStr}] 恭喜达到55分以上合格标准！发音清晰响亮，继续保持！🌟`
             : (lang === 'fr'
-            ? `[${targetWordStr}] Félicitations pour avoir dépassé 65 points ! Prononciation claire et nette ! 🌟`
+            ? `[${targetWordStr}] Félicitations pour avoir dépassé 55 points ! Prononciation claire et nette ! 🌟`
             : (lang === 'ja'
-            ? `[${targetWordStr}] 65点以上の合格基準達成！発音も明瞭で素晴らしいです！🌟`
+            ? `[${targetWordStr}] 55点以上の合格基準達成！発音も明瞭で素晴らしいです！🌟`
             : (lang === 'vi'
-            ? `[${targetWordStr}] Chúc mừng đạt trên 65 điểm! Phát âm rõ ràng và tự tin! 🌟`
+            ? `[${targetWordStr}] Chúc mừng đạt trên 55 điểm! Phát âm rõ ràng và tự tin! 🌟`
             : (lang === 'hi'
-            ? `[${targetWordStr}] 65 से अधिक अंक प्राप्त करने पर बधाई! अच्छा उच्चारण! 🌟`
-            : `[${targetWordStr}] 65점 이상 합격 기준을 멋지게 달성했어요! 자신감 있는 또박또박한 발음이 아주 좋습니다. 🌟`)))),
+            ? `[${targetWordStr}] 55 से अधिक अंक प्राप्त करने पर बधाई! अच्छा उच्चारण! 🌟`
+            : `[${targetWordStr}] 55점 이상 합격 기준을 멋지게 달성했어요! 자신감 있는 또박또박한 발음이 아주 좋습니다. 🌟`)))),
           color: '#0284C7',
           bg: '#F0F9FF',
           border: '#BAE6FD'
@@ -1156,21 +1160,21 @@ export default function ModernStudyPage() {
           let finalScore = calculateMatchScore(targetWordStr, spokenText);
 
           // 만약 Web Speech API에서 텍스트가 안 잡혔지만 마이크 음량(maxVolume)이 감지된 경우 (네트워크 지연/방화벽 등)
-          if ((!spokenText || finalScore <= 50) && maxVolumeRef.current > 15) {
-            finalScore = Math.floor(Math.random() * 8) + 82; // 82~89점 격려 점수
+          if ((!spokenText || finalScore <= 55) && maxVolumeRef.current > 10) {
+            finalScore = Math.floor(Math.random() * 7) + 85; // 85~91점 관대한 격려 점수
           }
 
           setRecordedScore(finalScore);
-          setRecognizedText(spokenText || (finalScore >= 70 ? targetWordStr : ''));
+          setRecognizedText(spokenText || (finalScore >= 55 ? targetWordStr : ''));
           setRecordingStatusText(
-            finalScore >= 85
+            finalScore >= 80
               ? `🎉 ${finalScore}점! 원어민 수준의 완벽한 발음입니다! ⭐`
-              : finalScore >= 65
+              : finalScore >= 55
               ? `👍 ${finalScore}점! 아주 훌륭한 발음입니다! 🌟`
               : `💡 ${finalScore}점! 아래 AI 코칭 팁을 보고 다시 도전해 보세요!`
           );
 
-          if (finalScore >= 65) {
+          if (finalScore >= 55) {
             setHasRecorded(true);
             const studentId = currentUser?.student_id || currentUser?.id;
             if (studentId) {
@@ -1182,7 +1186,7 @@ export default function ModernStudyPage() {
 
           // 퀴즈 3단계(발음 퀴즈) 모드일 때 자동 채점 및 합격 처리
           if (currentTab === 'quiz' && quizLevel === 3) {
-            if (finalScore >= 65) {
+            if (finalScore >= 55) {
               setIsQuizCorrect(true);
               setIsAnswerChecked(true);
               setQuizScore(prev => prev + 1);
@@ -3572,10 +3576,10 @@ export default function ModernStudyPage() {
               {recordedScore !== null && !isRecording && (
                 <div style={{
                   width: '100%',
-                  background: recordedScore >= 85 ? '#F0FDF4' : recordedScore >= 65 ? '#F0F9FF' : '#FFFBEB',
+                  background: recordedScore >= 80 ? '#F0FDF4' : recordedScore >= 55 ? '#F0F9FF' : '#FFFBEB',
                   borderRadius: '20px',
                   padding: '12px 14px',
-                  border: recordedScore >= 85 ? '1.5px solid #86EFAC' : recordedScore >= 65 ? '1.5px solid #BAE6FD' : '1.5px solid #FDE68A',
+                  border: recordedScore >= 80 ? '1.5px solid #86EFAC' : recordedScore >= 55 ? '1.5px solid #BAE6FD' : '1.5px solid #FDE68A',
                   boxShadow: '0 4px 14px rgba(0,0,0,0.03)',
                   display: 'flex',
                   flexDirection: 'column',
@@ -3587,7 +3591,7 @@ export default function ModernStudyPage() {
                       <span style={{
                         fontSize: '18px',
                         fontWeight: '900',
-                        color: recordedScore >= 85 ? '#16A34A' : recordedScore >= 65 ? '#0284C7' : '#D97706'
+                        color: recordedScore >= 80 ? '#16A34A' : recordedScore >= 55 ? '#0284C7' : '#D97706'
                       }}>
                         {recordedScore}점
                       </span>
@@ -3596,10 +3600,10 @@ export default function ModernStudyPage() {
                         fontWeight: '800',
                         padding: '2px 7px',
                         borderRadius: '8px',
-                        background: recordedScore >= 85 ? '#DCFCE7' : recordedScore >= 65 ? '#E0F2FE' : '#FEF3C7',
-                        color: recordedScore >= 85 ? '#15803D' : recordedScore >= 65 ? '#0369A1' : '#B45309'
+                        background: recordedScore >= 80 ? '#DCFCE7' : recordedScore >= 55 ? '#E0F2FE' : '#FEF3C7',
+                        color: recordedScore >= 80 ? '#15803D' : recordedScore >= 55 ? '#0369A1' : '#B45309'
                       }}>
-                        {recordedScore >= 85 ? '🌟 원어민급' : recordedScore >= 65 ? '👍 합격' : '💡 연습'}
+                        {recordedScore >= 80 ? '🌟 원어민급' : recordedScore >= 55 ? '👍 합격' : '💡 연습'}
                       </span>
                     </div>
 
@@ -4487,12 +4491,12 @@ export default function ModernStudyPage() {
                             marginTop: '4px',
                             padding: '8px 14px',
                             borderRadius: '12px',
-                            background: recordedScore >= 70 ? '#DCFCE7' : '#FEF3C7',
-                            color: recordedScore >= 70 ? '#15803D' : '#B45309',
+                            background: recordedScore >= 55 ? '#DCFCE7' : '#FEF3C7',
+                            color: recordedScore >= 55 ? '#15803D' : '#B45309',
                             fontWeight: '900',
                             fontSize: '13px'
                           }}>
-                            {recordedScore >= 70 ? `🎉 ${recordedScore}점! 발음 합격!` : `💡 ${recordedScore}점! 다시 도전하거나 다음 문제로 이동하세요.`}
+                            {recordedScore >= 55 ? `🎉 ${recordedScore}점! 발음 합격!` : `💡 ${recordedScore}점! 다시 도전하거나 다음 문제로 이동하세요.`}
                           </div>
                         )}
                       </div>
