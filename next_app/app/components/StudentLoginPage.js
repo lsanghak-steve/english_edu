@@ -554,53 +554,11 @@ export default function StudentLoginPage({ onLoginSuccess, onParentLoginSuccess,
           </p>
         </div>
 
-        {/* 🇨🇳 로그인 모드 선택 탭 (이름+PIN vs 📱 휴대폰 번호) */}
-        <div style={{ display: 'flex', gap: '8px', marginBottom: '18px', background: '#F1F5F9', padding: '4px', borderRadius: '14px' }}>
-          <button
-            type="button"
-            onClick={() => setLoginMode('account')}
-            style={{
-              flex: 1,
-              padding: '9px 12px',
-              borderRadius: '10px',
-              fontSize: '13px',
-              fontWeight: '900',
-              border: 'none',
-              background: loginMode === 'account' ? '#FFFFFF' : 'transparent',
-              color: loginMode === 'account' ? '#2C3E50' : '#64748B',
-              boxShadow: loginMode === 'account' ? '0 2px 6px rgba(0,0,0,0.08)' : 'none',
-              cursor: 'pointer',
-              transition: 'all 0.15s'
-            }}
-          >
-            👤 {currentLang === 'zh' ? '账号密码' : '학생 이름/PIN'}
-          </button>
-          <button
-            type="button"
-            onClick={() => setLoginMode('phone')}
-            style={{
-              flex: 1,
-              padding: '9px 12px',
-              borderRadius: '10px',
-              fontSize: '13px',
-              fontWeight: '900',
-              border: 'none',
-              background: loginMode === 'phone' ? '#FFFFFF' : 'transparent',
-              color: loginMode === 'phone' ? '#2C3E50' : '#64748B',
-              boxShadow: loginMode === 'phone' ? '0 2px 6px rgba(0,0,0,0.08)' : 'none',
-              cursor: 'pointer',
-              transition: 'all 0.15s'
-            }}
-          >
-            📱 {currentLang === 'zh' ? '手机快捷登录' : '휴대폰 번호'}
-          </button>
-        </div>
-
         {isLoading ? (
           <div style={{ padding: '30px', color: '#3498DB', fontWeight: 'bold', fontSize: '15px' }}>
             ☁️ 클라우드 DB 연동 중...
           </div>
-        ) : loginMode === 'account' ? (
+        ) : (
           <form onSubmit={handleStudentLoginSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
 
             <div style={{ textAlign: 'left' }}>
@@ -668,114 +626,6 @@ export default function StudentLoginPage({ onLoginSuccess, onParentLoginSuccess,
               }}
             >
               {t('btn_student_login', currentLang)} ➔
-            </button>
-          </form>
-        ) : (
-          /* 📱 手机号 + 短信验证码 登录 表单 */
-          <form onSubmit={handlePhoneLoginSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
-            <div style={{ textAlign: 'left' }}>
-              <label style={{ display: 'block', fontSize: '13px', fontWeight: 'bold', color: '#34495E', marginBottom: '6px' }}>
-                📱 {currentLang === 'zh' ? '手机号码' : '휴대폰 번호'}
-              </label>
-              <div style={{ display: 'flex', gap: '8px' }}>
-                <select
-                  value={phoneCountryCode}
-                  onChange={(e) => setPhoneCountryCode(e.target.value)}
-                  style={{
-                    padding: '12px 10px',
-                    borderRadius: '12px',
-                    border: '2px solid #CBD5E1',
-                    background: '#F8FAFC',
-                    fontWeight: '900',
-                    fontSize: '14px',
-                    outline: 'none'
-                  }}
-                >
-                  <option value="+86">🇨🇳 +86 (中国)</option>
-                  <option value="+82">🇰🇷 +82 (한국)</option>
-                  <option value="+1">🇺🇸 +1 (US)</option>
-                  <option value="+84">🇻🇳 +84 (VN)</option>
-                </select>
-                <input
-                  type="tel"
-                  placeholder={currentLang === 'zh' ? '请输入11位手机号' : '휴대폰 번호 입력'}
-                  value={phoneInput}
-                  onChange={(e) => setPhoneInput(e.target.value)}
-                  style={{
-                    flex: 1,
-                    padding: '12px 14px',
-                    borderRadius: '12px',
-                    border: '2px solid #3498DB',
-                    background: '#F4F6F7',
-                    fontSize: '15px',
-                    fontWeight: 'bold',
-                    outline: 'none'
-                  }}
-                  autoFocus
-                />
-              </div>
-            </div>
-
-            <div style={{ textAlign: 'left' }}>
-              <label style={{ display: 'block', fontSize: '13px', fontWeight: 'bold', color: '#34495E', marginBottom: '6px' }}>
-                📩 {currentLang === 'zh' ? '短信验证码' : 'SMS 인증번호'}
-              </label>
-              <div style={{ display: 'flex', gap: '8px' }}>
-                <input
-                  type="text"
-                  maxLength={6}
-                  placeholder={currentLang === 'zh' ? '6位验证码' : '인증번호'}
-                  value={smsCodeInput}
-                  onChange={(e) => setSmsCodeInput(e.target.value)}
-                  style={{
-                    flex: 1,
-                    padding: '12px 14px',
-                    borderRadius: '12px',
-                    border: '2px solid #9B59B6',
-                    fontSize: '16px',
-                    fontWeight: 'bold',
-                    outline: 'none',
-                    letterSpacing: '2px'
-                  }}
-                />
-                <button
-                  type="button"
-                  onClick={handleSendSms}
-                  disabled={smsCountdown > 0}
-                  style={{
-                    padding: '12px 14px',
-                    borderRadius: '12px',
-                    border: 'none',
-                    background: smsCountdown > 0 ? '#CBD5E1' : '#3B82F6',
-                    color: 'white',
-                    fontWeight: '900',
-                    fontSize: '13px',
-                    cursor: smsCountdown > 0 ? 'not-allowed' : 'pointer',
-                    whiteSpace: 'nowrap'
-                  }}
-                >
-                  {smsCountdown > 0 ? `${smsCountdown}s` : (currentLang === 'zh' ? '获取验证码' : '인증번호 받기')}
-                </button>
-              </div>
-            </div>
-
-            <button
-              type="submit"
-              style={{
-                width: '100%',
-                background: 'linear-gradient(135deg, #2563EB 0%, #1D4ED8 100%)',
-                color: 'white',
-                border: 'none',
-                padding: '15px',
-                borderRadius: '16px',
-                fontWeight: 'bold',
-                fontSize: '16px',
-                cursor: 'pointer',
-                boxShadow: '0 6px 16px rgba(37,99,235,0.3)',
-                marginTop: '4px'
-              }}
-            >
-              {currentLang === 'zh' ? '📱 手机快捷登录 ➔' : '📱 휴대폰 로그인 ➔'}
             </button>
           </form>
         )}
