@@ -43,6 +43,7 @@ export default function Home() {
   // 단어 목록 데이터는 항상 Supabase 클라우드 DB에서 실시간으로 로드
   const [wordList, setWordList] = useState([]);
   const [dailyRandomWords, setDailyRandomWords] = useState([]);
+  const [isWordsLoading, setIsWordsLoading] = useState(true);
   const [studyRound, setStudyRound] = useState(1);
 
   const [todayAllLearnedWords, setTodayAllLearnedWords] = useState([]);
@@ -252,12 +253,14 @@ export default function Home() {
   }, [todayStr]);
 
   const handleLoginSuccess = (studentObj) => {
+    setIsWordsLoading(true);
     const dailySetKey = `daily_random_set_${studentObj.id}_${todayStr}`;
     try {
       const cached = JSON.parse(localStorage.getItem(dailySetKey) || '[]');
       const targetCount = parseInt(studentObj.dailyWordCount || studentObj.daily_word_count || 10, 10);
       if (cached && cached.length === targetCount && cached.length > 0) {
         setDailyRandomWords(cached);
+        setTimeout(() => setIsWordsLoading(false), 200);
       }
     } catch (e) {}
     setCurrentUser(studentObj);
@@ -676,6 +679,7 @@ export default function Home() {
 
       const targetCount = parseInt(currentUser?.dailyWordCount || currentUser?.daily_word_count || 10, 10);
 
+      let finalLoaded = false;
       // 로컬 세트의 개수가 현재 학생의 목표 수량(예: 20개)과 정확히 일치할 때만 캐시 사용, 다르면 DB 라이브 로드!
       if (savedDailySet && savedDailySet.length === targetCount && savedDailySet.length > 0) {
         const sanitized = savedDailySet.map(w => {
@@ -690,6 +694,7 @@ export default function Home() {
         });
         setDailyRandomWords(sanitized);
         localStorage.setItem(dailySetKey, JSON.stringify(sanitized));
+        finalLoaded = true;
       } else {
         const newRandomSet = await loadDailyRandomWordsFromDB(currentUser);
         if (newRandomSet && newRandomSet.length > 0) {
@@ -697,8 +702,12 @@ export default function Home() {
           localStorage.setItem(dailySetKey, JSON.stringify(newRandomSet));
           setTodayAllLearnedWords(newRandomSet);
           localStorage.setItem(todayAllKey, JSON.stringify(newRandomSet));
+          finalLoaded = true;
         }
       }
+      setTimeout(() => {
+        setIsWordsLoading(false);
+      }, 350);
     }
 
     syncDailyRandomWords();
@@ -788,9 +797,11 @@ export default function Home() {
 
   const userDailyCount = currentUser ? parseInt(currentUser.dailyWordCount || currentUser.daily_word_count || 10, 10) : 10;
 
-  const safeActiveWords = (dailyRandomWords && dailyRandomWords.length > 0)
-    ? dailyRandomWords.slice(0, userDailyCount)
-    : ((wordList && wordList.length > 0) ? wordList.slice(0, userDailyCount) : []);
+  const safeActiveWords = isWordsLoading
+    ? []
+    : ((dailyRandomWords && dailyRandomWords.length > 0)
+      ? dailyRandomWords.slice(0, userDailyCount)
+      : ((wordList && wordList.length > 0) ? wordList.slice(0, userDailyCount) : []));
 
   // 🛡️ 단어 수 변경 시 인덱스 범위 초과 방지 및 안전 클램핑
   useEffect(() => {
@@ -2323,17 +2334,34 @@ export default function Home() {
             </div>
           </div>
 
-          {(!currentWord || safeActiveWords.length === 0) ? (
+          {(!currentWord || safeActiveWords.length === 0 || isWordsLoading) ? (
             <div className="flashcard-wrapper">
               <div className="flashcard" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '380px', background: '#FFFFFF', borderRadius: '32px', border: '3px solid #E2E8F0', boxShadow: '0 12px 30px rgba(0,0,0,0.06)', padding: '30px 20px', textAlign: 'center' }}>
-                <div style={{ fontSize: '48px', marginBottom: '14px' }}>📖</div>
+                <div style={{ fontSize: '48px', marginBottom: '14px', animation: 'pulse 1.5s infinite' }}>📖</div>
                 <h3 style={{ margin: '0 0 8px 0', color: '#2C3E50', fontSize: '20px', fontWeight: 'bold' }}>
-                  {currentUser?.name ? `${currentUser.name} 님의` : ''} {translateGradeLevel(currentUser?.studyGradeLevel || currentUser?.study_grade_level || '맞춤', currentLang)} 단어장 준비 중...
+                  {currentUser?.name ? `${currentUser.name} 님의` : ''} {translateGradeLevel(currentUser?.studyGradeLevel || currentUser?.study_grade_level || '맞춤', currentLang)} 단어 로딩 중...
                 </h3>
-                <p style={{ margin: '0 0 16px 0', color: '#7F8C8D', fontSize: '14px' }}>
-                  오늘 학습할 {userDailyCount}개 단어를 안전하게 불러오고 있습니다. ⚡
+                <p style={{ margin: '0 0 20px 0', color: '#7F8C8D', fontSize: '14px' }}>
+                  오늘 학습할 {userDailyCount}개 단어를 안전하게 불러오고 있습니다. 잠시만 기다려 주세요! ⚡
                 </p>
-                <div style={{ width: '36px', height: '36px', border: '4px solid #E2E8F0', borderTop: '4px solid #3498DB', borderRadius: '50%' }} />
+                <div style={{
+                  width: '36px',
+                  height: '36px',
+                  border: '4px solid #E2E8F0',
+                  borderTop: '4px solid #4F46E5',
+                  borderRadius: '50%',
+                  animation: 'spin 1s linear infinite'
+                }} />
+                <style jsx>{`
+                  @keyframes spin {
+                    0% { transform: rotate(0deg); }
+                    100% { transform: rotate(360deg); }
+                  }
+                  @keyframes pulse {
+                    0%, 100% { transform: scale(1); }
+                    50% { transform: scale(1.1); }
+                  }
+                `}</style>
               </div>
             </div>
           ) : (
