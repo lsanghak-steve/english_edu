@@ -244,10 +244,10 @@ export default function UserManager({ currentUser, setCurrentUser, onLogout, cur
           🎁 100% 무료
         </span>
         <button className="btn-user-edit" onClick={handleOpenEditModal}>
-          ✏️ <span className="btn-text-hide-mobile">{editBtnText}</span><span className="btn-text-show-mobile">{currentLang === 'zh' ? '修改' : (currentLang === 'fr' ? 'Modifier' : '수정')}</span>
+          <span className="btn-text-hide-mobile">{editBtnText}</span><span className="btn-text-show-mobile">{currentLang === 'zh' ? '✏️ 修改' : (currentLang === 'fr' ? '✏️ Modifier' : '✏️ 수정')}</span>
         </button>
         <button className="btn-user-logout" onClick={onLogout}>
-          🚪 <span className="btn-text-hide-mobile">{logoutBtnText}</span><span className="btn-text-show-mobile">{currentLang === 'zh' ? '退出' : (currentLang === 'fr' ? 'Sortir' : '로그아웃')}</span>
+          <span className="btn-text-hide-mobile">{logoutBtnText}</span><span className="btn-text-show-mobile">{currentLang === 'zh' ? '🚪 退出' : (currentLang === 'fr' ? '🚪 Sortir' : '🚪 로그아웃')}</span>
         </button>
       </div>
 
