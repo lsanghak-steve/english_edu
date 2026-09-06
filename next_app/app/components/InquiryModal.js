@@ -1,16 +1,23 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import supabase from '../../lib/supabaseClient.js';
+import { faqList } from '../../data/faqData.js';
 
 /**
  * [InquiryModal.js]
- * 1:1 고객 문의사항 및 건의 창구 (Contact Us / Inquiry Modal)
- * - 학생 및 학부모가 학습 오류, 단어 오류, 기능 건의, 계정 문의 등을 남길 수 있는 소통 창구
+ * 자주 묻는 질문(FAQ 50선) 및 1:1 고객 문의사항 (FAQ & Contact Us)
+ * - 학생 및 학부모가 서비스 이용 중 궁금한 점을 카테고리별/검색으로 즉시 확인할 수 있는 FAQ 50선 탑재
+ * - 원하는 답변이 없거나 추가 도움이 필요한 경우 1:1 문의 폼으로 원클릭 전환
  * - Supabase 클라우드 DB 연동 및 로컬스토리지 백업 지원
  * - 관리자 센터(/admin)에서 실시간 조회 및 답변 상태 관리 지원
  */
-export default function InquiryModal({ isOpen, onClose, currentUser = null, currentLang = 'ko' }) {
+export default function InquiryModal({ isOpen, onClose, currentUser = null, currentLang = 'ko', defaultTab = 'faq' }) {
+  const [activeModalTab, setActiveModalTab] = useState(defaultTab); // 'faq' | 'inquiry'
+  const [faqCategory, setFaqCategory] = useState('전체');
+  const [faqSearch, setFaqSearch] = useState('');
+  const [expandedFaqId, setExpandedFaqId] = useState(null);
+
   const [category, setCategory] = useState('학습/퀴즈 오류');
   const [authorName, setAuthorName] = useState(currentUser?.name || '');
   const [authorPhone, setAuthorPhone] = useState(currentUser?.parentPhone || '');
@@ -18,6 +25,30 @@ export default function InquiryModal({ isOpen, onClose, currentUser = null, curr
   const [content, setContent] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
+
+  // FAQ 카테고리 목록
+  const faqCategories = [
+    { id: '전체', label: '전체 (50)', icon: '🌟' },
+    { id: '학습 및 암기', label: '학습 및 암기 (10)', icon: '📖' },
+    { id: '발음 및 녹음', label: '발음 및 녹음 (8)', icon: '🎙️' },
+    { id: '퀴즈 및 복습', label: '퀴즈 및 복습 (8)', icon: '🎯' },
+    { id: '출석 및 보상', label: '출석 및 보상 (8)', icon: '💮' },
+    { id: '계정 및 학부모', label: '계정 및 학부모 (8)', icon: '👨‍👩‍👧' },
+    { id: '시험지 및 인쇄', label: '시험지 및 인쇄 (8)', icon: '🖨️' }
+  ];
+
+  // FAQ 필터링
+  const filteredFaqs = useMemo(() => {
+    return faqList.filter((item) => {
+      const matchCategory = faqCategory === '전체' || item.category === faqCategory;
+      const searchLower = faqSearch.trim().toLowerCase();
+      const matchSearch =
+        !searchLower ||
+        item.question.toLowerCase().includes(searchLower) ||
+        item.answer.toLowerCase().includes(searchLower);
+      return matchCategory && matchSearch;
+    });
+  }, [faqCategory, faqSearch]);
 
   if (!isOpen) return null;
 
@@ -115,12 +146,13 @@ export default function InquiryModal({ isOpen, onClose, currentUser = null, curr
           borderRadius: '28px',
           padding: '28px 24px',
           width: '100%',
-          maxWidth: '480px',
-          maxHeight: '90vh',
+          maxWidth: activeModalTab === 'faq' ? '680px' : '520px',
+          maxHeight: '92vh',
           overflowY: 'auto',
           boxShadow: '0 25px 60px -15px rgba(0, 0, 0, 0.3)',
           border: '1px solid #E2E8F0',
-          position: 'relative'
+          position: 'relative',
+          transition: 'max-width 0.2s ease'
         }}
         onClick={(e) => e.stopPropagation()}
       >
@@ -141,13 +173,299 @@ export default function InquiryModal({ isOpen, onClose, currentUser = null, curr
             fontSize: '16px',
             color: '#64748B',
             cursor: 'pointer',
-            fontWeight: 'bold'
+            fontWeight: 'bold',
+            zIndex: 10
           }}
         >
           ✕
         </button>
 
-        {isSuccess ? (
+        {/* 상단 탭 전환: FAQ 50선 vs 1:1 문의 */}
+        <div style={{ display: 'flex', background: '#F1F5F9', padding: '4px', borderRadius: '16px', marginBottom: '20px', width: 'fit-content' }}>
+          <button
+            type="button"
+            onClick={() => setActiveModalTab('faq')}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px',
+              padding: '8px 18px',
+              borderRadius: '12px',
+              fontSize: '13.5px',
+              fontWeight: '800',
+              border: 'none',
+              background: activeModalTab === 'faq' ? '#FFFFFF' : 'transparent',
+              color: activeModalTab === 'faq' ? '#0284C7' : '#64748B',
+              boxShadow: activeModalTab === 'faq' ? '0 2px 8px rgba(0,0,0,0.08)' : 'none',
+              cursor: 'pointer',
+              transition: 'all 0.15s ease'
+            }}
+          >
+            <span>❓</span>
+            <span>자주 묻는 질문 (FAQ 50)</span>
+          </button>
+          <button
+            type="button"
+            onClick={() => setActiveModalTab('inquiry')}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px',
+              padding: '8px 18px',
+              borderRadius: '12px',
+              fontSize: '13.5px',
+              fontWeight: '800',
+              border: 'none',
+              background: activeModalTab === 'inquiry' ? '#FFFFFF' : 'transparent',
+              color: activeModalTab === 'inquiry' ? '#0284C7' : '#64748B',
+              boxShadow: activeModalTab === 'inquiry' ? '0 2px 8px rgba(0,0,0,0.08)' : 'none',
+              cursor: 'pointer',
+              transition: 'all 0.15s ease'
+            }}
+          >
+            <span>💬</span>
+            <span>1:1 문의하기</span>
+          </button>
+        </div>
+
+        {activeModalTab === 'faq' ? (
+          /* ========================================================
+           * TAB 1: 자주 묻는 질문 (FAQ 50선) 아코디언 & 검색
+           * ======================================================== */
+          <div>
+            <div style={{ marginBottom: '16px' }}>
+              <h2 style={{ fontSize: '20px', fontWeight: '900', color: '#0F172A', margin: 0, display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <span>❓</span> 자주 묻는 질문 50선
+              </h2>
+              <p style={{ fontSize: '13px', color: '#64748B', marginTop: '4px', marginBottom: 0 }}>
+                궁금하신 점을 빠르게 찾아보세요! 검색창에 키워드를 입력하거나 카테고리를 선택하세요.
+              </p>
+            </div>
+
+            {/* 검색창 */}
+            <div style={{ position: 'relative', marginBottom: '14px' }}>
+              <input
+                type="text"
+                value={faqSearch}
+                onChange={(e) => setFaqSearch(e.target.value)}
+                placeholder="🔍 검색어 입력 (예: 발음, 출석, 달란트, Day 6, 핀번호, 시험지...)"
+                style={{
+                  width: '100%',
+                  padding: '11px 40px 11px 14px',
+                  borderRadius: '14px',
+                  border: '1.5px solid #CBD5E1',
+                  fontSize: '13.5px',
+                  outline: 'none',
+                  fontWeight: '600',
+                  boxSizing: 'border-box'
+                }}
+              />
+              {faqSearch && (
+                <button
+                  type="button"
+                  onClick={() => setFaqSearch('')}
+                  style={{
+                    position: 'absolute',
+                    right: '12px',
+                    top: '50%',
+                    transform: 'translateY(-50%)',
+                    background: '#E2E8F0',
+                    border: 'none',
+                    borderRadius: '50%',
+                    width: '20px',
+                    height: '20px',
+                    fontSize: '11px',
+                    color: '#64748B',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center'
+                  }}
+                >
+                  ✕
+                </button>
+              )}
+            </div>
+
+            {/* 카테고리 필터 버튼들 */}
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', marginBottom: '18px' }}>
+              {faqCategories.map((cat) => {
+                const isSelected = faqCategory === cat.id;
+                return (
+                  <button
+                    key={cat.id}
+                    type="button"
+                    onClick={() => setFaqCategory(cat.id)}
+                    style={{
+                      padding: '6px 12px',
+                      borderRadius: '10px',
+                      fontSize: '12px',
+                      fontWeight: isSelected ? '800' : '600',
+                      border: isSelected ? '1.5px solid #0284C7' : '1px solid #E2E8F0',
+                      background: isSelected ? '#F0F9FF' : '#FFFFFF',
+                      color: isSelected ? '#0369A1' : '#64748B',
+                      cursor: 'pointer',
+                      transition: 'all 0.15s ease'
+                    }}
+                  >
+                    {cat.icon} {cat.label}
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* 질문 아코디언 리스트 */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', maxHeight: '52vh', overflowY: 'auto', paddingRight: '4px' }}>
+              {filteredFaqs.length === 0 ? (
+                <div style={{ textAlign: 'center', padding: '36px 16px', background: '#F8FAFC', borderRadius: '16px' }}>
+                  <div style={{ fontSize: '36px', marginBottom: '8px' }}>🔎</div>
+                  <div style={{ fontSize: '14px', fontWeight: '800', color: '#475569' }}>
+                    '{faqSearch}' 에 대한 검색 결과가 없습니다.
+                  </div>
+                  <div style={{ fontSize: '12.5px', color: '#94A3B8', marginTop: '4px' }}>
+                    철자를 확인하시거나 아래 1:1 문의하기를 이용해 주세요.
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setActiveModalTab('inquiry')}
+                    style={{
+                      marginTop: '12px',
+                      background: '#0EA5E9',
+                      color: 'white',
+                      border: 'none',
+                      padding: '8px 16px',
+                      borderRadius: '10px',
+                      fontSize: '12px',
+                      fontWeight: '800',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    💬 1:1 문의 남기기 ➔
+                  </button>
+                </div>
+              ) : (
+                filteredFaqs.map((faq) => {
+                  const isExpanded = expandedFaqId === faq.id;
+                  return (
+                    <div
+                      key={faq.id}
+                      style={{
+                        border: isExpanded ? '1.5px solid #38BDF8' : '1px solid #E2E8F0',
+                        borderRadius: '14px',
+                        background: isExpanded ? '#F0F9FF' : '#FFFFFF',
+                        overflow: 'hidden',
+                        transition: 'all 0.2s ease'
+                      }}
+                    >
+                      <button
+                        type="button"
+                        onClick={() => setExpandedFaqId(isExpanded ? null : faq.id)}
+                        style={{
+                          width: '100%',
+                          textAlign: 'left',
+                          padding: '12px 14px',
+                          background: 'none',
+                          border: 'none',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'space-between',
+                          gap: '10px',
+                          cursor: 'pointer'
+                        }}
+                      >
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                          <span
+                            style={{
+                              background: isExpanded ? '#0284C7' : '#E2E8F0',
+                              color: isExpanded ? '#FFFFFF' : '#475569',
+                              fontSize: '11px',
+                              fontWeight: '900',
+                              padding: '2px 7px',
+                              borderRadius: '6px'
+                            }}
+                          >
+                            Q{faq.id}
+                          </span>
+                          <span style={{ fontSize: '11.5px', color: '#0284C7', fontWeight: '700' }}>
+                            [{faq.category}]
+                          </span>
+                          <span style={{ fontSize: '13.5px', fontWeight: '800', color: '#0F172A', lineHeight: '1.4' }}>
+                            {faq.question}
+                          </span>
+                        </div>
+                        <span style={{ fontSize: '14px', color: '#64748B', fontWeight: 'bold' }}>
+                          {isExpanded ? '▲' : '▼'}
+                        </span>
+                      </button>
+
+                      {isExpanded && (
+                        <div
+                          style={{
+                            padding: '12px 16px 14px 16px',
+                            background: '#FFFFFF',
+                            borderTop: '1px solid #E0F2FE',
+                            fontSize: '13px',
+                            lineHeight: '1.6',
+                            color: '#334155'
+                          }}
+                        >
+                          <div style={{ display: 'flex', gap: '8px', alignItems: 'flex-start' }}>
+                            <span style={{ color: '#0284C7', fontWeight: '900', fontSize: '14px' }}>A.</span>
+                            <div style={{ flex: 1, whiteSpace: 'pre-line' }}>
+                              {faq.answer}
+                            </div>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  );
+                })
+              )}
+            </div>
+
+            {/* 하단 1:1 문의 유도 배너 */}
+            <div
+              style={{
+                marginTop: '16px',
+                padding: '12px 16px',
+                background: '#F8FAFC',
+                borderRadius: '14px',
+                border: '1px solid #E2E8F0',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                gap: '12px'
+              }}
+            >
+              <div>
+                <div style={{ fontSize: '12.5px', fontWeight: '800', color: '#1E293B' }}>
+                  💡 찾으시는 답변이 없으신가요?
+                </div>
+                <div style={{ fontSize: '11.5px', color: '#64748B', marginTop: '2px' }}>
+                  선생님께 직접 문의 남겨주시면 정성껏 답변해 드립니다.
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setActiveModalTab('inquiry')}
+                style={{
+                  background: 'linear-gradient(135deg, #0EA5E9 0%, #0284C7 100%)',
+                  color: 'white',
+                  border: 'none',
+                  padding: '8px 14px',
+                  borderRadius: '10px',
+                  fontSize: '12px',
+                  fontWeight: '800',
+                  cursor: 'pointer',
+                  whiteSpace: 'nowrap',
+                  boxShadow: '0 2px 8px rgba(14, 165, 233, 0.3)'
+                }}
+              >
+                1:1 문의하기 ➔
+              </button>
+            </div>
+          </div>
+        ) : isSuccess ? (
           <div style={{ textAlign: 'center', padding: '30px 10px' }}>
             <div style={{ fontSize: '56px', marginBottom: '16px' }}>💌</div>
             <h3 style={{ fontSize: '22px', fontWeight: '900', color: '#0F172A', marginBottom: '8px' }}>
