@@ -2409,7 +2409,7 @@ export default function ModernStudyPage() {
                     <span>✨</span> 스마트 전체 학습관 & 리포트
                   </div>
                   <span style={{ fontSize: '11px', fontWeight: '800', color: '#00A8BF', background: '#E6FAFC', padding: '3px 8px', borderRadius: '10px' }}>
-                    6대 필수 코스
+                    7대 맞춤 코스
                   </span>
                 </div>
 
@@ -2580,6 +2580,57 @@ export default function ModernStudyPage() {
                       <div style={{ fontSize: '14px', fontWeight: '900', color: '#1E293B' }}>학부모 대시보드</div>
                       <div style={{ fontSize: '11px', fontWeight: '600', color: '#64748B', marginTop: '2px' }}>자녀 출석 & 칭찬하기</div>
                     </div>
+                  </div>
+
+                  {/* 7. 자주 묻는 질문 50선 (FAQ) */}
+                  <div
+                    onClick={() => setShowInquiryModal(true)}
+                    style={{
+                      gridColumn: 'span 2',
+                      background: 'linear-gradient(135deg, #F0F9FF 0%, #E0F2FE 100%)',
+                      borderRadius: '20px',
+                      padding: '14px 16px',
+                      border: '1.5px solid #BAE6FD',
+                      boxShadow: '0 4px 14px rgba(2, 132, 199, 0.08)',
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      gap: '12px',
+                      transition: 'all 0.15s ease'
+                    }}
+                    onMouseEnter={(e) => { e.currentTarget.style.borderColor = '#0284C7'; e.currentTarget.style.transform = 'translateY(-2px)'; }}
+                    onMouseLeave={(e) => { e.currentTarget.style.borderColor = '#BAE6FD'; e.currentTarget.style.transform = 'translateY(0)'; }}
+                  >
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                      <div style={{
+                        width: '42px',
+                        height: '42px',
+                        borderRadius: '14px',
+                        background: '#0284C7',
+                        color: 'white',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        fontSize: '22px',
+                        boxShadow: '0 4px 10px rgba(2, 132, 199, 0.25)',
+                        flexShrink: 0
+                      }}>
+                        ❓
+                      </div>
+                      <div>
+                        <div style={{ fontSize: '14px', fontWeight: '900', color: '#0369A1', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                          <span>자주 묻는 질문 50선 (FAQ)</span>
+                          <span style={{ fontSize: '10px', fontWeight: '800', background: '#0284C7', color: '#FFFFFF', padding: '2px 7px', borderRadius: '8px' }}>50문 50답</span>
+                        </div>
+                        <div style={{ fontSize: '11.5px', fontWeight: '600', color: '#0284C7', opacity: 0.85, marginTop: '2px' }}>
+                          학습법, 발음녹음, 출석도장, 달란트, 시험지 인쇄 총정리
+                        </div>
+                      </div>
+                    </div>
+                    <span style={{ fontSize: '12px', fontWeight: '800', color: '#0284C7', background: '#FFFFFF', padding: '6px 12px', borderRadius: '10px', border: '1px solid #BAE6FD', whiteSpace: 'nowrap' }}>
+                      전체보기 ➔
+                    </span>
                   </div>
                 </div>
               </div>
@@ -5869,7 +5920,24 @@ export default function ModernStudyPage() {
                 border: 'none',
                 color: '#0284C7',
                 fontSize: '12.5px',
-                fontWeight: '800',
+                fontWeight: '900',
+                cursor: 'pointer',
+                textDecoration: 'underline',
+                padding: '2px'
+              }}
+            >
+              ❓ {currentLang === 'zh' ? '常见问题 50 (FAQ)' : (currentLang === 'fr' ? 'FAQ (50 Questions)' : '자주 묻는 질문 50선 (FAQ)')}
+            </button>
+            <span>•</span>
+            <button
+              type="button"
+              onClick={() => setShowInquiryModal(true)}
+              style={{
+                background: 'none',
+                border: 'none',
+                color: '#64748B',
+                fontSize: '12.5px',
+                fontWeight: '700',
                 cursor: 'pointer',
                 textDecoration: 'underline',
                 padding: '2px'

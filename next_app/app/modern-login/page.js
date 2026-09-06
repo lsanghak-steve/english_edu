@@ -1298,6 +1298,23 @@ export default function ModernLoginPage() {
               border: 'none',
               color: '#0284C7',
               fontSize: '12px',
+              fontWeight: '800',
+              cursor: 'pointer',
+              textDecoration: 'underline',
+              padding: 0
+            }}
+          >
+            ❓ {currentLang === 'zh' ? '常见问题 50 (FAQ)' : (currentLang === 'fr' ? 'FAQ (50)' : '자주 묻는 질문 50선 (FAQ)')}
+          </button>
+          <span>•</span>
+          <button
+            type="button"
+            onClick={() => setShowInquiryModal(true)}
+            style={{
+              background: 'none',
+              border: 'none',
+              color: '#64748B',
+              fontSize: '12px',
               fontWeight: '700',
               cursor: 'pointer',
               textDecoration: 'underline',

@@ -883,7 +883,24 @@ export default function ParentDashboard({ currentUser, onLogout, currentLang = '
               border: 'none',
               color: '#0284C7',
               fontSize: '12.5px',
-              fontWeight: '800',
+              fontWeight: '900',
+              cursor: 'pointer',
+              textDecoration: 'underline',
+              padding: '2px'
+            }}
+          >
+            ❓ {currentLang === 'zh' ? '常见问题 50 (FAQ)' : (currentLang === 'fr' ? 'FAQ (50)' : '자주 묻는 질문 50선 (FAQ)')}
+          </button>
+          <span>•</span>
+          <button
+            type="button"
+            onClick={() => setShowInquiryModal(true)}
+            style={{
+              background: 'none',
+              border: 'none',
+              color: '#64748B',
+              fontSize: '12.5px',
+              fontWeight: '700',
               cursor: 'pointer',
               textDecoration: 'underline',
               padding: '2px'

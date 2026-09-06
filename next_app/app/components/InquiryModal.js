@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import supabase from '../../lib/supabaseClient.js';
 import { faqList } from '../../data/faqData.js';
 
@@ -13,10 +13,21 @@ import { faqList } from '../../data/faqData.js';
  * - 관리자 센터(/admin)에서 실시간 조회 및 답변 상태 관리 지원
  */
 export default function InquiryModal({ isOpen, onClose, currentUser = null, currentLang = 'ko', defaultTab = 'faq' }) {
-  const [activeModalTab, setActiveModalTab] = useState(defaultTab); // 'faq' | 'inquiry'
+  const [activeModalTab, setActiveModalTab] = useState(defaultTab || 'faq'); // 'faq' | 'inquiry'
   const [faqCategory, setFaqCategory] = useState('전체');
   const [faqSearch, setFaqSearch] = useState('');
   const [expandedFaqId, setExpandedFaqId] = useState(null);
+
+  // 모달이 열리거나 defaultTab 변경 시 초기화
+  useEffect(() => {
+    if (isOpen) {
+      setActiveModalTab(defaultTab || 'faq');
+      setIsSuccess(false);
+      setFaqCategory('전체');
+      setFaqSearch('');
+      setExpandedFaqId(null);
+    }
+  }, [isOpen, defaultTab]);
 
   const [category, setCategory] = useState('학습/퀴즈 오류');
   const [authorName, setAuthorName] = useState(currentUser?.name || '');
@@ -234,9 +245,14 @@ export default function InquiryModal({ isOpen, onClose, currentUser = null, curr
            * ======================================================== */
           <div>
             <div style={{ marginBottom: '16px' }}>
-              <h2 style={{ fontSize: '20px', fontWeight: '900', color: '#0F172A', margin: 0, display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <span>❓</span> 자주 묻는 질문 50선
-              </h2>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '8px' }}>
+                <h2 style={{ fontSize: '20px', fontWeight: '900', color: '#0F172A', margin: 0, display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <span>❓</span> 자주 묻는 질문 50선
+                </h2>
+                <span style={{ fontSize: '12px', fontWeight: '800', color: '#0284C7', background: '#E0F2FE', padding: '3px 10px', borderRadius: '12px' }}>
+                  총 {filteredFaqs.length}개 질문 {faqCategory !== '전체' ? `(${faqCategory})` : ''}
+                </span>
+              </div>
               <p style={{ fontSize: '13px', color: '#64748B', marginTop: '4px', marginBottom: 0 }}>
                 궁금하신 점을 빠르게 찾아보세요! 검색창에 키워드를 입력하거나 카테고리를 선택하세요.
               </p>
@@ -373,7 +389,7 @@ export default function InquiryModal({ isOpen, onClose, currentUser = null, curr
                           cursor: 'pointer'
                         }}
                       >
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flex: 1, minWidth: 0 }}>
                           <span
                             style={{
                               background: isExpanded ? '#0284C7' : '#E2E8F0',
@@ -381,19 +397,20 @@ export default function InquiryModal({ isOpen, onClose, currentUser = null, curr
                               fontSize: '11px',
                               fontWeight: '900',
                               padding: '2px 7px',
-                              borderRadius: '6px'
+                              borderRadius: '6px',
+                              flexShrink: 0
                             }}
                           >
                             Q{faq.id}
                           </span>
-                          <span style={{ fontSize: '11.5px', color: '#0284C7', fontWeight: '700' }}>
+                          <span style={{ fontSize: '11.5px', color: '#0284C7', fontWeight: '700', flexShrink: 0 }}>
                             [{faq.category}]
                           </span>
-                          <span style={{ fontSize: '13.5px', fontWeight: '800', color: '#0F172A', lineHeight: '1.4' }}>
+                          <span style={{ fontSize: '13.5px', fontWeight: '800', color: '#0F172A', lineHeight: '1.4', wordBreak: 'keep-all', flex: 1 }}>
                             {faq.question}
                           </span>
                         </div>
-                        <span style={{ fontSize: '14px', color: '#64748B', fontWeight: 'bold' }}>
+                        <span style={{ fontSize: '14px', color: '#64748B', fontWeight: 'bold', flexShrink: 0, marginLeft: '6px' }}>
                           {isExpanded ? '▲' : '▼'}
                         </span>
                       </button>

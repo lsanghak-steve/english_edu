@@ -713,6 +713,23 @@ export default function StudentLoginPage({ onLoginSuccess, onParentLoginSuccess,
               padding: '4px'
             }}
           >
+            ❓ {currentLang === 'zh' ? '常见问题 50 (FAQ)' : (currentLang === 'fr' ? 'FAQ (50)' : '자주 묻는 질문 50선 (FAQ)')}
+          </button>
+          <span style={{ color: '#BDC3C7', fontSize: '11px' }}>•</span>
+          <button
+            type="button"
+            onClick={() => setShowInquiryModal(true)}
+            style={{
+              background: 'none',
+              border: 'none',
+              color: '#7F8C8D',
+              fontSize: '12px',
+              fontWeight: 'bold',
+              cursor: 'pointer',
+              textDecoration: 'underline',
+              padding: '4px'
+            }}
+          >
             💬 {currentLang === 'zh' ? '1:1 意见与问题反馈' : (currentLang === 'fr' ? 'Contact / Assistance' : '1:1 문의 및 건의사항')}
           </button>
         </div>
