@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import supabase from '../../lib/supabaseClient.js';
 import { t } from '../../lib/i18n.js';
 import PrivacyModal from './PrivacyModal.js';
+import InquiryModal from './InquiryModal.js';
 
 // 학생/학부모 이름 이모지 자동 제거 헬퍼 함수
 const removeEmoji = (str) => {
@@ -39,8 +40,9 @@ export default function StudentLoginPage({ onLoginSuccess, onParentLoginSuccess,
   const [signUpSuccessModal, setSignUpSuccessModal] = useState(false);
   const [signUpSuccessData, setSignUpSuccessData] = useState(null);
 
-  // 📜 개인정보처리방침 모달 상태
+  // 📜 개인정보처리방침 및 💬 고객 문의사항 모달 상태
   const [showPrivacyModal, setShowPrivacyModal] = useState(false);
+  const [showInquiryModal, setShowInquiryModal] = useState(false);
 
   // 🇨🇳 중국/글로벌 현지화: 로그인 모드 및 위챗/휴대폰 인증 상태
   const [loginMode, setLoginMode] = useState('account'); // 'account' | 'phone'
@@ -678,8 +680,8 @@ export default function StudentLoginPage({ onLoginSuccess, onParentLoginSuccess,
           </button>
         </div>
 
-        {/* 📜 개인정보처리방침 안내 링크 */}
-        <div style={{ marginTop: '14px', textAlign: 'center' }}>
+        {/* 📜 개인정보처리방침 & 💬 1:1 문의사항 안내 링크 */}
+        <div style={{ marginTop: '14px', textAlign: 'center', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px', flexWrap: 'wrap' }}>
           <button
             type="button"
             onClick={() => setShowPrivacyModal(true)}
@@ -694,7 +696,24 @@ export default function StudentLoginPage({ onLoginSuccess, onParentLoginSuccess,
               padding: '4px'
             }}
           >
-            📜 {currentLang === 'zh' ? '隐私政策与条款' : (currentLang === 'fr' ? 'Politique de confidentialité' : '개인정보처리방침 및 서비스 이용약관')}
+            📜 {currentLang === 'zh' ? '隐私政策' : (currentLang === 'fr' ? 'Confidentialité' : '개인정보처리방침')}
+          </button>
+          <span style={{ color: '#BDC3C7', fontSize: '11px' }}>•</span>
+          <button
+            type="button"
+            onClick={() => setShowInquiryModal(true)}
+            style={{
+              background: 'none',
+              border: 'none',
+              color: '#0284C7',
+              fontSize: '12px',
+              fontWeight: 'bold',
+              cursor: 'pointer',
+              textDecoration: 'underline',
+              padding: '4px'
+            }}
+          >
+            💬 {currentLang === 'zh' ? '1:1 意见与问题反馈' : (currentLang === 'fr' ? 'Contact / Assistance' : '1:1 문의 및 건의사항')}
           </button>
         </div>
       </div>
@@ -1065,6 +1084,13 @@ export default function StudentLoginPage({ onLoginSuccess, onParentLoginSuccess,
       <PrivacyModal
         isOpen={showPrivacyModal}
         onClose={() => setShowPrivacyModal(false)}
+        currentLang={currentLang}
+      />
+
+      {/* 💬 1:1 고객 문의사항 및 건의 팝업 모달 */}
+      <InquiryModal
+        isOpen={showInquiryModal}
+        onClose={() => setShowInquiryModal(false)}
         currentLang={currentLang}
       />
     </div>

@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import supabase from '../../lib/supabaseClient.js';
 import { t } from '../../lib/i18n.js';
 import PrivacyModal from '../components/PrivacyModal.js';
+import InquiryModal from '../components/InquiryModal.js';
 
 // 학생/학부모 이름 이모지 제거 헬퍼
 const removeEmoji = (str) => {
@@ -321,8 +322,9 @@ export default function ModernLoginPage() {
   const [editParentPhone, setEditParentPhone] = useState('010-4006-9050');
   const [editParentPin, setEditParentPin] = useState('0815');
 
-  // 📜 개인정보처리방침 & 이용약관 모달 상태
+  // 📜 개인정보처리방침 & 💬 1:1 고객 문의사항 모달 상태
   const [showPrivacyModal, setShowPrivacyModal] = useState(false);
+  const [showInquiryModal, setShowInquiryModal] = useState(false);
 
   // 🎯 기본 학생 목록 (폴백용)
   const defaultStudents = [
@@ -1288,6 +1290,23 @@ export default function ModernLoginPage() {
             {currentLang === 'zh' ? '服务条款' : (currentLang === 'fr' ? 'Conditions d\'utilisation' : '서비스 이용약관')}
           </Link>
           <span>•</span>
+          <button
+            type="button"
+            onClick={() => setShowInquiryModal(true)}
+            style={{
+              background: 'none',
+              border: 'none',
+              color: '#0284C7',
+              fontSize: '12px',
+              fontWeight: '700',
+              cursor: 'pointer',
+              textDecoration: 'underline',
+              padding: 0
+            }}
+          >
+            💬 {currentLang === 'zh' ? '1:1 意见反馈' : (currentLang === 'fr' ? 'Contact' : '1:1 문의/건의')}
+          </button>
+          <span>•</span>
           <span style={{ fontSize: '11px', color: '#94A3B8' }}>
             © FlipVoca
           </span>
@@ -1320,6 +1339,13 @@ export default function ModernLoginPage() {
       <PrivacyModal
         isOpen={showPrivacyModal}
         onClose={() => setShowPrivacyModal(false)}
+        currentLang={currentLang}
+      />
+
+      {/* 💬 1:1 고객 문의사항 및 건의 팝업 모달 */}
+      <InquiryModal
+        isOpen={showInquiryModal}
+        onClose={() => setShowInquiryModal(false)}
         currentLang={currentLang}
       />
     </div>

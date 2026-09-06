@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import supabase from '../../lib/supabaseClient.js';
 import ParentNotificationManager from './ParentNotificationManager.js';
 import PrivacyModal from './PrivacyModal.js';
+import InquiryModal from './InquiryModal.js';
 import { t, translateStudentGrade, getLocalDateString } from '../../lib/i18n.js';
 import { playUniversalAudio } from '../../lib/audioPlayer.js';
 
@@ -37,6 +38,7 @@ export default function ParentDashboard({ currentUser, onLogout, currentLang = '
   const [showWrongModal, setShowWrongModal] = useState(false);
   const [showNotificationModal, setShowNotificationModal] = useState(false);
   const [showPrivacyModal, setShowPrivacyModal] = useState(false);
+  const [showInquiryModal, setShowInquiryModal] = useState(false);
 
   // 1. Supabase 클라우드 DB `users` 테이블에서 현재 학부모에게 등록된 자녀 목록만 필터링 로드
   useEffect(() => {
@@ -873,6 +875,23 @@ export default function ParentDashboard({ currentUser, onLogout, currentLang = '
             {currentLang === 'zh' ? '服务条款' : (currentLang === 'fr' ? 'Conditions d\'utilisation' : '서비스 이용약관')}
           </a>
           <span>•</span>
+          <button
+            type="button"
+            onClick={() => setShowInquiryModal(true)}
+            style={{
+              background: 'none',
+              border: 'none',
+              color: '#0284C7',
+              fontSize: '12.5px',
+              fontWeight: '800',
+              cursor: 'pointer',
+              textDecoration: 'underline',
+              padding: '2px'
+            }}
+          >
+            💬 {currentLang === 'zh' ? '1:1 意见与咨询' : (currentLang === 'fr' ? 'Contact / Assistance' : '1:1 고객 문의사항')}
+          </button>
+          <span>•</span>
           <span style={{ fontWeight: '600', color: '#94A3B8' }}>
             보호책임자: 이상학 센터장 (010-4006-9050)
           </span>
@@ -886,6 +905,14 @@ export default function ParentDashboard({ currentUser, onLogout, currentLang = '
       <PrivacyModal
         isOpen={showPrivacyModal}
         onClose={() => setShowPrivacyModal(false)}
+        currentLang={currentLang}
+      />
+
+      {/* 💬 1:1 고객 문의사항 및 건의 팝업 모달 */}
+      <InquiryModal
+        isOpen={showInquiryModal}
+        onClose={() => setShowInquiryModal(false)}
+        currentUser={currentUser}
         currentLang={currentLang}
       />
     </div>

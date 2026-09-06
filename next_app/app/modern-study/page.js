@@ -14,6 +14,7 @@ import StatsSection from '../components/StatsSection.js';
 import LeaderboardSection from '../components/LeaderboardSection.js';
 import ParentDashboard from '../components/ParentDashboard.js';
 import PrivacyModal from '../components/PrivacyModal.js';
+import InquiryModal from '../components/InquiryModal.js';
 
 // 학생/학부모 이름 이모지 제거 헬퍼
 const removeEmoji = (str) => {
@@ -309,8 +310,9 @@ export default function ModernStudyPage() {
   const [isSavingProfile, setIsSavingProfile] = useState(false);
   const [profileSaveSuccess, setProfileSaveSuccess] = useState(false);
 
-  // 📜 개인정보처리방침 모달 상태
+  // 📜 개인정보처리방침 & 💬 1:1 고객 문의사항 모달 상태
   const [showPrivacyModal, setShowPrivacyModal] = useState(false);
+  const [showInquiryModal, setShowInquiryModal] = useState(false);
 
   // 🎯 학생 친화적 발음 유사도 점수(0~100점) 판정 알고리즘
   const calculateMatchScore = (targetStr, spokenStr) => {
@@ -5859,6 +5861,23 @@ export default function ModernStudyPage() {
               {currentLang === 'zh' ? '服务条款' : (currentLang === 'fr' ? 'Conditions d\'utilisation' : '서비스 이용약관')}
             </Link>
             <span>•</span>
+            <button
+              type="button"
+              onClick={() => setShowInquiryModal(true)}
+              style={{
+                background: 'none',
+                border: 'none',
+                color: '#0284C7',
+                fontSize: '12.5px',
+                fontWeight: '800',
+                cursor: 'pointer',
+                textDecoration: 'underline',
+                padding: '2px'
+              }}
+            >
+              💬 {currentLang === 'zh' ? '1:1 意见与问题反馈' : (currentLang === 'fr' ? 'Contact / Assistance' : '1:1 문의 및 건의사항')}
+            </button>
+            <span>•</span>
             <span style={{ fontWeight: '600', color: '#94A3B8' }}>
               보호책임자: 이상학 센터장 (010-4006-9050)
             </span>
@@ -5874,6 +5893,14 @@ export default function ModernStudyPage() {
       <PrivacyModal
         isOpen={showPrivacyModal}
         onClose={() => setShowPrivacyModal(false)}
+        currentLang={currentLang}
+      />
+
+      {/* 💬 1:1 고객 문의사항 및 건의 팝업 모달 */}
+      <InquiryModal
+        isOpen={showInquiryModal}
+        onClose={() => setShowInquiryModal(false)}
+        currentUser={currentUser}
         currentLang={currentLang}
       />
     </div>

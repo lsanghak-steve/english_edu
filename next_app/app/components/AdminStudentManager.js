@@ -63,6 +63,12 @@ export default function AdminStudentManager() {
     { id: '1', title: '🎉 8월 방학 초/중/고/수능 영단어 챌린지!', content: '8월 동안 단어 목표를 달성하면 달란트 50P 지급!', createdAt: '2026-08-05' }
   ]);
 
+  // 💬 1:1 고객 문의사항 및 제보 관리 상태
+  const [inquiries, setInquiries] = useState([]);
+  const [inquiryFilter, setInquiryFilter] = useState('all'); // 'all', 'pending', 'completed'
+  const [selectedInquiry, setSelectedInquiry] = useState(null);
+  const [replyText, setReplyText] = useState('');
+
   // 📖 단어 DB 관리자 (초등, 중학, 고등, 수능 확장)
   const [words, setWords] = useState([]);
   const [selectedGradeFilter, setSelectedGradeFilter] = useState('전체');
@@ -181,9 +187,94 @@ export default function AdminStudentManager() {
     setWords(wordList500Fallback.map(w => ({ ...w, gradeLevel: w.gradeLevel || '초등 필수' })));
   };
 
+  // 💬 1:1 고객 문의사항 로드
+  const loadInquiries = () => {
+    let list = [];
+    try {
+      const local = localStorage.getItem('flipvoca_inquiries');
+      if (local) {
+        list = JSON.parse(local);
+      }
+    } catch (e) {}
+
+    // 초기 샘플 문의사항 데이터 (처음 방문 시 안내용)
+    if (!list || list.length === 0) {
+      list = [
+        {
+          id: 'inq_sample_1',
+          category: '기능 건의/개선',
+          title: 'Day 6 복습 퀴즈 데이 모드가 너무 유익해요!',
+          content: '주간 오답 탈출과 랜덤 20개 퀴즈가 아이 실력 향상에 큰 도움이 되고 있습니다. 앞으로도 재미있는 도전 과제 많이 만들어주세요!',
+          author_name: '이상학 학부모님',
+          author_phone: '010-4006-9050',
+          student_id: 'sh_100',
+          status: 'completed',
+          created_at: '2026-09-06T12:00:00Z',
+          answer: '따뜻한 격려 말씀 감사드립니다! 아이들의 어휘력 성장을 위해 최선을 다하겠습니다. 😊',
+          answered_at: '2026-09-06T13:30:00Z'
+        },
+        {
+          id: 'inq_sample_2',
+          category: '학습/퀴즈 오류',
+          title: '스펠링 퀴즈 진행 시 일부 입력칸 포커스 관련 문의',
+          content: '태블릿에서 스펠링 퀴즈를 풀 때 키보드가 올라오면서 보기 버튼이 살짝 가려지는 현상이 있었습니다. 확인 부탁드립니다.',
+          author_name: '이승현 학생',
+          author_phone: '010-4006-9050',
+          student_id: 'sh_101',
+          status: 'pending',
+          created_at: '2026-09-06T14:15:00Z',
+          answer: '',
+          answered_at: null
+        }
+      ];
+      localStorage.setItem('flipvoca_inquiries', JSON.stringify(list));
+    }
+
+    setInquiries(list);
+  };
+
+  // 💬 답변 작성 및 처리 상태 변경
+  const handleSaveReply = (inquiryId) => {
+    if (!replyText.trim()) {
+      alert('답변 내용을 입력해 주세요.');
+      return;
+    }
+    const updated = inquiries.map(item => {
+      if (item.id === inquiryId) {
+        return {
+          ...item,
+          status: 'completed',
+          answer: replyText.trim(),
+          answered_at: new Date().toISOString()
+        };
+      }
+      return item;
+    });
+    setInquiries(updated);
+    localStorage.setItem('flipvoca_inquiries', JSON.stringify(updated));
+    setSelectedInquiry(null);
+    setReplyText('');
+    alert('✅ 답변이 등록되고 [처리 완료] 상태로 변경되었습니다!');
+  };
+
+  // 💬 문의사항 삭제
+  const handleDeleteInquiry = (inquiryId) => {
+    if (!confirm('정말 이 문의 내역을 삭제하시겠습니까?')) return;
+    const updated = inquiries.filter(item => item.id !== inquiryId);
+    setInquiries(updated);
+    localStorage.setItem('flipvoca_inquiries', JSON.stringify(updated));
+    if (selectedInquiry?.id === inquiryId) setSelectedInquiry(null);
+    alert('문의가 삭제되었습니다.');
+  };
+
   useEffect(() => {
     loadStudents();
     loadWords();
+    loadInquiries();
+
+    const handleInquiryEvent = () => loadInquiries();
+    window.addEventListener('inquiry_submitted', handleInquiryEvent);
+    return () => window.removeEventListener('inquiry_submitted', handleInquiryEvent);
   }, []);
 
   // ➕ 신규 학생 등록 모달 열기
@@ -620,6 +711,35 @@ export default function AdminStudentManager() {
           style={{ padding: '10px 18px', borderRadius: '12px', border: 'none', background: adminTab === 'notices' ? '#E67E22' : '#F8F9FA', color: adminTab === 'notices' ? 'white' : '#2C3E50', fontWeight: 'bold', cursor: 'pointer' }}
         >
           📢 센터 공지사항 관리
+        </button>
+        <button
+          onClick={() => setAdminTab('inquiries')}
+          style={{
+            padding: '10px 18px',
+            borderRadius: '12px',
+            border: 'none',
+            background: adminTab === 'inquiries' ? '#0284C7' : '#F8F9FA',
+            color: adminTab === 'inquiries' ? 'white' : '#2C3E50',
+            fontWeight: 'bold',
+            cursor: 'pointer',
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '6px'
+          }}
+        >
+          <span>💬 1:1 고객 문의사항 접수처</span>
+          {inquiries.filter(i => i.status === 'pending').length > 0 && (
+            <span style={{
+              background: '#EF4444',
+              color: 'white',
+              fontSize: '11px',
+              padding: '2px 6px',
+              borderRadius: '10px',
+              fontWeight: '900'
+            }}>
+              {inquiries.filter(i => i.status === 'pending').length}
+            </span>
+          )}
         </button>
         <button
           onClick={() => setAdminTab('words')}
@@ -1115,6 +1235,272 @@ export default function AdminStudentManager() {
               📢 공지사항 등록 및 학생 팝업 적용 ➔
             </button>
           </form>
+        </div>
+      )}
+
+      {/* 탭: 💬 1:1 고객 문의사항 및 제보 관리자 */}
+      {adminTab === 'inquiries' && (
+        <div>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px', flexWrap: 'wrap', gap: '10px' }}>
+            <div>
+              <h3 style={{ margin: 0, color: '#0284C7', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                💬 1:1 고객 문의사항 & 기능 제보 접수함
+                {inquiries.filter(i => i.status === 'pending').length > 0 && (
+                  <span style={{ background: '#EF4444', color: 'white', fontSize: '12px', padding: '2px 8px', borderRadius: '12px', fontWeight: 'bold' }}>
+                    답변 대기 {inquiries.filter(i => i.status === 'pending').length}건
+                  </span>
+                )}
+              </h3>
+              <p style={{ margin: '4px 0 0 0', fontSize: '13px', color: '#64748B' }}>
+                학생과 학부모님이 남겨주신 학습 오류, 단어 발음 제보, 기능 건의 사항을 확인하고 답변할 수 있습니다.
+              </p>
+            </div>
+
+            {/* 필터 버튼 */}
+            <div style={{ display: 'flex', gap: '6px' }}>
+              {[
+                { id: 'all', label: `전체 (${inquiries.length})` },
+                { id: 'pending', label: `답변 대기 (${inquiries.filter(i => i.status === 'pending').length})` },
+                { id: 'completed', label: `처리 완료 (${inquiries.filter(i => i.status === 'completed').length})` },
+              ].map(f => (
+                <button
+                  key={f.id}
+                  onClick={() => setInquiryFilter(f.id)}
+                  style={{
+                    padding: '8px 14px',
+                    borderRadius: '10px',
+                    border: inquiryFilter === f.id ? '2px solid #0284C7' : '1px solid #CBD5E1',
+                    background: inquiryFilter === f.id ? '#0284C7' : '#FFFFFF',
+                    color: inquiryFilter === f.id ? '#FFFFFF' : '#475569',
+                    fontWeight: 'bold',
+                    fontSize: '12.5px',
+                    cursor: 'pointer'
+                  }}
+                >
+                  {f.label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* 문의사항 카드 목록 */}
+          {inquiries.filter(i => inquiryFilter === 'all' ? true : i.status === inquiryFilter).length === 0 ? (
+            <div style={{ textAlign: 'center', padding: '60px 20px', background: '#F8FAFC', borderRadius: '18px', color: '#94A3B8' }}>
+              <div style={{ fontSize: '40px', marginBottom: '8px' }}>📭</div>
+              <div style={{ fontSize: '15px', fontWeight: 'bold' }}>접수된 문의사항이 없습니다.</div>
+            </div>
+          ) : (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+              {inquiries
+                .filter(i => inquiryFilter === 'all' ? true : i.status === inquiryFilter)
+                .map((item) => (
+                  <div
+                    key={item.id}
+                    style={{
+                      background: '#FFFFFF',
+                      borderRadius: '18px',
+                      padding: '18px 20px',
+                      border: item.status === 'pending' ? '1.5px solid #38BDF8' : '1px solid #E2E8F0',
+                      boxShadow: item.status === 'pending' ? '0 4px 14px rgba(56, 189, 248, 0.12)' : '0 2px 8px rgba(0,0,0,0.02)'
+                    }}
+                  >
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '8px', marginBottom: '8px' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <span
+                          style={{
+                            padding: '4px 10px',
+                            borderRadius: '8px',
+                            fontSize: '12px',
+                            fontWeight: '800',
+                            background: item.category.includes('오류') ? '#FEE2E2' : '#E0F2FE',
+                            color: item.category.includes('오류') ? '#DC2626' : '#0284C7'
+                          }}
+                        >
+                          {item.category}
+                        </span>
+                        <h4 style={{ margin: 0, fontSize: '16px', fontWeight: '800', color: '#0F172A' }}>
+                          {item.title}
+                        </h4>
+                      </div>
+
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <span
+                          style={{
+                            padding: '3px 10px',
+                            borderRadius: '12px',
+                            fontSize: '11.5px',
+                            fontWeight: '800',
+                            background: item.status === 'completed' ? '#DCFCE7' : '#FEF3C7',
+                            color: item.status === 'completed' ? '#16A34A' : '#D97706'
+                          }}
+                        >
+                          {item.status === 'completed' ? '✅ 처리 완료' : '⏳ 답변 대기'}
+                        </span>
+                        <button
+                          onClick={() => handleDeleteInquiry(item.id)}
+                          style={{
+                            background: 'none',
+                            border: 'none',
+                            color: '#94A3B8',
+                            cursor: 'pointer',
+                            fontSize: '13px',
+                            padding: '2px 6px'
+                          }}
+                          title="삭제"
+                        >
+                          🗑️
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* 문의 본문 내용 */}
+                    <p style={{ margin: '8px 0', fontSize: '13.5px', color: '#334155', lineHeight: '1.6', background: '#F8FAFC', padding: '12px 14px', borderRadius: '12px', whiteSpace: 'pre-wrap' }}>
+                      {item.content}
+                    </p>
+
+                    {/* 작성자 정보 및 일시 */}
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '12px', color: '#64748B', marginTop: '10px', flexWrap: 'wrap', gap: '6px' }}>
+                      <div>
+                        👤 <strong>{item.author_name}</strong> {item.author_phone && item.author_phone !== '-' ? `(${item.author_phone})` : ''}
+                      </div>
+                      <div>
+                        📅 {item.created_at ? new Date(item.created_at).toLocaleDateString() : ''}
+                      </div>
+                    </div>
+
+                    {/* 답변 내용이 이미 있는 경우 표출 */}
+                    {item.answer && (
+                      <div style={{ marginTop: '12px', background: '#F0FDF4', border: '1px solid #BBF7D0', borderRadius: '12px', padding: '12px 14px' }}>
+                        <div style={{ fontSize: '12px', fontWeight: '800', color: '#15803D', marginBottom: '4px' }}>
+                          🧑‍🏫 센터 관리자 답변 ({item.answered_at ? new Date(item.answered_at).toLocaleDateString() : '최근'}):
+                        </div>
+                        <div style={{ fontSize: '13px', color: '#166534', lineHeight: '1.5', whiteSpace: 'pre-wrap' }}>
+                          {item.answer}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* 답변 작성하기 / 수정하기 버튼 */}
+                    <div style={{ marginTop: '12px', display: 'flex', justifyContent: 'flex-end' }}>
+                      <button
+                        onClick={() => {
+                          setSelectedInquiry(item);
+                          setReplyText(item.answer || '');
+                        }}
+                        style={{
+                          padding: '7px 14px',
+                          borderRadius: '10px',
+                          border: 'none',
+                          background: item.status === 'completed' ? '#F1F5F9' : '#0284C7',
+                          color: item.status === 'completed' ? '#475569' : '#FFFFFF',
+                          fontSize: '12.5px',
+                          fontWeight: '800',
+                          cursor: 'pointer',
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: '6px'
+                        }}
+                      >
+                        {item.status === 'completed' ? '✏️ 답변 수정' : '💬 답변 작성하기'}
+                      </button>
+                    </div>
+                  </div>
+                ))}
+            </div>
+          )}
+
+          {/* 답변 작성 모달 */}
+          {selectedInquiry && (
+            <div
+              style={{
+                position: 'fixed',
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                background: 'rgba(15, 23, 42, 0.65)',
+                backdropFilter: 'blur(4px)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                zIndex: 12000,
+                padding: '16px'
+              }}
+              onClick={() => setSelectedInquiry(null)}
+            >
+              <div
+                style={{
+                  background: 'white',
+                  borderRadius: '24px',
+                  padding: '24px',
+                  width: '100%',
+                  maxWidth: '520px',
+                  boxShadow: '0 20px 50px rgba(0,0,0,0.25)'
+                }}
+                onClick={e => e.stopPropagation()}
+              >
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '14px', paddingBottom: '10px', borderBottom: '1px solid #E2E8F0' }}>
+                  <h3 style={{ margin: 0, color: '#0284C7', fontSize: '18px' }}>
+                    💬 문의 답변 작성
+                  </h3>
+                  <button onClick={() => setSelectedInquiry(null)} style={{ background: '#F1F5F9', border: 'none', borderRadius: '50%', width: '30px', height: '30px', cursor: 'pointer', fontWeight: 'bold' }}>
+                    ✕
+                  </button>
+                </div>
+
+                <div style={{ background: '#F8FAFC', padding: '12px', borderRadius: '12px', marginBottom: '14px' }}>
+                  <div style={{ fontSize: '12px', color: '#64748B' }}>
+                    [{selectedInquiry.category}] {selectedInquiry.author_name}
+                  </div>
+                  <div style={{ fontSize: '14px', fontWeight: '800', color: '#0F172A', marginTop: '2px' }}>
+                    {selectedInquiry.title}
+                  </div>
+                  <div style={{ fontSize: '13px', color: '#334155', marginTop: '6px', whiteSpace: 'pre-wrap' }}>
+                    {selectedInquiry.content}
+                  </div>
+                </div>
+
+                <div>
+                  <label style={{ display: 'block', fontSize: '12.5px', fontWeight: '800', color: '#334155', marginBottom: '6px' }}>
+                    🧑‍🏫 관리자 답변 내용 입력
+                  </label>
+                  <textarea
+                    rows={5}
+                    value={replyText}
+                    onChange={(e) => setReplyText(e.target.value)}
+                    placeholder="문의자에게 전달될 답변 내용을 정성스럽게 작성해 주세요."
+                    style={{
+                      width: '100%',
+                      padding: '12px',
+                      borderRadius: '12px',
+                      border: '1.5px solid #CBD5E1',
+                      fontSize: '13.5px',
+                      outline: 'none',
+                      lineHeight: '1.5'
+                    }}
+                    autoFocus
+                  />
+                </div>
+
+                <div style={{ display: 'flex', gap: '10px', marginTop: '16px' }}>
+                  <button
+                    type="button"
+                    onClick={() => setSelectedInquiry(null)}
+                    style={{ flex: 1, padding: '12px', borderRadius: '12px', border: '1px solid #CBD5E1', background: '#FFFFFF', color: '#475569', fontWeight: 'bold', cursor: 'pointer' }}
+                  >
+                    취소
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handleSaveReply(selectedInquiry.id)}
+                    style={{ flex: 2, padding: '12px', borderRadius: '12px', border: 'none', background: '#0284C7', color: 'white', fontWeight: 'bold', fontSize: '14px', cursor: 'pointer', boxShadow: '0 4px 12px rgba(2, 132, 199, 0.3)' }}
+                  >
+                    💾 답변 저장 및 처리 완료 ➔
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       )}
 
