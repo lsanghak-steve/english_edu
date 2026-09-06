@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import supabase from '../../lib/supabaseClient.js';
 import ParentNotificationManager from './ParentNotificationManager.js';
+import PrivacyModal from './PrivacyModal.js';
 import { t, translateStudentGrade, getLocalDateString } from '../../lib/i18n.js';
 import { playUniversalAudio } from '../../lib/audioPlayer.js';
 
@@ -35,6 +36,7 @@ export default function ParentDashboard({ currentUser, onLogout, currentLang = '
   const [showWordsModal, setShowWordsModal] = useState(false);
   const [showWrongModal, setShowWrongModal] = useState(false);
   const [showNotificationModal, setShowNotificationModal] = useState(false);
+  const [showPrivacyModal, setShowPrivacyModal] = useState(false);
 
   // 1. Supabase 클라우드 DB `users` 테이블에서 현재 학부모에게 등록된 자녀 목록만 필터링 로드
   useEffect(() => {
@@ -827,6 +829,65 @@ export default function ParentDashboard({ currentUser, onLogout, currentLang = '
           onClose={() => setShowNotificationModal(false)}
         />
       )}
+
+      {/* 📜 하단 개인정보처리방침 & 이용약관 푸터 */}
+      <footer style={{
+        marginTop: '36px',
+        padding: '20px 16px',
+        borderTop: '1px solid #E2E8F0',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        gap: '6px',
+        fontSize: '12px',
+        color: '#64748B',
+        textAlign: 'center'
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap', justifyContent: 'center' }}>
+          <button
+            type="button"
+            onClick={() => setShowPrivacyModal(true)}
+            style={{
+              background: 'none',
+              border: 'none',
+              color: '#00A8BF',
+              fontSize: '12.5px',
+              fontWeight: '800',
+              cursor: 'pointer',
+              textDecoration: 'underline',
+              padding: '2px'
+            }}
+          >
+            📜 {currentLang === 'zh' ? '隐私政策与条款' : (currentLang === 'fr' ? 'Politique de confidentialité' : '개인정보처리방침')}
+          </button>
+          <span>•</span>
+          <a
+            href="/privacy"
+            style={{
+              color: '#64748B',
+              fontSize: '12.5px',
+              fontWeight: '700',
+              textDecoration: 'underline'
+            }}
+          >
+            {currentLang === 'zh' ? '服务条款' : (currentLang === 'fr' ? 'Conditions d\'utilisation' : '서비스 이용약관')}
+          </a>
+          <span>•</span>
+          <span style={{ fontWeight: '600', color: '#94A3B8' }}>
+            보호책임자: 이상학 센터장 (010-4006-9050)
+          </span>
+        </div>
+        <div style={{ fontSize: '11px', color: '#94A3B8' }}>
+          © FlipVoca (플립보카) 학부모 안심 리포트 센터. All rights reserved.
+        </div>
+      </footer>
+
+      {/* 📜 개인정보처리방침 & 서비스 이용약관 팝업 모달 */}
+      <PrivacyModal
+        isOpen={showPrivacyModal}
+        onClose={() => setShowPrivacyModal(false)}
+        currentLang={currentLang}
+      />
     </div>
   );
 }

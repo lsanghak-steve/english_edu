@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import supabase from '../../lib/supabaseClient.js';
 import { t } from '../../lib/i18n.js';
+import AchievementBadgesModal from './AchievementBadgesModal.js';
 
 /**
  * [StatsSection.js]
@@ -18,6 +19,7 @@ export default function StatsSection({ currentUser, totalWordCount = 500, onNavi
 
   const [learnedWordList, setLearnedWordList] = useState([]);
   const [showLearnedModal, setShowLearnedModal] = useState(false);
+  const [showBadgesModal, setShowBadgesModal] = useState(false);
 
   useEffect(() => {
     if (!currentUser) return;
@@ -148,7 +150,7 @@ export default function StatsSection({ currentUser, totalWordCount = 500, onNavi
 
   return (
     <div style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: '16px' }}>
-      {/* 타이틀 및 성장 레벨 칭호 */}
+      {/* 타이틀 및 성장 레벨 칭호 & 동기부여 뱃지 컬렉션 진입 */}
       <div
         style={{
           background: 'white',
@@ -178,6 +180,31 @@ export default function StatsSection({ currentUser, totalWordCount = 500, onNavi
         </div>
         <div style={{ fontSize: '13px', color: '#555', marginTop: '6px', fontWeight: '600' }}>
           {badge.desc}
+        </div>
+
+        {/* 뱃지 모달 열기 버튼 */}
+        <div style={{ marginTop: '14px', display: 'flex', justifyContent: 'center' }}>
+          <button
+            onClick={() => setShowBadgesModal(true)}
+            style={{
+              padding: '8px 16px',
+              borderRadius: '20px',
+              background: 'linear-gradient(135deg, #FFF9C4 0%, #FFE082 100%)',
+              border: '1.5px solid #FFD54F',
+              fontSize: '13px',
+              fontWeight: 'bold',
+              color: '#B78103',
+              cursor: 'pointer',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '6px',
+              boxShadow: '0 2px 8px rgba(245, 127, 23, 0.15)',
+              transition: 'all 0.2s',
+            }}
+          >
+            <span>🏅</span>
+            <span>{currentLang === 'zh' ? '查看成就勋章与头衔 (8种) ➔' : (currentLang === 'fr' ? 'Badges & Récompenses (8 types) ➔' : '전체 칭호 & 동기부여 뱃지 컬렉션 (8종) 보기 ➔')}</span>
+          </button>
         </div>
       </div>
 
@@ -429,6 +456,14 @@ export default function StatsSection({ currentUser, totalWordCount = 500, onNavi
           </div>
         </div>
       )}
+
+      {/* 🏅 성취 칭호 & 동기부여 뱃지 컬렉션 모달 */}
+      <AchievementBadgesModal
+        isOpen={showBadgesModal}
+        onClose={() => setShowBadgesModal(false)}
+        stats={stats}
+        currentLang={currentLang}
+      />
     </div>
   );
 }

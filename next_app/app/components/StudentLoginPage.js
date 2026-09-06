@@ -1,8 +1,9 @@
-﻿'use client';
+'use client';
 
 import { useState, useEffect } from 'react';
 import supabase from '../../lib/supabaseClient.js';
 import { t } from '../../lib/i18n.js';
+import PrivacyModal from './PrivacyModal.js';
 
 // 학생/학부모 이름 이모지 자동 제거 헬퍼 함수
 const removeEmoji = (str) => {
@@ -37,6 +38,9 @@ export default function StudentLoginPage({ onLoginSuccess, onParentLoginSuccess,
   // 🎯 가입 신청 완료 알림 모달 상태
   const [signUpSuccessModal, setSignUpSuccessModal] = useState(false);
   const [signUpSuccessData, setSignUpSuccessData] = useState(null);
+
+  // 📜 개인정보처리방침 모달 상태
+  const [showPrivacyModal, setShowPrivacyModal] = useState(false);
 
   // 🇨🇳 중국/글로벌 현지화: 로그인 모드 및 위챗/휴대폰 인증 상태
   const [loginMode, setLoginMode] = useState('account'); // 'account' | 'phone'
@@ -673,6 +677,26 @@ export default function StudentLoginPage({ onLoginSuccess, onParentLoginSuccess,
             {t('btn_parent_login', currentLang)} ➔
           </button>
         </div>
+
+        {/* 📜 개인정보처리방침 안내 링크 */}
+        <div style={{ marginTop: '14px', textAlign: 'center' }}>
+          <button
+            type="button"
+            onClick={() => setShowPrivacyModal(true)}
+            style={{
+              background: 'none',
+              border: 'none',
+              color: '#7F8C8D',
+              fontSize: '12px',
+              fontWeight: 'bold',
+              cursor: 'pointer',
+              textDecoration: 'underline',
+              padding: '4px'
+            }}
+          >
+            📜 {currentLang === 'zh' ? '隐私政策与条款' : (currentLang === 'fr' ? 'Politique de confidentialité' : '개인정보처리방침 및 서비스 이용약관')}
+          </button>
+        </div>
       </div>
 
       {/* 📝 학생 신규 회원가입 신청 모달 */}
@@ -800,6 +824,49 @@ export default function StudentLoginPage({ onLoginSuccess, onParentLoginSuccess,
                   onChange={(e) => setSignUpParentPhone(e.target.value)}
                   style={{ width: '100%', padding: '10px 14px', borderRadius: '10px', border: '1px solid #BDC3C7', fontSize: '14px' }}
                 />
+              </div>
+
+              {/* 7. 개인정보처리방침 동의 안내 */}
+              <div style={{
+                background: '#F8FAFC',
+                padding: '10px 12px',
+                borderRadius: '10px',
+                border: '1px solid #E2E8F0',
+                fontSize: '12px',
+                color: '#475569',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px'
+              }}>
+                <input
+                  type="checkbox"
+                  id="signup-privacy-check"
+                  required
+                  defaultChecked
+                  style={{ width: '16px', height: '16px', accentColor: '#27AE60', cursor: 'pointer' }}
+                />
+                <label htmlFor="signup-privacy-check" style={{ cursor: 'pointer', lineHeight: 1.4 }}>
+                  <span>[필수] </span>
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setShowPrivacyModal(true);
+                    }}
+                    style={{
+                      background: 'none',
+                      border: 'none',
+                      padding: 0,
+                      color: '#00A8BF',
+                      fontWeight: 'bold',
+                      textDecoration: 'underline',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    개인정보처리방침 및 서비스 이용약관
+                  </button>
+                  <span>에 동의합니다.</span>
+                </label>
               </div>
 
               <button
@@ -993,6 +1060,13 @@ export default function StudentLoginPage({ onLoginSuccess, onParentLoginSuccess,
           </div>
         </div>
       )}
+
+      {/* 📜 개인정보처리방침 & 서비스 이용약관 팝업 모달 */}
+      <PrivacyModal
+        isOpen={showPrivacyModal}
+        onClose={() => setShowPrivacyModal(false)}
+        currentLang={currentLang}
+      />
     </div>
   );
 }

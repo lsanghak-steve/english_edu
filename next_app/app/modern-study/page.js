@@ -13,6 +13,7 @@ import Day6ReviewSection from '../components/Day6ReviewSection.js';
 import StatsSection from '../components/StatsSection.js';
 import LeaderboardSection from '../components/LeaderboardSection.js';
 import ParentDashboard from '../components/ParentDashboard.js';
+import PrivacyModal from '../components/PrivacyModal.js';
 
 // 학생/학부모 이름 이모지 제거 헬퍼
 const removeEmoji = (str) => {
@@ -307,6 +308,9 @@ export default function ModernStudyPage() {
   const [editParentPin, setEditParentPin] = useState('0815');
   const [isSavingProfile, setIsSavingProfile] = useState(false);
   const [profileSaveSuccess, setProfileSaveSuccess] = useState(false);
+
+  // 📜 개인정보처리방침 모달 상태
+  const [showPrivacyModal, setShowPrivacyModal] = useState(false);
 
   // 🎯 학생 친화적 발음 유사도 점수(0~100점) 판정 알고리즘
   const calculateMatchScore = (targetStr, spokenStr) => {
@@ -2515,8 +2519,8 @@ export default function ModernStudyPage() {
                       <span style={{ fontSize: '10px', fontWeight: '800', background: '#ECFDF5', color: '#059669', padding: '2px 8px', borderRadius: '10px' }}>성장 칭호</span>
                     </div>
                     <div>
-                      <div style={{ fontSize: '14px', fontWeight: '900', color: '#1E293B' }}>학습 통계 리포트</div>
-                      <div style={{ fontSize: '11px', fontWeight: '600', color: '#64748B', marginTop: '2px' }}>누적 단어 & 성취도</div>
+                      <div style={{ fontSize: '14px', fontWeight: '900', color: '#1E293B' }}>학습 리포트 & 뱃지</div>
+                      <div style={{ fontSize: '11px', fontWeight: '600', color: '#64748B', marginTop: '2px' }}>성장 칭호 & 동기부여 뱃지</div>
                     </div>
                   </div>
 
@@ -5812,7 +5816,66 @@ export default function ModernStudyPage() {
           </div>
         )}
 
+        {/* 📜 하단 개인정보처리방침 & 이용약관 안내 푸터 */}
+        <footer style={{
+          marginTop: '40px',
+          padding: '24px 16px',
+          borderTop: '1px solid #E2E8F0',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          gap: '8px',
+          fontSize: '12px',
+          color: '#64748B',
+          textAlign: 'center'
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '14px', flexWrap: 'wrap', justifyContent: 'center' }}>
+            <button
+              type="button"
+              onClick={() => setShowPrivacyModal(true)}
+              style={{
+                background: 'none',
+                border: 'none',
+                color: '#00A8BF',
+                fontSize: '12.5px',
+                fontWeight: '800',
+                cursor: 'pointer',
+                textDecoration: 'underline',
+                padding: '2px'
+              }}
+            >
+              📜 {currentLang === 'zh' ? '隐私政策与条款' : (currentLang === 'fr' ? 'Politique de confidentialité' : '개인정보처리방침')}
+            </button>
+            <span>•</span>
+            <Link
+              href="/privacy"
+              style={{
+                color: '#64748B',
+                fontSize: '12.5px',
+                fontWeight: '700',
+                textDecoration: 'underline'
+              }}
+            >
+              {currentLang === 'zh' ? '服务条款' : (currentLang === 'fr' ? 'Conditions d\'utilisation' : '서비스 이용약관')}
+            </Link>
+            <span>•</span>
+            <span style={{ fontWeight: '600', color: '#94A3B8' }}>
+              보호책임자: 이상학 센터장 (010-4006-9050)
+            </span>
+          </div>
+          <div style={{ fontSize: '11px', color: '#94A3B8' }}>
+            © FlipVoca (플립보카) 스마트 영단어 학습관. All rights reserved.
+          </div>
+        </footer>
+
       </div>
+
+      {/* 📜 개인정보처리방침 & 서비스 이용약관 팝업 모달 */}
+      <PrivacyModal
+        isOpen={showPrivacyModal}
+        onClose={() => setShowPrivacyModal(false)}
+        currentLang={currentLang}
+      />
     </div>
   );
 }

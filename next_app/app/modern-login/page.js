@@ -1,10 +1,11 @@
-﻿'use client';
+'use client';
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import supabase from '../../lib/supabaseClient.js';
 import { t } from '../../lib/i18n.js';
+import PrivacyModal from '../components/PrivacyModal.js';
 
 // 학생/학부모 이름 이모지 제거 헬퍼
 const removeEmoji = (str) => {
@@ -319,6 +320,9 @@ export default function ModernLoginPage() {
   const [editParentName, setEditParentName] = useState('');
   const [editParentPhone, setEditParentPhone] = useState('010-4006-9050');
   const [editParentPin, setEditParentPin] = useState('0815');
+
+  // 📜 개인정보처리방침 & 이용약관 모달 상태
+  const [showPrivacyModal, setShowPrivacyModal] = useState(false);
 
   // 🎯 기본 학생 목록 (폴백용)
   const defaultStudents = [
@@ -1243,6 +1247,52 @@ export default function ModernLoginPage() {
 
         </div>
 
+        {/* 📜 하단 개인정보처리방침 & 이용약관 푸터 영역 */}
+        <div style={{
+          marginTop: '20px',
+          paddingTop: '16px',
+          borderTop: '1px solid #F1F5F9',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          gap: '16px',
+          fontSize: '12px',
+          color: '#94A3B8'
+        }}>
+          <button
+            type="button"
+            onClick={() => setShowPrivacyModal(true)}
+            style={{
+              background: 'none',
+              border: 'none',
+              color: '#64748B',
+              fontSize: '12px',
+              fontWeight: '700',
+              cursor: 'pointer',
+              textDecoration: 'underline',
+              padding: 0
+            }}
+          >
+            📜 {currentLang === 'zh' ? '隐私政策与条款' : (currentLang === 'fr' ? 'Politique de confidentialité' : '개인정보처리방침')}
+          </button>
+          <span>•</span>
+          <Link
+            href="/privacy"
+            style={{
+              color: '#64748B',
+              fontSize: '12px',
+              fontWeight: '700',
+              textDecoration: 'underline'
+            }}
+          >
+            {currentLang === 'zh' ? '服务条款' : (currentLang === 'fr' ? 'Conditions d\'utilisation' : '서비스 이용약관')}
+          </Link>
+          <span>•</span>
+          <span style={{ fontSize: '11px', color: '#94A3B8' }}>
+            © FlipVoca
+          </span>
+        </div>
+
         {/* 🔔 로그인 성공 토스트 메시지 */}
         {loginSuccessToast && (
           <div style={{
@@ -1265,6 +1315,13 @@ export default function ModernLoginPage() {
         )}
 
       </div>
+
+      {/* 📜 개인정보처리방침 & 서비스 이용약관 팝업 모달 */}
+      <PrivacyModal
+        isOpen={showPrivacyModal}
+        onClose={() => setShowPrivacyModal(false)}
+        currentLang={currentLang}
+      />
     </div>
   );
 }
