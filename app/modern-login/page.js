@@ -234,10 +234,12 @@ export default function ModernLoginPage() {
 
     if (!cleanInputId) {
       setErrorMessage(currentStrings.errNoId);
+      alert(currentLang === 'zh' ? '请输入学生账号或姓名。' : currentLang === 'fr' ? "Veuillez saisir l'identifiant ou le nom de l'élève." : '학생 아이디(또는 이름)를 입력해 주세요.');
       return;
     }
     if (!cleanPin) {
       setErrorMessage(currentStrings.errNoPin);
+      alert(currentLang === 'zh' ? '请输入4位数字PIN码。' : currentLang === 'fr' ? 'Veuillez saisir un code PIN à 4 chiffres.' : '비밀번호(4자리 PIN)를 입력해 주세요. (기본값: 1234)');
       return;
     }
 
@@ -273,6 +275,7 @@ export default function ModernLoginPage() {
       if (!targetUser) {
         setIsLoading(false);
         setErrorMessage(currentStrings.errNotFound);
+        alert(currentLang === 'zh' ? '未找到该学生信息。' : currentLang === 'fr' ? 'Élève non trouvé.' : '등록되지 않은 학생 아이디/이름입니다. 다시 확인해 주세요.');
         return;
       }
 
@@ -283,6 +286,7 @@ export default function ModernLoginPage() {
       if (!isPinMatch) {
         setIsLoading(false);
         setErrorMessage(`${currentStrings.errWrongPin} (${expectedPin || '1234'})`);
+        alert(currentLang === 'zh' ? '密码不正确，请重新输入。' : currentLang === 'fr' ? 'Code PIN incorrect.' : '비밀번호가 올바르지 않습니다. 다시 확인해 주세요. (기본값: 1234)');
         return;
       }
 
@@ -331,11 +335,19 @@ export default function ModernLoginPage() {
 
     if (!cleanParentName) {
       setErrorMessage(currentStrings.errNoParentName);
+      alert(currentLang === 'zh' ? '请输入家长姓名。' : currentLang === 'fr' ? 'Veuillez saisir le nom du parent.' : '학부모 성함을 입력해 주세요.');
       return;
     }
 
-    if (cleanParentPin && cleanParentPin !== '0815' && cleanParentPin !== '1234') {
+    if (!cleanParentPin) {
       setErrorMessage(currentStrings.errWrongParentPin);
+      alert(currentLang === 'zh' ? '请输入家长密码。' : currentLang === 'fr' ? 'Veuillez saisir le mot de passe du parent.' : '학부모 비밀번호(PIN)를 입력해 주세요. (기본: 0815)');
+      return;
+    }
+
+    if (cleanParentPin !== '0815' && cleanParentPin !== '1234') {
+      setErrorMessage(currentStrings.errWrongParentPin);
+      alert(currentLang === 'zh' ? '家长密码不正确。' : currentLang === 'fr' ? 'Mot de passe parent incorrect.' : '학부모 비밀번호가 올바르지 않습니다. (기본: 0815)');
       return;
     }
 

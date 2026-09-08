@@ -411,13 +411,17 @@ export default function ModernLoginPage() {
 
     // 1. 아이디/이름 미입력 시 오류 표시 및 중단 (빠른 간편 로그인 customUser 제외)
     if (!targetStudent && !inputName) {
-      setErrorMessage(currentStrings.errNoId || '아이디(또는 이름)를 입력해주세요.');
+      const msg = currentStrings.errNoId || '아이디(또는 이름)를 입력해주세요.';
+      setErrorMessage(msg);
+      alert(currentLang === 'zh' ? '请输入学生账号或姓名。' : currentLang === 'fr' ? "Veuillez saisir l'identifiant ou le nom de l'élève." : '학생 아이디(또는 이름)를 입력해 주세요.');
       return;
     }
 
     // 2. 비밀번호(PIN) 미입력 시 오류 표시 및 중단 (빠른 간편 로그인 customUser 제외)
     if (!targetStudent && !inputPin) {
-      setErrorMessage(currentStrings.errNoPin || '비밀번호(또는 4자리 PIN)를 입력해주세요.');
+      const msg = currentStrings.errNoPin || '비밀번호(또는 4자리 PIN)를 입력해주세요.';
+      setErrorMessage(msg);
+      alert(currentLang === 'zh' ? '请输入4位数字PIN码。' : currentLang === 'fr' ? 'Veuillez saisir un code PIN à 4 chiffres.' : '비밀번호(4자리 PIN)를 입력해 주세요. (기본값: 1234)');
       return;
     }
 
@@ -438,7 +442,9 @@ export default function ModernLoginPage() {
     if (!targetStudent && targetUser) {
       const correctPin = String(targetUser.studentPin || targetUser.student_pin || targetUser.pin || '').trim();
       if (correctPin && inputPin !== correctPin && inputPin !== '1234') {
-        setErrorMessage(currentStrings.errWrongPin || '비밀번호가 올바르지 않습니다. (예: 1234)');
+        const msg = currentStrings.errWrongPin || '비밀번호가 올바르지 않습니다. (예: 1234)';
+        setErrorMessage(msg);
+        alert(currentLang === 'zh' ? '密码不正确，请重新输入。' : currentLang === 'fr' ? 'Code PIN incorrect.' : '비밀번호가 올바르지 않습니다. 다시 확인해 주세요. (기본값: 1234)');
         return;
       }
     }
@@ -493,15 +499,26 @@ export default function ModernLoginPage() {
     const cleanParentPin = parentPinInput.trim();
 
     if (!cleanParentName) {
-      setErrorMessage(currentStrings.errNoParentName);
+      const msg = currentStrings.errNoParentName || '학부모 성함을 입력해주세요.';
+      setErrorMessage(msg);
+      alert(currentLang === 'zh' ? '请输入家长姓名。' : currentLang === 'fr' ? 'Veuillez saisir le nom du parent.' : '학부모 성함을 입력해 주세요.');
+      return;
+    }
+
+    if (!cleanParentPin) {
+      const msg = currentStrings.errWrongParentPin || '학부모 비밀번호를 입력해주세요. (기본: 0815)';
+      setErrorMessage(msg);
+      alert(currentLang === 'zh' ? '请输入家长密码。' : currentLang === 'fr' ? 'Veuillez saisir le mot de passe du parent.' : '학부모 비밀번호(PIN)를 입력해 주세요. (기본: 0815)');
       return;
     }
 
     const savedCustomPin = typeof window !== 'undefined' ? localStorage.getItem('flipvoca_parent_pin') : null;
-    const isValidPin = !cleanParentPin || cleanParentPin === '0815' || cleanParentPin === '1234' || (savedCustomPin && cleanParentPin === savedCustomPin);
+    const isValidPin = cleanParentPin === '0815' || cleanParentPin === '1234' || (savedCustomPin && cleanParentPin === savedCustomPin);
 
     if (!isValidPin) {
-      setErrorMessage(currentStrings.errWrongParentPin);
+      const msg = currentStrings.errWrongParentPin || '학부모 비밀번호가 올바르지 않습니다. (기본: 0815)';
+      setErrorMessage(msg);
+      alert(currentLang === 'zh' ? '家长密码不正确。' : currentLang === 'fr' ? 'Mot de passe parent incorrect.' : '학부모 비밀번호가 올바르지 않습니다. (기본: 0815)');
       return;
     }
 
