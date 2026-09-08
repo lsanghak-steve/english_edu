@@ -220,17 +220,21 @@ export default function StudentLoginPage({ onLoginSuccess, onParentLoginSuccess,
   const handleStudentLoginSubmit = (e) => {
     if (e && e.preventDefault) e.preventDefault();
     const trimmedName = removeEmoji(studentNameInput).replace(/\(.*?\)/g, '').trim();
+    const trimmedPin = pinInput.trim();
 
-    // 1. 이름 미입력 시 첫 번째 등록 학생(이상학 등)으로 자동 즉시 로그인
+    // 1. 이름 미입력 시 경고 안내 및 로그인 차단
     if (!trimmedName) {
-      const defaultUser = users[0] || defaultStudents[0];
-      if (defaultUser && onLoginSuccess) {
-        onLoginSuccess(defaultUser);
-      }
+      alert(currentLang === 'zh' ? '请输入学生姓名。' : currentLang === 'fr' ? "Veuillez saisir le nom de l'élève." : '학생 이름을 입력해 주세요.');
       return;
     }
 
-    // 2. 등록된 학생 찾기
+    // 2. 비밀번호(PIN) 미입력 시 경고 안내 및 로그인 차단
+    if (!trimmedPin) {
+      alert(currentLang === 'zh' ? '请输入4位数字PIN码。' : currentLang === 'fr' ? 'Veuillez saisir un code PIN à 4 chiffres.' : '비밀번호(4자리 PIN)를 입력해 주세요. (기본값: 1234)');
+      return;
+    }
+
+    // 3. 등록된 학생 찾기
     let student = users.find(u => {
       const dbNameClean = removeEmoji(u.name || '').replace(/\(.*?\)/g, '').trim();
       return dbNameClean.toLowerCase() === trimmedName.toLowerCase() ||
@@ -238,7 +242,16 @@ export default function StudentLoginPage({ onLoginSuccess, onParentLoginSuccess,
              trimmedName.includes(dbNameClean);
     });
 
-    // 3. 미등록 이름이라도 학습이 막히지 않도록 즉시 체험 계정 생성 후 바로 학습 진입
+    // 4. 등록된 학생의 경우 PIN 비밀번호 확인 (기본값 1234 허용)
+    if (student) {
+      const correctPin = String(student.studentPin || student.student_pin || '').trim();
+      if (correctPin && trimmedPin !== correctPin && trimmedPin !== '1234') {
+        alert(currentLang === 'zh' ? '密码不正确，请重新输入。' : currentLang === 'fr' ? 'Code PIN incorrect.' : '비밀번호가 올바르지 않습니다. 다시 확인해 주세요.');
+        return;
+      }
+    }
+
+    // 5. 미등록 이름이라도 학습이 막히지 않도록 즉시 체험 계정 생성 후 바로 학습 진입
     if (!student) {
       student = {
         id: `user_${Date.now()}`,
@@ -250,14 +263,14 @@ export default function StudentLoginPage({ onLoginSuccess, onParentLoginSuccess,
         study_grade_level: '초등단어',
         dailyWordCount: '10',
         daily_word_count: 10,
-        studentPin: pinInput.trim() || '1234',
+        studentPin: trimmedPin || '1234',
         parentName: trimmedName + ' 학부모',
         parentPhone: '010-0000-0000',
         parentPin: '0815'
       };
     }
 
-    // 4. 즉시 학습 화면(onLoginSuccess)으로 이동!
+    // 6. 즉시 학습 화면(onLoginSuccess)으로 이동!
     if (onLoginSuccess) {
       onLoginSuccess(student);
     }

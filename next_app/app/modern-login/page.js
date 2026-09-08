@@ -407,9 +407,23 @@ export default function ModernLoginPage() {
 
     const targetStudent = customUser;
     const inputName = userIdInput.trim();
-    const cleanInputId = targetStudent ? targetStudent.name : (inputName || '이상학');
+    const inputPin = passwordInput.trim();
 
-    // 1. 등록 학생 목록에서 찾기
+    // 1. 아이디/이름 미입력 시 오류 표시 및 중단 (빠른 간편 로그인 customUser 제외)
+    if (!targetStudent && !inputName) {
+      setErrorMessage(currentStrings.errNoId || '아이디(또는 이름)를 입력해주세요.');
+      return;
+    }
+
+    // 2. 비밀번호(PIN) 미입력 시 오류 표시 및 중단 (빠른 간편 로그인 customUser 제외)
+    if (!targetStudent && !inputPin) {
+      setErrorMessage(currentStrings.errNoPin || '비밀번호(또는 4자리 PIN)를 입력해주세요.');
+      return;
+    }
+
+    const cleanInputId = targetStudent ? targetStudent.name : inputName;
+
+    // 3. 등록 학생 목록에서 찾기
     let targetUser = targetStudent;
     if (!targetUser) {
       targetUser = defaultStudents.find(u => {
@@ -420,16 +434,25 @@ export default function ModernLoginPage() {
       });
     }
 
-    // 2. 미등록 이름이라도 바로 입장 가능하도록 게스트 계정 즉시 생성
+    // 4. 등록된 학생 비밀번호 확인 (초기 기본값 1234 허용)
+    if (!targetStudent && targetUser) {
+      const correctPin = String(targetUser.studentPin || targetUser.student_pin || targetUser.pin || '').trim();
+      if (correctPin && inputPin !== correctPin && inputPin !== '1234') {
+        setErrorMessage(currentStrings.errWrongPin || '비밀번호가 올바르지 않습니다. (예: 1234)');
+        return;
+      }
+    }
+
+    // 5. 미등록 이름이라도 바로 입장 가능하도록 게스트 계정 즉시 생성
     if (!targetUser) {
       targetUser = {
         id: `stu_${Date.now()}`,
         student_id: `stu_${Date.now()}`,
         name: cleanInputId,
-        grade: '대학생 및 성인',
-        avatar: '대학생 및 성인',
-        studyGradeLevel: '중등단어',
-        dailyWordCount: '20'
+        grade: '초등 5학년',
+        avatar: '초등 5학년',
+        studyGradeLevel: '초등단어',
+        dailyWordCount: '10'
       };
     }
 
