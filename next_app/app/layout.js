@@ -18,6 +18,9 @@ export const metadata = {
   },
   verification: {
     google: "dGOGHe5ZIqQtbWuMR2MBVELzXMojaVLXki60_IIHjDk",
+    other: {
+      "naver-site-verification": "a714d19f81d25031de6b0337b1e0cc59e31e3860",
+    },
   },
 };
 
@@ -25,6 +28,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="ko" className="h-full antialiased">
       <head>
+        <meta name="naver-site-verification" content="a714d19f81d25031de6b0337b1e0cc59e31e3860" />
         <link
           rel="stylesheet"
           as="style"
