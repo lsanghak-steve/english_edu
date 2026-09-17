@@ -7,6 +7,6 @@ export default function robots() {
         disallow: ['/admin', '/api/'],
       },
     ],
-    sitemap: 'https://flipvoca.com/sitemap.xml',
+    sitemap: 'https://www.flipvoca.com/sitemap.xml',
   };
 }

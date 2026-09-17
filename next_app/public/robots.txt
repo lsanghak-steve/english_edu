@@ -3,4 +3,4 @@ Allow: /
 Disallow: /admin
 Disallow: /api/
 
-Sitemap: https://flipvoca.com/sitemap.xml
+Sitemap: https://www.flipvoca.com/sitemap.xml
