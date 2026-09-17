@@ -20,6 +20,16 @@ const nextConfig = {
       },
     ],
   },
+  async redirects() {
+    return [
+      // 구주소 보존: 학생 북마크·홈화면 바로가기가 /modern-study 를 가리킨다 (폴더명 msv1 변경, 2026-09-14)
+      {
+        source: '/modern-study',
+        destination: '/msv1',
+        permanent: true,
+      },
+    ];
+  },
   async headers() {
     return [
       {

@@ -486,8 +486,8 @@ export default function ModernLoginPage() {
       sessionStorage.setItem('english_edu_current_user', JSON.stringify(userData));
     } catch(e) {}
 
-    // 5. 학습 페이지(/modern-study)로 즉시 이동
-    router.push('/modern-study');
+    // 5. 학습 페이지(/msv1)로 즉시 이동
+    router.push('/msv1');
   };
 
   // 👨‍👩‍👧 학부모 ID / 비밀번호 로그인 처리
@@ -532,7 +532,7 @@ export default function ModernLoginPage() {
 
     setLoginSuccessToast(`👨‍👩‍👧 ${cleanParentName} ${currentStrings.parentLoginSuccess}`);
     setTimeout(() => {
-      router.push('/modern-study?tab=parent');
+      router.push('/msv1?tab=parent');
     }, 700);
   };
 
