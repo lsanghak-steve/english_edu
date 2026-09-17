@@ -2,6 +2,13 @@
   "buildCommand": "npm run build --prefix next_app",
   "outputDirectory": "next_app/.next",
   "framework": "nextjs",
+  "redirects": [
+    {
+      "source": "/",
+      "destination": "/msv1",
+      "permanent": false
+    }
+  ],
   "headers": [
     {
       "source": "/word_img/(.*)",

@@ -12,6 +12,20 @@ const nextConfig = {
       },
     ],
   },
+  async redirects() {
+    return [
+      {
+        source: '/',
+        destination: '/msv1',
+        permanent: false,
+      },
+      {
+        source: '/modern-study',
+        destination: '/msv1',
+        permanent: false,
+      },
+    ];
+  },
 };
 
 export default nextConfig;
