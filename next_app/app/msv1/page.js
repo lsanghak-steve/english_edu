@@ -313,6 +313,7 @@ export default function ModernStudyPage() {
   // 📜 개인정보처리방침 & 💬 1:1 고객 문의사항 모달 상태
   const [showPrivacyModal, setShowPrivacyModal] = useState(false);
   const [showInquiryModal, setShowInquiryModal] = useState(false);
+  const [inquiryDefaultTab, setInquiryDefaultTab] = useState('faq');
 
   // 🎯 학생 친화적 발음 유사도 점수(0~100점) 판정 알고리즘
   const calculateMatchScore = (targetStr, spokenStr) => {
@@ -4895,6 +4896,127 @@ export default function ModernStudyPage() {
                     <span>학생 및 학부모 로그인 정보 수정하기</span>
                   </button>
 
+                  {/* 💬 고객지원 & 서비스 약관 안내 버튼 카드 */}
+                  <div style={{
+                    background: '#F8FAFC',
+                    borderRadius: '20px',
+                    padding: '16px',
+                    border: '1.5px solid #E2E8F0',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: '10px'
+                  }}>
+                    <div style={{ fontSize: '13px', fontWeight: '900', color: '#334155', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                      <span>🎧</span> 고객지원 및 서비스 안내
+                    </div>
+
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
+                      {/* 1. 자주 묻는 질문 50선 (FAQ) */}
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setInquiryDefaultTab('faq');
+                          setShowInquiryModal(true);
+                        }}
+                        style={{
+                          padding: '11px 8px',
+                          borderRadius: '14px',
+                          border: '1.5px solid #BAE6FD',
+                          background: '#F0F9FF',
+                          color: '#0284C7',
+                          fontSize: '12px',
+                          fontWeight: '900',
+                          cursor: 'pointer',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          gap: '5px',
+                          boxShadow: '0 2px 6px rgba(2, 132, 199, 0.08)'
+                        }}
+                      >
+                        <span style={{ fontSize: '15px' }}>❓</span>
+                        <span>{currentLang === 'zh' ? '常见问题 50' : '자주 묻는 질문 50'}</span>
+                      </button>
+
+                      {/* 2. 1:1 문의 및 건의사항 */}
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setInquiryDefaultTab('inquiry');
+                          setShowInquiryModal(true);
+                        }}
+                        style={{
+                          padding: '11px 8px',
+                          borderRadius: '14px',
+                          border: '1.5px solid #CBD5E1',
+                          background: '#FFFFFF',
+                          color: '#334155',
+                          fontSize: '12px',
+                          fontWeight: '900',
+                          cursor: 'pointer',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          gap: '5px',
+                          boxShadow: '0 2px 6px rgba(0, 0, 0, 0.04)'
+                        }}
+                      >
+                        <span style={{ fontSize: '15px' }}>💬</span>
+                        <span>{currentLang === 'zh' ? '1:1 意见反馈' : '1:1 문의 및 건의'}</span>
+                      </button>
+
+                      {/* 3. 개인정보처리방침 */}
+                      <button
+                        type="button"
+                        onClick={() => setShowPrivacyModal(true)}
+                        style={{
+                          padding: '10px 6px',
+                          borderRadius: '12px',
+                          border: '1px solid #E2E8F0',
+                          background: '#FFFFFF',
+                          color: '#00A8BF',
+                          fontSize: '11.5px',
+                          fontWeight: '800',
+                          cursor: 'pointer',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          gap: '4px'
+                        }}
+                      >
+                        <span>📜</span>
+                        <span>{currentLang === 'zh' ? '隐私政策' : '개인정보처리방침'}</span>
+                      </button>
+
+                      {/* 4. 서비스 이용약관 */}
+                      <button
+                        type="button"
+                        onClick={() => setShowPrivacyModal(true)}
+                        style={{
+                          padding: '10px 6px',
+                          borderRadius: '12px',
+                          border: '1px solid #E2E8F0',
+                          background: '#FFFFFF',
+                          color: '#64748B',
+                          fontSize: '11.5px',
+                          fontWeight: '800',
+                          cursor: 'pointer',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          gap: '4px'
+                        }}
+                      >
+                        <span>📋</span>
+                        <span>{currentLang === 'zh' ? '服务条款' : '서비스 이용약관'}</span>
+                      </button>
+                    </div>
+
+                    <div style={{ fontSize: '10.5px', color: '#94A3B8', textAlign: 'center', marginTop: '2px' }}>
+                      개인정보보호책임자: 이상학 센터장 (010-4006-9050)
+                    </div>
+                  </div>
+
                   {/* 🚪 로그아웃 버튼 */}
                   <button
                     type="button"
@@ -5873,88 +5995,20 @@ export default function ModernStudyPage() {
           </div>
         )}
 
-        {/* 📜 하단 개인정보처리방침 & 이용약관 안내 푸터 */}
+        {/* 📜 하단 저작권 푸터 (약관 및 고객지원 버튼은 [내정보] 탭으로 통합) */}
         <footer style={{
-          marginTop: '40px',
-          padding: '24px 16px',
-          borderTop: '1px solid #E2E8F0',
+          marginTop: '24px',
+          padding: '16px',
+          borderTop: '1px solid #F1F5F9',
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
-          gap: '8px',
-          fontSize: '12px',
-          color: '#64748B',
+          gap: '4px',
+          fontSize: '11px',
+          color: '#94A3B8',
           textAlign: 'center'
         }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '14px', flexWrap: 'wrap', justifyContent: 'center' }}>
-            <button
-              type="button"
-              onClick={() => setShowPrivacyModal(true)}
-              style={{
-                background: 'none',
-                border: 'none',
-                color: '#00A8BF',
-                fontSize: '12.5px',
-                fontWeight: '800',
-                cursor: 'pointer',
-                textDecoration: 'underline',
-                padding: '2px'
-              }}
-            >
-              📜 {currentLang === 'zh' ? '隐私政策与条款' : (currentLang === 'fr' ? 'Politique de confidentialité' : '개인정보처리방침')}
-            </button>
-            <span>•</span>
-            <Link
-              href="/privacy"
-              style={{
-                color: '#64748B',
-                fontSize: '12.5px',
-                fontWeight: '700',
-                textDecoration: 'underline'
-              }}
-            >
-              {currentLang === 'zh' ? '服务条款' : (currentLang === 'fr' ? 'Conditions d\'utilisation' : '서비스 이용약관')}
-            </Link>
-            <span>•</span>
-            <button
-              type="button"
-              onClick={() => setShowInquiryModal(true)}
-              style={{
-                background: 'none',
-                border: 'none',
-                color: '#0284C7',
-                fontSize: '12.5px',
-                fontWeight: '900',
-                cursor: 'pointer',
-                textDecoration: 'underline',
-                padding: '2px'
-              }}
-            >
-              ❓ {currentLang === 'zh' ? '常见问题 50 (FAQ)' : (currentLang === 'fr' ? 'FAQ (50 Questions)' : '자주 묻는 질문 50선 (FAQ)')}
-            </button>
-            <span>•</span>
-            <button
-              type="button"
-              onClick={() => setShowInquiryModal(true)}
-              style={{
-                background: 'none',
-                border: 'none',
-                color: '#64748B',
-                fontSize: '12.5px',
-                fontWeight: '700',
-                cursor: 'pointer',
-                textDecoration: 'underline',
-                padding: '2px'
-              }}
-            >
-              💬 {currentLang === 'zh' ? '1:1 意见与问题反馈' : (currentLang === 'fr' ? 'Contact / Assistance' : '1:1 문의 및 건의사항')}
-            </button>
-            <span>•</span>
-            <span style={{ fontWeight: '600', color: '#94A3B8' }}>
-              보호책임자: 이상학 센터장 (010-4006-9050)
-            </span>
-          </div>
-          <div style={{ fontSize: '11px', color: '#94A3B8' }}>
+          <div>
             © FlipVoca (플립보카) 스마트 영단어 학습관. All rights reserved.
           </div>
         </footer>
@@ -5974,6 +6028,7 @@ export default function ModernStudyPage() {
         onClose={() => setShowInquiryModal(false)}
         currentUser={currentUser}
         currentLang={currentLang}
+        defaultTab={inquiryDefaultTab}
       />
     </div>
   );
