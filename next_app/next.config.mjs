@@ -22,12 +22,8 @@ const nextConfig = {
   },
   async redirects() {
     return [
-      // 메인 홈(/) 접속 시 msv1 (스마트 영단어 학습관)으로 바로 직행
-      {
-        source: '/',
-        destination: '/msv1',
-        permanent: false,
-      },
+      // ※ 루트(/) → /msv1 리디렉션은 제거(2026-09-22): 루트가 SEO 랜딩을 직접 서빙하고,
+      //   로그인된 학생은 app/page.js 가 클라이언트에서 /msv1 로 즉시 전환한다.
       // 구주소 보존: 학생 북마크·홈화면 바로가기가 /modern-study 를 가리킨다 (폴더명 msv1 변경, 2026-09-14)
       {
         source: '/modern-study',
