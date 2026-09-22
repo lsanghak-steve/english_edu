@@ -307,6 +307,8 @@ export default function ModernStudyPage() {
   const [editParentName, setEditParentName] = useState('이상학');
   const [editParentPhone, setEditParentPhone] = useState('010-4006-9050');
   const [editParentPin, setEditParentPin] = useState('0815');
+  const [showEditStudentPin, setShowEditStudentPin] = useState(false);
+  const [showEditParentPin, setShowEditParentPin] = useState(false);
   const [isSavingProfile, setIsSavingProfile] = useState(false);
   const [profileSaveSuccess, setProfileSaveSuccess] = useState(false);
 
@@ -1951,6 +1953,8 @@ export default function ModernStudyPage() {
     setEditParentName(currentUser?.parentName || currentUser?.parent_name || '이상학');
     setEditParentPhone(currentUser?.parentPhone || currentUser?.parent_phone || '010-4006-9050');
     setEditParentPin(currentUser?.parentPin || currentUser?.parent_pin || '0815');
+    setShowEditStudentPin(false);
+    setShowEditParentPin(false);
     setIsEditingProfile(true);
   };
 
@@ -5178,24 +5182,50 @@ export default function ModernStudyPage() {
                     <label style={{ display: 'block', fontSize: '12px', fontWeight: '800', color: '#334155', marginBottom: '6px' }}>
                       학생 비밀번호 (4자리 PIN)
                     </label>
-                    <input
-                      type="text"
-                      maxLength={6}
-                      value={editPin}
-                      onChange={(e) => setEditPin(e.target.value)}
-                      placeholder="예: 1234"
-                      style={{
-                        width: '100%',
-                        padding: '11px 14px',
-                        borderRadius: '14px',
-                        border: '1.5px solid #CBD5E1',
-                        fontSize: '14px',
-                        fontWeight: '800',
-                        color: '#1E293B',
-                        outline: 'none',
-                        boxSizing: 'border-box'
-                      }}
-                    />
+                    <div style={{ position: 'relative', width: '100%' }}>
+                      <input
+                        type={showEditStudentPin ? "text" : "password"}
+                        inputMode="numeric"
+                        maxLength={6}
+                        value={editPin}
+                        onChange={(e) => setEditPin(e.target.value)}
+                        placeholder="••••"
+                        style={{
+                          width: '100%',
+                          padding: '11px 44px 11px 14px',
+                          borderRadius: '14px',
+                          border: '1.5px solid #CBD5E1',
+                          fontSize: '15px',
+                          fontWeight: '800',
+                          letterSpacing: showEditStudentPin ? 'normal' : '4px',
+                          color: '#1E293B',
+                          outline: 'none',
+                          boxSizing: 'border-box'
+                        }}
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowEditStudentPin(!showEditStudentPin)}
+                        style={{
+                          position: 'absolute',
+                          right: '10px',
+                          top: '50%',
+                          transform: 'translateY(-50%)',
+                          background: 'none',
+                          border: 'none',
+                          cursor: 'pointer',
+                          fontSize: '16px',
+                          padding: '6px',
+                          color: '#94A3B8',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center'
+                        }}
+                        title={showEditStudentPin ? "비밀번호 숨기기" : "비밀번호 보기"}
+                      >
+                        {showEditStudentPin ? '👁️' : '🙈'}
+                      </button>
+                    </div>
                   </div>
 
                   <div style={{ height: '1.5px', background: '#F1F5F9', margin: '4px 0' }} />
@@ -5258,25 +5288,51 @@ export default function ModernStudyPage() {
                     <label style={{ display: 'block', fontSize: '12px', fontWeight: '800', color: '#334155', marginBottom: '6px' }}>
                       학부모 전용 로그인 비밀번호 (PIN)
                     </label>
-                    <input
-                      type="text"
-                      maxLength={6}
-                      value={editParentPin}
-                      onChange={(e) => setEditParentPin(e.target.value)}
-                      placeholder="예: 0815"
-                      style={{
-                        width: '100%',
-                        padding: '11px 14px',
-                        borderRadius: '14px',
-                        border: '1.5px solid #93C5FD',
-                        background: '#EFF6FF',
-                        fontSize: '14px',
-                        fontWeight: '800',
-                        color: '#1E40AF',
-                        outline: 'none',
-                        boxSizing: 'border-box'
-                      }}
-                    />
+                    <div style={{ position: 'relative', width: '100%' }}>
+                      <input
+                        type={showEditParentPin ? "text" : "password"}
+                        inputMode="numeric"
+                        maxLength={6}
+                        value={editParentPin}
+                        onChange={(e) => setEditParentPin(e.target.value)}
+                        placeholder="••••"
+                        style={{
+                          width: '100%',
+                          padding: '11px 44px 11px 14px',
+                          borderRadius: '14px',
+                          border: '1.5px solid #93C5FD',
+                          background: '#EFF6FF',
+                          fontSize: '15px',
+                          fontWeight: '800',
+                          letterSpacing: showEditParentPin ? 'normal' : '4px',
+                          color: '#1E40AF',
+                          outline: 'none',
+                          boxSizing: 'border-box'
+                        }}
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowEditParentPin(!showEditParentPin)}
+                        style={{
+                          position: 'absolute',
+                          right: '10px',
+                          top: '50%',
+                          transform: 'translateY(-50%)',
+                          background: 'none',
+                          border: 'none',
+                          cursor: 'pointer',
+                          fontSize: '16px',
+                          padding: '6px',
+                          color: '#60A5FA',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center'
+                        }}
+                        title={showEditParentPin ? "비밀번호 숨기기" : "비밀번호 보기"}
+                      >
+                        {showEditParentPin ? '👁️' : '🙈'}
+                      </button>
+                    </div>
                   </div>
 
                   {/* 저장 및 취소 버튼 그룹 */}
