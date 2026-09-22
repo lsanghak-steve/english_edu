@@ -2684,8 +2684,10 @@ export default function ModernStudyPage() {
             ) : (
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '14px', width: '100%' }}>
               
-              {/* 🚀 상단 퀵 액션 툴바 (Action Buttons Toolbar) */}
-              <div style={{
+              {/* 🚀 상단 퀵 액션 툴바 및 학습 진행도 스테퍼 (요청에 따라 숨김 처리) */}
+              {false && (
+                <>
+                  <div style={{
                 width: '100%',
                 background: '#FFFFFF',
                 border: '1.5px solid #E2E8F0',
@@ -3082,6 +3084,8 @@ export default function ModernStudyPage() {
                   </div>
                 );
               })()}
+                </>
+              )}
               
               {/* 오답 복습 모드 배너 or 덱 모드 전환 바 */}
               {isWrongReviewMode ? (
