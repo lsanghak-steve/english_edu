@@ -4855,7 +4855,7 @@ export default function ModernStudyPage() {
                     </div>
                     <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12.5px' }}>
                       <span style={{ color: '#64748B', fontWeight: '700' }}>🔑 학부모 로그인 PIN</span>
-                      <strong style={{ color: '#2563EB', fontWeight: '800' }}>{currentUser?.parentPin || currentUser?.parent_pin || '0815'}</strong>
+                      <strong style={{ color: '#64748B', fontWeight: '800' }}>● ● ● ●</strong>
                     </div>
                   </div>
 
