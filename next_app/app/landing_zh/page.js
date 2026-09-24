@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import { useState } from 'react';
 import Link from 'next/link';
@@ -90,14 +90,14 @@ export default function LandingZhPage() {
         return;
       }
       alert(`🎉 恭喜！${studentName} 同学的体验账号已就绪！\n正在前往智能学习主页。`);
-      window.location.href = '/';
+      window.location.href = '/msv1';
     } else if (selectedRole === 'parent') {
       if (!parentName.trim() || !parentPhone.trim()) {
         alert('请完整填写家长姓名和联系电话。');
         return;
       }
       alert(`🎉 感谢 ${parentName} 家长的关注！\n微信学习报告演示看板已就绪。`);
-      window.location.href = '/';
+      window.location.href = '/msv1';
     } else {
       if (!academyName.trim() || !directorName.trim() || !academyPhone.trim()) {
         alert('请完整填写机构名称、负责人姓名及电话。');
@@ -170,7 +170,7 @@ export default function LandingZhPage() {
             <Link href="/" style={{ fontSize: '13px', fontWeight: 'bold', color: '#475569', textDecoration: 'none', padding: '8px 10px' }}>
               🇰🇷 한국어
             </Link>
-            <Link href="/" style={{ background: '#58CC02', color: 'white', padding: '9px 18px', borderRadius: '12px', fontWeight: '900', fontSize: '14px', textDecoration: 'none', boxShadow: '0 4px 0 #46A302' }}>
+            <Link href="/msv1" style={{ background: '#58CC02', color: 'white', padding: '9px 18px', borderRadius: '12px', fontWeight: '900', fontSize: '14px', textDecoration: 'none', boxShadow: '0 4px 0 #46A302' }}>
               🚀 免费进入学习 ➔
             </Link>
           </div>
@@ -194,7 +194,7 @@ export default function LandingZhPage() {
           </p>
 
           <div style={{ display: 'flex', justifyContent: 'center', gap: '14px', flexWrap: 'wrap' }}>
-            <Link href="/" style={{ background: '#58CC02', color: 'white', padding: '16px 36px', borderRadius: '16px', fontWeight: '900', fontSize: '18px', textDecoration: 'none', boxShadow: '0 6px 0 #46A302' }}>
+            <Link href="/msv1" style={{ background: '#58CC02', color: 'white', padding: '16px 36px', borderRadius: '16px', fontWeight: '900', fontSize: '18px', textDecoration: 'none', boxShadow: '0 6px 0 #46A302' }}>
               ⚡ 微信/手机号 一键免费畅学 ➔
             </Link>
             <button

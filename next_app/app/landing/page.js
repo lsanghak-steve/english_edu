@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import { useState } from 'react';
 import Link from 'next/link';
@@ -105,7 +105,7 @@ export default function LandingPage() {
     }
     setShowAuthModal(false);
     if (selectedRole !== 'academy') {
-      window.location.href = '/';
+      window.location.href = '/msv1';
     }
   };
 
@@ -136,11 +136,11 @@ export default function LandingPage() {
           </nav>
 
           <div className="nav-actions">
-            <Link href="/" className="btn-apple-secondary">
-              학습 앱 ➔
+            <Link href="/msv1" className="btn-apple-study">
+              🚀 학습하러 가기 ➔
             </Link>
             <button className="btn-apple-primary" onClick={() => setShowAuthModal(true)}>
-              🎁 100% 무료 가입
+              🎁 무료 가입
             </button>
           </div>
         </div>
@@ -164,11 +164,14 @@ export default function LandingPage() {
             </p>
             
             <div className="hero-btn-group">
+              <Link href="/msv1" className="btn-hero-apple" style={{ background: 'linear-gradient(135deg, #10B981 0%, #059669 100%)', textDecoration: 'none', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
+                🚀 바로 학습하러 가기 ➔
+              </Link>
               <button className="btn-hero-apple" onClick={() => setShowAuthModal(true)}>
-                🎁 100% 무료 회원가입하기
+                🎁 100% 무료 회원가입
               </button>
               <button className="btn-hero-glass" onClick={openAcademyConsultModal}>
-                📞 학원 도입 문의하기
+                📞 학원 도입 문의
               </button>
             </div>
 
@@ -321,8 +324,8 @@ export default function LandingPage() {
                 <span className="dash-live-chip">Live Sync</span>
               </div>
               <div className="ios-segmented-control">
-                <button className="seg-btn active">👦 첫째 이승현</button>
-                <button className="seg-btn">👧 둘째 이수민</button>
+                <button className="seg-btn active">👦 학생1 (테스트)</button>
+                <button className="seg-btn">👧 학생2 (테스트)</button>
               </div>
 
               <div className="dash-metrics-grid">
@@ -617,8 +620,11 @@ export default function LandingPage() {
           <h2>Start Learning English Vocabulary Today.</h2>
           <p>학생/학부모는 100% 무료! 학원 도입은 언제든지 따로 연락 주세요.</p>
           <div className="cta-btn-flex">
+            <Link href="/msv1" className="btn-hero-apple" style={{ background: 'linear-gradient(135deg, #10B981 0%, #059669 100%)', textDecoration: 'none', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
+              🚀 바로 학습하러 가기 ➔
+            </Link>
             <button className="btn-hero-apple" onClick={() => setShowAuthModal(true)}>
-              🎁 100% 무료 회원가입하기
+              🎁 100% 무료 회원가입
             </button>
             <button className="btn-hero-glass" onClick={openAcademyConsultModal}>
               📞 학원 도입 문의하기
@@ -669,7 +675,7 @@ export default function LandingPage() {
                     <label>학생 이름</label>
                     <input
                       type="text"
-                      placeholder="예: 이승현"
+                      placeholder="예: 학생1"
                       value={studentName}
                       onChange={(e) => setStudentName(e.target.value)}
                     />
@@ -862,6 +868,24 @@ export default function LandingPage() {
           color: #1D1D1F;
           font-size: 13px;
           font-weight: 600;
+        }
+        .btn-apple-study {
+          padding: 8px 18px;
+          border-radius: 999px;
+          background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+          color: #FFFFFF;
+          font-size: 13px;
+          font-weight: 800;
+          text-decoration: none;
+          display: inline-flex;
+          align-items: center;
+          gap: 4px;
+          box-shadow: 0 4px 14px rgba(16, 185, 129, 0.35);
+          transition: transform 0.15s ease, box-shadow 0.15s ease;
+        }
+        .btn-apple-study:hover {
+          transform: translateY(-1px) scale(1.02);
+          box-shadow: 0 6px 18px rgba(16, 185, 129, 0.45);
         }
         .btn-apple-primary {
           padding: 8px 18px;
