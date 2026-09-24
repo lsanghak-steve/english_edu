@@ -105,7 +105,7 @@ export default function LandingPage() {
     }
     setShowAuthModal(false);
     if (selectedRole !== 'academy') {
-      window.location.href = '/msv1';
+      window.location.href = '/modern-login';
     }
   };
 
@@ -136,7 +136,7 @@ export default function LandingPage() {
           </nav>
 
           <div className="nav-actions">
-            <Link href="/msv1" className="btn-apple-study">
+            <Link href="/modern-login" className="btn-apple-study">
               🚀 학습하러 가기 ➔
             </Link>
             <button className="btn-apple-primary" onClick={() => setShowAuthModal(true)}>
@@ -164,7 +164,7 @@ export default function LandingPage() {
             </p>
             
             <div className="hero-btn-group">
-              <Link href="/msv1" className="btn-hero-apple" style={{ background: 'linear-gradient(135deg, #10B981 0%, #059669 100%)', textDecoration: 'none', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
+              <Link href="/modern-login" className="btn-hero-apple" style={{ background: 'linear-gradient(135deg, #10B981 0%, #059669 100%)', textDecoration: 'none', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
                 🚀 바로 학습하러 가기 ➔
               </Link>
               <button className="btn-hero-apple" onClick={() => setShowAuthModal(true)}>
@@ -620,7 +620,7 @@ export default function LandingPage() {
           <h2>Start Learning English Vocabulary Today.</h2>
           <p>학생/학부모는 100% 무료! 학원 도입은 언제든지 따로 연락 주세요.</p>
           <div className="cta-btn-flex">
-            <Link href="/msv1" className="btn-hero-apple" style={{ background: 'linear-gradient(135deg, #10B981 0%, #059669 100%)', textDecoration: 'none', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
+            <Link href="/modern-login" className="btn-hero-apple" style={{ background: 'linear-gradient(135deg, #10B981 0%, #059669 100%)', textDecoration: 'none', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
               🚀 바로 학습하러 가기 ➔
             </Link>
             <button className="btn-hero-apple" onClick={() => setShowAuthModal(true)}>

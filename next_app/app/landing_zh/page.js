@@ -170,7 +170,7 @@ export default function LandingZhPage() {
             <Link href="/" style={{ fontSize: '13px', fontWeight: 'bold', color: '#475569', textDecoration: 'none', padding: '8px 10px' }}>
               🇰🇷 한국어
             </Link>
-            <Link href="/msv1" style={{ background: '#58CC02', color: 'white', padding: '9px 18px', borderRadius: '12px', fontWeight: '900', fontSize: '14px', textDecoration: 'none', boxShadow: '0 4px 0 #46A302' }}>
+            <Link href="/modern-login" style={{ background: '#58CC02', color: 'white', padding: '9px 18px', borderRadius: '12px', fontWeight: '900', fontSize: '14px', textDecoration: 'none', boxShadow: '0 4px 0 #46A302' }}>
               🚀 免费进入学习 ➔
             </Link>
           </div>
@@ -194,7 +194,7 @@ export default function LandingZhPage() {
           </p>
 
           <div style={{ display: 'flex', justifyContent: 'center', gap: '14px', flexWrap: 'wrap' }}>
-            <Link href="/msv1" style={{ background: '#58CC02', color: 'white', padding: '16px 36px', borderRadius: '16px', fontWeight: '900', fontSize: '18px', textDecoration: 'none', boxShadow: '0 6px 0 #46A302' }}>
+            <Link href="/modern-login" style={{ background: '#58CC02', color: 'white', padding: '16px 36px', borderRadius: '16px', fontWeight: '900', fontSize: '18px', textDecoration: 'none', boxShadow: '0 6px 0 #46A302' }}>
               ⚡ 微信/手机号 一键免费畅学 ➔
             </Link>
             <button
@@ -436,7 +436,7 @@ export default function LandingZhPage() {
           <p style={{ fontSize: '16px', color: '#94A3B8', marginBottom: '32px' }}>
             无需下载安装，支持微信扫码与手机号直接进入，立即免费体验 5,000 核心单词包
           </p>
-          <Link href="/" style={{ background: '#58CC02', color: 'white', padding: '16px 40px', borderRadius: '16px', fontWeight: '900', fontSize: '18px', textDecoration: 'none', boxShadow: '0 6px 0 #46A302', display: 'inline-block' }}>
+          <Link href="/modern-login" style={{ background: '#58CC02', color: 'white', padding: '16px 40px', borderRadius: '16px', fontWeight: '900', fontSize: '18px', textDecoration: 'none', boxShadow: '0 6px 0 #46A302', display: 'inline-block' }}>
             🚀 免费进入体验 ➔
           </Link>
         </div>
