@@ -2,7 +2,10 @@ import Link from 'next/link';
 
 export const metadata = {
   title: '개인정보처리방침 - FlipVoca (플립보카)',
-  description: 'FlipVoca 서비스의 개인정보처리방침 및 서비스 이용약관 안내'
+  description: 'FlipVoca 서비스의 개인정보처리방침 및 서비스 이용약관 안내',
+  // 루트 레이아웃의 캐노니컬(홈)이 상속되면 이 페이지가 "홈의 대체 페이지"로 분류돼
+  // 색인에서 빠진다(서치콘솔 실측 2026-09-24) — 자기 주소를 명시한다.
+  alternates: { canonical: 'https://www.flipvoca.com/privacy' },
 };
 
 export default function PrivacyPage() {

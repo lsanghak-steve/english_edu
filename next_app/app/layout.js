@@ -3,7 +3,7 @@ import "./globals.css";
 export const metadata = {
   metadataBase: new URL("https://www.flipvoca.com"),
   title: "FlipVoca (플립보카) - 5,000단어 3D 스마트 영단어 학습",
-  description: "초등부터 수능까지 필수 영단어 5,000개, 3D 플립 카드, AI 발음 평가, 4단계 퀴즈, 매일 출석도장을 제공하는 스마트 영어 학습 플랫폼 FlipVoca",
+  description: "초등부터 수능까지 영단어 5,000개를 3D 플립 카드와 AI 발음 평가, 4단계 퀴즈로 학습하는 플립보카(FlipVoca)",
   keywords: ["FlipVoca", "플립보카", "영어단어", "초등영단어", "중등영단어", "고등영단어", "수능영단어", "영단어학습", "플래시카드", "발음평가"],
   alternates: {
     canonical: "https://www.flipvoca.com",
