@@ -297,6 +297,17 @@ export default function ModernStudyPage() {
   const [typingInput, setTypingInput] = useState('');
   const [isQuizFinished, setIsQuizFinished] = useState(false);
   const [levelTransitionToast, setLevelTransitionToast] = useState('');
+  // 🛡️ 카카오톡 웹뷰 및 모바일 더블 탭 / 타이머 중복 실행 방지 Ref
+  const quizAutoAdvanceTimerRef = useRef(null);
+  const isQuizNavigatingRef = useRef(false);
+  const isQuizSelectingRef = useRef(false);
+
+  const clearQuizAutoAdvanceTimer = () => {
+    if (quizAutoAdvanceTimerRef.current) {
+      clearTimeout(quizAutoAdvanceTimerRef.current);
+      quizAutoAdvanceTimerRef.current = null;
+    }
+  };
 
   // 👤 내 정보 및 학부모 정보 수정 모드 상태
   const [isEditingProfile, setIsEditingProfile] = useState(false);
@@ -1199,7 +1210,8 @@ export default function ModernStudyPage() {
               setIsQuizCorrect(true);
               setIsAnswerChecked(true);
               setQuizScore(prev => prev + 1);
-              setTimeout(() => {
+              clearQuizAutoAdvanceTimer();
+              quizAutoAdvanceTimerRef.current = setTimeout(() => {
                 handleNextQuizQuestion();
               }, 1800);
             } else {
@@ -1300,7 +1312,8 @@ export default function ModernStudyPage() {
         setIsQuizCorrect(true);
         setIsAnswerChecked(true);
         setQuizScore(prev => prev + 1);
-        setTimeout(() => {
+        clearQuizAutoAdvanceTimer();
+        quizAutoAdvanceTimerRef.current = setTimeout(() => {
           handleNextQuizQuestion();
         }, 1600);
       }
@@ -1353,6 +1366,9 @@ export default function ModernStudyPage() {
       } catch (e) {}
 
       // 퀴즈 탭으로 이동 및 1단계 퀴즈 초기화
+      clearQuizAutoAdvanceTimer();
+      isQuizNavigatingRef.current = false;
+      isQuizSelectingRef.current = false;
       setCurrentTab('quiz');
       setQuizLevel(1);
       setQuizIndex(0);
@@ -1405,6 +1421,7 @@ export default function ModernStudyPage() {
 
   // ✍️ 1. 퀴즈 문제 및 보기 초기화 (문제 전환 시에만 1회 실행)
   useEffect(() => {
+    clearQuizAutoAdvanceTimer();
     if (currentTab === 'quiz') {
       setSelectedAnswer(null);
       setIsAnswerChecked(false);
@@ -1417,7 +1434,14 @@ export default function ModernStudyPage() {
         const opts = generateQuizOptions(currentQuizWord, activeWordList, quizLevel);
         setQuizOptions(opts);
       }
+    } else {
+      isQuizNavigatingRef.current = false;
+      isQuizSelectingRef.current = false;
     }
+
+    return () => {
+      clearQuizAutoAdvanceTimer();
+    };
   }, [quizIndex, quizLevel, currentTab, words.length, currentLang]);
 
   // 🔊 2. 1단계 퀴즈일 때 지속 소리 재생 (정답 선택 전까지 3.2초마다 자동 반복)
@@ -1445,7 +1469,11 @@ export default function ModernStudyPage() {
 
   // ✍️ 퀴즈 인터랙션 핸들러 (보기 선택 시 시각 피드백 후 1초 뒤 다음 문제로 자동 전환)
   const handleSelectQuizOption = (optIndex, opt) => {
-    if (isAnswerChecked) return;
+    // 🛡️ 카카오톡 웹뷰 및 모바일 터치 중복 탭, 고스트 클릭 완벽 차단
+    if (isAnswerChecked || isQuizSelectingRef.current || isQuizNavigatingRef.current) return;
+    isQuizSelectingRef.current = true;
+    clearQuizAutoAdvanceTimer();
+
     const activeWordList = words.length > 0 ? words : wordList500Fallback;
     const currentQuizWord = activeWordList[quizIndex] || activeWordList[0];
 
@@ -1462,14 +1490,15 @@ export default function ModernStudyPage() {
     }
 
     // 🚀 정답/오답 확인 후 1.0초 뒤 다음 문제로 자동 이동!
-    setTimeout(() => {
+    quizAutoAdvanceTimerRef.current = setTimeout(() => {
       handleNextQuizQuestion();
     }, 1000);
   };
 
   const handleSubmitTyping = (e) => {
     if (e) e.preventDefault();
-    if (isAnswerChecked || !typingInput.trim()) return;
+    if (isAnswerChecked || isQuizNavigatingRef.current || !typingInput.trim()) return;
+    clearQuizAutoAdvanceTimer();
     const activeWordList = words.length > 0 ? words : wordList500Fallback;
     const currentQuizWord = activeWordList[quizIndex] || activeWordList[0];
     const isMatched = typingInput.trim().toLowerCase() === (currentQuizWord?.word || '').toLowerCase().trim();
@@ -1567,6 +1596,20 @@ export default function ModernStudyPage() {
   };
 
   const handleNextQuizQuestion = () => {
+    // 1. 기존 예약된 자동 넘김 타이머 즉시 취소 (중복 실행/문제 건너뜀 원천 차단)
+    clearQuizAutoAdvanceTimer();
+
+    // 2. 카카오톡 웹뷰 및 모바일 더블 탭, 고스트 클릭 방지용 네비게이션 락
+    if (isQuizNavigatingRef.current) return;
+    isQuizNavigatingRef.current = true;
+    isQuizSelectingRef.current = true;
+
+    // 350ms 후 다음 문제 입력 허용 (화면 전환 중 고스트 터치가 다음 문제 보기를 클릭하는 현상 완벽 방지)
+    setTimeout(() => {
+      isQuizNavigatingRef.current = false;
+      isQuizSelectingRef.current = false;
+    }, 350);
+
     const totalCount = words.length || 10;
     if (quizIndex + 1 < totalCount) {
       setQuizIndex(prev => prev + 1);
@@ -1630,6 +1673,9 @@ export default function ModernStudyPage() {
   };
 
   const handleRestartQuizLevel = () => {
+    clearQuizAutoAdvanceTimer();
+    isQuizNavigatingRef.current = false;
+    isQuizSelectingRef.current = false;
     setQuizIndex(0);
     setIsQuizFinished(false);
     setQuizScore(0);
@@ -1640,6 +1686,9 @@ export default function ModernStudyPage() {
   };
 
   const handleNextQuizLevel = () => {
+    clearQuizAutoAdvanceTimer();
+    isQuizNavigatingRef.current = false;
+    isQuizSelectingRef.current = false;
     setQuizLevel(prev => (prev < 4 ? prev + 1 : 1));
     setQuizIndex(0);
     setIsQuizFinished(false);
@@ -1828,6 +1877,9 @@ export default function ModernStudyPage() {
       alert('🎉 현재 틀린 단어가 없습니다! 완벽합니다!');
       return;
     }
+    clearQuizAutoAdvanceTimer();
+    isQuizNavigatingRef.current = false;
+    isQuizSelectingRef.current = false;
     if (!isWrongReviewMode && words.length > 0 && words.length !== wrongWords.length) {
       setOriginalDailyWords(words);
     }
@@ -4221,6 +4273,9 @@ export default function ModernStudyPage() {
                       key={item.lvl}
                       type="button"
                       onClick={() => {
+                        clearQuizAutoAdvanceTimer();
+                        isQuizNavigatingRef.current = false;
+                        isQuizSelectingRef.current = false;
                         setQuizLevel(item.lvl);
                         setQuizIndex(0);
                         setIsQuizFinished(false);
@@ -4238,6 +4293,8 @@ export default function ModernStudyPage() {
                         fontWeight: '900',
                         cursor: 'pointer',
                         whiteSpace: 'nowrap',
+                        touchAction: 'manipulation',
+                        WebkitTapHighlightColor: 'transparent',
                         background: quizLevel === item.lvl ? 'linear-gradient(135deg, #00C7E5 0%, #00A8BF 100%)' : '#F1F5F9',
                         color: quizLevel === item.lvl ? '#FFFFFF' : '#64748B',
                         boxShadow: quizLevel === item.lvl ? '0 4px 10px rgba(0,168,191,0.25)' : 'none',
@@ -4641,7 +4698,10 @@ export default function ModernStudyPage() {
                             <button
                               key={i}
                               type="button"
-                              onClick={() => handleSelectQuizOption(i, opt)}
+                              onClick={(e) => {
+                                if (e && e.stopPropagation) e.stopPropagation();
+                                handleSelectQuizOption(i, opt);
+                              }}
                               disabled={isAnswerChecked}
                               style={{
                                 padding: '12px 8px',
@@ -4654,7 +4714,9 @@ export default function ModernStudyPage() {
                                 cursor: isAnswerChecked ? 'default' : 'pointer',
                                 transition: 'all 0.15s ease',
                                 textAlign: 'center',
-                                wordBreak: 'keep-all'
+                                wordBreak: 'keep-all',
+                                touchAction: 'manipulation',
+                                WebkitTapHighlightColor: 'transparent'
                               }}
                             >
                               {opt.label}
@@ -4701,7 +4763,11 @@ export default function ModernStudyPage() {
                         {/* 👉 [다음 문제로 이동 ➔] 버튼 (마지막 문제일 시 다음 단계 자동 이동 안내) */}
                         <button
                           type="button"
-                          onClick={handleNextQuizQuestion}
+                          onClick={(e) => {
+                            if (e && e.stopPropagation) e.stopPropagation();
+                            clearQuizAutoAdvanceTimer();
+                            handleNextQuizQuestion();
+                          }}
                           style={{
                             width: '100%',
                             padding: '12px',
@@ -4720,7 +4786,9 @@ export default function ModernStudyPage() {
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
-                            gap: '6px'
+                            gap: '6px',
+                            touchAction: 'manipulation',
+                            WebkitTapHighlightColor: 'transparent'
                           }}
                         >
                           {quizIndex === totalQuizCount - 1 ? (
