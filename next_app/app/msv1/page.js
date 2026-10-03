@@ -316,8 +316,8 @@ export default function ModernStudyPage() {
   const [editGradeLevel, setEditGradeLevel] = useState('중등단어');
   const [editDailyCount, setEditDailyCount] = useState('20');
   const [editPin, setEditPin] = useState('1234');
-  const [editParentName, setEditParentName] = useState('이상학');
-  const [editParentPhone, setEditParentPhone] = useState('010-4006-9050');
+  const [editParentName, setEditParentName] = useState('');
+  const [editParentPhone, setEditParentPhone] = useState('');
   const [editParentPin, setEditParentPin] = useState('0815');
   const [showEditStudentPin, setShowEditStudentPin] = useState(false);
   const [showEditParentPin, setShowEditParentPin] = useState(false);
@@ -662,20 +662,25 @@ export default function ModernStudyPage() {
       }
       const savedUserStr = localStorage.getItem('english_edu_current_user');
       if (savedUserStr) {
-        const parsed = JSON.parse(savedUserStr);
-        setCurrentUser(parsed);
+        try {
+          const parsed = JSON.parse(savedUserStr);
+          if (parsed && (parsed.name || parsed.id)) {
+            setCurrentUser(parsed);
+          } else {
+            router.replace('/modern-login');
+            return;
+          }
+        } catch (err) {
+          router.replace('/modern-login');
+          return;
+        }
       } else {
-        const defaultUser = {
-          id: 'lsh_20260807_000001',
-          name: '이상학',
-          grade: '대학생 및 성인',
-          studyGradeLevel: '중등단어',
-          dailyWordCount: '20'
-        };
-        setCurrentUser(defaultUser);
+        router.replace('/modern-login');
+        return;
       }
     } catch (e) {
       console.error(e);
+      router.replace('/modern-login');
     }
   }, []);
 
@@ -2068,12 +2073,12 @@ export default function ModernStudyPage() {
 
   // 👤 내 정보 & 학부모 정보 수정 모달/폼 열기
   const handleOpenEditProfile = () => {
-    setEditName(currentUser?.name || '이상학');
+    setEditName(currentUser?.name || '');
     setEditGradeLevel(currentUser?.studyGradeLevel || currentUser?.study_grade_level || '중등단어');
     setEditDailyCount(String(currentUser?.dailyWordCount || currentUser?.daily_word_count || '20'));
     setEditPin(currentUser?.pin || '1234');
-    setEditParentName(currentUser?.parentName || currentUser?.parent_name || '이상학');
-    setEditParentPhone(currentUser?.parentPhone || currentUser?.parent_phone || '010-4006-9050');
+    setEditParentName(currentUser?.parentName || currentUser?.parent_name || '');
+    setEditParentPhone(currentUser?.parentPhone || currentUser?.parent_phone || '');
     setEditParentPin(currentUser?.parentPin || currentUser?.parent_pin || '0815');
     setShowEditStudentPin(false);
     setShowEditParentPin(false);
@@ -2097,19 +2102,19 @@ export default function ModernStudyPage() {
       dailyWordCount: String(editDailyCount),
       daily_word_count: parseInt(editDailyCount, 10),
       pin: editPin.trim() || '1234',
-      parentName: editParentName.trim() || '이상학',
-      parent_name: editParentName.trim() || '이상학',
-      parentPhone: editParentPhone.trim() || '010-4006-9050',
-      parent_phone: editParentPhone.trim() || '010-4006-9050',
-      parentPin: editParentPin.trim() || '0815',
-      parent_pin: editParentPin.trim() || '0815'
+      parentName: editParentName.trim() || currentUser?.parentName || '',
+      parent_name: editParentName.trim() || currentUser?.parent_name || '',
+      parentPhone: editParentPhone.trim() || currentUser?.parentPhone || '',
+      parent_phone: editParentPhone.trim() || currentUser?.parent_phone || '',
+      parentPin: editParentPin.trim() || currentUser?.parentPin || '0815',
+      parent_pin: editParentPin.trim() || currentUser?.parent_pin || '0815'
     };
 
     // 1. 로컬 저장소 즉시 업데이트
     setCurrentUser(updatedUser);
     try {
-      localStorage.setItem('flipvoca_parent_name', editParentName.trim() || '이상학');
-      localStorage.setItem('flipvoca_parent_phone', editParentPhone.trim() || '010-4006-9050');
+      localStorage.setItem('flipvoca_parent_name', editParentName.trim() || currentUser?.parentName || '');
+      localStorage.setItem('flipvoca_parent_phone', editParentPhone.trim() || currentUser?.parentPhone || '');
       localStorage.setItem('flipvoca_parent_pin', editParentPin.trim() || '0815');
       localStorage.setItem('english_edu_current_user', JSON.stringify(updatedUser));
       sessionStorage.setItem('english_edu_current_user', JSON.stringify(updatedUser));
@@ -2126,8 +2131,8 @@ export default function ModernStudyPage() {
             study_grade_level: editGradeLevel,
             daily_word_count: parseInt(editDailyCount, 10),
             pin: editPin.trim() || '1234',
-            parent_name: editParentName.trim() || '이상학',
-            parent_phone: editParentPhone.trim() || '010-4006-9050',
+            parent_name: editParentName.trim() || '',
+            parent_phone: editParentPhone.trim() || '',
             parent_pin: editParentPin.trim() || '0815'
           })
           .eq('student_id', studentId);
@@ -2181,6 +2186,43 @@ export default function ModernStudyPage() {
   };
 
 
+
+  if (!currentUser) {
+    return (
+      <div style={{
+        minHeight: '100vh',
+        background: 'linear-gradient(180deg, #E6FAFC 0%, #E0F2FE 45%, #F0FDF4 100%)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: '16px 10px',
+        fontFamily: '"Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif'
+      }}>
+        <div style={{
+          width: '100%',
+          maxWidth: '430px',
+          height: '840px',
+          maxHeight: '94vh',
+          background: '#FFFFFF',
+          borderRadius: '36px',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: '14px',
+          boxShadow: '0 25px 60px -15px rgba(0, 168, 191, 0.22)'
+        }}>
+          <div style={{ fontSize: '36px' }}>🔒</div>
+          <div style={{ fontSize: '16px', fontWeight: '900', color: '#0F172A' }}>
+            로그인 상태를 확인하는 중입니다...
+          </div>
+          <div style={{ fontSize: '13px', color: '#64748B', fontWeight: '600' }}>
+            잠시만 기다려주세요
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div style={{
@@ -5120,10 +5162,10 @@ export default function ModernStudyPage() {
                     <div style={{ flex: 1, minWidth: 0 }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap' }}>
                         <h3 style={{ margin: 0, fontSize: '20px', fontWeight: '900', color: '#1E293B' }}>
-                          {currentUser?.name || '이상학'} 학생
+                          {currentUser?.name || '학생'} 학생
                         </h3>
                         <span style={{ fontSize: '11px', fontWeight: '800', background: '#F1F5F9', color: '#64748B', padding: '2px 7px', borderRadius: '6px' }}>
-                          ID: {currentUser?.student_id || currentUser?.id || 'lsh_20260807'}
+                          ID: {currentUser?.student_id || currentUser?.id || 'student'}
                         </span>
                       </div>
                       <div style={{ fontSize: '12.5px', fontWeight: '800', color: '#008294', marginTop: '3px' }}>
@@ -5157,11 +5199,11 @@ export default function ModernStudyPage() {
                     <div style={{ height: '1px', background: '#E2E8F0', margin: '2px 0' }} />
                     <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12.5px' }}>
                       <span style={{ color: '#64748B', fontWeight: '700' }}>👨‍👩‍👧 학부모 성함</span>
-                      <strong style={{ color: '#2563EB', fontWeight: '900' }}>{currentUser?.parentName || currentUser?.parent_name || '이상학'} 학부모님</strong>
+                      <strong style={{ color: '#2563EB', fontWeight: '900' }}>{currentUser?.parentName || currentUser?.parent_name || '학부모'} 학부모님</strong>
                     </div>
                     <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12.5px' }}>
                       <span style={{ color: '#64748B', fontWeight: '700' }}>📞 학부모 연락처</span>
-                      <strong style={{ color: '#334155', fontWeight: '800' }}>{currentUser?.parentPhone || currentUser?.parent_phone || '010-4006-9050'}</strong>
+                      <strong style={{ color: '#334155', fontWeight: '800' }}>{currentUser?.parentPhone || currentUser?.parent_phone || '미등록'}</strong>
                     </div>
                     <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12.5px' }}>
                       <span style={{ color: '#64748B', fontWeight: '700' }}>🔑 학부모 로그인 PIN</span>
@@ -5398,7 +5440,7 @@ export default function ModernStudyPage() {
                       type="text"
                       value={editName}
                       onChange={(e) => setEditName(e.target.value)}
-                      placeholder="이름 입력 (예: 이상학)"
+                      placeholder="학생 이름 입력"
                       style={{
                         width: '100%',
                         padding: '11px 14px',
@@ -5550,7 +5592,7 @@ export default function ModernStudyPage() {
                       type="text"
                       value={editParentName}
                       onChange={(e) => setEditParentName(e.target.value)}
-                      placeholder="학부모 성함 (예: 이상학)"
+                      placeholder="학부모 성함 입력"
                       style={{
                         width: '100%',
                         padding: '11px 14px',

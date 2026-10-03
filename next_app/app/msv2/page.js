@@ -197,7 +197,7 @@ function HomeScreen({ go, user }) {
     <div style={{ padding: '64px 20px 0', display: 'flex', flexDirection: 'column', gap: 16 }}>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <div>
-          <div style={{ fontSize: 22, fontWeight: 900, color: C.text }}>안녕, {(user?.name || '상학').replace(/^이|^김|^박/, '')}! 👋</div>
+          <div style={{ fontSize: 22, fontWeight: 900, color: C.text }}>안녕, {(user?.name ? user.name.replace(/^이|^김|^박/, '') : '친구')}! 👋</div>
           <div style={{ fontSize: 13, color: C.sub, marginTop: 2 }}>오늘도 단어 정복하러 가볼까?</div>
         </div>
         <Pill bg={C.amberBg} color={C.amber}>🔥 12일 연속</Pill>
@@ -760,7 +760,7 @@ function ParentScreen({ user }) {
         <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
           <div style={{ width: 48, height: 48, borderRadius: '50%', background: C.amberBg, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 24 }}>🧒</div>
           <div style={{ flex: 1 }}>
-            <div style={{ fontSize: 16, fontWeight: 900, color: C.text }}>{(user?.name || '상학').replace(/^이|^김|^박/, '')} · {user?.level || '중등단어'} 과정</div>
+            <div style={{ fontSize: 16, fontWeight: 900, color: C.text }}>{(user?.name || '자녀')} · {user?.level || '중등단어'} 과정</div>
             <div style={{ fontSize: 12, color: C.sub, marginTop: 2 }}>Day 14 진행 중 · 오늘 12단어 학습</div>
           </div>
           <Pill bg="#DEF5EB" color="#0B9268" style={{ fontSize: 11, padding: '6px 10px' }}>● 학습 중</Pill>
