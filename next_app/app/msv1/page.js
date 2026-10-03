@@ -279,6 +279,7 @@ export default function ModernStudyPage() {
   const [selectedCalendarDate, setSelectedCalendarDate] = useState(null);
   const [selectedDateWords, setSelectedDateWords] = useState([]);
   const [isLoadingDateWords, setIsLoadingDateWords] = useState(false);
+  const [makeupStudyDate, setMakeupStudyDate] = useState(null); // 📅 달력 빠진 날짜 보충 학습 대상 날짜 (YYYY-MM-DD)
 
   // 🚨 틀린 단어(오답노트) 및 오답 집중 복습 상태
   const [wrongWords, setWrongWords] = useState([]);
@@ -1515,10 +1516,10 @@ export default function ModernStudyPage() {
   };
 
   // 💮 클라우드 DB & localStorage 공식 출석 도장 찍기
-  const handleStampAttendance = async () => {
+  const handleStampAttendance = async (customDateStr = null) => {
     if (!currentUser) return;
     const studentIdToUse = currentUser.student_id || currentUser.id || 'lsh_20260807_000001';
-    const stampDateKey = todayStr;
+    const stampDateKey = customDateStr || makeupStudyDate || todayStr;
     const stampKey = `english_stamps_${studentIdToUse}`;
     const stampedWordsKey = `stamped_words_${studentIdToUse}_${stampDateKey}`;
     const todayAllKey = `today_all_learned_${studentIdToUse}_${stampDateKey}`;
@@ -1526,7 +1527,9 @@ export default function ModernStudyPage() {
 
     // 1. 로컬 상태 즉시 출석 완료 반영
     setStampedDates(prev => prev.includes(stampDateKey) ? prev : [...prev, stampDateKey]);
-    setIsTodayStamped(true);
+    if (stampDateKey === todayStr) {
+      setIsTodayStamped(true);
+    }
 
     // 2. 단어 목록 누적 보존 (오답 복습 등으로 덮어쓰여지는 현상 완벽 방지)
     let allAccumulated = [];
@@ -1623,9 +1626,10 @@ export default function ModernStudyPage() {
       setCompletedQuizLevels(prev => {
         const nextLevels = Array.from(new Set([...prev, finishedLvl]));
         const studentId = currentUser?.student_id || currentUser?.id;
+        const targetDateKey = makeupStudyDate || todayStr;
         if (studentId) {
           try {
-            localStorage.setItem(`quiz_mission_${studentId}_${todayStr}`, JSON.stringify(nextLevels));
+            localStorage.setItem(`quiz_mission_${studentId}_${targetDateKey}`, JSON.stringify(nextLevels));
           } catch (e) {}
         }
         return nextLevels;
@@ -1633,9 +1637,14 @@ export default function ModernStudyPage() {
 
       // 💮 1. 2단계 퀴즈 완수 시 ➔ 공식 학습 완료 & 출석 도장 찍기 인정! (3, 4단계는 선택 심화)
       if (quizLevel === 2) {
-        handleStampAttendance();
+        const targetDateKey = makeupStudyDate || todayStr;
+        handleStampAttendance(targetDateKey);
         setIsQuizFinished(true);
-        setLevelTransitionToast('🎉 2단계 퀴즈 완수! 오늘의 공식 출석 도장이 성공적으로 찍혔습니다! 💮');
+        if (makeupStudyDate && makeupStudyDate !== todayStr) {
+          setLevelTransitionToast(`🎉 [${makeupStudyDate}] 밀린 학습 완수! 출석 달력에 도장(💮)이 성공적으로 찍혔습니다! 💮`);
+        } else {
+          setLevelTransitionToast('🎉 2단계 퀴즈 완수! 오늘의 공식 출석 도장이 성공적으로 찍혔습니다! 💮');
+        }
         setTimeout(() => setLevelTransitionToast(''), 4500);
       } else if (quizLevel === 1) {
         // 1단계 완료 시 ➔ 필수 2단계(스펠링)로 자동 이동
@@ -1790,16 +1799,77 @@ export default function ModernStudyPage() {
       console.log('Learned words DB fetch notice:', err);
     }
 
-    // 4. 출석 도장이 찍힌 과거 날짜인데 단어 기록이 비어있을 경우 (폴백 보정)
-    if ((!loadedWords || loadedWords.length === 0) && (isStamped || isToday)) {
-      const seed = parseInt(dateStr.replace(/-/g, ''), 10) || 1;
-      const count = parseInt(currentUser?.dailyWordCount || 20, 10);
-      const startIdx = (seed * 7) % Math.max(1, wordList500Fallback.length - count);
-      loadedWords = wordList500Fallback.slice(startIdx, startIdx + count);
+    // 4. 출석 도장이 찍힌 과거 날짜이거나, 빠진 날짜(미완료)인 경우 해당 날짜 단어 세트 로드/생성
+    if (!loadedWords || loadedWords.length === 0) {
+      // 4-1. localStorage에 저장된 데일리 세트 확인
+      try {
+        const savedDaily = localStorage.getItem(`daily_random_set_${studentIdToUse}_${dateStr}`);
+        if (savedDaily) {
+          const parsed = JSON.parse(savedDaily);
+          if (Array.isArray(parsed) && parsed.length > 0) {
+            loadedWords = parsed;
+          }
+        }
+      } catch (e) {}
+
+      // 4-2. 없으면 해당 날짜 고유 시드 기반으로 결정론적 단어 생성 (단어 풀 기반)
+      if (!loadedWords || loadedWords.length === 0) {
+        const seed = parseInt(dateStr.replace(/-/g, ''), 10) || 1;
+        const count = parseInt(currentUser?.dailyWordCount || currentUser?.daily_count || 10, 10);
+        const pool = (allLevelWords && allLevelWords.length > 0) ? allLevelWords : wordList500Fallback;
+        const startIdx = (seed * 11) % Math.max(1, pool.length - count);
+        loadedWords = pool.slice(startIdx, startIdx + count);
+
+        // 생성된 단어 세트를 해당 날짜 키로 보존
+        try {
+          localStorage.setItem(`daily_random_set_${studentIdToUse}_${dateStr}`, JSON.stringify(loadedWords));
+        } catch (e) {}
+      }
     }
 
     setSelectedDateWords(loadedWords || []);
     setIsLoadingDateWords(false);
+  };
+
+  // 🚀 밀린 학습(보충 학습) 시작 핸들러
+  const handleStartMakeupStudy = (targetDate, dateWords) => {
+    if (!targetDate) return;
+    const wordsToStudy = (dateWords && dateWords.length > 0) ? dateWords : selectedDateWords;
+    if (!wordsToStudy || wordsToStudy.length === 0) {
+      alert('학습할 단어 목록을 불러오지 못했습니다.');
+      return;
+    }
+
+    // 기존 오늘의 정규 단어 보존 (복귀 시 복원)
+    if (!makeupStudyDate && words.length > 0 && !isWrongReviewMode) {
+      setOriginalDailyWords(words);
+    }
+
+    setMakeupStudyDate(targetDate);
+    setWords(wordsToStudy);
+    setCurrentIndex(0);
+    setIsFlipped(false);
+    setQuizIndex(0);
+    setQuizLevel(1);
+    setIsQuizFinished(false);
+    setSelectedAnswer(null);
+    setIsAnswerChecked(false);
+    setIsQuizCorrect(null);
+    setTypingInput('');
+    clearQuizAutoAdvanceTimer();
+    setCurrentTab('deck');
+  };
+
+  // 🔄 보충 학습 모드 종료 및 오늘 정규 학습으로 복귀
+  const handleExitMakeupStudy = () => {
+    setMakeupStudyDate(null);
+    if (originalDailyWords && originalDailyWords.length > 0) {
+      setWords(originalDailyWords);
+    }
+    setCurrentIndex(0);
+    setIsFlipped(false);
+    setQuizIndex(0);
+    setIsQuizFinished(false);
   };
 
   // 🚨 오답 단어(틀린 단어) 자동 수집 및 보관
@@ -2740,6 +2810,52 @@ export default function ModernStudyPage() {
               </div>
             ) : (
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '14px', width: '100%' }}>
+              
+              {/* 📅 빠진 날짜 보충 학습 진행 중 안내 배너 */}
+              {makeupStudyDate && (
+                <div style={{
+                  width: '100%',
+                  background: 'linear-gradient(135deg, #FFFBEB 0%, #FEF3C7 100%)',
+                  border: '1.5px solid #F59E0B',
+                  borderRadius: '20px',
+                  padding: '12px 16px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  gap: '10px',
+                  boxShadow: '0 4px 14px rgba(245, 158, 11, 0.15)',
+                  animation: 'fadeIn 0.25s ease'
+                }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                    <span style={{ fontSize: '20px' }}>📅</span>
+                    <div>
+                      <div style={{ fontSize: '13.5px', fontWeight: '900', color: '#92400E' }}>
+                        [{makeupStudyDate}] 빠진 날짜 보충 학습 진행 중!
+                      </div>
+                      <div style={{ fontSize: '11.5px', fontWeight: '700', color: '#B45309', marginTop: '2px' }}>
+                        플래시카드 후 2단계 퀴즈 완수 시 출석 도장(💮)이 찍힙니다!
+                      </div>
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={handleExitMakeupStudy}
+                    style={{
+                      background: '#FFFFFF',
+                      border: '1px solid #D97706',
+                      color: '#92400E',
+                      borderRadius: '10px',
+                      padding: '6px 12px',
+                      fontSize: '11px',
+                      fontWeight: '800',
+                      cursor: 'pointer',
+                      whiteSpace: 'nowrap'
+                    }}
+                  >
+                    오늘 학습 복귀 ✕
+                  </button>
+                </div>
+              )}
               
               {/* 🚀 상단 퀵 액션 툴바 및 학습 진행도 스테퍼 (요청에 따라 숨김 처리) */}
               {false && (
@@ -3986,6 +4102,8 @@ export default function ModernStudyPage() {
                       const dayOfWeek = (firstDayOfWeek + d - 1) % 7;
                       const isSun = dayOfWeek === 0;
                       const isSat = dayOfWeek === 6;
+                      const isPast = dStr < todayStr;
+                      const isMissed = isPast && !isStamped;
 
                       return (
                         <div
@@ -4004,28 +4122,45 @@ export default function ModernStudyPage() {
                                 ? '#E6FAFC'
                                 : isToday
                                   ? '#F1F5F9'
-                                  : 'transparent',
+                                  : isMissed
+                                    ? '#FFFBEB'
+                                    : 'transparent',
                             border: isSelected
                               ? '2.5px solid #0284C7'
                               : isToday
                                 ? '2px solid #00A8BF'
                                 : isStamped
                                   ? '1px solid #BAE8EE'
-                                  : '1px solid transparent',
-                            color: isStamped ? '#008294' : isSun ? '#EF4444' : isSat ? '#3B82F6' : '#334155',
-                            fontWeight: isStamped || isToday || isSelected ? '900' : '600',
+                                  : isMissed
+                                    ? '1.5px dashed #FCD34D'
+                                    : '1px solid transparent',
+                            color: isStamped ? '#008294' : isMissed ? '#B45309' : isSun ? '#EF4444' : isSat ? '#3B82F6' : '#334155',
+                            fontWeight: isStamped || isToday || isSelected || isMissed ? '900' : '600',
                             fontSize: '12px',
                             position: 'relative',
                             cursor: 'pointer',
                             transition: 'all 0.15s ease',
                             transform: isSelected ? 'scale(1.04)' : 'none',
-                            boxShadow: isSelected ? '0 4px 12px rgba(2, 132, 199, 0.2)' : 'none'
+                            boxShadow: isSelected ? '0 4px 12px rgba(2, 132, 199, 0.2)' : isMissed ? '0 2px 6px rgba(245, 158, 11, 0.1)' : 'none'
                           }}
                         >
                           <span>{d}</span>
                           {isStamped && <span style={{ fontSize: '11px', lineHeight: 1 }}>💮</span>}
                           {isToday && !isStamped && (
                             <span style={{ fontSize: '8px', color: '#00A8BF', fontWeight: '900', lineHeight: 1 }}>오늘</span>
+                          )}
+                          {isMissed && (
+                            <span style={{
+                              fontSize: '7.5px',
+                              color: '#D97706',
+                              background: '#FEF3C7',
+                              padding: '1px 3px',
+                              borderRadius: '4px',
+                              fontWeight: '900',
+                              lineHeight: 1
+                            }}>
+                              보충
+                            </span>
                           )}
                         </div>
                       );
@@ -4040,10 +4175,11 @@ export default function ModernStudyPage() {
                     fontWeight: '700',
                     textAlign: 'center',
                     background: '#F8FAFC',
-                    padding: '6px 10px',
-                    borderRadius: '10px'
+                    padding: '8px 12px',
+                    borderRadius: '12px',
+                    lineHeight: 1.5
                   }}>
-                    💡 출석 도장(💮)이 찍힌 날짜를 클릭하면 <strong>해당 날짜에 공부한 단어 목록</strong>을 확인할 수 있습니다.
+                    💡 출석 도장(💮) 날짜는 <strong>복습</strong>이 가능하며, <span style={{ color: '#D97706', fontWeight: '900' }}>[보충]</span> 날짜를 클릭하면 <strong>밀린 학습을 완료하고 도장</strong>을 받을 수 있습니다.
                   </div>
                 </div>
 
@@ -4061,34 +4197,56 @@ export default function ModernStudyPage() {
                     animation: 'fadeIn 0.25s ease'
                   }}>
                     {/* 상단 날짜 및 닫기 헤더 */}
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1.5px solid #F1F5F9', paddingBottom: '10px' }}>
-                      <div>
-                        <div style={{ fontSize: '16px', fontWeight: '900', color: '#1E293B', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                          <span>📅</span>
-                          <span>{selectedCalendarDate} 학습 단어장</span>
-                          {stampedDates.includes(selectedCalendarDate) && <span>💮</span>}
+                    {(() => {
+                      const isStamped = stampedDates.includes(selectedCalendarDate);
+                      const isToday = selectedCalendarDate === todayStr;
+                      const isPast = selectedCalendarDate < todayStr;
+                      const isMissed = isPast && !isStamped;
+
+                      return (
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1.5px solid #F1F5F9', paddingBottom: '10px' }}>
+                          <div>
+                            <div style={{ fontSize: '16px', fontWeight: '900', color: '#1E293B', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                              <span>{isMissed ? '⚠️' : '📅'}</span>
+                              <span>
+                                {selectedCalendarDate} {isMissed ? '미완료 학습 (보충 가능)' : isStamped ? '학습 단어장' : isToday ? '오늘의 학습 단어장' : '예정 단어장'}
+                              </span>
+                              {isStamped && <span>💮</span>}
+                            </div>
+                            <div style={{
+                              fontSize: '12px',
+                              fontWeight: '700',
+                              color: isMissed ? '#D97706' : isStamped ? '#008294' : '#64748B',
+                              marginTop: '2px'
+                            }}>
+                              {isMissed
+                                ? `빠진 날짜의 배정 단어 ${selectedDateWords.length}개를 학습하고 출석 도장(💮)을 채우세요!`
+                                : isStamped
+                                  ? `총 ${selectedDateWords.length}개의 단어를 학습 완료했습니다.`
+                                  : isToday
+                                    ? `오늘 배정된 단어 ${selectedDateWords.length}개를 학습하고 출석 도장을 받으세요!`
+                                    : `해당 날짜에 배정될 단어 ${selectedDateWords.length}개입니다.`}
+                            </div>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => setSelectedCalendarDate(null)}
+                            style={{
+                              background: '#F1F5F9',
+                              border: 'none',
+                              borderRadius: '8px',
+                              padding: '5px 9px',
+                              fontSize: '12px',
+                              fontWeight: '800',
+                              color: '#64748B',
+                              cursor: 'pointer'
+                            }}
+                          >
+                            닫기 ✕
+                          </button>
                         </div>
-                        <div style={{ fontSize: '12px', fontWeight: '700', color: '#008294', marginTop: '2px' }}>
-                          총 {selectedDateWords.length}개의 단어를 학습 완료했습니다.
-                        </div>
-                      </div>
-                      <button
-                        type="button"
-                        onClick={() => setSelectedCalendarDate(null)}
-                        style={{
-                          background: '#F1F5F9',
-                          border: 'none',
-                          borderRadius: '8px',
-                          padding: '5px 9px',
-                          fontSize: '12px',
-                          fontWeight: '800',
-                          color: '#64748B',
-                          cursor: 'pointer'
-                        }}
-                      >
-                        닫기 ✕
-                      </button>
-                    </div>
+                      );
+                    })()}
 
                     {/* 단어 목록 리스트 (스크롤 지원) */}
                     {isLoadingDateWords ? (
@@ -4176,37 +4334,71 @@ export default function ModernStudyPage() {
                       </div>
                     )}
 
-                    {/* 복습하기 액션 버튼 */}
-                    {selectedDateWords.length > 0 && (
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setWords(selectedDateWords);
-                          setCurrentIndex(0);
-                          setIsFlipped(false);
-                          setCurrentTab('deck');
-                        }}
-                        style={{
-                          width: '100%',
-                          padding: '12px',
-                          borderRadius: '14px',
-                          border: 'none',
-                          background: 'linear-gradient(135deg, #00C7E5 0%, #00A8BF 100%)',
-                          color: '#FFFFFF',
-                          fontWeight: '900',
-                          fontSize: '13.5px',
-                          cursor: 'pointer',
-                          boxShadow: '0 4px 12px rgba(0, 168, 191, 0.25)',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          gap: '6px'
-                        }}
-                      >
-                        <span>📘</span>
-                        <span>이 날의 단어들로 플래시카드 복습하기</span>
-                      </button>
-                    )}
+                    {/* 학습 / 복습 액션 버튼 */}
+                    {selectedDateWords.length > 0 && (() => {
+                      const isStamped = stampedDates.includes(selectedCalendarDate);
+                      const isPast = selectedCalendarDate < todayStr;
+                      const isMissed = isPast && !isStamped;
+
+                      if (isMissed) {
+                        return (
+                          <button
+                            type="button"
+                            onClick={() => handleStartMakeupStudy(selectedCalendarDate, selectedDateWords)}
+                            style={{
+                              width: '100%',
+                              padding: '13px',
+                              borderRadius: '16px',
+                              border: 'none',
+                              background: 'linear-gradient(135deg, #F59E0B 0%, #D97706 100%)',
+                              color: '#FFFFFF',
+                              fontWeight: '900',
+                              fontSize: '14px',
+                              cursor: 'pointer',
+                              boxShadow: '0 4px 14px rgba(217, 119, 6, 0.3)',
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              gap: '8px'
+                            }}
+                          >
+                            <span>🚀</span>
+                            <span>[{selectedCalendarDate}] 밀린 학습 시작하기 (플래시카드 + 퀴즈)</span>
+                          </button>
+                        );
+                      }
+
+                      return (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setWords(selectedDateWords);
+                            setCurrentIndex(0);
+                            setIsFlipped(false);
+                            setCurrentTab('deck');
+                          }}
+                          style={{
+                            width: '100%',
+                            padding: '12px',
+                            borderRadius: '14px',
+                            border: 'none',
+                            background: 'linear-gradient(135deg, #00C7E5 0%, #00A8BF 100%)',
+                            color: '#FFFFFF',
+                            fontWeight: '900',
+                            fontSize: '13.5px',
+                            cursor: 'pointer',
+                            boxShadow: '0 4px 12px rgba(0, 168, 191, 0.25)',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            gap: '6px'
+                          }}
+                        >
+                          <span>📘</span>
+                          <span>이 날의 단어들로 플래시카드 {isStamped ? '복습하기' : '학습하기'}</span>
+                        </button>
+                      );
+                    })()}
                   </div>
                 )}
 
@@ -4242,6 +4434,52 @@ export default function ModernStudyPage() {
 
             return (
               <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                
+                {/* 📅 빠진 날짜 보충 학습 진행 중 안내 배너 */}
+                {makeupStudyDate && (
+                  <div style={{
+                    width: '100%',
+                    background: 'linear-gradient(135deg, #FFFBEB 0%, #FEF3C7 100%)',
+                    border: '1.5px solid #F59E0B',
+                    borderRadius: '18px',
+                    padding: '12px 16px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    gap: '10px',
+                    boxShadow: '0 4px 14px rgba(245, 158, 11, 0.15)',
+                    animation: 'fadeIn 0.25s ease'
+                  }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                      <span style={{ fontSize: '20px' }}>📅</span>
+                      <div>
+                        <div style={{ fontSize: '13.5px', fontWeight: '900', color: '#92400E' }}>
+                          [{makeupStudyDate}] 빠진 날짜 보충 퀴즈 진행 중!
+                        </div>
+                        <div style={{ fontSize: '11.5px', fontWeight: '700', color: '#B45309', marginTop: '2px' }}>
+                          2단계 퀴즈까지 완수 시 출석 도장(💮)이 찍힙니다!
+                        </div>
+                      </div>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={handleExitMakeupStudy}
+                      style={{
+                        background: '#FFFFFF',
+                        border: '1px solid #D97706',
+                        color: '#92400E',
+                        borderRadius: '10px',
+                        padding: '6px 12px',
+                        fontSize: '11px',
+                        fontWeight: '800',
+                        cursor: 'pointer',
+                        whiteSpace: 'nowrap'
+                      }}
+                    >
+                      오늘 학습 복귀 ✕
+                    </button>
+                  </div>
+                )}
                 
                 {/* 🚀 단계 자동 전환 안내 토스트 배너 */}
                 {levelTransitionToast && (

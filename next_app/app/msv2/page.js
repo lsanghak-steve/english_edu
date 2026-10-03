@@ -245,13 +245,17 @@ function HomeScreen({ go, user }) {
 }
 
 // ═══ 03 플래시카드 ═══
-function FlashcardScreen({ go }) {
+function FlashcardScreen({ go, makeupDay, setMakeupDay }) {
   const [idx, setIdx] = useState(0);
   const [flipped, setFlipped] = useState(false);
-  const [done, setDone] = useState(11); // 오늘 완료 수 (12/30에서 시작)
+  const [done, setDone] = useState(makeupDay ? 0 : 11); // 오늘 완료 수 (12/30에서 시작)
   const w = WORDS[idx % WORDS.length];
   const next = () => {
     setFlipped(false);
+    if (idx >= WORDS.length - 1) {
+      if (go) go('quiz');
+      return;
+    }
     setIdx((p) => p + 1);
     setDone((p) => Math.min(p + 1, 29));
   };
@@ -261,11 +265,23 @@ function FlashcardScreen({ go }) {
   };
   return (
     <div style={{ padding: '60px 20px 28px', display: 'flex', flexDirection: 'column', gap: 18, height: '100%', boxSizing: 'border-box' }}>
+      {makeupDay && (
+        <div style={{ background: '#FFFBEB', border: '1.5px solid #FCD34D', borderRadius: 16, padding: '10px 14px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8, boxShadow: '0 4px 12px rgba(245, 158, 11, 0.15)' }}>
+          <div style={{ fontSize: 12, fontWeight: 800, color: '#92400E' }}>
+            📅 9월 {makeupDay}일 (Day {makeupDay}) 빠진 날짜 보충 학습 중!
+          </div>
+          <button onClick={() => { if (setMakeupDay) setMakeupDay(null); if (go) go('calendar'); }} style={{ background: '#FFFFFF', border: '1px solid #D97706', color: '#92400E', borderRadius: 8, padding: '4px 8px', fontSize: 11, fontWeight: 700, cursor: 'pointer' }}>
+            달력 복귀
+          </button>
+        </div>
+      )}
       <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-        <button onClick={() => go('home')} style={{ width: 40, height: 40, borderRadius: '50%', background: C.surface, border: 'none', fontSize: 18, fontWeight: 700, color: C.text, cursor: 'pointer' }}>←</button>
+        <button onClick={() => { if (setMakeupDay) setMakeupDay(null); go('calendar'); }} style={{ width: 40, height: 40, borderRadius: '50%', background: C.surface, border: 'none', fontSize: 18, fontWeight: 700, color: C.text, cursor: 'pointer' }}>←</button>
         <div style={{ flex: 1, textAlign: 'center' }}>
-          <div style={{ fontSize: 15, fontWeight: 900, color: C.text }}>DAY 14 · 중등단어</div>
-          <div style={{ fontSize: 11, color: C.sub }}>플래시카드 학습</div>
+          <div style={{ fontSize: 15, fontWeight: 900, color: C.text }}>DAY {makeupDay || 14} · 중등단어</div>
+          <div style={{ fontSize: 11, color: makeupDay ? '#D97706' : C.sub, fontWeight: makeupDay ? 700 : 500 }}>
+            {makeupDay ? '보충 플래시카드 학습' : '플래시카드 학습'}
+          </div>
         </div>
         <Pill bg={C.primaryLight} color={C.primaryDeep}>{done + 1} / 30</Pill>
       </div>
@@ -320,7 +336,7 @@ function FlashcardScreen({ go }) {
 }
 
 // ═══ 04 퀴즈 ═══
-function QuizScreen({ go }) {
+function QuizScreen({ go, makeupDay, setMakeupDay, setCheckedDays }) {
   const [qIdx, setQIdx] = useState(0);
   const [picked, setPicked] = useState(null);
   const [score, setScore] = useState(60);
@@ -333,20 +349,45 @@ function QuizScreen({ go }) {
     setPicked(i);
     if (i === correctIdx) setScore((s) => s + 10);
   };
-  const next = () => { setPicked(null); setQIdx((p) => p + 1); };
+  const next = () => {
+    if (qIdx >= 4) { // 5문제 완수 시
+      if (makeupDay && setCheckedDays) {
+        setCheckedDays((prev) => Array.from(new Set([...prev, makeupDay])));
+        alert(`🎉 9월 ${makeupDay}일 (Day ${makeupDay}) 보충 퀴즈 완수!\n학습 달력에 출석 도장(✓)이 성공적으로 찍혔습니다! 💮`);
+        if (setMakeupDay) setMakeupDay(null);
+        if (go) go('calendar');
+        return;
+      }
+      alert('🎉 퀴즈를 모두 완수했습니다!');
+      if (go) go('calendar');
+      return;
+    }
+    setPicked(null);
+    setQIdx((p) => p + 1);
+  };
   return (
     <div style={{ padding: '60px 20px 28px', display: 'flex', flexDirection: 'column', gap: 18, height: '100%', boxSizing: 'border-box' }}>
+      {makeupDay && (
+        <div style={{ background: '#FFFBEB', border: '1.5px solid #FCD34D', borderRadius: 16, padding: '10px 14px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8, boxShadow: '0 4px 12px rgba(245, 158, 11, 0.15)' }}>
+          <div style={{ fontSize: 12, fontWeight: 800, color: '#92400E' }}>
+            📝 9월 {makeupDay}일 (Day {makeupDay}) 보충 퀴즈 (완수 시 출석 인정!)
+          </div>
+          <button onClick={() => { if (setMakeupDay) setMakeupDay(null); if (go) go('calendar'); }} style={{ background: '#FFFFFF', border: '1px solid #D97706', color: '#92400E', borderRadius: 8, padding: '4px 8px', fontSize: 11, fontWeight: 700, cursor: 'pointer' }}>
+            달력 복귀
+          </button>
+        </div>
+      )}
       <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-        <button onClick={() => go('home')} style={{ width: 40, height: 40, borderRadius: '50%', background: C.surface, border: 'none', fontSize: 16, fontWeight: 700, color: C.text, cursor: 'pointer' }}>✕</button>
-        <div style={{ flex: 1, textAlign: 'center', fontSize: 16, fontWeight: 900, color: C.text }}>Day 14 퀴즈</div>
+        <button onClick={() => { if (setMakeupDay) setMakeupDay(null); go('calendar'); }} style={{ width: 40, height: 40, borderRadius: '50%', background: C.surface, border: 'none', fontSize: 16, fontWeight: 700, color: C.text, cursor: 'pointer' }}>✕</button>
+        <div style={{ flex: 1, textAlign: 'center', fontSize: 16, fontWeight: 900, color: C.text }}>Day {makeupDay || 14} 퀴즈</div>
         <Pill bg={C.amberBg} color={C.amber}>⭐ {score}점</Pill>
       </div>
       <div style={{ height: 8, background: C.border, borderRadius: 999, overflow: 'hidden' }}>
-        <div style={{ width: `${(((qIdx % 10) + 7) / 10) * 100}%`, height: '100%', background: C.green, borderRadius: 999 }} />
+        <div style={{ width: `${(((qIdx % 5) + 1) / 5) * 100}%`, height: '100%', background: C.green, borderRadius: 999 }} />
       </div>
 
       <div style={{ background: C.surface, borderRadius: 26, padding: '30px 24px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 10 }}>
-        <div style={{ fontSize: 13, fontWeight: 900, color: C.primary }}>Q{(qIdx % 10) + 7}</div>
+        <div style={{ fontSize: 13, fontWeight: 900, color: C.primary }}>Q{(qIdx % 5) + 1}</div>
         <div style={{ fontSize: 14, fontWeight: 500, color: C.sub }}>다음 단어의 뜻은 무엇일까요?</div>
         <div style={{ fontSize: 38, fontWeight: 900, color: C.text, letterSpacing: '-1px' }}>{w.word}</div>
         <button onClick={() => speak(w.word)} style={{ background: C.primaryLight, border: 'none', borderRadius: 999, padding: '7px 12px', fontSize: 12, fontWeight: 700, color: C.primaryDeep, cursor: 'pointer', fontFamily: FONT }}>
@@ -375,7 +416,7 @@ function QuizScreen({ go }) {
       </div>
 
       <button onClick={next} disabled={!answered} style={{ marginTop: 'auto', background: answered ? C.primary : '#C7CAF5', border: 'none', borderRadius: 18, padding: '18px 0', fontSize: 16, fontWeight: 700, color: '#FFFFFF', cursor: answered ? 'pointer' : 'default', fontFamily: FONT }}>
-        다음 문제 →
+        {qIdx >= 4 ? '퀴즈 완료 및 출석 인정 ➔' : '다음 문제 →'}
       </button>
     </div>
   );
@@ -428,16 +469,34 @@ function WordbookScreen() {
 }
 
 // ═══ 06 달력 ═══
-function CalendarScreen() {
-  const checked = [1, 2, 3, 4, 7, 8, 9, 10];
+function CalendarScreen({ go, checkedDays = [1, 2, 3, 4, 7, 8, 9, 10], setCheckedDays, setMakeupDay }) {
   const today = 11;
   const firstDow = 2; // 2026-09-01 = 화요일
   const cells = [...Array(firstDow).fill(null), ...Array.from({ length: 30 }, (_, i) => i + 1)];
+  const [selectedDay, setSelectedDay] = useState(5); // 기본으로 미완료(빠진 날짜)인 5일 선택
+
+  const isChecked = selectedDay && checkedDays.includes(selectedDay);
+  const isToday = selectedDay === today;
+  const isPast = selectedDay && selectedDay < today;
+  const isMissed = isPast && !isChecked;
+
+  const handleStartMakeup = (d) => {
+    if (setMakeupDay) setMakeupDay(d);
+    if (go) go('flashcard');
+  };
+
+  const handleStartQuizMakeup = (d) => {
+    if (setMakeupDay) setMakeupDay(d);
+    if (go) go('quiz');
+  };
+
   return (
     <div style={{ padding: '60px 20px 0', display: 'flex', flexDirection: 'column', gap: 14 }}>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <div style={{ fontSize: 24, fontWeight: 900, color: C.text }}>학습 달력 📅</div>
-        <Pill bg={C.amberBg} color={C.amber} style={{ fontSize: 12 }}>🔥 이번 달 18일 학습</Pill>
+        <Pill bg={C.amberBg} color={C.amber} style={{ fontSize: 12 }}>
+          🔥 이번 달 {checkedDays.length}일 완료
+        </Pill>
       </div>
       <div style={{ background: C.surface, borderRadius: 24, padding: '22px 18px' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
@@ -450,17 +509,61 @@ function CalendarScreen() {
             <div key={d} style={{ fontSize: 12, fontWeight: 700, color: i === 0 ? '#E85D75' : i === 6 ? '#5B8DEF' : C.sub, padding: '6px 0' }}>{d}</div>
           ))}
           {cells.map((d, i) => {
-            const isChecked = d && checked.includes(d);
-            const isToday = d === today;
+            const dChecked = d && checkedDays.includes(d);
+            const dToday = d === today;
+            const dMissed = d && d < today && !dChecked;
+            const isSelected = d && d === selectedDay;
+
             return (
-              <div key={i} style={{ padding: '8px 0', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2, minHeight: 48 }}>
+              <div
+                key={i}
+                onClick={() => d && setSelectedDay(d)}
+                style={{
+                  padding: '6px 0',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  gap: 2,
+                  minHeight: 48,
+                  cursor: d ? 'pointer' : 'default',
+                  borderRadius: 12,
+                  background: isSelected ? '#EFF6FF' : 'transparent',
+                  border: isSelected ? `2px solid ${C.primary}` : '2px solid transparent',
+                  transition: 'all 0.15s ease'
+                }}
+              >
                 {d && (
                   <>
-                    <div style={{ width: 32, height: 32, borderRadius: '50%', background: isToday ? C.primary : isChecked ? '#DEF5EB' : 'transparent', color: isToday ? '#FFFFFF' : isChecked ? '#0B9268' : C.text, fontSize: 13, fontWeight: isToday || isChecked ? 700 : 500, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <div style={{
+                      width: 32,
+                      height: 32,
+                      borderRadius: '50%',
+                      background: dToday
+                        ? C.primary
+                        : dChecked
+                          ? '#DEF5EB'
+                          : dMissed
+                            ? '#FEF3C7'
+                            : 'transparent',
+                      color: dToday
+                        ? '#FFFFFF'
+                        : dChecked
+                          ? '#0B9268'
+                          : dMissed
+                            ? '#B45309'
+                            : C.text,
+                      fontSize: 13,
+                      fontWeight: dToday || dChecked || dMissed || isSelected ? 700 : 500,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      boxShadow: isSelected ? '0 2px 8px rgba(79, 70, 229, 0.2)' : 'none'
+                    }}>
                       {d}
                     </div>
-                    {isChecked && <span style={{ fontSize: 9, color: '#0B9268' }}>✓</span>}
-                    {isToday && <span style={{ fontSize: 8, fontWeight: 900, color: C.primary }}>오늘</span>}
+                    {dChecked && <span style={{ fontSize: 9, color: '#0B9268', fontWeight: 900 }}>✓</span>}
+                    {dToday && !dChecked && <span style={{ fontSize: 8, fontWeight: 900, color: C.primary }}>오늘</span>}
+                    {dMissed && <span style={{ fontSize: 8, fontWeight: 900, color: '#D97706', background: '#FEF3C7', padding: '1px 3px', borderRadius: 4 }}>보충</span>}
                   </>
                 )}
               </div>
@@ -468,17 +571,115 @@ function CalendarScreen() {
           })}
         </div>
       </div>
-      <div style={{ background: C.surface, borderRadius: 24, padding: 18, display: 'flex', flexDirection: 'column', gap: 14, marginBottom: 16 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-          <div style={{ width: 44, height: 44, borderRadius: 12, background: '#DEF5EB', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 20 }}>✅</div>
-          <div>
-            <div style={{ fontSize: 14, fontWeight: 900, color: C.text }}>9월 10일 · Day 13 완료</div>
-            <div style={{ fontSize: 12, color: C.sub, marginTop: 2 }}>30단어 학습 · 퀴즈 93점 · 오답 2개</div>
-          </div>
-        </div>
-        <button style={{ background: C.primaryLight, border: 'none', borderRadius: 14, padding: '13px 0', fontSize: 14, fontWeight: 700, color: C.primaryDeep, cursor: 'pointer', fontFamily: FONT }}>
-          이 날 단어 다시 복습하기
-        </button>
+
+      {/* 날짜 상세 및 학습 액션 카드 */}
+      <div style={{
+        background: C.surface,
+        borderRadius: 24,
+        padding: 18,
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 14,
+        marginBottom: 16,
+        border: isMissed ? '1.5px solid #FCD34D' : `1px solid ${C.border}`,
+        boxShadow: isMissed ? '0 4px 16px rgba(245, 158, 11, 0.12)' : '0 4px 12px rgba(0,0,0,0.02)'
+      }}>
+        {isMissed ? (
+          <>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+              <div style={{ width: 44, height: 44, borderRadius: 12, background: '#FEF3C7', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 22, flexShrink: 0 }}>⚠️</div>
+              <div style={{ flex: 1 }}>
+                <div style={{ fontSize: 15, fontWeight: 900, color: C.text }}>9월 {selectedDay}일 · Day {selectedDay} 빠진 학습</div>
+                <div style={{ fontSize: 12, color: '#D97706', fontWeight: 700, marginTop: 2 }}>미완료 학습 · 지금 보충 학습하고 출석 도장(✓) 채우기!</div>
+              </div>
+            </div>
+            <div style={{ display: 'flex', gap: 8 }}>
+              <button
+                onClick={() => handleStartMakeup(selectedDay)}
+                style={{
+                  flex: 1,
+                  background: 'linear-gradient(135deg, #F59E0B 0%, #D97706 100%)',
+                  border: 'none',
+                  borderRadius: 14,
+                  padding: '13px 0',
+                  fontSize: 13.5,
+                  fontWeight: 800,
+                  color: '#FFFFFF',
+                  cursor: 'pointer',
+                  fontFamily: FONT,
+                  boxShadow: '0 4px 12px rgba(217, 119, 6, 0.25)'
+                }}
+              >
+                🔥 빠진 단어 학습하기
+              </button>
+              <button
+                onClick={() => handleStartQuizMakeup(selectedDay)}
+                style={{
+                  flex: 1,
+                  background: C.primaryLight,
+                  border: 'none',
+                  borderRadius: 14,
+                  padding: '13px 0',
+                  fontSize: 13.5,
+                  fontWeight: 800,
+                  color: C.primaryDeep,
+                  cursor: 'pointer',
+                  fontFamily: FONT
+                }}
+              >
+                📝 퀴즈 바로 풀기
+              </button>
+            </div>
+          </>
+        ) : isChecked ? (
+          <>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+              <div style={{ width: 44, height: 44, borderRadius: 12, background: '#DEF5EB', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 20 }}>✅</div>
+              <div>
+                <div style={{ fontSize: 14, fontWeight: 900, color: C.text }}>9월 {selectedDay}일 · Day {selectedDay} 완료</div>
+                <div style={{ fontSize: 12, color: C.sub, marginTop: 2 }}>30단어 학습 완료 · 퀴즈 95점 · 출석 도장 완료</div>
+              </div>
+            </div>
+            <button
+              onClick={() => { if (setMakeupDay) setMakeupDay(null); if (go) go('flashcard'); }}
+              style={{ background: C.primaryLight, border: 'none', borderRadius: 14, padding: '13px 0', fontSize: 14, fontWeight: 700, color: C.primaryDeep, cursor: 'pointer', fontFamily: FONT }}
+            >
+              이 날 단어 다시 복습하기
+            </button>
+          </>
+        ) : isToday ? (
+          <>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+              <div style={{ width: 44, height: 44, borderRadius: 12, background: C.primaryLight, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 20 }}>⏳</div>
+              <div>
+                <div style={{ fontSize: 14, fontWeight: 900, color: C.text }}>9월 {selectedDay}일 · 오늘 학습</div>
+                <div style={{ fontSize: 12, color: C.primary, fontWeight: 700, marginTop: 2 }}>오늘 30단어 학습하고 출석 도장을 받으세요!</div>
+              </div>
+            </div>
+            <button
+              onClick={() => { if (setMakeupDay) setMakeupDay(null); if (go) go('flashcard'); }}
+              style={{ background: C.primary, border: 'none', borderRadius: 14, padding: '13px 0', fontSize: 14, fontWeight: 700, color: '#FFFFFF', cursor: 'pointer', fontFamily: FONT }}
+            >
+              오늘의 학습 시작하기 ➔
+            </button>
+          </>
+        ) : (
+          <>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+              <div style={{ width: 44, height: 44, borderRadius: 12, background: '#F1F5F9', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 20 }}>📅</div>
+              <div>
+                <div style={{ fontSize: 14, fontWeight: 900, color: C.text }}>9월 {selectedDay}일 · 예정된 학습</div>
+                <div style={{ fontSize: 12, color: C.sub, marginTop: 2 }}>해당 날짜에 열리는 단어들입니다.</div>
+              </div>
+            </div>
+            <button
+              onClick={() => { if (setMakeupDay) setMakeupDay(null); if (go) go('flashcard'); }}
+              style={{ background: C.primaryLight, border: 'none', borderRadius: 14, padding: '13px 0', fontSize: 14, fontWeight: 700, color: C.primaryDeep, cursor: 'pointer', fontFamily: FONT }}
+            >
+              이 날 단어 미리 예습하기
+            </button>
+          </>
+        )}
       </div>
     </div>
   );
@@ -618,6 +819,8 @@ export default function ModernStudyV2Page() {
   const [screen, setScreen] = useState('login');
   const [scale, setScale] = useState(1);
   const [user, setUser] = useState(null);
+  const [makeupDay, setMakeupDay] = useState(null);
+  const [checkedDays, setCheckedDays] = useState([1, 2, 3, 4, 7, 8, 9, 10]);
   const go = (s) => setScreen(s);
 
   // 뷰포트에 맞춰 폰 프레임을 비율 유지한 채 축소 (내부 스크롤·잘림 방지)
@@ -641,10 +844,10 @@ export default function ModernStudyV2Page() {
   const screens = {
     login: <LoginScreen go={go} onLogin={setUser} />,
     home: <HomeScreen go={go} user={user} />,
-    flashcard: <FlashcardScreen go={go} />,
-    quiz: <QuizScreen go={go} />,
+    flashcard: <FlashcardScreen go={go} makeupDay={makeupDay} setMakeupDay={setMakeupDay} />,
+    quiz: <QuizScreen go={go} makeupDay={makeupDay} setMakeupDay={setMakeupDay} setCheckedDays={setCheckedDays} />,
     wordbook: <WordbookScreen />,
-    calendar: <CalendarScreen />,
+    calendar: <CalendarScreen go={go} checkedDays={checkedDays} setCheckedDays={setCheckedDays} setMakeupDay={setMakeupDay} />,
     stats: <StatsScreen />,
     parent: <ParentScreen user={user} />,
   };
