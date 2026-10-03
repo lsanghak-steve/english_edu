@@ -308,13 +308,22 @@ function RecordingSheet({ word, rate, onClose, onScored }) {
     setTimeout(() => finish(''), 6000);
   };
 
+  // 시트가 열리면 바로 녹음 시작 (버튼을 또 누를 필요 없음)
+  useEffect(() => {
+    start();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const tip = score !== null ? pronTip(word, score) : null;
   return (
     <div style={{ position: 'absolute', inset: 0, zIndex: 50 }}>
       <div onClick={() => { stopAll(); onClose(); }} style={{ position: 'absolute', inset: 0, background: 'rgba(17,24,39,0.45)' }} />
       <div style={{ position: 'absolute', left: 0, right: 0, bottom: 0, background: '#FFFFFF', borderRadius: '28px 28px 0 0', padding: '12px 24px 26px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12 }}>
+        <button onClick={() => { stopAll(); onClose(); }}
+          style={{ position: 'absolute', top: 12, right: 14, width: 32, height: 32, borderRadius: 16, border: 'none', background: C.input, color: C.sub, fontSize: 14, fontWeight: 900, cursor: 'pointer', fontFamily: FONT, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+          title="닫기">✕</button>
         <div style={{ width: 44, height: 5, borderRadius: 999, background: C.border }} />
-        <div style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <div style={{ width: '100%', boxSizing: 'border-box', paddingRight: 30, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <span style={{ fontSize: 18, fontWeight: 900, color: C.text }}>발음 연습 🎙️</span>
           <Pill bg={C.primaryLight} color={C.primaryDeep} style={{ padding: '5px 12px' }}>{word}</Pill>
         </div>
