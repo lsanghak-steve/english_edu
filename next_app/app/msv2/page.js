@@ -212,7 +212,7 @@ function HomeScreen({ go, user, done, total, streak, loading }) {
 }
 
 // ═══ 녹음 바텀시트 (피그마 10) ═══
-function RecordingSheet({ word, rate, onClose, onScored }) {
+function RecordingSheet({ word, rate, onClose, onScored, closeHint }) {
   const [phase, setPhase] = useState('ready');
   const [score, setScore] = useState(null);
   const [recognized, setRecognized] = useState('');
@@ -361,6 +361,9 @@ function RecordingSheet({ word, rate, onClose, onScored }) {
             🔊 원어민과 비교
           </button>
         </div>
+        {score !== null && closeHint && (
+          <div style={{ fontSize: 12, fontWeight: 700, color: C.primaryDeep }}>{closeHint}</div>
+        )}
       </div>
     </div>
   );
@@ -370,6 +373,7 @@ function RecordingSheet({ word, rate, onClose, onScored }) {
 function FlashcardScreen({ go, user, words, loading, idx, setIdx, markDone, wrongWords, toggleWrong, rate, cycleRate, onFinishSet, makeupDate, exitMakeup }) {
   const [flipped, setFlipped] = useState(false);
   const [sheet, setSheet] = useState(false);
+  const lastScoreRef = useRef(null);
   const w = words[idx];
   const total = words.length || 1;
   const wkey = cleanWord(w).toLowerCase();
@@ -396,6 +400,13 @@ function FlashcardScreen({ go, user, words, loading, idx, setIdx, markDone, wron
     markDone(idx);
     if (idx + 1 < total) setIdx(idx + 1);
     else onFinishSet();
+  };
+  // 녹음 시트를 닫으면: 채점이 있었을 때만 자동으로 다음 단어 (55점 미만은 오답노트 자동 담기)
+  const closeSheet = () => {
+    setSheet(false);
+    const s = lastScoreRef.current;
+    lastScoreRef.current = null;
+    if (s !== null && s !== undefined) next(s >= 55);
   };
   const face = {
     position: 'absolute', inset: 0, borderRadius: 32, backfaceVisibility: 'hidden',
@@ -448,12 +459,12 @@ function FlashcardScreen({ go, user, words, loading, idx, setIdx, markDone, wron
         </div>
       </div>
 
-      <div style={{ display: 'flex', gap: 12 }}>
-        <button onClick={() => next(false)} style={{ flex: 1, background: C.redBg, border: 'none', borderRadius: 18, padding: '15px 0', fontSize: 15, fontWeight: 700, color: C.red, cursor: 'pointer', fontFamily: FONT }}>
-          🤔 아직 몰라요
+      <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+        <button onClick={() => setSheet(true)} style={{ flex: 1, background: C.grad, border: 'none', borderRadius: 18, padding: '15px 0', fontSize: 15, fontWeight: 700, color: '#FFFFFF', cursor: 'pointer', fontFamily: FONT }}>
+          🎙️ 발음하고 다음으로
         </button>
-        <button onClick={() => next(true)} style={{ flex: 1, background: C.green, border: 'none', borderRadius: 18, padding: '15px 0', fontSize: 15, fontWeight: 700, color: '#FFFFFF', cursor: 'pointer', fontFamily: FONT }}>
-          😎 알아요!
+        <button onClick={() => next(true)} style={{ background: 'none', border: 'none', fontSize: 13, fontWeight: 700, color: C.sub, cursor: 'pointer', fontFamily: FONT, padding: '0 6px' }}>
+          건너뛰기 →
         </button>
       </div>
       <div style={{ display: 'flex', justifyContent: 'center', gap: 5, flexWrap: 'wrap' }}>
@@ -461,7 +472,7 @@ function FlashcardScreen({ go, user, words, loading, idx, setIdx, markDone, wron
           <div key={i} style={{ width: i === idx ? 16 : 6, height: 6, borderRadius: 999, background: i === idx ? C.primary : C.border, transition: 'width 0.2s' }} />
         ))}
       </div>
-      {sheet && <RecordingSheet word={cleanWord(w)} rate={rate} onClose={() => setSheet(false)} />}
+      {sheet && <RecordingSheet word={cleanWord(w)} rate={rate} onClose={closeSheet} onScored={(s) => { lastScoreRef.current = s; }} closeHint="✕ 를 누르면 다음 단어로 넘어가요 👉" />}
     </div>
   );
 }
