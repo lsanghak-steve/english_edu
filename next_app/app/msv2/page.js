@@ -100,9 +100,14 @@ function LoginScreen({ go, onLogin }) {
   const submit = () => {
     const nm = name.trim();
     const pinStr = pin.join('');
-    if (!nm) { setError('이름을 입력해 주세요.'); return; }
+    if (!nm) { setError('이름 또는 아이디를 입력해 주세요.'); return; }
     if (pinStr.length < 4) { setError('PIN 번호 4자리를 입력해 주세요.'); return; }
-    const found = STUDENTS.find((s) => s.name === nm || s.name.includes(nm) || nm.includes(s.name));
+    const query = nm.toLowerCase();
+    const found = STUDENTS.find((s) => {
+      const sName = String(s.name || '').toLowerCase();
+      const sId = String(s.student_id || s.id || '').toLowerCase();
+      return sName === query || sId === query || sName.includes(query) || query.includes(sName);
+    });
     if (found && pinStr !== found.pin && pinStr !== '1234') {
       setError('비밀번호가 올바르지 않습니다. 다시 확인해 주세요.');
       return;
@@ -131,8 +136,8 @@ function LoginScreen({ go, onLogin }) {
       </div>
       <div style={{ padding: '32px 24px 0', display: 'flex', flexDirection: 'column', gap: 13 }}>
         <div>
-          <div style={{ fontSize: 13, fontWeight: 700, color: C.text, marginBottom: 8 }}>이름</div>
-          <input placeholder="이름을 입력하세요" value={name}
+          <div style={{ fontSize: 13, fontWeight: 700, color: C.text, marginBottom: 8 }}>이름 / 학생 아이디</div>
+          <input placeholder="이름 또는 학생 아이디를 입력하세요" value={name}
             onChange={(e) => { setName(e.target.value); setError(''); }}
             onKeyDown={(e) => { if (e.key === 'Enter') submit(); }}
             style={{ width: '100%', boxSizing: 'border-box', background: C.input, border: `1.5px solid ${C.border}`, borderRadius: 16, padding: '15px 18px', fontSize: 15, color: C.text, outline: 'none', fontFamily: FONT }} />
