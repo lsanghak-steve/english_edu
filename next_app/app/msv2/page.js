@@ -10,7 +10,7 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { playUniversalAudio, initAudioUnlock } from '../../lib/audioPlayer.js';
-import { saveStudentSession, clearStudentSession } from '../../lib/studentSession.js';
+import { readStudentSession, saveStudentSession, clearStudentSession } from '../../lib/studentSession.js';
 import {
   STUDENTS, loadWordsForUser, saveLearnedWords, stampAttendance, fetchStamps,
   fetchWordsOfDate, updateProfile, wordMeaning, wordExample, wordImgSrc,
@@ -172,7 +172,7 @@ function LoginScreen({ go, onLogin }) {
 }
 
 // ═══ 02 홈 ═══
-function HomeScreen({ go, user, done, total, streak, loading }) {
+function HomeScreen({ go, user, done, total, streak, loading, completedQuizLevels = [], hasRecorded = false }) {
   const first = (user?.name || '친구').replace(/^이|^김|^박/, '');
   const pct = total ? Math.round((done / total) * 100) : 0;
   const menu = [
@@ -510,7 +510,7 @@ const LEVELS = [
   { lv: 4, label: '4단계 ✍️ 쓰기', tag: '선택' },
 ];
 
-function QuizScreen({ initialLevel = 1, onLevelChange, go, user, words, pool, rate, onQuizDone, recordStamp, makeupDate, exitMakeup }) {
+function QuizScreen({ initialLevel = 1, onLevelChange, completedLevels = [], go, user, words, pool, rate, onQuizDone, recordStamp, makeupDate, exitMakeup }) {
   const [level, setLevel] = useState(initialLevel);
   const [qIdx, setQIdx] = useState(0);
   const [score, setScore] = useState(0);
@@ -604,12 +604,15 @@ function QuizScreen({ initialLevel = 1, onLevelChange, go, user, words, pool, ra
         <Pill bg={C.amberBg} color={C.amber}>⭐ {score}점</Pill>
       </div>
       <div style={{ display: 'flex', gap: 6 }}>
-        {LEVELS.map((L) => (
-          <button key={L.lv} onClick={() => switchLevel(L.lv)}
-            style={{ flex: 1, padding: '9px 2px', borderRadius: 12, border: 'none', background: level === L.lv ? C.grad : '#ECEDF4', color: level === L.lv ? '#FFFFFF' : C.sub, fontSize: 10, fontWeight: 900, cursor: 'pointer', fontFamily: FONT, whiteSpace: 'nowrap' }}>
-            {L.label} [{L.tag}]
-          </button>
-        ))}
+        {LEVELS.map((L) => {
+          const isLvDone = completedLevels.includes(L.lv);
+          return (
+            <button key={L.lv} onClick={() => switchLevel(L.lv)}
+              style={{ flex: 1, padding: '9px 2px', borderRadius: 12, border: 'none', background: level === L.lv ? C.grad : isLvDone ? C.greenBg : '#ECEDF4', color: level === L.lv ? '#FFFFFF' : isLvDone ? C.greenDeep : C.sub, fontSize: 10, fontWeight: 900, cursor: 'pointer', fontFamily: FONT, whiteSpace: 'nowrap' }}>
+              {isLvDone ? '✓ ' : ''}{L.label} [{L.tag}]
+            </button>
+          );
+        })}
       </div>
       <div style={{ height: 8, background: C.border, borderRadius: 999, overflow: 'hidden' }}>
         <div style={{ width: `${((qIdx + 1) / total) * 100}%`, height: '100%', background: C.green, borderRadius: 999, transition: 'width 0.3s' }} />
@@ -1327,6 +1330,8 @@ export default function Msv2Page() {
   const [makeupDate, setMakeupDate] = useState(null); // 보충 학습 대상 날짜 'YYYY-MM-DD'
   const [isWrongReview, setIsWrongReview] = useState(false);
   const [saveError, setSaveError] = useState(null);
+  const [completedQuizLevels, setCompletedQuizLevels] = useState([]);
+  const [hasRecorded, setHasRecorded] = useState(false);
   const isSpecialDeckRef = useRef(false);
   const savedDatesRef = useRef(new Set());
   const learnedWordsSetRef = useRef(new Set());
@@ -1334,11 +1339,21 @@ export default function Msv2Page() {
   const originalDailyDoneSetRef = useRef(new Set());
   const originalDailyIdxRef = useRef(0);
 
+  const saveDailyProgress = useCallback((uid, dateStr, patch) => {
+    if (!uid || !dateStr) return;
+    try {
+      const key = `msv2_progress_${uid}_${dateStr}`;
+      const prev = JSON.parse(localStorage.getItem(key) || '{}');
+      localStorage.setItem(key, JSON.stringify({ ...prev, ...patch }));
+    } catch (e) {}
+  }, []);
+
   const restoreDailySet = useCallback(() => {
     let restored = originalDailyWordsRef.current;
     if ((!restored || !restored.length) && user) {
       try {
-        const cached = localStorage.getItem(`daily_set_${user.id}_${localDateStr()}`);
+        const today = localDateStr();
+        const cached = localStorage.getItem(`daily_random_set_${user.id}_${today}`) || localStorage.getItem(`daily_set_${user.id}_${today}`);
         if (cached) restored = JSON.parse(cached);
       } catch (e) {}
     }
@@ -1402,23 +1417,58 @@ export default function Msv2Page() {
     setScreen(target);
   };
 
-  useEffect(() => {
-    initAudioUnlock();
-    const fit = () => setScale(Math.min(1, (window.innerHeight - 24) / 844, (window.innerWidth - 16) / 390));
-    fit();
-    window.addEventListener('resize', fit);
-    return () => window.removeEventListener('resize', fit);
-  }, []);
-
-  const loadAll = useCallback(async (u) => {
+  const loadAll = useCallback(async (u, forceNewSet = false) => {
     setWordsLoading(true);
-    const [{ words: ws, pool: pl, learnedCount, learnedWords }, st] = await Promise.all([
+    const uid = u?.id;
+    const today = localDateStr();
+    const dailyCount = parseInt(u?.daily || 20, 10) || 20;
+    const [{ words: fetchedWords, pool: pl, learnedCount, learnedWords }, st] = await Promise.all([
       loadWordsForUser(u),
       fetchStamps(u),
     ]);
+    let ws = fetchedWords || [];
+    if (!forceNewSet && uid) {
+      try {
+        const cached = localStorage.getItem(`daily_random_set_${uid}_${today}`) || localStorage.getItem(`daily_set_${uid}_${today}`);
+        if (cached) {
+          const parsed = JSON.parse(cached);
+          if (Array.isArray(parsed) && parsed.length > 0 && (!ws.length || parsed.length === dailyCount)) {
+            ws = parsed;
+          }
+        }
+      } catch (e) {}
+    }
+    let restoredDoneSet = new Set();
+    let restoredIdx = 0;
+    let restoredQuizLevels = [];
+    let restoredHasRecorded = false;
+    let localStamps = [];
+    if (uid) {
+      try {
+        if (ws && ws.length) {
+          localStorage.setItem(`daily_set_${uid}_${today}`, JSON.stringify(ws));
+          localStorage.setItem(`daily_random_set_${uid}_${today}`, JSON.stringify(ws));
+        }
+        const prog = JSON.parse(localStorage.getItem(`msv2_progress_${uid}_${today}`) || '{}');
+        const maxLen = ws.length || dailyCount;
+        if (Array.isArray(prog.doneIndices)) {
+          restoredDoneSet = new Set(prog.doneIndices.filter((i) => typeof i === 'number' && i >= 0 && i < maxLen));
+        }
+        if (typeof prog.idx === 'number' && prog.idx >= 0 && prog.idx < maxLen) {
+          restoredIdx = prog.idx;
+        }
+        const qMission = JSON.parse(localStorage.getItem(`quiz_mission_${uid}_${today}`) || 'null');
+        if (Array.isArray(qMission)) restoredQuizLevels = qMission;
+        else if (Array.isArray(prog.completedQuizLevels)) restoredQuizLevels = prog.completedQuizLevels;
+        restoredHasRecorded = localStorage.getItem(`record_mission_${uid}_${today}`) === 'true' || Boolean(prog.hasRecorded);
+        const ls = JSON.parse(localStorage.getItem(`english_stamps_${uid}`) || '[]');
+        if (Array.isArray(ls)) localStamps = ls;
+      } catch (e) {}
+    }
+    const mergedStamps = Array.from(new Set([...(st || []), ...localStamps]));
     originalDailyWordsRef.current = ws || [];
-    originalDailyDoneSetRef.current = new Set();
-    originalDailyIdxRef.current = 0;
+    originalDailyDoneSetRef.current = new Set(restoredDoneSet);
+    originalDailyIdxRef.current = restoredIdx;
     savedDatesRef.current = new Set();
     learnedWordsSetRef.current = new Set((learnedWords || []).map((w) => String(w).toLowerCase().trim()).filter(Boolean));
     isSpecialDeckRef.current = false;
@@ -1426,28 +1476,56 @@ export default function Msv2Page() {
     setMakeupDate(null);
     setSaveError(null);
     setRepeatCount(0);
-    try {
-      if (u && ws && ws.length) {
-        localStorage.setItem(`daily_set_${u.id}_${localDateStr()}`, JSON.stringify(ws));
-      }
-    } catch (e) {}
+    setCompletedQuizLevels(restoredQuizLevels);
+    setHasRecorded(restoredHasRecorded);
     setWords(ws);
     setPool(pl);
     setLearnedTotal(learnedCount);
-    setStamps(st);
-    setIdx(0);
-    setDoneSet(new Set());
+    setStamps(mergedStamps);
+    setIdx(restoredIdx);
+    setDoneSet(restoredDoneSet);
     setWordsLoading(false);
   }, []);
 
-  const handleLogin = (u) => {
+  const handleLogin = useCallback((u) => {
     setUser(u);
+    setWrongWords([]);
+    setFavs([]);
+    setDoneSet(new Set());
+    setIdx(0);
+    setCompletedQuizLevels([]);
+    setHasRecorded(false);
+    setQuizResult(null);
     try {
       setWrongWords(JSON.parse(localStorage.getItem(`msv2_wrong_${u.id}`) || '[]'));
       setFavs(JSON.parse(localStorage.getItem(`msv2_fav_${u.id}`) || '[]'));
     } catch (e) {}
     loadAll(u);
-  };
+  }, [loadAll]);
+
+  useEffect(() => {
+    initAudioUnlock();
+    const fit = () => setScale(Math.min(1, (window.innerHeight - 24) / 844, (window.innerWidth - 16) / 390));
+    fit();
+    window.addEventListener('resize', fit);
+    const savedSession = readStudentSession();
+    if (savedSession) {
+      const uid = savedSession.student_id || savedSession.id;
+      const found = STUDENTS.find((s) => s.id === uid || s.name === savedSession.name);
+      const restoredUser = {
+        ...(found || {}),
+        id: uid,
+        student_id: uid,
+        name: savedSession.name,
+        level: savedSession.studyGradeLevel || savedSession.study_grade_level || savedSession.level || found?.level || '중등단어',
+        daily: parseInt(savedSession.dailyWordCount || savedSession.daily_word_count || savedSession.daily || found?.daily || 20, 10) || 20,
+        guest: found ? false : Boolean(savedSession.guest),
+      };
+      handleLogin(restoredUser);
+      setScreen('home');
+    }
+    return () => window.removeEventListener('resize', fit);
+  }, [handleLogin]);
 
   const toggleWrong = (w, forceAdd) => {
     if (!w) return;
@@ -1472,7 +1550,10 @@ export default function Msv2Page() {
   };
   const markDone = (i) => setDoneSet((p) => {
     const next = new Set([...p, i]);
-    if (!isWrongReview && !makeupDate && !isSpecialDeckRef.current) originalDailyDoneSetRef.current = next;
+    if (!isWrongReview && !makeupDate && !isSpecialDeckRef.current) {
+      originalDailyDoneSetRef.current = next;
+      if (user?.id) saveDailyProgress(user.id, localDateStr(), { doneIndices: Array.from(next) });
+    }
     return next;
   });
   const cycleRate = () => setRate((r) => (r === 1.0 ? 1.25 : r === 1.25 ? 0.75 : 1.0));
@@ -1518,6 +1599,9 @@ export default function Msv2Page() {
       if (ok !== false) {
         setSaveError(null);
         setRepeatCount((c) => c + 1);
+        try { localStorage.setItem(`record_mission_${user.id}_${dateKey}`, 'true'); } catch (e) {}
+        saveDailyProgress(user.id, dateKey, { hasRecorded: true });
+        if (!makeupDate) setHasRecorded(true);
       } else {
         setSaveError({ type: 'learned', dateKey, words });
       }
@@ -1540,7 +1624,17 @@ export default function Msv2Page() {
     }
     const ok = await stampAttendance(user, dateKey);
     if (ok) {
-      setStamps((p) => (p.includes(dateKey) ? p : [...p, dateKey]));
+      setStamps((p) => {
+        const next = p.includes(dateKey) ? p : [...p, dateKey];
+        try {
+          localStorage.setItem(`english_stamps_${user.id}`, JSON.stringify(next));
+          if (words.length) {
+            localStorage.setItem(`stamped_words_${user.id}_${dateKey}`, JSON.stringify(words));
+            localStorage.setItem(`today_all_learned_${user.id}_${dateKey}`, JSON.stringify(words));
+          }
+        } catch (e) {}
+        return next;
+      });
       setSaveError(null);
       if (makeupDate) setMakeupDate(null);
       return dateKey;
@@ -1558,7 +1652,11 @@ export default function Msv2Page() {
     if (type === 'stamp') {
       const ok = await stampAttendance(user, dateKey);
       if (!ok) return false;
-      setStamps((p) => (p.includes(dateKey) ? p : [...p, dateKey]));
+      setStamps((p) => {
+        const next = p.includes(dateKey) ? p : [...p, dateKey];
+        try { localStorage.setItem(`english_stamps_${user.id}`, JSON.stringify(next)); } catch (e) {}
+        return next;
+      });
       setQuizResult((prev) => (prev ? { ...prev, stampedDate: dateKey } : prev));
       if (makeupDate) setMakeupDate(null);
     }
@@ -1567,6 +1665,15 @@ export default function Msv2Page() {
   };
   const onQuizDone = (result) => {
     result.wrongs.forEach((w) => toggleWrong(w, true));
+    if (user?.id && result?.level) {
+      const dateKey = makeupDate || localDateStr();
+      setCompletedQuizLevels((prev) => {
+        const next = prev.includes(result.level) ? prev : [...prev, result.level];
+        try { localStorage.setItem(`quiz_mission_${user.id}_${dateKey}`, JSON.stringify(next)); } catch (e) {}
+        saveDailyProgress(user.id, dateKey, { completedQuizLevels: next });
+        return next;
+      });
+    }
     setQuizResult(result);
     setScreen('quizdone');
   };
@@ -1638,11 +1745,15 @@ export default function Msv2Page() {
     setUser(u);
     if (!user.guest) await updateProfile(user, { level, daily });
     try {
+      const today = localDateStr();
+      localStorage.removeItem(`daily_set_${u.id}_${today}`);
+      localStorage.removeItem(`daily_random_set_${u.id}_${today}`);
+      localStorage.removeItem(`msv2_progress_${u.id}_${today}`);
       const sessionUser = { id: u.id, student_id: u.id, name: u.name, studyGradeLevel: level, dailyWordCount: String(daily) };
       localStorage.setItem('english_edu_current_user', JSON.stringify(sessionUser));
       saveStudentSession(sessionUser);
     } catch (e) {}
-    loadAll(u);
+    loadAll(u, true);
   };
   const logout = () => {
     setUser(null);
@@ -1655,7 +1766,11 @@ export default function Msv2Page() {
     setIsWrongReview(false);
     setSaveError(null);
     setRepeatCount(0);
-    setWords([]); setPool([]); setStamps([]); setDoneSet(new Set()); setQuizResult(null); setMakeupDate(null);
+    setCompletedQuizLevels([]);
+    setHasRecorded(false);
+    setWrongWords([]);
+    setFavs([]);
+    setWords([]); setPool([]); setStamps([]); setDoneSet(new Set()); setIdx(0); setQuizResult(null); setMakeupDate(null);
     clearStudentSession();
     setScreen('login');
   };
@@ -1675,7 +1790,7 @@ export default function Msv2Page() {
   const showNav = ['home', 'wordbook', 'calendar', 'stats', 'parent', 'profile'].includes(screen);
   const screens = {
     login: <LoginScreen go={go} onLogin={handleLogin} />,
-    home: <HomeScreen go={go} user={user} done={doneSet.size} total={words.length || user?.daily || 20} streak={streak} loading={wordsLoading} />,
+    home: <HomeScreen go={go} user={user} done={doneSet.size} total={words.length || user?.daily || 20} streak={streak} loading={wordsLoading} completedQuizLevels={completedQuizLevels} hasRecorded={hasRecorded} />,
     flashcard: (
       <FlashcardScreen
         go={go}
@@ -1685,7 +1800,10 @@ export default function Msv2Page() {
         idx={idx}
         setIdx={(newIdx) => {
           setIdx(newIdx);
-          if (!isWrongReview && !makeupDate && !isSpecialDeckRef.current) originalDailyIdxRef.current = newIdx;
+          if (!isWrongReview && !makeupDate && !isSpecialDeckRef.current) {
+            originalDailyIdxRef.current = newIdx;
+            if (user?.id) saveDailyProgress(user.id, localDateStr(), { idx: newIdx });
+          }
         }}
         markDone={markDone}
         wrongWords={wrongWords}
@@ -1699,7 +1817,7 @@ export default function Msv2Page() {
         exitWrongReview={exitWrongReview}
       />
     ),
-    quiz: <QuizScreen key={quizKey} initialLevel={quizLevel} onLevelChange={setQuizLevel} go={go} user={user} words={words} pool={pool} rate={rate} onQuizDone={onQuizDone} recordStamp={recordStamp} makeupDate={makeupDate} exitMakeup={exitMakeup} />,
+    quiz: <QuizScreen key={quizKey} initialLevel={quizLevel} onLevelChange={setQuizLevel} completedLevels={completedQuizLevels} go={go} user={user} words={words} pool={pool} rate={rate} onQuizDone={onQuizDone} recordStamp={recordStamp} makeupDate={makeupDate} exitMakeup={exitMakeup} />,
     quizdone: <QuizDoneScreen go={go} result={quizResult} onReviewWrong={reviewWrong} onNextLevel={handleNextQuizLevel} saveError={saveError} onRetrySave={retrySave} />,
     wordbook: <WordbookScreen user={user} words={words} pool={pool} favs={favs} toggleFav={toggleFav} wrongWords={wrongWords} rate={rate} initialTab={wordbookTab} go={go} />,
     calendar: <CalendarScreen go={go} user={user} stamps={stamps} onRestudy={restudyDate} startMakeup={startMakeup} rate={rate} />,

@@ -58,9 +58,31 @@ export async function loadWordsForUser(user) {
     (data || []).forEach((r) => learned.add((r.word || '').toLowerCase().trim()));
   } catch (e) {}
 
-  const fresh = pool.filter((w) => !learned.has((w.word || '').toLowerCase().trim()));
-  const base = fresh.length ? fresh : pool;
-  return { words: shuffle(base).slice(0, daily), pool, learnedCount: learned.size, learnedWords: Array.from(learned) };
+  const today = localDateStr();
+  let selectedWords = null;
+  if (user?.id && typeof localStorage !== 'undefined') {
+    try {
+      const cached = localStorage.getItem(`daily_random_set_${user.id}_${today}`) || localStorage.getItem(`daily_set_${user.id}_${today}`);
+      if (cached) {
+        const parsed = JSON.parse(cached);
+        if (Array.isArray(parsed) && parsed.length === daily) {
+          selectedWords = parsed;
+        }
+      }
+    } catch (e) {}
+  }
+  if (!selectedWords) {
+    const fresh = pool.filter((w) => !learned.has((w.word || '').toLowerCase().trim()));
+    const base = fresh.length ? fresh : pool;
+    selectedWords = shuffle(base).slice(0, daily);
+    if (user?.id && selectedWords.length && typeof localStorage !== 'undefined') {
+      try {
+        localStorage.setItem(`daily_random_set_${user.id}_${today}`, JSON.stringify(selectedWords));
+        localStorage.setItem(`daily_set_${user.id}_${today}`, JSON.stringify(selectedWords));
+      } catch (e) {}
+    }
+  }
+  return { words: selectedWords, pool, learnedCount: learned.size, learnedWords: Array.from(learned) };
 }
 
 // ── 학습 완료 단어 일괄 저장 (msv1 payload 형식 그대로, 중복 제거·보충 날짜 지정 및 에러 감지 지원) ──
