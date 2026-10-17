@@ -521,9 +521,27 @@ function QuizScreen({ initialLevel = 1, onLevelChange, completedLevels = [], go,
   const [pronResult, setPronResult] = useState(null);
   const [wrongs, setWrongs] = useState([]);
   const startRef = useRef(Date.now());
-  const qWords = words.length ? words : [];
-  const total = Math.min(qWords.length, 10) || 1;
+  const autoAdvanceRef = useRef(null);
+  const qWords = (() => {
+    const seen = new Set();
+    return (words || []).filter((x) => {
+      const k = cleanWord(x).toLowerCase();
+      if (!k || seen.has(k)) return false;
+      seen.add(k);
+      return true;
+    });
+  })();
+  const total = qWords.length || 1;
   const w = qWords[qIdx % Math.max(qWords.length, 1)];
+
+  const clearAutoAdvance = () => {
+    if (autoAdvanceRef.current) {
+      if (autoAdvanceRef.current.id != null) clearTimeout(autoAdvanceRef.current.id);
+      autoAdvanceRef.current = null;
+    }
+  };
+
+  useEffect(() => () => clearAutoAdvance(), []);
 
   const options = (() => {
     if (!w) return [];
@@ -557,6 +575,16 @@ function QuizScreen({ initialLevel = 1, onLevelChange, completedLevels = [], go,
     setPicked(i);
     if (options[i].isCorrect) { setScore((s) => s + 10); speak(cleanWord(w), rate); }
     else addWrong();
+    clearAutoAdvance();
+    const token = { id: null };
+    autoAdvanceRef.current = token;
+    token.id = setTimeout(() => {
+      if (autoAdvanceRef.current !== token) return;
+      autoAdvanceRef.current = null;
+      setPicked(null); setTyped(null); setTyping(''); setPronResult(null);
+      if (qIdx + 1 < total) setQIdx(qIdx + 1);
+      else finishLevel();
+    }, 1000);
   };
   const submitTyping = () => {
     if (typed !== null || !typing.trim()) return;
@@ -581,11 +609,13 @@ function QuizScreen({ initialLevel = 1, onLevelChange, completedLevels = [], go,
     onQuizDone({ level, score, total, correct: Math.round(score / 10), timeStr, wrongs, stampedDate, nextLevel: level < 4 ? level + 1 : null });
   };
   const nextQ = () => {
+    clearAutoAdvance();
     setPicked(null); setTyped(null); setTyping(''); setPronResult(null);
     if (qIdx + 1 < total) setQIdx(qIdx + 1);
     else finishLevel();
   };
   const switchLevel = (lv) => {
+    clearAutoAdvance();
     setLevel(lv); setQIdx(0); setScore(0); setWrongs([]);
     setPicked(null); setTyped(null); setTyping(''); setPronResult(null);
     startRef.current = Date.now();
@@ -597,9 +627,9 @@ function QuizScreen({ initialLevel = 1, onLevelChange, completedLevels = [], go,
   }
   return (
     <div style={{ padding: '56px 20px 24px', display: 'flex', flexDirection: 'column', gap: 12, height: '100%', boxSizing: 'border-box', position: 'relative' }}>
-      <MakeupBanner makeupDate={makeupDate} onExit={() => { exitMakeup(); go('calendar'); }} kind="quiz" />
+      <MakeupBanner makeupDate={makeupDate} onExit={() => { clearAutoAdvance(); exitMakeup(); go('calendar'); }} kind="quiz" />
       <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-        <button onClick={() => go('home')} style={{ width: 40, height: 40, borderRadius: '50%', background: C.surface, border: 'none', fontSize: 16, fontWeight: 700, color: C.text, cursor: 'pointer' }}>✕</button>
+        <button onClick={() => { clearAutoAdvance(); go('home'); }} style={{ width: 40, height: 40, borderRadius: '50%', background: C.surface, border: 'none', fontSize: 16, fontWeight: 700, color: C.text, cursor: 'pointer' }}>✕</button>
         <div style={{ flex: 1, textAlign: 'center', fontSize: 16, fontWeight: 900, color: C.text }}>{makeupDate ? '보충 퀴즈' : '오늘의 퀴즈'}</div>
         <Pill bg={C.amberBg} color={C.amber}>⭐ {score}점</Pill>
       </div>
