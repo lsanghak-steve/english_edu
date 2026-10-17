@@ -68,6 +68,21 @@ function MakeupBanner({ makeupDate, onExit, kind }) {
   );
 }
 
+// 오답 복습 안내 배너 (틀린 단어 복습 모드일 때)
+function WrongReviewBanner({ onExit }) {
+  return (
+    <div style={{ background: '#FEF2F2', border: '1.5px solid #FCA5A5', borderRadius: 16, padding: '10px 14px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8, boxShadow: '0 4px 10px rgba(239, 68, 68, 0.08)' }}>
+      <div style={{ fontSize: 12, fontWeight: 800, color: '#DC2626', display: 'flex', alignItems: 'center', gap: 6 }}>
+        <span>🚨</span>
+        <span>틀린 단어 오답 집중 복습 중</span>
+      </div>
+      <button onClick={onExit} style={{ background: '#FFFFFF', border: '1px solid #FECACA', color: '#B91C1C', borderRadius: 8, padding: '4px 8px', fontSize: 11, fontWeight: 700, cursor: 'pointer', fontFamily: FONT }}>
+        오늘 단어로 복귀 ✕
+      </button>
+    </div>
+  );
+}
+
 // ═══ 01 로그인 ═══
 function LoginScreen({ go, onLogin }) {
   const [name, setName] = useState('');
@@ -372,7 +387,7 @@ function RecordingSheet({ word, rate, onClose, onScored, closeHint }) {
 }
 
 // ═══ 03 플래시카드 ═══
-function FlashcardScreen({ go, user, words, loading, idx, setIdx, markDone, wrongWords, toggleWrong, rate, cycleRate, onFinishSet, makeupDate, exitMakeup }) {
+function FlashcardScreen({ go, user, words, loading, idx, setIdx, markDone, wrongWords, toggleWrong, rate, cycleRate, onFinishSet, makeupDate, exitMakeup, isWrongReview, exitWrongReview }) {
   const [flipped, setFlipped] = useState(false);
   const [sheet, setSheet] = useState(false);
   const lastScoreRef = useRef(null);
@@ -417,17 +432,20 @@ function FlashcardScreen({ go, user, words, loading, idx, setIdx, markDone, wron
   return (
     <div style={{ padding: '56px 20px 24px', display: 'flex', flexDirection: 'column', gap: 13, height: '100%', boxSizing: 'border-box', position: 'relative' }}>
       <MakeupBanner makeupDate={makeupDate} onExit={() => { exitMakeup(); go('calendar'); }} kind="deck" />
+      {isWrongReview && <WrongReviewBanner onExit={() => { if (exitWrongReview) exitWrongReview(); go('home'); }} />}
       <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-        <button onClick={() => go('home')} style={{ width: 40, height: 40, borderRadius: '50%', background: C.surface, border: 'none', fontSize: 18, fontWeight: 700, color: C.text, cursor: 'pointer', flexShrink: 0 }}>←</button>
+        <button onClick={() => { if (isWrongReview && exitWrongReview) exitWrongReview(); go('home'); }} style={{ width: 40, height: 40, borderRadius: '50%', background: C.surface, border: 'none', fontSize: 18, fontWeight: 700, color: C.text, cursor: 'pointer', flexShrink: 0 }}>←</button>
         <div style={{ flex: 1, textAlign: 'center' }}>
-          <div style={{ fontSize: 15, fontWeight: 900, color: C.text }}>{user?.level || '단어'} 학습</div>
-          <div style={{ fontSize: 11, color: makeupDate ? '#D97706' : C.sub, fontWeight: makeupDate ? 700 : 400 }}>{makeupDate ? '보충 플래시카드 학습' : '플래시카드 학습'}</div>
+          <div style={{ fontSize: 15, fontWeight: 900, color: C.text }}>{isWrongReview ? '오답 집중 복습' : (user?.level || '단어') + ' 학습'}</div>
+          <div style={{ fontSize: 11, color: isWrongReview ? '#DC2626' : (makeupDate ? '#D97706' : C.sub), fontWeight: (isWrongReview || makeupDate) ? 700 : 400 }}>
+            {isWrongReview ? '틀린 단어 다시 익히기' : (makeupDate ? '보충 플래시카드 학습' : '플래시카드 학습')}
+          </div>
         </div>
         <Pill bg={C.input} color={C.sub} onClick={cycleRate} style={{ padding: '6px 10px', fontSize: 12 }}>{rate}x</Pill>
-        <Pill bg={C.primaryLight} color={C.primaryDeep}>{idx + 1} / {total}</Pill>
+        <Pill bg={isWrongReview ? '#FEEDF0' : C.primaryLight} color={isWrongReview ? C.red : C.primaryDeep}>{idx + 1} / {total}</Pill>
       </div>
       <div style={{ height: 8, background: C.border, borderRadius: 999, overflow: 'hidden' }}>
-        <div style={{ width: `${((idx + 1) / total) * 100}%`, height: '100%', background: C.primary, borderRadius: 999, transition: 'width 0.3s' }} />
+        <div style={{ width: `${((idx + 1) / total) * 100}%`, height: '100%', background: isWrongReview ? C.red : C.primary, borderRadius: 999, transition: 'width 0.3s' }} />
       </div>
 
       <div onClick={() => setFlipped(!flipped)} style={{ flex: 1, perspective: 1200, cursor: 'pointer' }}>
@@ -1289,12 +1307,36 @@ export default function Msv2Page() {
   const [quizLevel, setQuizLevel] = useState(1);
   const [wordbookTab, setWordbookTab] = useState(null);
   const [makeupDate, setMakeupDate] = useState(null); // 보충 학습 대상 날짜 'YYYY-MM-DD'
+  const [isWrongReview, setIsWrongReview] = useState(false);
+  const originalDailyWordsRef = useRef([]);
+  const originalDailyDoneSetRef = useRef(new Set());
+  const originalDailyIdxRef = useRef(0);
+
+  const exitWrongReview = useCallback(() => {
+    setIsWrongReview(false);
+    let restored = originalDailyWordsRef.current;
+    if ((!restored || !restored.length) && user) {
+      try {
+        const cached = localStorage.getItem(`daily_set_${user.id}_${localDateStr()}`);
+        if (cached) restored = JSON.parse(cached);
+      } catch (e) {}
+    }
+    if (restored && restored.length > 0) {
+      originalDailyWordsRef.current = restored;
+      setWords(restored);
+      setDoneSet(new Set(originalDailyDoneSetRef.current));
+      setIdx(originalDailyIdxRef.current);
+    }
+  }, [user]);
 
   const go = (target) => {
     if (target === 'wordbook:wrong') { setWordbookTab('오답노트'); setScreen('wordbook'); return; }
     if (target === 'wordbook') setWordbookTab(null);
     if (target === 'home') setMakeupDate(null);
     if (target === 'quiz') setQuizLevel(1);
+    if (target !== 'flashcard' && isWrongReview) {
+      exitWrongReview();
+    }
     setScreen(target);
   };
 
@@ -1312,6 +1354,15 @@ export default function Msv2Page() {
       loadWordsForUser(u),
       fetchStamps(u),
     ]);
+    originalDailyWordsRef.current = ws || [];
+    originalDailyDoneSetRef.current = new Set();
+    originalDailyIdxRef.current = 0;
+    setIsWrongReview(false);
+    try {
+      if (u && ws && ws.length) {
+        localStorage.setItem(`daily_set_${u.id}_${localDateStr()}`, JSON.stringify(ws));
+      }
+    } catch (e) {}
     setWords(ws);
     setPool(pl);
     setLearnedTotal(learnedCount);
@@ -1351,11 +1402,21 @@ export default function Msv2Page() {
       return next;
     });
   };
-  const markDone = (i) => setDoneSet((p) => new Set([...p, i]));
+  const markDone = (i) => setDoneSet((p) => {
+    const next = new Set([...p, i]);
+    if (!isWrongReview) originalDailyDoneSetRef.current = next;
+    return next;
+  });
   const cycleRate = () => setRate((r) => (r === 1.0 ? 1.25 : r === 1.25 ? 0.75 : 1.0));
 
-  // 세트 완주 → 학습 기록 DB 저장 → 퀴즈로
+  // 세트 완주 → 학습 기록 DB 저장 → 퀴즈로 (오답 복습 완주 시 원래 단어 복귀 후 홈으로)
   const onFinishSet = async () => {
+    if (isWrongReview) {
+      exitWrongReview();
+      try { alert('🎉 오답 복습을 모두 완료했습니다!'); } catch (e) {}
+      setScreen('home');
+      return;
+    }
     if (user && words.length) {
       await saveLearnedWords(user, words);
       setLearnedTotal((n) => n + words.length);
@@ -1389,7 +1450,15 @@ export default function Msv2Page() {
   };
   const reviewWrong = () => {
     const list = quizResult?.wrongs?.length ? quizResult.wrongs : wrongWords;
-    if (list.length) {
+    if (list && list.length) {
+      if (!isWrongReview) {
+        if (words.length > 0) {
+          originalDailyWordsRef.current = words;
+        }
+        originalDailyDoneSetRef.current = doneSet;
+        originalDailyIdxRef.current = idx;
+      }
+      setIsWrongReview(true);
       setWords(list);
       setIdx(0);
       setDoneSet(new Set());
@@ -1427,6 +1496,10 @@ export default function Msv2Page() {
   };
   const logout = () => {
     setUser(null);
+    originalDailyWordsRef.current = [];
+    originalDailyDoneSetRef.current = new Set();
+    originalDailyIdxRef.current = 0;
+    setIsWrongReview(false);
     setWords([]); setPool([]); setStamps([]); setDoneSet(new Set()); setQuizResult(null); setMakeupDate(null);
     clearStudentSession();
     setScreen('login');
@@ -1448,7 +1521,29 @@ export default function Msv2Page() {
   const screens = {
     login: <LoginScreen go={go} onLogin={handleLogin} />,
     home: <HomeScreen go={go} user={user} done={doneSet.size} total={words.length || user?.daily || 20} streak={streak} loading={wordsLoading} />,
-    flashcard: <FlashcardScreen go={go} user={user} words={words} loading={wordsLoading} idx={idx} setIdx={setIdx} markDone={markDone} wrongWords={wrongWords} toggleWrong={toggleWrong} rate={rate} cycleRate={cycleRate} onFinishSet={onFinishSet} makeupDate={makeupDate} exitMakeup={() => setMakeupDate(null)} />,
+    flashcard: (
+      <FlashcardScreen
+        go={go}
+        user={user}
+        words={words}
+        loading={wordsLoading}
+        idx={idx}
+        setIdx={(newIdx) => {
+          setIdx(newIdx);
+          if (!isWrongReview) originalDailyIdxRef.current = newIdx;
+        }}
+        markDone={markDone}
+        wrongWords={wrongWords}
+        toggleWrong={toggleWrong}
+        rate={rate}
+        cycleRate={cycleRate}
+        onFinishSet={onFinishSet}
+        makeupDate={makeupDate}
+        exitMakeup={() => setMakeupDate(null)}
+        isWrongReview={isWrongReview}
+        exitWrongReview={exitWrongReview}
+      />
+    ),
     quiz: <QuizScreen key={quizKey} initialLevel={quizLevel} onLevelChange={setQuizLevel} go={go} user={user} words={words} pool={pool} rate={rate} onQuizDone={onQuizDone} recordStamp={recordStamp} makeupDate={makeupDate} exitMakeup={() => setMakeupDate(null)} />,
     quizdone: <QuizDoneScreen go={go} result={quizResult} onReviewWrong={reviewWrong} onNextLevel={handleNextQuizLevel} />,
     wordbook: <WordbookScreen user={user} words={words} pool={pool} favs={favs} toggleFav={toggleFav} wrongWords={wrongWords} rate={rate} initialTab={wordbookTab} go={go} />,
