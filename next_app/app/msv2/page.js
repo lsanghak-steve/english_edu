@@ -1308,12 +1308,12 @@ export default function Msv2Page() {
   const [wordbookTab, setWordbookTab] = useState(null);
   const [makeupDate, setMakeupDate] = useState(null); // 보충 학습 대상 날짜 'YYYY-MM-DD'
   const [isWrongReview, setIsWrongReview] = useState(false);
+  const isSpecialDeckRef = useRef(false);
   const originalDailyWordsRef = useRef([]);
   const originalDailyDoneSetRef = useRef(new Set());
   const originalDailyIdxRef = useRef(0);
 
-  const exitWrongReview = useCallback(() => {
-    setIsWrongReview(false);
+  const restoreDailySet = useCallback(() => {
     let restored = originalDailyWordsRef.current;
     if ((!restored || !restored.length) && user) {
       try {
@@ -1329,13 +1329,54 @@ export default function Msv2Page() {
     }
   }, [user]);
 
+  const exitWrongReview = useCallback(() => {
+    setIsWrongReview(false);
+    isSpecialDeckRef.current = false;
+    restoreDailySet();
+  }, [restoreDailySet]);
+
+  const exitMakeup = useCallback(() => {
+    setMakeupDate(null);
+    isSpecialDeckRef.current = false;
+    restoreDailySet();
+  }, [restoreDailySet]);
+
+  const getWordsForMakeupDate = useCallback((dateKey) => {
+    const uid = user?.id || 'guest';
+    try {
+      const saved = localStorage.getItem(`daily_set_${uid}_${dateKey}`) || localStorage.getItem(`daily_random_set_${uid}_${dateKey}`);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      }
+    } catch (e) {}
+    const count = parseInt(user?.daily || 20, 10) || 20;
+    const srcPool = (pool && pool.length >= count) ? pool : (originalDailyWordsRef.current.length ? originalDailyWordsRef.current : words);
+    if (!srcPool || !srcPool.length) return [];
+    const seed = parseInt(String(dateKey || '').replace(/-/g, ''), 10) || 1;
+    const maxOffset = Math.max(1, srcPool.length - count);
+    const startIdx = maxOffset > 1 ? ((seed * 11) % (maxOffset - 1)) + 1 : 0;
+    const selected = srcPool.slice(startIdx, startIdx + count);
+    try {
+      if (selected.length) {
+        localStorage.setItem(`daily_set_${uid}_${dateKey}`, JSON.stringify(selected));
+        localStorage.setItem(`daily_random_set_${uid}_${dateKey}`, JSON.stringify(selected));
+      }
+    } catch (e) {}
+    return selected;
+  }, [user, pool, words]);
+
   const go = (target) => {
     if (target === 'wordbook:wrong') { setWordbookTab('오답노트'); setScreen('wordbook'); return; }
     if (target === 'wordbook') setWordbookTab(null);
-    if (target === 'home') setMakeupDate(null);
     if (target === 'quiz') setQuizLevel(1);
     if (target !== 'flashcard' && isWrongReview) {
       exitWrongReview();
+    }
+    if (target !== 'flashcard' && target !== 'quiz' && target !== 'quizdone') {
+      if (makeupDate || isSpecialDeckRef.current) {
+        exitMakeup();
+      }
     }
     setScreen(target);
   };
@@ -1357,7 +1398,9 @@ export default function Msv2Page() {
     originalDailyWordsRef.current = ws || [];
     originalDailyDoneSetRef.current = new Set();
     originalDailyIdxRef.current = 0;
+    isSpecialDeckRef.current = false;
     setIsWrongReview(false);
+    setMakeupDate(null);
     try {
       if (u && ws && ws.length) {
         localStorage.setItem(`daily_set_${u.id}_${localDateStr()}`, JSON.stringify(ws));
@@ -1404,7 +1447,7 @@ export default function Msv2Page() {
   };
   const markDone = (i) => setDoneSet((p) => {
     const next = new Set([...p, i]);
-    if (!isWrongReview) originalDailyDoneSetRef.current = next;
+    if (!isWrongReview && !makeupDate && !isSpecialDeckRef.current) originalDailyDoneSetRef.current = next;
     return next;
   });
   const cycleRate = () => setRate((r) => (r === 1.0 ? 1.25 : r === 1.25 ? 0.75 : 1.0));
@@ -1418,7 +1461,7 @@ export default function Msv2Page() {
       return;
     }
     if (user && words.length) {
-      await saveLearnedWords(user, words);
+      await saveLearnedWords(user, words, makeupDate);
       setLearnedTotal((n) => n + words.length);
     }
     setQuizLevel(1);
@@ -1451,7 +1494,7 @@ export default function Msv2Page() {
   const reviewWrong = () => {
     const list = quizResult?.wrongs?.length ? quizResult.wrongs : wrongWords;
     if (list && list.length) {
-      if (!isWrongReview) {
+      if (!isWrongReview && !makeupDate && !isSpecialDeckRef.current) {
         if (words.length > 0) {
           originalDailyWordsRef.current = words;
         }
@@ -1459,6 +1502,7 @@ export default function Msv2Page() {
         originalDailyIdxRef.current = idx;
       }
       setIsWrongReview(true);
+      isSpecialDeckRef.current = true;
       setWords(list);
       setIdx(0);
       setDoneSet(new Set());
@@ -1468,6 +1512,14 @@ export default function Msv2Page() {
   const restudyDate = (dateWords) => {
     const list = dateWords.map((w) => ({ word: (w.word || '').replace(/\.png/gi, ''), meaning: w.meaning }));
     if (list.length) {
+      if (!isWrongReview && !makeupDate && !isSpecialDeckRef.current) {
+        if (words.length > 0) {
+          originalDailyWordsRef.current = words;
+        }
+        originalDailyDoneSetRef.current = doneSet;
+        originalDailyIdxRef.current = idx;
+      }
+      isSpecialDeckRef.current = true;
       setWords(list);
       setIdx(0);
       setDoneSet(new Set());
@@ -1476,6 +1528,19 @@ export default function Msv2Page() {
   };
   // 달력 → 빠진 날짜 보충 학습/퀴즈 시작
   const startMakeup = (dateKey, target) => {
+    if (!isWrongReview && !makeupDate && !isSpecialDeckRef.current) {
+      if (words.length > 0) {
+        originalDailyWordsRef.current = words;
+      }
+      originalDailyDoneSetRef.current = doneSet;
+      originalDailyIdxRef.current = idx;
+    }
+    setIsWrongReview(false);
+    isSpecialDeckRef.current = true;
+    const makeupWords = getWordsForMakeupDate(dateKey);
+    if (makeupWords.length > 0) {
+      setWords(makeupWords);
+    }
     setMakeupDate(dateKey);
     setIdx(0);
     setDoneSet(new Set());
@@ -1499,6 +1564,7 @@ export default function Msv2Page() {
     originalDailyWordsRef.current = [];
     originalDailyDoneSetRef.current = new Set();
     originalDailyIdxRef.current = 0;
+    isSpecialDeckRef.current = false;
     setIsWrongReview(false);
     setWords([]); setPool([]); setStamps([]); setDoneSet(new Set()); setQuizResult(null); setMakeupDate(null);
     clearStudentSession();
@@ -1530,7 +1596,7 @@ export default function Msv2Page() {
         idx={idx}
         setIdx={(newIdx) => {
           setIdx(newIdx);
-          if (!isWrongReview) originalDailyIdxRef.current = newIdx;
+          if (!isWrongReview && !makeupDate && !isSpecialDeckRef.current) originalDailyIdxRef.current = newIdx;
         }}
         markDone={markDone}
         wrongWords={wrongWords}
@@ -1539,12 +1605,12 @@ export default function Msv2Page() {
         cycleRate={cycleRate}
         onFinishSet={onFinishSet}
         makeupDate={makeupDate}
-        exitMakeup={() => setMakeupDate(null)}
+        exitMakeup={exitMakeup}
         isWrongReview={isWrongReview}
         exitWrongReview={exitWrongReview}
       />
     ),
-    quiz: <QuizScreen key={quizKey} initialLevel={quizLevel} onLevelChange={setQuizLevel} go={go} user={user} words={words} pool={pool} rate={rate} onQuizDone={onQuizDone} recordStamp={recordStamp} makeupDate={makeupDate} exitMakeup={() => setMakeupDate(null)} />,
+    quiz: <QuizScreen key={quizKey} initialLevel={quizLevel} onLevelChange={setQuizLevel} go={go} user={user} words={words} pool={pool} rate={rate} onQuizDone={onQuizDone} recordStamp={recordStamp} makeupDate={makeupDate} exitMakeup={exitMakeup} />,
     quizdone: <QuizDoneScreen go={go} result={quizResult} onReviewWrong={reviewWrong} onNextLevel={handleNextQuizLevel} />,
     wordbook: <WordbookScreen user={user} words={words} pool={pool} favs={favs} toggleFav={toggleFav} wrongWords={wrongWords} rate={rate} initialTab={wordbookTab} go={go} />,
     calendar: <CalendarScreen go={go} user={user} stamps={stamps} onRestudy={restudyDate} startMakeup={startMakeup} rate={rate} />,

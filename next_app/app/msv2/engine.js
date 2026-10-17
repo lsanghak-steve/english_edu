@@ -38,7 +38,7 @@ export async function loadWordsForUser(user) {
   const daily = parseInt(user?.daily || 20, 10) || 20;
   let pool = [];
   try {
-    let q = supabase.from('words').select('*');
+    let q = supabase.from('words').select('*').not('word', 'ilike', 'cornell');
     if (level && level !== '전체') {
       q = q.or(`category.eq.${level},grade_level.eq.${level},grade_level_ko.eq.${level}`);
     }
@@ -47,7 +47,7 @@ export async function loadWordsForUser(user) {
   } catch (e) {}
   if (!pool.length) {
     try {
-      const { data } = await supabase.from('words').select('*').limit(300);
+      const { data } = await supabase.from('words').select('*').not('word', 'ilike', 'cornell').limit(300);
       if (data && data.length) pool = data;
     } catch (e) {}
   }
@@ -63,15 +63,16 @@ export async function loadWordsForUser(user) {
   return { words: shuffle(base).slice(0, daily), pool, learnedCount: learned.size };
 }
 
-// ── 학습 완료 단어 일괄 저장 (msv1 payload 형식 그대로) ──
-export async function saveLearnedWords(user, words) {
+// ── 학습 완료 단어 일괄 저장 (msv1 payload 형식 그대로, 보충 날짜 지정 지원) ──
+export async function saveLearnedWords(user, words, dateKey) {
   if (!user?.id || !words?.length) return;
   try {
+    const learnedAt = dateKey ? `${dateKey}T12:00:00.000Z` : new Date().toISOString();
     const payload = words.map((w) => ({
       student_id: user.id,
       word: (w.word || '').replace(/\.png/gi, '').trim(),
       meaning: w.meaning || '',
-      learned_at: new Date().toISOString(),
+      learned_at: learnedAt,
     }));
     await supabase.from('student_learned_words').insert(payload);
   } catch (e) {}
@@ -110,8 +111,16 @@ export async function fetchWordsOfDate(user, dateStr) {
       .eq('student_id', user.id)
       .gte('learned_at', `${dateStr}T00:00:00`)
       .lte('learned_at', `${dateStr}T23:59:59`);
-    return data || [];
-  } catch (e) { return []; }
+    if (data && data.length) return data;
+  } catch (e) {}
+  try {
+    const cached = localStorage.getItem(`daily_set_${user.id}_${dateStr}`) || localStorage.getItem(`daily_random_set_${user.id}_${dateStr}`);
+    if (cached) {
+      const parsed = JSON.parse(cached);
+      if (Array.isArray(parsed) && parsed.length) return parsed;
+    }
+  } catch (e) {}
+  return [];
 }
 
 // ── 프로필 저장 (msv1: students 테이블 update) ──
