@@ -172,14 +172,14 @@ function LoginScreen({ go, onLogin }) {
 }
 
 // ═══ 02 홈 ═══
-function HomeScreen({ go, user, done, total, streak, loading, completedQuizLevels = [], hasRecorded = false }) {
+function HomeScreen({ go, user, done, total, streak, loading, completedQuizLevels = [], hasRecorded = false, wrongCount = 0 }) {
   const first = (user?.name || '친구').replace(/^이|^김|^박/, '');
   const pct = total ? Math.round((done / total) * 100) : 0;
   const menu = [
     ['🃏', '플래시카드', C.primaryLight, 'flashcard'],
     ['📝', '퀴즈', C.amberBg, 'quiz'],
     ['📚', '단어장', '#DEF5EB', 'wordbook'],
-    ['❌', '오답노트', '#FCE5EB', 'wordbook:wrong'],
+    ['❌', wrongCount > 0 ? `오답노트 (${wrongCount})` : '오답노트', '#FCE5EB', 'wordbook:wrong'],
     ['📅', '달력', '#E3F0FC', 'calendar'],
     ['📊', '통계·랭킹', '#F2E8FA', 'stats'],
   ];
@@ -213,7 +213,7 @@ function HomeScreen({ go, user, done, total, streak, loading, completedQuizLevel
       </div>
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12 }}>
         {menu.map(([icon, label, bg, target]) => (
-          <button key={label} onClick={() => go(target)} style={{ background: C.surface, border: 'none', borderRadius: 18, padding: '16px 0', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8, cursor: 'pointer', fontFamily: FONT }}>
+          <button key={target} onClick={() => go(target)} style={{ background: C.surface, border: 'none', borderRadius: 18, padding: '16px 0', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8, cursor: 'pointer', fontFamily: FONT }}>
             <div style={{ width: 44, height: 44, borderRadius: 14, background: bg, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 20 }}>{icon}</div>
             <span style={{ fontSize: 12, fontWeight: 700, color: C.text }}>{label}</span>
           </button>
@@ -392,7 +392,7 @@ function RecordingSheet({ word, rate, onClose, onScored, closeHint }) {
 }
 
 // ═══ 03 플래시카드 ═══
-function FlashcardScreen({ go, user, words, loading, idx, setIdx, markDone, wrongWords, toggleWrong, rate, cycleRate, onFinishSet, makeupDate, exitMakeup, isWrongReview, exitWrongReview }) {
+function FlashcardScreen({ go, user, words, loading, idx, setIdx, markDone, wrongWords, toggleWrong, onRemoveWrong, rate, cycleRate, onFinishSet, makeupDate, exitMakeup, isWrongReview, exitWrongReview }) {
   const [flipped, setFlipped] = useState(false);
   const [sheet, setSheet] = useState(false);
   const lastScoreRef = useRef(null);
@@ -484,6 +484,12 @@ function FlashcardScreen({ go, user, words, loading, idx, setIdx, markDone, wron
         </div>
       </div>
 
+      {isWrongReview && onRemoveWrong && (
+        <button onClick={() => onRemoveWrong(w)} style={{ background: C.greenBg, border: `1.5px solid ${C.green}`, borderRadius: 14, padding: '10px 0', fontSize: 13, fontWeight: 800, color: C.greenDeep, cursor: 'pointer', fontFamily: FONT }}>
+          ✅ 이 단어 완전 정복! (오답 해제)
+        </button>
+      )}
+
       <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
         <button onClick={() => setSheet(true)} style={{ flex: 1, background: C.grad, border: 'none', borderRadius: 18, padding: '15px 0', fontSize: 15, fontWeight: 700, color: '#FFFFFF', cursor: 'pointer', fontFamily: FONT }}>
           🎙️ 발음하고 다음으로
@@ -510,7 +516,7 @@ const LEVELS = [
   { lv: 4, label: '4단계 ✍️ 쓰기', tag: '선택' },
 ];
 
-function QuizScreen({ initialLevel = 1, onLevelChange, completedLevels = [], go, user, words, pool, rate, onQuizDone, recordStamp, makeupDate, exitMakeup }) {
+function QuizScreen({ initialLevel = 1, onLevelChange, completedLevels = [], go, user, words, pool, rate, onQuizDone, onRecordWrong, recordStamp, makeupDate, exitMakeup, isWrongReview, exitWrongReview }) {
   const [level, setLevel] = useState(initialLevel);
   const [qIdx, setQIdx] = useState(0);
   const [score, setScore] = useState(0);
@@ -568,7 +574,10 @@ function QuizScreen({ initialLevel = 1, onLevelChange, completedLevels = [], go,
   }, [qIdx, level]);
 
   const answered = picked !== null || typed !== null || pronResult !== null;
-  const addWrong = () => setWrongs((p) => (p.some((x) => cleanWord(x) === cleanWord(w)) ? p : [...p, w]));
+  const addWrong = () => {
+    setWrongs((p) => (p.some((x) => cleanWord(x) === cleanWord(w)) ? p : [...p, w]));
+    if (onRecordWrong && w) onRecordWrong(w);
+  };
 
   const pick = (i) => {
     if (answered || level === 3 || level === 4) return;
@@ -605,7 +614,7 @@ function QuizScreen({ initialLevel = 1, onLevelChange, completedLevels = [], go,
     const elapsed = Math.round((Date.now() - startRef.current) / 1000);
     const timeStr = `${Math.floor(elapsed / 60)}:${String(elapsed % 60).padStart(2, '0')}`;
     let stampedDate = null;
-    if (level === 2) stampedDate = await recordStamp();
+    if (level === 2 && !isWrongReview) stampedDate = await recordStamp();
     onQuizDone({ level, score, total, correct: Math.round(score / 10), timeStr, wrongs, stampedDate, nextLevel: level < 4 ? level + 1 : null });
   };
   const nextQ = () => {
@@ -628,9 +637,10 @@ function QuizScreen({ initialLevel = 1, onLevelChange, completedLevels = [], go,
   return (
     <div style={{ padding: '56px 20px 24px', display: 'flex', flexDirection: 'column', gap: 12, height: '100%', boxSizing: 'border-box', position: 'relative' }}>
       <MakeupBanner makeupDate={makeupDate} onExit={() => { clearAutoAdvance(); exitMakeup(); go('calendar'); }} kind="quiz" />
+      {isWrongReview && <WrongReviewBanner onExit={() => { clearAutoAdvance(); if (exitWrongReview) exitWrongReview(); go('home'); }} />}
       <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-        <button onClick={() => { clearAutoAdvance(); go('home'); }} style={{ width: 40, height: 40, borderRadius: '50%', background: C.surface, border: 'none', fontSize: 16, fontWeight: 700, color: C.text, cursor: 'pointer' }}>✕</button>
-        <div style={{ flex: 1, textAlign: 'center', fontSize: 16, fontWeight: 900, color: C.text }}>{makeupDate ? '보충 퀴즈' : '오늘의 퀴즈'}</div>
+        <button onClick={() => { clearAutoAdvance(); if (isWrongReview && exitWrongReview) exitWrongReview(); go('home'); }} style={{ width: 40, height: 40, borderRadius: '50%', background: C.surface, border: 'none', fontSize: 16, fontWeight: 700, color: C.text, cursor: 'pointer' }}>✕</button>
+        <div style={{ flex: 1, textAlign: 'center', fontSize: 16, fontWeight: 900, color: C.text }}>{isWrongReview ? '오답 집중 퀴즈' : makeupDate ? '보충 퀴즈' : '오늘의 퀴즈'}</div>
         <Pill bg={C.amberBg} color={C.amber}>⭐ {score}점</Pill>
       </div>
       <div style={{ display: 'flex', gap: 6 }}>
@@ -788,7 +798,7 @@ function QuizDoneScreen({ go, result, onReviewWrong, onNextLevel, saveError, onR
 }
 
 // ═══ 05 단어장 ═══
-function WordbookScreen({ user, words, pool, favs, toggleFav, wrongWords, rate, initialTab, go }) {
+function WordbookScreen({ user, words, pool, favs, toggleFav, wrongWords, onStartWrongReview, onRemoveWrong, rate, initialTab, go }) {
   const [tab, setTab] = useState(initialTab || '전체 단어');
   const [chip, setChip] = useState('전체');
   const [search, setSearch] = useState('');
@@ -802,6 +812,7 @@ function WordbookScreen({ user, words, pool, favs, toggleFav, wrongWords, rate, 
     const q = search.trim().toLowerCase();
     list = list.filter((w) => cleanWord(w).toLowerCase().includes(q) || (wordMeaning(w) || '').includes(q));
   }
+  const visibleList = tab === '오답노트' ? list : list.slice(0, 40);
   return (
     <div style={{ padding: '60px 20px 0', display: 'flex', flexDirection: 'column', gap: 14 }}>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -815,6 +826,18 @@ function WordbookScreen({ user, words, pool, favs, toggleFav, wrongWords, rate, 
           </button>
         ))}
       </div>
+      {tab === '오답노트' && wrongWords.length > 0 && (
+        <div style={{ display: 'flex', gap: 8 }}>
+          <button onClick={() => onStartWrongReview && onStartWrongReview('flashcard')}
+            style={{ flex: 1, background: C.redBg, border: `1.5px solid ${C.red}`, borderRadius: 14, padding: '11px 8px', fontSize: 12, fontWeight: 800, color: C.red, cursor: 'pointer', fontFamily: FONT }}>
+            🔥 오답 카드 복습 ({wrongWords.length}개)
+          </button>
+          <button onClick={() => onStartWrongReview && onStartWrongReview('quiz')}
+            style={{ flex: 1, background: C.primaryLight, border: `1.5px solid ${C.primary}`, borderRadius: 14, padding: '11px 8px', fontSize: 12, fontWeight: 800, color: C.primaryDeep, cursor: 'pointer', fontFamily: FONT }}>
+            📝 오답 집중 퀴즈 ({wrongWords.length}개)
+          </button>
+        </div>
+      )}
       <div style={{ background: C.surface, border: `1.5px solid ${C.border}`, borderRadius: 16, padding: '12px 16px', display: 'flex', alignItems: 'center', gap: 10 }}>
         <span style={{ fontSize: 14 }}>🔍</span>
         <input placeholder="단어를 검색해보세요" value={search} onChange={(e) => setSearch(e.target.value)}
@@ -828,12 +851,12 @@ function WordbookScreen({ user, words, pool, favs, toggleFav, wrongWords, rate, 
         ))}
       </div>
       <div style={{ display: 'flex', flexDirection: 'column', gap: 10, paddingBottom: 16 }}>
-        {list.length === 0 && (
+        {visibleList.length === 0 && (
           <div style={{ textAlign: 'center', padding: '40px 0', color: C.sub, fontSize: 13, fontWeight: 500 }}>
             {tab === '오답노트' ? '오답 단어가 없어요! 대단해요 👏' : '단어가 없어요'}
           </div>
         )}
-        {list.slice(0, 40).map((w, i) => {
+        {visibleList.map((w, i) => {
           const key = cleanWord(w).toLowerCase();
           const isWrong = wrongWords.some((x) => cleanWord(x).toLowerCase() === key);
           return (
@@ -846,6 +869,11 @@ function WordbookScreen({ user, words, pool, favs, toggleFav, wrongWords, rate, 
                 </div>
                 <div style={{ fontSize: 12, color: C.sub, marginTop: 2 }}>{wordMeaning(w)}{(w.category || w.grade_level) ? ` · ${w.category || w.grade_level}` : ''}</div>
               </div>
+              {isWrong && onRemoveWrong && (
+                <button onClick={() => onRemoveWrong(w)} style={{ background: C.greenBg, border: `1px solid ${C.green}`, borderRadius: 999, padding: '4px 10px', fontSize: 11, fontWeight: 800, color: C.greenDeep, cursor: 'pointer', fontFamily: FONT, flexShrink: 0 }}>
+                  ✅ 마스터
+                </button>
+              )}
               <span onClick={() => toggleFav(cleanWord(w))} style={{ fontSize: 18, cursor: 'pointer', filter: favSet.has(key) ? 'none' : 'grayscale(1) opacity(0.45)' }}>⭐</span>
             </div>
           );
@@ -1432,11 +1460,60 @@ export default function Msv2Page() {
     return selected;
   }, [user, pool, words]);
 
+  const persistWrongWords = (uid, list) => {
+    if (!uid) return;
+    try {
+      const json = JSON.stringify(list);
+      localStorage.setItem(`english_wrong_words_${uid}`, json);
+      localStorage.setItem(`msv2_wrong_${uid}`, json);
+    } catch (e) {}
+  };
+
+  const loadWrongWordsFromStorage = (uid) => {
+    if (!uid) return [];
+    const merged = [];
+    const seen = new Set();
+    const keys = [
+      `english_wrong_words_${uid}`,
+      `msv2_wrong_${uid}`,
+      `wrong_answers_${uid}`,
+      `wrong_words_${uid}`,
+    ];
+    for (const k of keys) {
+      try {
+        const raw = localStorage.getItem(k);
+        if (!raw) continue;
+        const arr = JSON.parse(raw);
+        if (!Array.isArray(arr)) continue;
+        for (const item of arr) {
+          const wKey = cleanWord(item).toLowerCase();
+          if (!wKey || seen.has(wKey)) continue;
+          seen.add(wKey);
+          merged.push({
+            ...item,
+            word: cleanWord(item),
+            meaning: wordMeaning(item),
+            category: item.category || item.grade_level,
+          });
+        }
+      } catch (e) {}
+    }
+    if (merged.length > 0) {
+      persistWrongWords(uid, merged);
+    }
+    return merged;
+  };
+
   const go = (target) => {
-    if (target === 'wordbook:wrong') { setWordbookTab('오답노트'); setScreen('wordbook'); return; }
+    if (target === 'wordbook:wrong') {
+      if (isWrongReview) exitWrongReview();
+      setWordbookTab('오답노트');
+      setScreen('wordbook');
+      return;
+    }
     if (target === 'wordbook') setWordbookTab(null);
     if (target === 'quiz') setQuizLevel(1);
-    if (target !== 'flashcard' && isWrongReview) {
+    if (target !== 'flashcard' && target !== 'quiz' && target !== 'quizdone' && isWrongReview) {
       exitWrongReview();
     }
     if (target !== 'flashcard' && target !== 'quiz' && target !== 'quizdone') {
@@ -1527,7 +1604,7 @@ export default function Msv2Page() {
     setHasRecorded(false);
     setQuizResult(null);
     try {
-      setWrongWords(JSON.parse(localStorage.getItem(`msv2_wrong_${u.id}`) || '[]'));
+      setWrongWords(loadWrongWordsFromStorage(u.id));
       setFavs(JSON.parse(localStorage.getItem(`msv2_fav_${u.id}`) || '[]'));
     } catch (e) {}
     loadAll(u);
@@ -1561,14 +1638,35 @@ export default function Msv2Page() {
     if (!w) return;
     setWrongWords((prev) => {
       const key = cleanWord(w).toLowerCase();
+      if (!key) return prev;
       const exists = prev.some((x) => cleanWord(x).toLowerCase() === key);
       let next;
       if (exists && !forceAdd) next = prev.filter((x) => cleanWord(x).toLowerCase() !== key);
       else if (exists) next = prev;
-      else next = [...prev, { word: cleanWord(w), meaning: wordMeaning(w), category: w.category }];
-      try { if (user) localStorage.setItem(`msv2_wrong_${user.id}`, JSON.stringify(next)); } catch (e) {}
+      else next = [{ ...w, word: cleanWord(w), meaning: wordMeaning(w), category: w.category || w.grade_level }, ...prev];
+      if (user?.id) persistWrongWords(user.id, next);
       return next;
     });
+  };
+  const removeWrongWord = (w) => {
+    if (!w) return;
+    const key = cleanWord(w).toLowerCase();
+    if (!key) return;
+    setWrongWords((prev) => {
+      const next = prev.filter((x) => cleanWord(x).toLowerCase() !== key);
+      if (user?.id) persistWrongWords(user.id, next);
+      return next;
+    });
+    if (isWrongReview) {
+      const remaining = words.filter((x) => cleanWord(x).toLowerCase() !== key);
+      if (remaining.length === 0) {
+        exitWrongReview();
+        setScreen('home');
+      } else {
+        setWords(remaining);
+        setIdx((prevIdx) => Math.min(prevIdx, remaining.length - 1));
+      }
+    }
   };
   const toggleFav = (word) => {
     setFavs((prev) => {
@@ -1713,23 +1811,32 @@ export default function Msv2Page() {
     setQuizKey((k) => k + 1);
     setScreen('quiz');
   };
-  const reviewWrong = () => {
-    const list = quizResult?.wrongs?.length ? quizResult.wrongs : wrongWords;
-    if (list && list.length) {
-      if (!isWrongReview && !makeupDate && !isSpecialDeckRef.current) {
-        if (words.length > 0) {
-          originalDailyWordsRef.current = words;
-        }
-        originalDailyDoneSetRef.current = doneSet;
-        originalDailyIdxRef.current = idx;
+  const startWrongReview = (target = 'flashcard', customList = null) => {
+    const list = (Array.isArray(customList) && customList.length ? customList : wrongWords) || [];
+    if (!list.length) return;
+    if (!isWrongReview && !makeupDate && !isSpecialDeckRef.current) {
+      if (words.length > 0) {
+        originalDailyWordsRef.current = words;
       }
-      setIsWrongReview(true);
-      isSpecialDeckRef.current = true;
-      setWords(list);
-      setIdx(0);
-      setDoneSet(new Set());
+      originalDailyDoneSetRef.current = doneSet;
+      originalDailyIdxRef.current = idx;
+    }
+    setIsWrongReview(true);
+    isSpecialDeckRef.current = true;
+    setWords(list);
+    setIdx(0);
+    setDoneSet(new Set());
+    if (target === 'quiz') {
+      setQuizLevel(1);
+      setQuizKey((k) => k + 1);
+      setScreen('quiz');
+    } else {
       setScreen('flashcard');
     }
+  };
+  const reviewWrong = () => {
+    const list = quizResult?.wrongs?.length ? quizResult.wrongs : wrongWords;
+    startWrongReview('flashcard', list);
   };
   const restudyDate = (dateWords) => {
     const list = dateWords.map((w) => ({ word: (w.word || '').replace(/\.png/gi, ''), meaning: w.meaning }));
@@ -1820,7 +1927,7 @@ export default function Msv2Page() {
   const showNav = ['home', 'wordbook', 'calendar', 'stats', 'parent', 'profile'].includes(screen);
   const screens = {
     login: <LoginScreen go={go} onLogin={handleLogin} />,
-    home: <HomeScreen go={go} user={user} done={doneSet.size} total={words.length || user?.daily || 20} streak={streak} loading={wordsLoading} completedQuizLevels={completedQuizLevels} hasRecorded={hasRecorded} />,
+    home: <HomeScreen go={go} user={user} done={doneSet.size} total={words.length || user?.daily || 20} streak={streak} loading={wordsLoading} completedQuizLevels={completedQuizLevels} hasRecorded={hasRecorded} wrongCount={wrongWords.length} />,
     flashcard: (
       <FlashcardScreen
         go={go}
@@ -1838,6 +1945,7 @@ export default function Msv2Page() {
         markDone={markDone}
         wrongWords={wrongWords}
         toggleWrong={toggleWrong}
+        onRemoveWrong={removeWrongWord}
         rate={rate}
         cycleRate={cycleRate}
         onFinishSet={onFinishSet}
@@ -1847,9 +1955,9 @@ export default function Msv2Page() {
         exitWrongReview={exitWrongReview}
       />
     ),
-    quiz: <QuizScreen key={quizKey} initialLevel={quizLevel} onLevelChange={setQuizLevel} completedLevels={completedQuizLevels} go={go} user={user} words={words} pool={pool} rate={rate} onQuizDone={onQuizDone} recordStamp={recordStamp} makeupDate={makeupDate} exitMakeup={exitMakeup} />,
+    quiz: <QuizScreen key={quizKey} initialLevel={quizLevel} onLevelChange={setQuizLevel} completedLevels={completedQuizLevels} go={go} user={user} words={words} pool={pool} rate={rate} onQuizDone={onQuizDone} onRecordWrong={(w) => toggleWrong(w, true)} recordStamp={recordStamp} makeupDate={makeupDate} exitMakeup={exitMakeup} isWrongReview={isWrongReview} exitWrongReview={exitWrongReview} />,
     quizdone: <QuizDoneScreen go={go} result={quizResult} onReviewWrong={reviewWrong} onNextLevel={handleNextQuizLevel} saveError={saveError} onRetrySave={retrySave} />,
-    wordbook: <WordbookScreen user={user} words={words} pool={pool} favs={favs} toggleFav={toggleFav} wrongWords={wrongWords} rate={rate} initialTab={wordbookTab} go={go} />,
+    wordbook: <WordbookScreen user={user} words={words} pool={pool} favs={favs} toggleFav={toggleFav} wrongWords={wrongWords} onStartWrongReview={startWrongReview} onRemoveWrong={removeWrongWord} rate={rate} initialTab={wordbookTab} go={go} />,
     calendar: <CalendarScreen go={go} user={user} stamps={stamps} onRestudy={restudyDate} startMakeup={startMakeup} rate={rate} />,
     stats: <StatsScreen user={user} learnedTotal={learnedTotal} repeatCount={repeatCount} stamps={stamps} lastScore={quizResult ? quizResult.score : null} streak={streak} />,
     parent: <ParentScreen user={user} done={doneSet.size} total={words.length || user?.daily || 20} stamps={stamps} learnedTotal={learnedTotal} />,
