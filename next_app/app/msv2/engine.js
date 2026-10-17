@@ -60,15 +60,23 @@ export async function loadWordsForUser(user) {
 
   const fresh = pool.filter((w) => !learned.has((w.word || '').toLowerCase().trim()));
   const base = fresh.length ? fresh : pool;
-  return { words: shuffle(base).slice(0, daily), pool, learnedCount: learned.size };
+  return { words: shuffle(base).slice(0, daily), pool, learnedCount: learned.size, learnedWords: Array.from(learned) };
 }
 
-// ── 학습 완료 단어 일괄 저장 (msv1 payload 형식 그대로, 보충 날짜 지정 및 에러 감지 지원) ──
+// ── 학습 완료 단어 일괄 저장 (msv1 payload 형식 그대로, 중복 제거·보충 날짜 지정 및 에러 감지 지원) ──
 export async function saveLearnedWords(user, words, dateKey) {
   if (!user?.id || !words?.length) return false;
   try {
     const learnedAt = dateKey ? `${dateKey}T12:00:00.000Z` : new Date().toISOString();
-    const payload = words.map((w) => ({
+    const seen = new Set();
+    const uniqueWords = words.filter((w) => {
+      const k = (w?.word || '').replace(/\.png/gi, '').trim().toLowerCase();
+      if (!k || seen.has(k)) return false;
+      seen.add(k);
+      return true;
+    });
+    if (!uniqueWords.length) return true;
+    const payload = uniqueWords.map((w) => ({
       student_id: user.id,
       word: (w.word || '').replace(/\.png/gi, '').trim(),
       meaning: w.meaning || '',
@@ -118,7 +126,15 @@ export async function fetchWordsOfDate(user, dateStr) {
       .eq('student_id', user.id)
       .gte('learned_at', `${dateStr}T00:00:00`)
       .lte('learned_at', `${dateStr}T23:59:59`);
-    if (data && data.length) return data;
+    if (data && data.length) {
+      const seen = new Set();
+      return data.filter((r) => {
+        const k = (r.word || '').replace(/\.png/gi, '').trim().toLowerCase();
+        if (!k || seen.has(k)) return false;
+        seen.add(k);
+        return true;
+      });
+    }
   } catch (e) {}
   try {
     const cached = localStorage.getItem(`daily_set_${user.id}_${dateStr}`) || localStorage.getItem(`daily_random_set_${user.id}_${dateStr}`);

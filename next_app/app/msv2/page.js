@@ -976,7 +976,7 @@ function CalendarScreen({ go, user, stamps, onRestudy, startMakeup, rate }) {
 }
 
 // ═══ 07 통계·랭킹 ═══
-function StatsScreen({ user, learnedTotal, stamps, lastScore, streak }) {
+function StatsScreen({ user, learnedTotal, repeatCount = 0, stamps, lastScore, streak }) {
   const weekBars = (() => {
     const bars = [];
     const now = new Date();
@@ -1001,7 +1001,7 @@ function StatsScreen({ user, learnedTotal, stamps, lastScore, streak }) {
     <div style={{ padding: '60px 20px 0', display: 'flex', flexDirection: 'column', gap: 14 }}>
       <div style={{ fontSize: 24, fontWeight: 900, color: C.text }}>나의 학습 리포트 📊</div>
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 10 }}>
-        {[[`${learnedTotal.toLocaleString()}`, '배운 단어', C.primaryLight, C.primaryDeep], [lastScore !== null ? `${lastScore}점` : '—', '최근 퀴즈', C.greenBg, C.greenDeep], [`${streak}일`, '연속 학습', C.amberBg, C.amber]].map(([num, label, bg, color]) => (
+        {[[`${learnedTotal.toLocaleString()}`, repeatCount > 1 ? `배운 단어 (${repeatCount}회 완료)` : '배운 단어', C.primaryLight, C.primaryDeep], [lastScore !== null ? `${lastScore}점` : '—', '최근 퀴즈', C.greenBg, C.greenDeep], [`${streak}일`, '연속 학습', C.amberBg, C.amber]].map(([num, label, bg, color]) => (
           <div key={label} style={{ background: bg, borderRadius: 18, padding: '16px 0', textAlign: 'center' }}>
             <div style={{ fontSize: 21, fontWeight: 900, color }}>{num}</div>
             <div style={{ fontSize: 11, fontWeight: 700, color, opacity: 0.75, marginTop: 2 }}>{label}</div>
@@ -1311,6 +1311,7 @@ export default function Msv2Page() {
   const [doneSet, setDoneSet] = useState(new Set());
   const [stamps, setStamps] = useState([]);
   const [learnedTotal, setLearnedTotal] = useState(0);
+  const [repeatCount, setRepeatCount] = useState(0);
   const [rate, setRate] = useState(1.0);
   const [wrongWords, setWrongWords] = useState([]);
   const [favs, setFavs] = useState([]);
@@ -1323,6 +1324,7 @@ export default function Msv2Page() {
   const [saveError, setSaveError] = useState(null);
   const isSpecialDeckRef = useRef(false);
   const savedDatesRef = useRef(new Set());
+  const learnedWordsSetRef = useRef(new Set());
   const originalDailyWordsRef = useRef([]);
   const originalDailyDoneSetRef = useRef(new Set());
   const originalDailyIdxRef = useRef(0);
@@ -1405,7 +1407,7 @@ export default function Msv2Page() {
 
   const loadAll = useCallback(async (u) => {
     setWordsLoading(true);
-    const [{ words: ws, pool: pl, learnedCount }, st] = await Promise.all([
+    const [{ words: ws, pool: pl, learnedCount, learnedWords }, st] = await Promise.all([
       loadWordsForUser(u),
       fetchStamps(u),
     ]);
@@ -1413,10 +1415,12 @@ export default function Msv2Page() {
     originalDailyDoneSetRef.current = new Set();
     originalDailyIdxRef.current = 0;
     savedDatesRef.current = new Set();
+    learnedWordsSetRef.current = new Set((learnedWords || []).map((w) => String(w).toLowerCase().trim()).filter(Boolean));
     isSpecialDeckRef.current = false;
     setIsWrongReview(false);
     setMakeupDate(null);
     setSaveError(null);
+    setRepeatCount(0);
     try {
       if (u && ws && ws.length) {
         localStorage.setItem(`daily_set_${u.id}_${localDateStr()}`, JSON.stringify(ws));
@@ -1468,6 +1472,33 @@ export default function Msv2Page() {
   });
   const cycleRate = () => setRate((r) => (r === 1.0 ? 1.25 : r === 1.25 ? 0.75 : 1.0));
 
+  // 고유 학습 단어 저장 및 카운트 갱신 헬퍼 (중복 DB 저장 및 learnedTotal 부풀림 방지)
+  const persistLearnedSet = async (targetWords, dateKey, makeupDateArg) => {
+    if (!user || !targetWords?.length) return true;
+    const seenInBatch = new Set();
+    const unlearned = targetWords.filter((w) => {
+      const k = cleanWord(w).toLowerCase();
+      if (!k || seenInBatch.has(k) || learnedWordsSetRef.current.has(k)) return false;
+      seenInBatch.add(k);
+      return true;
+    });
+    const alreadySavedForDate = savedDatesRef.current.has(dateKey);
+    const wordsToSave = !alreadySavedForDate ? targetWords : unlearned;
+    if (wordsToSave.length > 0) {
+      const ok = await saveLearnedWords(user, wordsToSave, makeupDateArg);
+      if (ok === false) return false;
+    }
+    savedDatesRef.current.add(dateKey);
+    if (unlearned.length > 0) {
+      unlearned.forEach((w) => {
+        const k = cleanWord(w).toLowerCase();
+        if (k) learnedWordsSetRef.current.add(k);
+      });
+      setLearnedTotal((n) => n + unlearned.length);
+    }
+    return true;
+  };
+
   // 세트 완주 → 학습 기록 DB 저장 → 퀴즈로 (오답 복습 완주 시 원래 단어 복귀 후 홈으로)
   const onFinishSet = async () => {
     if (isWrongReview) {
@@ -1478,11 +1509,10 @@ export default function Msv2Page() {
     }
     const dateKey = makeupDate || localDateStr();
     if (user && words.length) {
-      const ok = await saveLearnedWords(user, words, makeupDate);
+      const ok = await persistLearnedSet(words, dateKey, makeupDate);
       if (ok !== false) {
-        savedDatesRef.current.add(dateKey);
         setSaveError(null);
-        setLearnedTotal((n) => n + words.length);
+        setRepeatCount((c) => c + 1);
       } else {
         setSaveError({ type: 'learned', dateKey, words });
       }
@@ -1496,13 +1526,12 @@ export default function Msv2Page() {
     if (!user) return null;
     const dateKey = makeupDate || localDateStr();
     if (words.length && !savedDatesRef.current.has(dateKey)) {
-      const learnedOk = await saveLearnedWords(user, words, makeupDate);
+      const learnedOk = await persistLearnedSet(words, dateKey, makeupDate);
       if (learnedOk === false) {
         setSaveError({ type: 'stamp', dateKey, words });
         return null;
       }
-      savedDatesRef.current.add(dateKey);
-      setLearnedTotal((n) => n + words.length);
+      setRepeatCount((c) => (c > 0 ? c : 1));
     }
     const ok = await stampAttendance(user, dateKey);
     if (ok) {
@@ -1518,10 +1547,8 @@ export default function Msv2Page() {
     if (!saveError || !user) return false;
     const { dateKey, words: targetWords, type } = saveError;
     if (!savedDatesRef.current.has(dateKey) && targetWords && targetWords.length) {
-      const learnedOk = await saveLearnedWords(user, targetWords, dateKey !== localDateStr() ? dateKey : null);
+      const learnedOk = await persistLearnedSet(targetWords, dateKey, dateKey !== localDateStr() ? dateKey : null);
       if (learnedOk === false) return false;
-      savedDatesRef.current.add(dateKey);
-      setLearnedTotal((n) => n + targetWords.length);
     }
     if (type === 'stamp') {
       const ok = await stampAttendance(user, dateKey);
@@ -1618,9 +1645,11 @@ export default function Msv2Page() {
     originalDailyDoneSetRef.current = new Set();
     originalDailyIdxRef.current = 0;
     savedDatesRef.current = new Set();
+    learnedWordsSetRef.current = new Set();
     isSpecialDeckRef.current = false;
     setIsWrongReview(false);
     setSaveError(null);
+    setRepeatCount(0);
     setWords([]); setPool([]); setStamps([]); setDoneSet(new Set()); setQuizResult(null); setMakeupDate(null);
     clearStudentSession();
     setScreen('login');
@@ -1669,7 +1698,7 @@ export default function Msv2Page() {
     quizdone: <QuizDoneScreen go={go} result={quizResult} onReviewWrong={reviewWrong} onNextLevel={handleNextQuizLevel} saveError={saveError} onRetrySave={retrySave} />,
     wordbook: <WordbookScreen user={user} words={words} pool={pool} favs={favs} toggleFav={toggleFav} wrongWords={wrongWords} rate={rate} initialTab={wordbookTab} go={go} />,
     calendar: <CalendarScreen go={go} user={user} stamps={stamps} onRestudy={restudyDate} startMakeup={startMakeup} rate={rate} />,
-    stats: <StatsScreen user={user} learnedTotal={learnedTotal} stamps={stamps} lastScore={quizResult ? quizResult.score : null} streak={streak} />,
+    stats: <StatsScreen user={user} learnedTotal={learnedTotal} repeatCount={repeatCount} stamps={stamps} lastScore={quizResult ? quizResult.score : null} streak={streak} />,
     parent: <ParentScreen user={user} done={doneSet.size} total={words.length || user?.daily || 20} stamps={stamps} learnedTotal={learnedTotal} />,
     profile: <ProfileScreen user={user} onSaveProfile={saveProfile} onLogout={logout} learnedTotal={learnedTotal} stamps={stamps} go={go} wordsTotal={words.length} />,
     pdf: <PdfScreen user={user} words={words} pool={pool} />,
