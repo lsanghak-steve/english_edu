@@ -4,6 +4,7 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import supabase from '../../lib/supabaseClient.js';
+import { readStudentSession, saveStudentSession, clearStudentSession } from '../../lib/studentSession.js';
 import wordList500Fallback from '../../data/wordsData.js';
 import { playUniversalAudio, initAudioUnlock } from '../../lib/audioPlayer.js';
 import { getLocalDateString, t } from '../../lib/i18n.js';
@@ -660,20 +661,9 @@ export default function ModernStudyPage() {
       if (savedLang && studyI18n[savedLang]) {
         setCurrentLang(savedLang);
       }
-      const savedUserStr = localStorage.getItem('english_edu_current_user');
-      if (savedUserStr) {
-        try {
-          const parsed = JSON.parse(savedUserStr);
-          if (parsed && (parsed.name || parsed.id)) {
-            setCurrentUser(parsed);
-          } else {
-            router.replace('/modern-login');
-            return;
-          }
-        } catch (err) {
-          router.replace('/modern-login');
-          return;
-        }
+      const savedUser = readStudentSession();
+      if (savedUser) {
+        setCurrentUser(savedUser);
       } else {
         router.replace('/modern-login');
         return;
@@ -751,7 +741,7 @@ export default function ModernStudyPage() {
 
         // 1) Supabase DB에서 해당 레벨의 전체 단어 풀 조회
         try {
-          let query = supabase.from('words').select('*');
+          let query = supabase.from('words').select('*').not('word', 'ilike', 'cornell');
           if (targetLevel && targetLevel !== '전체') {
             query = query.or(`category.eq.${targetLevel},grade_level.eq.${targetLevel},grade_level_ko.eq.${targetLevel}`);
           }
@@ -765,7 +755,7 @@ export default function ModernStudyPage() {
         // 2) Fallback 데이터 보정
         if (chosenWords.length === 0) {
           try {
-            const { data: allDbWords } = await supabase.from('words').select('*').limit(300);
+            const { data: allDbWords } = await supabase.from('words').select('*').not('word', 'ilike', 'cornell').limit(300);
             if (allDbWords && allDbWords.length > 0) {
               const filtered = allDbWords.filter(w => 
                 w.category === targetLevel || w.grade_level === targetLevel || w.gradeLevel === targetLevel
@@ -1329,7 +1319,7 @@ export default function ModernStudyPage() {
   // 🚪 로그아웃 처리
   const handleLogout = () => {
     try {
-      localStorage.removeItem('english_edu_current_user');
+      clearStudentSession();
     } catch (e) {}
     router.push('/modern-login');
   };
@@ -2117,7 +2107,7 @@ export default function ModernStudyPage() {
       localStorage.setItem('flipvoca_parent_phone', editParentPhone.trim() || currentUser?.parentPhone || '');
       localStorage.setItem('flipvoca_parent_pin', editParentPin.trim() || '0815');
       localStorage.setItem('english_edu_current_user', JSON.stringify(updatedUser));
-      sessionStorage.setItem('english_edu_current_user', JSON.stringify(updatedUser));
+      saveStudentSession(updatedUser);
     } catch(e) {}
 
     // 2. Cloud DB(Supabase) 동기화

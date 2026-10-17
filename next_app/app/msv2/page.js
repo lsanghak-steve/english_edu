@@ -10,6 +10,7 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { playUniversalAudio, initAudioUnlock } from '../../lib/audioPlayer.js';
+import { saveStudentSession, clearStudentSession } from '../../lib/studentSession.js';
 import {
   STUDENTS, loadWordsForUser, saveLearnedWords, stampAttendance, fetchStamps,
   fetchWordsOfDate, updateProfile, wordMeaning, wordExample, wordImgSrc,
@@ -96,6 +97,7 @@ function LoginScreen({ go, onLogin }) {
       : { id: `guest_${nm.replace(/\s/g, '_')}`, name: nm, level: '초등단어', daily: 10, guest: true };
     try {
       localStorage.setItem('english_edu_current_user', JSON.stringify({ id: user.id, student_id: user.id, name: user.name, studyGradeLevel: user.level, dailyWordCount: String(user.daily) }));
+      saveStudentSession({ id: user.id, student_id: user.id, name: user.name, studyGradeLevel: user.level, dailyWordCount: String(user.daily) });
     } catch (e) {}
     onLogin(user);
     go('home');
@@ -485,8 +487,8 @@ const LEVELS = [
   { lv: 4, label: '4단계 ✍️ 쓰기', tag: '선택' },
 ];
 
-function QuizScreen({ go, user, words, pool, rate, onQuizDone, recordStamp, makeupDate, exitMakeup }) {
-  const [level, setLevel] = useState(1);
+function QuizScreen({ initialLevel = 1, onLevelChange, go, user, words, pool, rate, onQuizDone, recordStamp, makeupDate, exitMakeup }) {
+  const [level, setLevel] = useState(initialLevel);
   const [qIdx, setQIdx] = useState(0);
   const [score, setScore] = useState(0);
   const [picked, setPicked] = useState(null);
@@ -564,6 +566,7 @@ function QuizScreen({ go, user, words, pool, rate, onQuizDone, recordStamp, make
     setLevel(lv); setQIdx(0); setScore(0); setWrongs([]);
     setPicked(null); setTyped(null); setTyping(''); setPronResult(null);
     startRef.current = Date.now();
+    if (onLevelChange) onLevelChange(lv);
   };
 
   if (!w) {
@@ -1283,6 +1286,7 @@ export default function Msv2Page() {
   const [favs, setFavs] = useState([]);
   const [quizResult, setQuizResult] = useState(null);
   const [quizKey, setQuizKey] = useState(0);
+  const [quizLevel, setQuizLevel] = useState(1);
   const [wordbookTab, setWordbookTab] = useState(null);
   const [makeupDate, setMakeupDate] = useState(null); // 보충 학습 대상 날짜 'YYYY-MM-DD'
 
@@ -1290,6 +1294,7 @@ export default function Msv2Page() {
     if (target === 'wordbook:wrong') { setWordbookTab('오답노트'); setScreen('wordbook'); return; }
     if (target === 'wordbook') setWordbookTab(null);
     if (target === 'home') setMakeupDate(null);
+    if (target === 'quiz') setQuizLevel(1);
     setScreen(target);
   };
 
@@ -1355,6 +1360,7 @@ export default function Msv2Page() {
       await saveLearnedWords(user, words);
       setLearnedTotal((n) => n + words.length);
     }
+    setQuizLevel(1);
     setQuizKey((k) => k + 1);
     setScreen('quiz');
   };
@@ -1374,6 +1380,12 @@ export default function Msv2Page() {
     result.wrongs.forEach((w) => toggleWrong(w, true));
     setQuizResult(result);
     setScreen('quizdone');
+  };
+  const handleNextQuizLevel = (nextLv) => {
+    const targetLv = typeof nextLv === 'number' && nextLv >= 1 && nextLv <= 4 ? nextLv : 1;
+    setQuizLevel(targetLv);
+    setQuizKey((k) => k + 1);
+    setScreen('quiz');
   };
   const reviewWrong = () => {
     const list = quizResult?.wrongs?.length ? quizResult.wrongs : wrongWords;
@@ -1398,6 +1410,7 @@ export default function Msv2Page() {
     setMakeupDate(dateKey);
     setIdx(0);
     setDoneSet(new Set());
+    if (target === 'quiz') setQuizLevel(1);
     setQuizKey((k) => k + 1);
     setScreen(target);
   };
@@ -1405,13 +1418,17 @@ export default function Msv2Page() {
     const u = { ...user, level, daily };
     setUser(u);
     if (!user.guest) await updateProfile(user, { level, daily });
-    try { localStorage.setItem('english_edu_current_user', JSON.stringify({ id: u.id, student_id: u.id, name: u.name, studyGradeLevel: level, dailyWordCount: String(daily) })); } catch (e) {}
+    try {
+      const sessionUser = { id: u.id, student_id: u.id, name: u.name, studyGradeLevel: level, dailyWordCount: String(daily) };
+      localStorage.setItem('english_edu_current_user', JSON.stringify(sessionUser));
+      saveStudentSession(sessionUser);
+    } catch (e) {}
     loadAll(u);
   };
   const logout = () => {
     setUser(null);
     setWords([]); setPool([]); setStamps([]); setDoneSet(new Set()); setQuizResult(null); setMakeupDate(null);
-    try { localStorage.removeItem('english_edu_current_user'); } catch (e) {}
+    clearStudentSession();
     setScreen('login');
   };
 
@@ -1432,8 +1449,8 @@ export default function Msv2Page() {
     login: <LoginScreen go={go} onLogin={handleLogin} />,
     home: <HomeScreen go={go} user={user} done={doneSet.size} total={words.length || user?.daily || 20} streak={streak} loading={wordsLoading} />,
     flashcard: <FlashcardScreen go={go} user={user} words={words} loading={wordsLoading} idx={idx} setIdx={setIdx} markDone={markDone} wrongWords={wrongWords} toggleWrong={toggleWrong} rate={rate} cycleRate={cycleRate} onFinishSet={onFinishSet} makeupDate={makeupDate} exitMakeup={() => setMakeupDate(null)} />,
-    quiz: <QuizScreen key={quizKey} go={go} user={user} words={words} pool={pool} rate={rate} onQuizDone={onQuizDone} recordStamp={recordStamp} makeupDate={makeupDate} exitMakeup={() => setMakeupDate(null)} />,
-    quizdone: <QuizDoneScreen go={go} result={quizResult} onReviewWrong={reviewWrong} onNextLevel={() => { setQuizKey((k) => k + 1); setScreen('quiz'); }} />,
+    quiz: <QuizScreen key={quizKey} initialLevel={quizLevel} onLevelChange={setQuizLevel} go={go} user={user} words={words} pool={pool} rate={rate} onQuizDone={onQuizDone} recordStamp={recordStamp} makeupDate={makeupDate} exitMakeup={() => setMakeupDate(null)} />,
+    quizdone: <QuizDoneScreen go={go} result={quizResult} onReviewWrong={reviewWrong} onNextLevel={handleNextQuizLevel} />,
     wordbook: <WordbookScreen user={user} words={words} pool={pool} favs={favs} toggleFav={toggleFav} wrongWords={wrongWords} rate={rate} initialTab={wordbookTab} go={go} />,
     calendar: <CalendarScreen go={go} user={user} stamps={stamps} onRestudy={restudyDate} startMakeup={startMakeup} rate={rate} />,
     stats: <StatsScreen user={user} learnedTotal={learnedTotal} stamps={stamps} lastScore={quizResult ? quizResult.score : null} streak={streak} />,

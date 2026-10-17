@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import supabase from '../../lib/supabaseClient.js';
+import { saveStudentSession } from '../../lib/studentSession.js';
 import { t } from '../../lib/i18n.js';
 import PrivacyModal from '../components/PrivacyModal.js';
 import InquiryModal from '../components/InquiryModal.js';
@@ -483,7 +484,7 @@ export default function ModernLoginPage() {
 
     try {
       localStorage.setItem('english_edu_current_user', JSON.stringify(userData));
-      sessionStorage.setItem('english_edu_current_user', JSON.stringify(userData));
+      saveStudentSession(userData);
     } catch(e) {}
 
     // 5. 학습 페이지(/msv1)로 즉시 이동

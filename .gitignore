@@ -10,6 +10,7 @@ scratch/
 .vscode/
 .idea/
 .vercel/
+next_app/backups/
 
 # 🔒 보안 복구 코드 & 키 파일 절대 추적 금지
 recovery/
