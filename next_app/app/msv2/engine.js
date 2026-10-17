@@ -63,9 +63,9 @@ export async function loadWordsForUser(user) {
   return { words: shuffle(base).slice(0, daily), pool, learnedCount: learned.size };
 }
 
-// ── 학습 완료 단어 일괄 저장 (msv1 payload 형식 그대로, 보충 날짜 지정 지원) ──
+// ── 학습 완료 단어 일괄 저장 (msv1 payload 형식 그대로, 보충 날짜 지정 및 에러 감지 지원) ──
 export async function saveLearnedWords(user, words, dateKey) {
-  if (!user?.id || !words?.length) return;
+  if (!user?.id || !words?.length) return false;
   try {
     const learnedAt = dateKey ? `${dateKey}T12:00:00.000Z` : new Date().toISOString();
     const payload = words.map((w) => ({
@@ -74,21 +74,28 @@ export async function saveLearnedWords(user, words, dateKey) {
       meaning: w.meaning || '',
       learned_at: learnedAt,
     }));
-    await supabase.from('student_learned_words').insert(payload);
-  } catch (e) {}
+    const res = await supabase.from('student_learned_words').insert(payload);
+    if (res && res.error) return false;
+    return true;
+  } catch (e) {
+    return false;
+  }
 }
 
-// ── 출석 도장: 있으면 update, 없으면 insert (msv1 로직 그대로) ──
+// ── 출석 도장: 있으면 update, 없으면 insert (DB 에러 명시적 검증) ──
 export async function stampAttendance(user, dateKey = localDateStr()) {
   if (!user?.id) return false;
   try {
-    const { data: existing } = await supabase
+    const { data: existing, error: selErr } = await supabase
       .from('study_records').select('id')
       .eq('student_id', user.id).eq('study_date', dateKey).limit(1);
+    if (selErr) return false;
     if (existing && existing.length) {
-      await supabase.from('study_records').update({ is_stamped: true }).eq('id', existing[0].id);
+      const { error: updErr } = await supabase.from('study_records').update({ is_stamped: true }).eq('id', existing[0].id);
+      if (updErr) return false;
     } else {
-      await supabase.from('study_records').insert([{ student_id: user.id, study_date: dateKey, is_stamped: true }]);
+      const { error: insErr } = await supabase.from('study_records').insert([{ student_id: user.id, study_date: dateKey, is_stamped: true }]);
+      if (insErr) return false;
     }
     return true;
   } catch (e) { return false; }

@@ -679,7 +679,7 @@ function QuizScreen({ initialLevel = 1, onLevelChange, go, user, words, pool, ra
 }
 
 // ═══ 11 퀴즈 완료 ═══
-function QuizDoneScreen({ go, result, onReviewWrong, onNextLevel }) {
+function QuizDoneScreen({ go, result, onReviewWrong, onNextLevel, saveError, onRetrySave }) {
   const r = result || { level: 2, score: 0, correct: 0, total: 10, timeStr: '0:00', wrongs: [], stampedDate: null };
   const sd = r.stampedDate ? r.stampedDate.split('-').map(Number) : null;
   return (
@@ -704,6 +704,18 @@ function QuizDoneScreen({ go, result, onReviewWrong, onNextLevel }) {
             <div style={{ fontSize: 15, fontWeight: 900, color: '#FFFFFF' }}>{sd[1]}월 {sd[2]}일 출석 도장 획득!</div>
             <div style={{ fontSize: 12, fontWeight: 700, color: '#DEE3FF', marginTop: 2 }}>🔥 꾸준한 학습이 쌓이고 있어요</div>
           </div>
+        </div>
+      )}
+      {saveError && (
+        <div style={{ width: '100%', boxSizing: 'border-box', background: '#FEF2F2', border: '1.5px solid #FCA5A5', borderRadius: 18, padding: '12px 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10 }}>
+          <div style={{ fontSize: 12, fontWeight: 700, color: '#DC2626' }}>
+            ⚠️ 학습·출석 기록 저장에 실패했어요. 네트워크를 확인하고 다시 시도해 주세요.
+          </div>
+          {onRetrySave && (
+            <button onClick={onRetrySave} style={{ background: '#DC2626', border: 'none', borderRadius: 10, padding: '7px 11px', fontSize: 11, fontWeight: 800, color: '#FFFFFF', cursor: 'pointer', flexShrink: 0, fontFamily: FONT }}>
+              🔄 재시도
+            </button>
+          )}
         </div>
       )}
       {r.wrongs.length > 0 && (
@@ -1308,7 +1320,9 @@ export default function Msv2Page() {
   const [wordbookTab, setWordbookTab] = useState(null);
   const [makeupDate, setMakeupDate] = useState(null); // 보충 학습 대상 날짜 'YYYY-MM-DD'
   const [isWrongReview, setIsWrongReview] = useState(false);
+  const [saveError, setSaveError] = useState(null);
   const isSpecialDeckRef = useRef(false);
+  const savedDatesRef = useRef(new Set());
   const originalDailyWordsRef = useRef([]);
   const originalDailyDoneSetRef = useRef(new Set());
   const originalDailyIdxRef = useRef(0);
@@ -1398,9 +1412,11 @@ export default function Msv2Page() {
     originalDailyWordsRef.current = ws || [];
     originalDailyDoneSetRef.current = new Set();
     originalDailyIdxRef.current = 0;
+    savedDatesRef.current = new Set();
     isSpecialDeckRef.current = false;
     setIsWrongReview(false);
     setMakeupDate(null);
+    setSaveError(null);
     try {
       if (u && ws && ws.length) {
         localStorage.setItem(`daily_set_${u.id}_${localDateStr()}`, JSON.stringify(ws));
@@ -1460,25 +1476,62 @@ export default function Msv2Page() {
       setScreen('home');
       return;
     }
+    const dateKey = makeupDate || localDateStr();
     if (user && words.length) {
-      await saveLearnedWords(user, words, makeupDate);
-      setLearnedTotal((n) => n + words.length);
+      const ok = await saveLearnedWords(user, words, makeupDate);
+      if (ok !== false) {
+        savedDatesRef.current.add(dateKey);
+        setSaveError(null);
+        setLearnedTotal((n) => n + words.length);
+      } else {
+        setSaveError({ type: 'learned', dateKey, words });
+      }
     }
     setQuizLevel(1);
     setQuizKey((k) => k + 1);
     setScreen('quiz');
   };
-  // 퀴즈 2단계 완수 → 출석 도장 (보충 모드면 그 날짜에 찍기)
+  // 퀴즈 2단계 완수 → 학습 단어 미저장 시 먼저 저장 보장 후 출석 도장 (보충 모드면 그 날짜에 찍기)
   const recordStamp = async () => {
     if (!user) return null;
     const dateKey = makeupDate || localDateStr();
+    if (words.length && !savedDatesRef.current.has(dateKey)) {
+      const learnedOk = await saveLearnedWords(user, words, makeupDate);
+      if (learnedOk === false) {
+        setSaveError({ type: 'stamp', dateKey, words });
+        return null;
+      }
+      savedDatesRef.current.add(dateKey);
+      setLearnedTotal((n) => n + words.length);
+    }
     const ok = await stampAttendance(user, dateKey);
     if (ok) {
       setStamps((p) => (p.includes(dateKey) ? p : [...p, dateKey]));
+      setSaveError(null);
       if (makeupDate) setMakeupDate(null);
       return dateKey;
     }
+    setSaveError({ type: 'stamp', dateKey, words });
     return null;
+  };
+  const retrySave = async () => {
+    if (!saveError || !user) return false;
+    const { dateKey, words: targetWords, type } = saveError;
+    if (!savedDatesRef.current.has(dateKey) && targetWords && targetWords.length) {
+      const learnedOk = await saveLearnedWords(user, targetWords, dateKey !== localDateStr() ? dateKey : null);
+      if (learnedOk === false) return false;
+      savedDatesRef.current.add(dateKey);
+      setLearnedTotal((n) => n + targetWords.length);
+    }
+    if (type === 'stamp') {
+      const ok = await stampAttendance(user, dateKey);
+      if (!ok) return false;
+      setStamps((p) => (p.includes(dateKey) ? p : [...p, dateKey]));
+      setQuizResult((prev) => (prev ? { ...prev, stampedDate: dateKey } : prev));
+      if (makeupDate) setMakeupDate(null);
+    }
+    setSaveError(null);
+    return true;
   };
   const onQuizDone = (result) => {
     result.wrongs.forEach((w) => toggleWrong(w, true));
@@ -1564,8 +1617,10 @@ export default function Msv2Page() {
     originalDailyWordsRef.current = [];
     originalDailyDoneSetRef.current = new Set();
     originalDailyIdxRef.current = 0;
+    savedDatesRef.current = new Set();
     isSpecialDeckRef.current = false;
     setIsWrongReview(false);
+    setSaveError(null);
     setWords([]); setPool([]); setStamps([]); setDoneSet(new Set()); setQuizResult(null); setMakeupDate(null);
     clearStudentSession();
     setScreen('login');
@@ -1611,7 +1666,7 @@ export default function Msv2Page() {
       />
     ),
     quiz: <QuizScreen key={quizKey} initialLevel={quizLevel} onLevelChange={setQuizLevel} go={go} user={user} words={words} pool={pool} rate={rate} onQuizDone={onQuizDone} recordStamp={recordStamp} makeupDate={makeupDate} exitMakeup={exitMakeup} />,
-    quizdone: <QuizDoneScreen go={go} result={quizResult} onReviewWrong={reviewWrong} onNextLevel={handleNextQuizLevel} />,
+    quizdone: <QuizDoneScreen go={go} result={quizResult} onReviewWrong={reviewWrong} onNextLevel={handleNextQuizLevel} saveError={saveError} onRetrySave={retrySave} />,
     wordbook: <WordbookScreen user={user} words={words} pool={pool} favs={favs} toggleFav={toggleFav} wrongWords={wrongWords} rate={rate} initialTab={wordbookTab} go={go} />,
     calendar: <CalendarScreen go={go} user={user} stamps={stamps} onRestudy={restudyDate} startMakeup={startMakeup} rate={rate} />,
     stats: <StatsScreen user={user} learnedTotal={learnedTotal} stamps={stamps} lastScore={quizResult ? quizResult.score : null} streak={streak} />,
