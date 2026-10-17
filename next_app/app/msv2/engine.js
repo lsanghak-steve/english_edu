@@ -42,12 +42,12 @@ export async function loadWordsForUser(user) {
     if (level && level !== '전체') {
       q = q.or(`category.eq.${level},grade_level.eq.${level},grade_level_ko.eq.${level}`);
     }
-    const { data } = await q.order('id', { ascending: true }).limit(500);
+    const { data } = await q.order('id', { ascending: true }).limit(5000);
     if (data && data.length) pool = data;
   } catch (e) {}
   if (!pool.length) {
     try {
-      const { data } = await supabase.from('words').select('*').not('word', 'ilike', 'cornell').limit(300);
+      const { data } = await supabase.from('words').select('*').not('word', 'ilike', 'cornell').limit(5000);
       if (data && data.length) pool = data;
     } catch (e) {}
   }

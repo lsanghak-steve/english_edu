@@ -802,9 +802,10 @@ function WordbookScreen({ user, words, pool, favs, toggleFav, wrongWords, onStar
   const [tab, setTab] = useState(initialTab || '전체 단어');
   const [chip, setChip] = useState('전체');
   const [search, setSearch] = useState('');
+  const [visibleCount, setVisibleCount] = useState(40);
   useEffect(() => { if (initialTab) setTab(initialTab); }, [initialTab]);
   const favSet = new Set(favs.map((f) => f.toLowerCase()));
-  const allWords = (pool.length ? pool : words).slice(0, 80);
+  const allWords = (pool && pool.length) ? pool : (words || []);
   let list = tab === '오답노트' ? wrongWords : tab === '내 단어장' ? allWords.filter((w) => favSet.has(cleanWord(w).toLowerCase())) : allWords;
   if (chip === '⭐ 즐겨찾기') list = list.filter((w) => favSet.has(cleanWord(w).toLowerCase()));
   else if (chip !== '전체') list = list.filter((w) => ((w.category || w.grade_level || '') + '').includes(chip));
@@ -812,7 +813,7 @@ function WordbookScreen({ user, words, pool, favs, toggleFav, wrongWords, onStar
     const q = search.trim().toLowerCase();
     list = list.filter((w) => cleanWord(w).toLowerCase().includes(q) || (wordMeaning(w) || '').includes(q));
   }
-  const visibleList = tab === '오답노트' ? list : list.slice(0, 40);
+  const visibleList = tab === '오답노트' ? list : list.slice(0, visibleCount);
   return (
     <div style={{ padding: '60px 20px 0', display: 'flex', flexDirection: 'column', gap: 14 }}>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -821,7 +822,7 @@ function WordbookScreen({ user, words, pool, favs, toggleFav, wrongWords, onStar
       </div>
       <div style={{ background: '#ECEDF4', borderRadius: 14, padding: 4, display: 'flex', gap: 6 }}>
         {['전체 단어', '내 단어장', '오답노트'].map((t) => (
-          <button key={t} onClick={() => setTab(t)} style={{ flex: 1, background: tab === t ? C.surface : 'transparent', border: 'none', borderRadius: 11, padding: '10px 0', fontSize: 13, fontWeight: tab === t ? 700 : 500, color: tab === t ? C.text : C.sub, cursor: 'pointer', fontFamily: FONT }}>
+          <button key={t} onClick={() => { setTab(t); setVisibleCount(40); }} style={{ flex: 1, background: tab === t ? C.surface : 'transparent', border: 'none', borderRadius: 11, padding: '10px 0', fontSize: 13, fontWeight: tab === t ? 700 : 500, color: tab === t ? C.text : C.sub, cursor: 'pointer', fontFamily: FONT }}>
             {t}{t === '오답노트' && wrongWords.length ? ` ${wrongWords.length}` : ''}
           </button>
         ))}
@@ -840,15 +841,18 @@ function WordbookScreen({ user, words, pool, favs, toggleFav, wrongWords, onStar
       )}
       <div style={{ background: C.surface, border: `1.5px solid ${C.border}`, borderRadius: 16, padding: '12px 16px', display: 'flex', alignItems: 'center', gap: 10 }}>
         <span style={{ fontSize: 14 }}>🔍</span>
-        <input placeholder="단어를 검색해보세요" value={search} onChange={(e) => setSearch(e.target.value)}
+        <input placeholder="단어를 검색해보세요" value={search} onChange={(e) => { setSearch(e.target.value); setVisibleCount(40); }}
           style={{ flex: 1, border: 'none', outline: 'none', fontSize: 14, color: C.text, fontFamily: FONT, background: 'transparent' }} />
       </div>
-      <div style={{ display: 'flex', gap: 8 }}>
-        {['전체', '초등', '중등', '⭐ 즐겨찾기'].map((c) => (
-          <button key={c} onClick={() => setChip(c)} style={{ background: chip === c ? C.primary : C.surface, border: chip === c ? 'none' : `1.5px solid ${C.border}`, borderRadius: 999, padding: '8px 14px', fontSize: 12, fontWeight: 700, color: chip === c ? '#FFFFFF' : C.sub, cursor: 'pointer', fontFamily: FONT }}>
-            {c}
-          </button>
-        ))}
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8 }}>
+        <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+          {['전체', '초등', '중등', '⭐ 즐겨찾기'].map((c) => (
+            <button key={c} onClick={() => { setChip(c); setVisibleCount(40); }} style={{ background: chip === c ? C.primary : C.surface, border: chip === c ? 'none' : `1.5px solid ${C.border}`, borderRadius: 999, padding: '8px 14px', fontSize: 12, fontWeight: 700, color: chip === c ? '#FFFFFF' : C.sub, cursor: 'pointer', fontFamily: FONT }}>
+              {c}
+            </button>
+          ))}
+        </div>
+        <span style={{ fontSize: 11, fontWeight: 700, color: C.sub, flexShrink: 0 }}>총 {list.length}개</span>
       </div>
       <div style={{ display: 'flex', flexDirection: 'column', gap: 10, paddingBottom: 16 }}>
         {visibleList.length === 0 && (
@@ -878,6 +882,18 @@ function WordbookScreen({ user, words, pool, favs, toggleFav, wrongWords, onStar
             </div>
           );
         })}
+        {visibleList.length < list.length && (
+          <div style={{ display: 'flex', gap: 8, marginTop: 4 }}>
+            <button onClick={() => setVisibleCount((c) => c + 40)}
+              style={{ flex: 1, background: C.primaryLight, border: 'none', borderRadius: 14, padding: '12px 0', fontSize: 13, fontWeight: 800, color: C.primaryDeep, cursor: 'pointer', fontFamily: FONT }}>
+              더보기 ({visibleList.length} / {list.length}) ↓
+            </button>
+            <button onClick={() => setVisibleCount(list.length)}
+              style={{ background: C.surface, border: `1.5px solid ${C.border}`, borderRadius: 14, padding: '12px 14px', fontSize: 12, fontWeight: 700, color: C.sub, cursor: 'pointer', fontFamily: FONT }}>
+              전체 보기
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );
