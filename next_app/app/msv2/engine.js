@@ -221,17 +221,64 @@ export async function fetchStamps(user) {
   } catch (e) { return []; }
 }
 
-export async function fetchWordsOfDate(user, dateStr) {
+export async function fetchWordsOfDate(user, dateStr, wordPool = []) {
   if (!user?.id) return [];
+  const normKey = (w) => (w?.word || '').replace(/\.png/gi, '').trim().toLowerCase();
+  const richMap = new Map();
+  const registerRich = (arr) => {
+    if (!Array.isArray(arr)) return;
+    for (const item of arr) {
+      const k = normKey(item);
+      if (!k) continue;
+      const prev = richMap.get(k) || {};
+      richMap.set(k, {
+        ...prev,
+        ...item,
+        word: (item.word || prev.word || '').replace(/\.png/gi, '').trim(),
+        meaning: item.meaning || prev.meaning || '',
+        phonics: item.phonics || item.phonetic || prev.phonics || prev.phonetic,
+        example_en: item.example_en || item.exampleEn || prev.example_en || prev.exampleEn,
+        example_ko: item.example_ko || item.exampleKo || prev.example_ko || prev.exampleKo,
+        image_url: item.image_url || item.imageUrl || prev.image_url || prev.imageUrl,
+        category: item.category || item.grade_level || prev.category || prev.grade_level,
+      });
+    }
+  };
+  registerRich(FALLBACK_WORDS);
+  registerRich(wordPool);
+  try {
+    const cacheKeys = [
+      `daily_set_${user.id}_${dateStr}`,
+      `daily_random_set_${user.id}_${dateStr}`,
+      `today_all_learned_${user.id}_${dateStr}`,
+      `stamped_words_${user.id}_${dateStr}`,
+    ];
+    for (const ck of cacheKeys) {
+      const raw = localStorage.getItem(ck);
+      if (raw) registerRich(JSON.parse(raw));
+    }
+  } catch (e) {}
+
   const merged = [];
   const seen = new Set();
   const addList = (arr) => {
     if (!Array.isArray(arr)) return;
     for (const r of arr) {
-      const k = (r?.word || '').replace(/\.png/gi, '').trim().toLowerCase();
+      const k = normKey(r);
       if (!k || seen.has(k)) continue;
       seen.add(k);
-      merged.push(r);
+      const rich = richMap.get(k) || {};
+      merged.push({
+        ...rich,
+        ...r,
+        word: (r.word || rich.word || '').replace(/\.png/gi, '').trim(),
+        meaning: r.meaning || rich.meaning || '',
+        phonics: r.phonics || r.phonetic || rich.phonics || rich.phonetic,
+        example_en: r.example_en || r.exampleEn || rich.example_en || rich.exampleEn,
+        example_ko: r.example_ko || r.exampleKo || rich.example_ko || rich.exampleKo,
+        image_url: r.image_url || r.imageUrl || rich.image_url || rich.imageUrl,
+        category: r.category || r.grade_level || rich.category || rich.grade_level,
+      });
     }
   };
   try {

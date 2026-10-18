@@ -1151,7 +1151,7 @@ function WordbookScreen({ user, words, pool, favs, toggleFav, customWords = [], 
 }
 
 // ═══ 06 달력 (보충 학습 흐름 포함) ═══
-function CalendarScreen({ go, user, stamps, onRestudy, startMakeup, rate }) {
+function CalendarScreen({ go, user, stamps, pool = [], onRestudy, startMakeup, rate }) {
   const now = new Date();
   const [ym, setYm] = useState([now.getFullYear(), now.getMonth()]);
   const [sel, setSel] = useState(null); // 'YYYY-MM-DD'
@@ -1170,7 +1170,7 @@ function CalendarScreen({ go, user, stamps, onRestudy, startMakeup, rate }) {
     setSel(k);
     if (stamps.includes(k)) {
       setSelLoading(true);
-      setSelWords(await fetchWordsOfDate(user, k));
+      setSelWords(await fetchWordsOfDate(user, k, pool));
       setSelLoading(false);
     } else {
       setSelWords([]);
@@ -2328,7 +2328,35 @@ export default function Msv2Page() {
     startWrongReview('flashcard', list);
   };
   const restudyDate = (dateWords) => {
-    const list = dateWords.map((w) => ({ word: (w.word || '').replace(/\.png/gi, ''), meaning: w.meaning }));
+    if (!Array.isArray(dateWords) || !dateWords.length) return;
+    const poolMap = new Map();
+    const registerSource = (arr) => {
+      if (!Array.isArray(arr)) return;
+      for (const item of arr) {
+        const k = cleanWord(item).toLowerCase();
+        if (k && !poolMap.has(k)) poolMap.set(k, item);
+      }
+    };
+    registerSource(pool);
+    registerSource(originalDailyWordsRef.current);
+    registerSource(words);
+    registerSource(FALLBACK_WORDS);
+
+    const list = dateWords.map((w) => {
+      const wText = cleanWord(w);
+      const matched = poolMap.get(wText.toLowerCase()) || {};
+      return {
+        ...matched,
+        ...w,
+        word: wText,
+        meaning: wordMeaning(w) || wordMeaning(matched),
+        phonics: w.phonics || w.phonetic || matched.phonics || matched.phonetic,
+        example_en: w.example_en || w.exampleEn || matched.example_en || matched.exampleEn,
+        example_ko: w.example_ko || w.exampleKo || matched.example_ko || matched.exampleKo,
+        image_url: w.image_url || w.imageUrl || matched.image_url || matched.imageUrl,
+        category: w.category || w.grade_level || matched.category || matched.grade_level,
+      };
+    });
     if (list.length) {
       if (!isWrongReview && !makeupDate && !isSpecialDeckRef.current) {
         if (words.length > 0) {
@@ -2488,7 +2516,7 @@ export default function Msv2Page() {
     quiz: <QuizScreen key={quizKey} initialLevel={quizLevel} onLevelChange={setQuizLevel} completedLevels={completedQuizLevels} go={go} user={user} words={words} pool={pool} rate={rate} onQuizDone={onQuizDone} onRecordWrong={(w) => toggleWrong(w, true)} recordStamp={recordStamp} makeupDate={makeupDate} exitMakeup={exitMakeup} isWrongReview={isWrongReview} exitWrongReview={exitWrongReview} userRecordings={userRecordings} onSaveRecording={saveUserRecording} loadError={wordsLoadError} onRetry={() => { if (user) loadAll(user, true); }} onUseFallback={applyFallbackWords} />,
     quizdone: <QuizDoneScreen go={go} result={quizResult} onReviewWrong={reviewWrong} onNextLevel={handleNextQuizLevel} onNextRound={canNextRound ? startNextRound : undefined} studyRound={studyRound} saveError={saveError} onRetrySave={retrySave} />,
     wordbook: <WordbookScreen user={user} words={words} pool={pool} favs={favs} toggleFav={toggleFav} customWords={customWords} onAddCustomWord={addCustomWord} onDeleteCustomWord={deleteCustomWord} wrongWords={wrongWords} onStartWrongReview={startWrongReview} onRemoveWrong={removeWrongWord} rate={rate} initialTab={wordbookTab} go={go} />,
-    calendar: <CalendarScreen go={go} user={user} stamps={stamps} onRestudy={restudyDate} startMakeup={startMakeup} rate={rate} />,
+    calendar: <CalendarScreen go={go} user={user} stamps={stamps} pool={pool} onRestudy={restudyDate} startMakeup={startMakeup} rate={rate} />,
     stats: <StatsScreen user={user} learnedTotal={learnedTotal} repeatCount={repeatCount} stamps={stamps} lastScore={quizResult ? quizResult.score : null} streak={streak} />,
     parent: <ParentScreen user={user} done={doneSet.size} total={words.length || user?.daily || 20} stamps={stamps} learnedTotal={learnedTotal} />,
     profile: <ProfileScreen user={user} onSaveProfile={saveProfile} onLogout={logout} learnedTotal={learnedTotal} stamps={stamps} go={go} wordsTotal={words.length} />,
