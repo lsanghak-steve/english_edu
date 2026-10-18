@@ -798,22 +798,53 @@ function QuizDoneScreen({ go, result, onReviewWrong, onNextLevel, saveError, onR
 }
 
 // ═══ 05 단어장 ═══
-function WordbookScreen({ user, words, pool, favs, toggleFav, wrongWords, onStartWrongReview, onRemoveWrong, rate, initialTab, go }) {
+function WordbookScreen({ user, words, pool, favs, toggleFav, customWords = [], onAddCustomWord, onDeleteCustomWord, wrongWords, onStartWrongReview, onRemoveWrong, rate, initialTab, go }) {
   const [tab, setTab] = useState(initialTab || '전체 단어');
   const [chip, setChip] = useState('전체');
   const [search, setSearch] = useState('');
   const [visibleCount, setVisibleCount] = useState(40);
+  const [customWordInput, setCustomWordInput] = useState('');
+  const [customMeaningInput, setCustomMeaningInput] = useState('');
+  const [customPhonicsInput, setCustomPhonicsInput] = useState('');
   useEffect(() => { if (initialTab) setTab(initialTab); }, [initialTab]);
   const favSet = new Set(favs.map((f) => f.toLowerCase()));
+  const customSet = new Set((customWords || []).map((c) => cleanWord(c).toLowerCase()).filter(Boolean));
   const allWords = (pool && pool.length) ? pool : (words || []);
-  let list = tab === '오답노트' ? wrongWords : tab === '내 단어장' ? allWords.filter((w) => favSet.has(cleanWord(w).toLowerCase())) : allWords;
-  if (chip === '⭐ 즐겨찾기') list = list.filter((w) => favSet.has(cleanWord(w).toLowerCase()));
+  const myWordbookList = (() => {
+    const merged = [];
+    const seen = new Set();
+    for (const cw of (customWords || [])) {
+      const k = cleanWord(cw).toLowerCase();
+      if (!k || seen.has(k)) continue;
+      seen.add(k);
+      merged.push(cw);
+    }
+    for (const w of allWords) {
+      const k = cleanWord(w).toLowerCase();
+      if (!k || seen.has(k) || !favSet.has(k)) continue;
+      seen.add(k);
+      merged.push(w);
+    }
+    return merged;
+  })();
+  let list = tab === '오답노트' ? wrongWords : tab === '내 단어장' ? myWordbookList : allWords;
+  if (chip === '⭐ 즐겨찾기') list = list.filter((w) => favSet.has(cleanWord(w).toLowerCase()) || customSet.has(cleanWord(w).toLowerCase()));
   else if (chip !== '전체') list = list.filter((w) => ((w.category || w.grade_level || '') + '').includes(chip));
   if (search.trim()) {
     const q = search.trim().toLowerCase();
     list = list.filter((w) => cleanWord(w).toLowerCase().includes(q) || (wordMeaning(w) || '').includes(q));
   }
   const visibleList = tab === '오답노트' ? list : list.slice(0, visibleCount);
+  const submitCustomWord = () => {
+    const w = customWordInput.trim();
+    const m = customMeaningInput.trim();
+    const p = customPhonicsInput.trim();
+    if (!w || !m) return;
+    if (onAddCustomWord) onAddCustomWord({ word: w, meaning: m, phonics: p });
+    setCustomWordInput('');
+    setCustomMeaningInput('');
+    setCustomPhonicsInput('');
+  };
   return (
     <div style={{ padding: '60px 20px 0', display: 'flex', flexDirection: 'column', gap: 14 }}>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -823,10 +854,30 @@ function WordbookScreen({ user, words, pool, favs, toggleFav, wrongWords, onStar
       <div style={{ background: '#ECEDF4', borderRadius: 14, padding: 4, display: 'flex', gap: 6 }}>
         {['전체 단어', '내 단어장', '오답노트'].map((t) => (
           <button key={t} onClick={() => { setTab(t); setVisibleCount(40); }} style={{ flex: 1, background: tab === t ? C.surface : 'transparent', border: 'none', borderRadius: 11, padding: '10px 0', fontSize: 13, fontWeight: tab === t ? 700 : 500, color: tab === t ? C.text : C.sub, cursor: 'pointer', fontFamily: FONT }}>
-            {t}{t === '오답노트' && wrongWords.length ? ` ${wrongWords.length}` : ''}
+            {t}{t === '내 단어장' && myWordbookList.length ? ` ${myWordbookList.length}` : ''}{t === '오답노트' && wrongWords.length ? ` ${wrongWords.length}` : ''}
           </button>
         ))}
       </div>
+      {tab === '내 단어장' && (
+        <div style={{ background: C.surface, border: `1.5px solid ${C.border}`, borderRadius: 18, padding: 14, display: 'flex', flexDirection: 'column', gap: 8 }}>
+          <div style={{ fontSize: 13, fontWeight: 800, color: C.text }}>➕ 나만의 단어 직접 추가</div>
+          <div style={{ display: 'flex', gap: 6 }}>
+            <input placeholder="영단어 (예: flashlight)" value={customWordInput} onChange={(e) => setCustomWordInput(e.target.value)}
+              style={{ flex: 1, minWidth: 0, background: C.input, border: `1px solid ${C.border}`, borderRadius: 10, padding: '9px 10px', fontSize: 12, color: C.text, outline: 'none', fontFamily: FONT }} />
+            <input placeholder="한글 뜻 (예: 손전등)" value={customMeaningInput} onChange={(e) => setCustomMeaningInput(e.target.value)}
+              style={{ flex: 1, minWidth: 0, background: C.input, border: `1px solid ${C.border}`, borderRadius: 10, padding: '9px 10px', fontSize: 12, color: C.text, outline: 'none', fontFamily: FONT }} />
+          </div>
+          <div style={{ display: 'flex', gap: 6 }}>
+            <input placeholder="발음기호/발음 (선택)" value={customPhonicsInput} onChange={(e) => setCustomPhonicsInput(e.target.value)}
+              onKeyDown={(e) => { if (e.key === 'Enter') submitCustomWord(); }}
+              style={{ flex: 1, minWidth: 0, background: C.input, border: `1px solid ${C.border}`, borderRadius: 10, padding: '9px 10px', fontSize: 12, color: C.text, outline: 'none', fontFamily: FONT }} />
+            <button onClick={submitCustomWord}
+              style={{ background: C.primary, border: 'none', borderRadius: 10, padding: '9px 14px', fontSize: 12, fontWeight: 800, color: '#FFFFFF', cursor: 'pointer', fontFamily: FONT, flexShrink: 0 }}>
+              + 단어 추가
+            </button>
+          </div>
+        </div>
+      )}
       {tab === '오답노트' && wrongWords.length > 0 && (
         <div style={{ display: 'flex', gap: 8 }}>
           <button onClick={() => onStartWrongReview && onStartWrongReview('flashcard')}
@@ -863,16 +914,25 @@ function WordbookScreen({ user, words, pool, favs, toggleFav, wrongWords, onStar
         {visibleList.map((w, i) => {
           const key = cleanWord(w).toLowerCase();
           const isWrong = wrongWords.some((x) => cleanWord(x).toLowerCase() === key);
+          const isCustom = customSet.has(key) || Boolean(w.isCustom) || w.category === '나만의 단어';
           return (
             <div key={key + i} style={{ background: C.surface, borderRadius: 18, padding: '14px 16px', display: 'flex', alignItems: 'center', gap: 12 }}>
               <button onClick={() => speak(cleanWord(w), rate)} style={{ width: 38, height: 38, borderRadius: 12, background: C.primaryLight, border: 'none', fontSize: 14, cursor: 'pointer', flexShrink: 0 }}>🔊</button>
               <div style={{ flex: 1, minWidth: 0 }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
                   <span style={{ fontSize: 16, fontWeight: 700, color: C.text }}>{cleanWord(w)}</span>
+                  {isCustom && <Pill bg={C.amberBg} color={C.amber} style={{ padding: '2px 8px', fontSize: 10 }}>나만의 단어</Pill>}
                   {isWrong && <Pill bg="#FEEDF0" color={C.red} style={{ padding: '2px 8px', fontSize: 10 }}>오답</Pill>}
                 </div>
-                <div style={{ fontSize: 12, color: C.sub, marginTop: 2 }}>{wordMeaning(w)}{(w.category || w.grade_level) ? ` · ${w.category || w.grade_level}` : ''}</div>
+                <div style={{ fontSize: 12, color: C.sub, marginTop: 2 }}>
+                  {wordMeaning(w)}{w.phonics ? ` [${w.phonics}]` : ''}{(w.category || w.grade_level) ? ` · ${w.category || w.grade_level}` : ''}
+                </div>
               </div>
+              {isCustom && onDeleteCustomWord && (
+                <button onClick={() => onDeleteCustomWord(w.id ?? cleanWord(w))} style={{ background: '#FEEDF0', border: '1px solid #FCA5A5', borderRadius: 999, padding: '4px 10px', fontSize: 11, fontWeight: 800, color: C.red, cursor: 'pointer', fontFamily: FONT, flexShrink: 0 }}>
+                  🗑️ 삭제
+                </button>
+              )}
               {isWrong && onRemoveWrong && (
                 <button onClick={() => onRemoveWrong(w)} style={{ background: C.greenBg, border: `1px solid ${C.green}`, borderRadius: 999, padding: '4px 10px', fontSize: 11, fontWeight: 800, color: C.greenDeep, cursor: 'pointer', fontFamily: FONT, flexShrink: 0 }}>
                   ✅ 마스터
@@ -1397,6 +1457,7 @@ export default function Msv2Page() {
   const [rate, setRate] = useState(1.0);
   const [wrongWords, setWrongWords] = useState([]);
   const [favs, setFavs] = useState([]);
+  const [customWords, setCustomWords] = useState([]);
   const [quizResult, setQuizResult] = useState(null);
   const [quizKey, setQuizKey] = useState(0);
   const [quizLevel, setQuizLevel] = useState(1);
@@ -1520,6 +1581,49 @@ export default function Msv2Page() {
     return merged;
   };
 
+  const persistCustomWords = (uid, list) => {
+    if (!uid) return;
+    try {
+      const json = JSON.stringify(list);
+      localStorage.setItem(`my_vocab_${uid}`, json);
+      localStorage.setItem(`msv2_custom_${uid}`, json);
+    } catch (e) {}
+  };
+
+  const loadCustomWordsFromStorage = (uid) => {
+    if (!uid) return [];
+    const merged = [];
+    const seen = new Set();
+    const keys = [`my_vocab_${uid}`, `msv2_custom_${uid}`];
+    for (const k of keys) {
+      try {
+        const raw = localStorage.getItem(k);
+        if (!raw) continue;
+        const arr = JSON.parse(raw);
+        if (!Array.isArray(arr)) continue;
+        for (const item of arr) {
+          const wText = cleanWord(item).trim();
+          const wKey = wText.toLowerCase();
+          if (!wKey || seen.has(wKey)) continue;
+          seen.add(wKey);
+          merged.push({
+            id: item.id || Date.now() + merged.length,
+            word: wText,
+            meaning: wordMeaning(item).trim(),
+            phonics: item.phonics || item.pronunciation || '',
+            category: '나만의 단어',
+            isCustom: true,
+            addedAt: item.addedAt || new Date().toISOString(),
+          });
+        }
+      } catch (e) {}
+    }
+    if (merged.length > 0) {
+      persistCustomWords(uid, merged);
+    }
+    return merged;
+  };
+
   const go = (target) => {
     if (target === 'wordbook:wrong') {
       if (isWrongReview) exitWrongReview();
@@ -1614,6 +1718,7 @@ export default function Msv2Page() {
     setUser(u);
     setWrongWords([]);
     setFavs([]);
+    setCustomWords([]);
     setDoneSet(new Set());
     setIdx(0);
     setCompletedQuizLevels([]);
@@ -1622,6 +1727,7 @@ export default function Msv2Page() {
     try {
       setWrongWords(loadWrongWordsFromStorage(u.id));
       setFavs(JSON.parse(localStorage.getItem(`msv2_fav_${u.id}`) || '[]'));
+      setCustomWords(loadCustomWordsFromStorage(u.id));
     } catch (e) {}
     loadAll(u);
   }, [loadAll]);
@@ -1689,6 +1795,37 @@ export default function Msv2Page() {
       const k = word.toLowerCase();
       const next = prev.includes(k) ? prev.filter((x) => x !== k) : [...prev, k];
       try { if (user) localStorage.setItem(`msv2_fav_${user.id}`, JSON.stringify(next)); } catch (e) {}
+      return next;
+    });
+  };
+  const addCustomWord = ({ word, meaning, phonics }) => {
+    const wText = String(word || '').trim();
+    const mText = String(meaning || '').trim();
+    const pText = String(phonics || '').trim();
+    if (!wText || !mText) return;
+    const wKey = wText.toLowerCase();
+    setCustomWords((prev) => {
+      const filtered = prev.filter((x) => cleanWord(x).toLowerCase() !== wKey);
+      const entry = {
+        id: Date.now(),
+        word: wText,
+        meaning: mText,
+        phonics: pText,
+        category: '나만의 단어',
+        isCustom: true,
+        addedAt: new Date().toISOString(),
+      };
+      const next = [entry, ...filtered];
+      if (user?.id) persistCustomWords(user.id, next);
+      return next;
+    });
+  };
+  const deleteCustomWord = (idOrWord) => {
+    if (idOrWord === undefined || idOrWord === null) return;
+    setCustomWords((prev) => {
+      const targetStr = String(idOrWord).toLowerCase().trim();
+      const next = prev.filter((x) => x.id !== idOrWord && cleanWord(x).toLowerCase() !== targetStr);
+      if (user?.id) persistCustomWords(user.id, next);
       return next;
     });
   };
@@ -1923,6 +2060,7 @@ export default function Msv2Page() {
     setHasRecorded(false);
     setWrongWords([]);
     setFavs([]);
+    setCustomWords([]);
     setWords([]); setPool([]); setStamps([]); setDoneSet(new Set()); setIdx(0); setQuizResult(null); setMakeupDate(null);
     clearStudentSession();
     setScreen('login');
@@ -1973,7 +2111,7 @@ export default function Msv2Page() {
     ),
     quiz: <QuizScreen key={quizKey} initialLevel={quizLevel} onLevelChange={setQuizLevel} completedLevels={completedQuizLevels} go={go} user={user} words={words} pool={pool} rate={rate} onQuizDone={onQuizDone} onRecordWrong={(w) => toggleWrong(w, true)} recordStamp={recordStamp} makeupDate={makeupDate} exitMakeup={exitMakeup} isWrongReview={isWrongReview} exitWrongReview={exitWrongReview} />,
     quizdone: <QuizDoneScreen go={go} result={quizResult} onReviewWrong={reviewWrong} onNextLevel={handleNextQuizLevel} saveError={saveError} onRetrySave={retrySave} />,
-    wordbook: <WordbookScreen user={user} words={words} pool={pool} favs={favs} toggleFav={toggleFav} wrongWords={wrongWords} onStartWrongReview={startWrongReview} onRemoveWrong={removeWrongWord} rate={rate} initialTab={wordbookTab} go={go} />,
+    wordbook: <WordbookScreen user={user} words={words} pool={pool} favs={favs} toggleFav={toggleFav} customWords={customWords} onAddCustomWord={addCustomWord} onDeleteCustomWord={deleteCustomWord} wrongWords={wrongWords} onStartWrongReview={startWrongReview} onRemoveWrong={removeWrongWord} rate={rate} initialTab={wordbookTab} go={go} />,
     calendar: <CalendarScreen go={go} user={user} stamps={stamps} onRestudy={restudyDate} startMakeup={startMakeup} rate={rate} />,
     stats: <StatsScreen user={user} learnedTotal={learnedTotal} repeatCount={repeatCount} stamps={stamps} lastScore={quizResult ? quizResult.score : null} streak={streak} />,
     parent: <ParentScreen user={user} done={doneSet.size} total={words.length || user?.daily || 20} stamps={stamps} learnedTotal={learnedTotal} />,
