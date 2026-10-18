@@ -241,26 +241,37 @@ function HomeScreen({ go, user, done, total, streak, loading, completedQuizLevel
 }
 
 // ═══ 녹음 바텀시트 (피그마 10) ═══
-function RecordingSheet({ word, rate, onClose, onScored, closeHint }) {
+function RecordingSheet({ word, rate, initialAudioUrl = null, userRecordings = {}, onClose, onScored, onAudioRecorded, closeHint }) {
   const [phase, setPhase] = useState('ready');
   const [score, setScore] = useState(null);
   const [recognized, setRecognized] = useState('');
-  const [myUrl, setMyUrl] = useState(null);
+  const [myUrl, setMyUrl] = useState(initialAudioUrl || null);
   const [err, setErr] = useState('');
   const canvasRef = useRef(null);
   const mediaRef = useRef({});
 
-  const stopAll = useCallback(() => {
+  const stopAll = useCallback((cancelPending = false) => {
     const m = mediaRef.current;
+    if (cancelPending) m.cancelled = true;
+    if (m.timer != null) {
+      try { clearTimeout(m.timer); } catch (e) {}
+      m.timer = null;
+    }
     try { if (m.recorder && m.recorder.state !== 'inactive') m.recorder.stop(); } catch (e) {}
     try { if (m.recog) m.recog.stop(); } catch (e) {}
     try { if (m.raf) cancelAnimationFrame(m.raf); } catch (e) {}
     try { if (m.stream) m.stream.getTracks().forEach((t) => t.stop()); } catch (e) {}
     try { if (m.ctx && m.ctx.state !== 'closed') m.ctx.close(); } catch (e) {}
   }, []);
-  useEffect(() => () => stopAll(), [stopAll]);
+  useEffect(() => () => stopAll(true), [stopAll]);
 
   const start = async () => {
+    stopAll(true);
+    const m = mediaRef.current;
+    m.cancelled = false;
+    m.spoken = '';
+    m.lastUrl = null;
+    m.lastScore = null;
     setErr(''); setScore(null); setRecognized('');
     let stream;
     try {
@@ -269,14 +280,25 @@ function RecordingSheet({ word, rate, onClose, onScored, closeHint }) {
       setErr('마이크 권한이 필요해요. 주소창의 🔒에서 마이크를 허용해 주세요.');
       return;
     }
-    const m = mediaRef.current;
+    if (m.cancelled) {
+      try { stream.getTracks().forEach((t) => t.stop()); } catch (e) {}
+      return;
+    }
     m.stream = stream;
     const chunks = [];
     try {
       m.recorder = new MediaRecorder(stream);
-      m.recorder.ondataavailable = (e) => { if (e.data.size) chunks.push(e.data); };
+      m.recorder.ondataavailable = (e) => { if (e.data && e.data.size) chunks.push(e.data); };
       m.recorder.onstop = () => {
-        try { setMyUrl(URL.createObjectURL(new Blob(chunks, { type: 'audio/webm' }))); } catch (e) {}
+        if (m.cancelled) return;
+        try {
+          const url = URL.createObjectURL(new Blob(chunks, { type: 'audio/webm' }));
+          m.lastUrl = url;
+          setMyUrl(url);
+          if (onAudioRecorded && word) {
+            onAudioRecorded(word, { word, url, score: m.lastScore, recognized: m.spoken || '' });
+          }
+        } catch (e) {}
       };
       m.recorder.start();
     } catch (e) {}
@@ -289,6 +311,7 @@ function RecordingSheet({ word, rate, onClose, onScored, closeHint }) {
       srcNode.connect(m.analyser);
       const data = new Uint8Array(m.analyser.frequencyBinCount);
       const draw = () => {
+        if (m.cancelled) return;
         const cv = canvasRef.current;
         if (cv && m.analyser) {
           m.analyser.getByteFrequencyData(data);
@@ -308,13 +331,19 @@ function RecordingSheet({ word, rate, onClose, onScored, closeHint }) {
     } catch (e) {}
     let finished = false;
     const finish = (text) => {
-      if (finished) return;
+      if (finished || m.cancelled) return;
       finished = true;
-      const s = pronScore(word, text);
+      const finalSpoken = text !== undefined && text !== null ? text : (m.spoken || '');
+      m.spoken = finalSpoken;
+      const s = pronScore(word, finalSpoken);
+      m.lastScore = s;
       setScore(s);
-      setRecognized(text || '');
+      setRecognized(finalSpoken || '');
       setPhase('done');
-      stopAll();
+      stopAll(false);
+      if (onAudioRecorded && word) {
+        onAudioRecorded(word, { word, url: m.lastUrl || myUrl || 'recorded', score: s, recognized: finalSpoken || '' });
+      }
       if (onScored) onScored(s);
     };
     const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -327,14 +356,15 @@ function RecordingSheet({ word, rate, onClose, onScored, closeHint }) {
         const alts = [];
         for (let i = 0; i < e.results[0].length; i++) alts.push(e.results[0][i].transcript);
         const best = alts.reduce((a, b) => (pronScore(word, b) > pronScore(word, a) ? b : a), alts[0] || '');
+        m.spoken = best;
         finish(best);
       };
-      m.recog.onerror = () => finish('');
-      m.recog.onend = () => finish('');
+      m.recog.onerror = () => finish(m.spoken || '');
+      m.recog.onend = () => finish(m.spoken || '');
       try { m.recog.start(); } catch (e) {}
     }
     setPhase('recording');
-    setTimeout(() => finish(''), 6000);
+    m.timer = setTimeout(() => finish(m.spoken || ''), 6000);
   };
 
   // 시트가 열리면 바로 녹음 시작 (버튼을 또 누를 필요 없음)
@@ -343,12 +373,23 @@ function RecordingSheet({ word, rate, onClose, onScored, closeHint }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  const wKey = String(word || '').toLowerCase().trim();
+  const effectiveUrl = myUrl || userRecordings?.[wKey]?.url || null;
+  const playRecorded = (urlToPlay, fallbackWord) => {
+    if (!urlToPlay) return;
+    if (urlToPlay === 'recorded' || urlToPlay === 'demo') {
+      if (fallbackWord) speak(fallbackWord, rate);
+      return;
+    }
+    try { new Audio(urlToPlay).play(); } catch (e) {}
+  };
+  const recordedList = Object.values(userRecordings || {}).filter((r) => r && r.word);
   const tip = score !== null ? pronTip(word, score) : null;
   return (
     <div style={{ position: 'absolute', inset: 0, zIndex: 50 }}>
-      <div onClick={() => { stopAll(); onClose(); }} style={{ position: 'absolute', inset: 0, background: 'rgba(17,24,39,0.45)' }} />
-      <div style={{ position: 'absolute', left: 0, right: 0, bottom: 0, background: '#FFFFFF', borderRadius: '28px 28px 0 0', padding: '12px 24px 26px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12 }}>
-        <button onClick={() => { stopAll(); onClose(); }}
+      <div onClick={() => { stopAll(true); onClose(); }} style={{ position: 'absolute', inset: 0, background: 'rgba(17,24,39,0.45)' }} />
+      <div style={{ position: 'absolute', left: 0, right: 0, bottom: 0, background: '#FFFFFF', borderRadius: '28px 28px 0 0', padding: '12px 24px 26px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12, maxHeight: '82%', overflowY: 'auto' }}>
+        <button onClick={() => { stopAll(true); onClose(); }}
           style={{ position: 'absolute', top: 12, right: 14, width: 32, height: 32, borderRadius: 16, border: 'none', background: C.input, color: C.sub, fontSize: 14, fontWeight: 900, cursor: 'pointer', fontFamily: FONT, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
           title="닫기">✕</button>
         <div style={{ width: 44, height: 5, borderRadius: 999, background: C.border }} />
@@ -373,7 +414,11 @@ function RecordingSheet({ word, rate, onClose, onScored, closeHint }) {
                 <span style={{ fontSize: 23, fontWeight: 900, color: tip.tone === 'green' ? C.greenDeep : C.amber }}>{score}점</span>
                 <Pill bg="#FFFFFF" color={tip.tone === 'green' ? C.greenDeep : C.amber} style={{ padding: '3px 9px', fontSize: 11 }}>{tip.icon} {tip.grade}</Pill>
               </div>
-              {recognized && <span style={{ fontSize: 11, fontWeight: 500, color: tip.tone === 'green' ? C.greenDeep : C.amber }}>인식: “{recognized}”</span>}
+              {recognized ? (
+                <span style={{ fontSize: 11, fontWeight: 500, color: tip.tone === 'green' ? C.greenDeep : C.amber }}>인식: “{recognized}”</span>
+              ) : (
+                <span style={{ fontSize: 11, fontWeight: 600, color: C.amber }}>음성 미인식</span>
+              )}
             </div>
             <div style={{ width: '100%', boxSizing: 'border-box', background: C.amberBg, borderRadius: 14, padding: '11px 14px', fontSize: 12, fontWeight: 700, color: C.amber }}>
               {tip.text}
@@ -381,8 +426,8 @@ function RecordingSheet({ word, rate, onClose, onScored, closeHint }) {
           </>
         )}
         <div style={{ width: '100%', display: 'flex', gap: 10 }}>
-          <button onClick={() => { if (myUrl) { try { new Audio(myUrl).play(); } catch (e) {} } }}
-            style={{ flex: 1, padding: '13px 0', borderRadius: 16, border: `1.5px solid ${C.border}`, background: '#FFFFFF', fontSize: 14, fontWeight: 700, color: myUrl ? C.text : '#C0C4CE', cursor: myUrl ? 'pointer' : 'default', fontFamily: FONT }}>
+          <button onClick={() => playRecorded(effectiveUrl, word)}
+            style={{ flex: 1, padding: '13px 0', borderRadius: 16, border: `1.5px solid ${C.border}`, background: '#FFFFFF', fontSize: 14, fontWeight: 700, color: effectiveUrl ? C.text : '#C0C4CE', cursor: effectiveUrl ? 'pointer' : 'default', fontFamily: FONT }}>
             🎧 내 발음 듣기
           </button>
           <button onClick={() => speak(word, rate)}
@@ -390,6 +435,22 @@ function RecordingSheet({ word, rate, onClose, onScored, closeHint }) {
             🔊 원어민과 비교
           </button>
         </div>
+        {recordedList.length > 0 && (
+          <div style={{ width: '100%', boxSizing: 'border-box', background: C.input, borderRadius: 14, padding: '10px 12px', display: 'flex', flexDirection: 'column', gap: 6 }}>
+            <div style={{ fontSize: 11, fontWeight: 800, color: C.sub }}>🎙️ 단어별 내 녹음 목록 ({recordedList.length})</div>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+              {recordedList.map((rec) => (
+                <button key={rec.word} onClick={() => playRecorded(rec.url, rec.word)}
+                  style={{ background: '#FFFFFF', border: `1px solid ${C.border}`, borderRadius: 999, padding: '4px 10px', fontSize: 11, fontWeight: 700, color: C.text, cursor: 'pointer', fontFamily: FONT, display: 'inline-flex', alignItems: 'center', gap: 4 }}>
+                  <span>🎧 {rec.word}</span>
+                  {rec.score !== null && rec.score !== undefined && (
+                    <span style={{ color: rec.score >= 55 ? C.greenDeep : C.amber, fontWeight: 800 }}>{rec.score}점</span>
+                  )}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
         {score !== null && closeHint && (
           <div style={{ fontSize: 12, fontWeight: 700, color: C.primaryDeep }}>{closeHint}</div>
         )}
@@ -399,7 +460,7 @@ function RecordingSheet({ word, rate, onClose, onScored, closeHint }) {
 }
 
 // ═══ 03 플래시카드 ═══
-function FlashcardScreen({ go, user, words, loading, idx, setIdx, markDone, wrongWords, toggleWrong, onRemoveWrong, rate, cycleRate, onFinishSet, makeupDate, exitMakeup, isWrongReview, exitWrongReview, studyRound = 1, todayAllCount = 0, onNextRound }) {
+function FlashcardScreen({ go, user, words, loading, idx, setIdx, markDone, wrongWords, toggleWrong, onRemoveWrong, rate, cycleRate, onFinishSet, makeupDate, exitMakeup, isWrongReview, exitWrongReview, studyRound = 1, todayAllCount = 0, onNextRound, userRecordings = {}, onSaveRecording }) {
   const [flipped, setFlipped] = useState(false);
   const [sheet, setSheet] = useState(false);
   const lastScoreRef = useRef(null);
@@ -407,6 +468,7 @@ function FlashcardScreen({ go, user, words, loading, idx, setIdx, markDone, wron
   const total = words.length || 1;
   const wkey = cleanWord(w).toLowerCase();
   const isWrong = wrongWords.some((x) => cleanWord(x).toLowerCase() === wkey);
+  const curRecording = userRecordings?.[wkey] || null;
 
   useEffect(() => {
     if (w && !flipped && !sheet) speak(cleanWord(w), rate);
@@ -441,6 +503,15 @@ function FlashcardScreen({ go, user, words, loading, idx, setIdx, markDone, wron
     const s = lastScoreRef.current;
     lastScoreRef.current = null;
     if (s !== null && s !== undefined) next(s >= 55);
+  };
+  const playWordRecording = (e) => {
+    if (e && e.stopPropagation) e.stopPropagation();
+    if (!curRecording?.url) return;
+    if (curRecording.url === 'recorded' || curRecording.url === 'demo') {
+      speak(cleanWord(w), rate);
+      return;
+    }
+    try { new Audio(curRecording.url).play(); } catch (err) {}
   };
   const face = {
     position: 'absolute', inset: 0, borderRadius: 32, backfaceVisibility: 'hidden',
@@ -478,6 +549,11 @@ function FlashcardScreen({ go, user, words, loading, idx, setIdx, markDone, wron
               <span style={{ fontSize: 14, fontWeight: 700, color: C.sub }}>{w.phonics || w.phonetic || ''}</span>
               <button onClick={(e) => { e.stopPropagation(); speak(cleanWord(w), rate); }} style={{ width: 36, height: 36, borderRadius: '50%', background: C.primaryLight, border: 'none', fontSize: 15, cursor: 'pointer' }}>🔊</button>
               <button onClick={(e) => { e.stopPropagation(); setSheet(true); }} style={{ width: 36, height: 36, borderRadius: '50%', background: C.greenBg, border: 'none', fontSize: 15, cursor: 'pointer' }} title="발음 연습">🎙️</button>
+              {curRecording && (
+                <button onClick={playWordRecording} style={{ height: 36, padding: '0 11px', borderRadius: 999, background: C.amberBg, border: 'none', fontSize: 12, fontWeight: 800, color: C.amber, cursor: 'pointer', fontFamily: FONT }} title="내 녹음 듣기">
+                  🎧 {curRecording.score != null ? `${curRecording.score}점` : '내 발음'}
+                </button>
+              )}
             </div>
             <div style={{ background: C.primaryLight, borderRadius: 999, padding: '7px 22px', fontSize: 18, fontWeight: 900, color: C.primaryDeep }}>{wordMeaning(w)}</div>
             <div style={{ fontSize: 12, fontWeight: 500, color: C.sub }}>카드를 탭하면 예문이 나와요 👆</div>
@@ -524,7 +600,18 @@ function FlashcardScreen({ go, user, words, loading, idx, setIdx, markDone, wron
           <div key={i} style={{ width: i === idx ? 16 : 6, height: 6, borderRadius: 999, background: i === idx ? C.primary : C.border, transition: 'width 0.2s' }} />
         ))}
       </div>
-      {sheet && <RecordingSheet word={cleanWord(w)} rate={rate} onClose={closeSheet} onScored={(s) => { lastScoreRef.current = s; }} closeHint="✕ 를 누르면 다음 단어로 넘어가요 👉" />}
+      {sheet && (
+        <RecordingSheet
+          word={cleanWord(w)}
+          rate={rate}
+          initialAudioUrl={curRecording?.url || null}
+          userRecordings={userRecordings}
+          onClose={closeSheet}
+          onScored={(s) => { lastScoreRef.current = s; }}
+          onAudioRecorded={(wStr, recInfo) => { if (onSaveRecording) onSaveRecording(wStr, recInfo); }}
+          closeHint="✕ 를 누르면 다음 단어로 넘어가요 👉"
+        />
+      )}
     </div>
   );
 }
@@ -537,7 +624,7 @@ const LEVELS = [
   { lv: 4, label: '4단계 ✍️ 쓰기', tag: '선택' },
 ];
 
-function QuizScreen({ initialLevel = 1, onLevelChange, completedLevels = [], go, user, words, pool, rate, onQuizDone, onRecordWrong, recordStamp, makeupDate, exitMakeup, isWrongReview, exitWrongReview }) {
+function QuizScreen({ initialLevel = 1, onLevelChange, completedLevels = [], go, user, words, pool, rate, onQuizDone, onRecordWrong, recordStamp, makeupDate, exitMakeup, isWrongReview, exitWrongReview, userRecordings = {}, onSaveRecording }) {
   const [level, setLevel] = useState(initialLevel);
   const [qIdx, setQIdx] = useState(0);
   const [score, setScore] = useState(0);
@@ -655,6 +742,7 @@ function QuizScreen({ initialLevel = 1, onLevelChange, completedLevels = [], go,
   if (!w) {
     return <div style={{ padding: '120px 20px', textAlign: 'center', color: C.sub, fontWeight: 700 }}>오늘 단어를 먼저 불러와 주세요 (홈 → 학습)</div>;
   }
+  const curWKey = cleanWord(w).toLowerCase();
   return (
     <div style={{ padding: '56px 20px 24px', display: 'flex', flexDirection: 'column', gap: 12, height: '100%', boxSizing: 'border-box', position: 'relative' }}>
       <MakeupBanner makeupDate={makeupDate} onExit={() => { clearAutoAdvance(); exitMakeup(); go('calendar'); }} kind="quiz" />
@@ -742,7 +830,17 @@ function QuizScreen({ initialLevel = 1, onLevelChange, completedLevels = [], go,
         style={{ marginTop: 'auto', background: answered ? C.primary : '#C7CAF5', border: 'none', borderRadius: 18, padding: '16px 0', fontSize: 16, fontWeight: 700, color: '#FFFFFF', cursor: answered ? 'pointer' : 'default', fontFamily: FONT }}>
         {qIdx + 1 < total ? '다음 문제 →' : level === 2 ? '💮 2단계 완수 & 출석 도장 받기 →' : `${level}단계 완료 →`}
       </button>
-      {sheet && <RecordingSheet word={cleanWord(w)} rate={rate} onClose={() => setSheet(false)} onScored={onPronScored} />}
+      {sheet && (
+        <RecordingSheet
+          word={cleanWord(w)}
+          rate={rate}
+          initialAudioUrl={userRecordings?.[curWKey]?.url || null}
+          userRecordings={userRecordings}
+          onClose={() => setSheet(false)}
+          onScored={onPronScored}
+          onAudioRecorded={(wStr, recInfo) => { if (onSaveRecording) onSaveRecording(wStr, recInfo); }}
+        />
+      )}
     </div>
   );
 }
@@ -1495,6 +1593,7 @@ export default function Msv2Page() {
   const [hasRecorded, setHasRecorded] = useState(false);
   const [studyRound, setStudyRound] = useState(1);
   const [todayAllLearned, setTodayAllLearned] = useState([]);
+  const [userRecordings, setUserRecordings] = useState({});
   const isSpecialDeckRef = useRef(false);
   const savedDatesRef = useRef(new Set());
   const learnedWordsSetRef = useRef(new Set());
@@ -1794,6 +1893,7 @@ export default function Msv2Page() {
     setWrongWords([]);
     setFavs([]);
     setCustomWords([]);
+    setUserRecordings({});
     setDoneSet(new Set());
     setIdx(0);
     setStudyRound(1);
@@ -2193,6 +2293,33 @@ export default function Msv2Page() {
     } catch (e) {}
     loadAll(u, true);
   };
+  const saveUserRecording = (wordStr, recInfo) => {
+    const wText = cleanWord(wordStr).trim();
+    const wKey = wText.toLowerCase();
+    if (!wKey) return;
+    setUserRecordings((prev) => {
+      const existing = prev[wKey] || {};
+      const nextUrl = recInfo?.url && recInfo.url !== 'recorded' ? recInfo.url : (existing.url || recInfo?.url || 'recorded');
+      const nextScore = recInfo?.score !== undefined && recInfo?.score !== null ? recInfo.score : existing.score;
+      const nextRecog = recInfo?.recognized !== undefined ? recInfo.recognized : (existing.recognized || '');
+      return {
+        ...prev,
+        [wKey]: {
+          word: wText,
+          url: nextUrl,
+          score: nextScore,
+          recognized: nextRecog,
+          updatedAt: new Date().toISOString(),
+        },
+      };
+    });
+    if (recInfo?.score >= 55 && user?.id && !makeupDate) {
+      const today = localDateStr();
+      setHasRecorded(true);
+      try { localStorage.setItem(`record_mission_${user.id}_${today}`, 'true'); } catch (e) {}
+      saveDailyProgress(user.id, today, { hasRecorded: true });
+    }
+  };
   const logout = () => {
     setUser(null);
     originalDailyWordsRef.current = [];
@@ -2211,6 +2338,7 @@ export default function Msv2Page() {
     setWrongWords([]);
     setFavs([]);
     setCustomWords([]);
+    setUserRecordings({});
     setWords([]); setPool([]); setStamps([]); setDoneSet(new Set()); setIdx(0); setQuizResult(null); setMakeupDate(null);
     clearStudentSession();
     setScreen('login');
@@ -2261,9 +2389,11 @@ export default function Msv2Page() {
         studyRound={studyRound}
         todayAllCount={todayAllLearned.length}
         onNextRound={canNextRound ? startNextRound : undefined}
+        userRecordings={userRecordings}
+        onSaveRecording={saveUserRecording}
       />
     ),
-    quiz: <QuizScreen key={quizKey} initialLevel={quizLevel} onLevelChange={setQuizLevel} completedLevels={completedQuizLevels} go={go} user={user} words={words} pool={pool} rate={rate} onQuizDone={onQuizDone} onRecordWrong={(w) => toggleWrong(w, true)} recordStamp={recordStamp} makeupDate={makeupDate} exitMakeup={exitMakeup} isWrongReview={isWrongReview} exitWrongReview={exitWrongReview} />,
+    quiz: <QuizScreen key={quizKey} initialLevel={quizLevel} onLevelChange={setQuizLevel} completedLevels={completedQuizLevels} go={go} user={user} words={words} pool={pool} rate={rate} onQuizDone={onQuizDone} onRecordWrong={(w) => toggleWrong(w, true)} recordStamp={recordStamp} makeupDate={makeupDate} exitMakeup={exitMakeup} isWrongReview={isWrongReview} exitWrongReview={exitWrongReview} userRecordings={userRecordings} onSaveRecording={saveUserRecording} />,
     quizdone: <QuizDoneScreen go={go} result={quizResult} onReviewWrong={reviewWrong} onNextLevel={handleNextQuizLevel} onNextRound={canNextRound ? startNextRound : undefined} studyRound={studyRound} saveError={saveError} onRetrySave={retrySave} />,
     wordbook: <WordbookScreen user={user} words={words} pool={pool} favs={favs} toggleFav={toggleFav} customWords={customWords} onAddCustomWord={addCustomWord} onDeleteCustomWord={deleteCustomWord} wrongWords={wrongWords} onStartWrongReview={startWrongReview} onRemoveWrong={removeWrongWord} rate={rate} initialTab={wordbookTab} go={go} />,
     calendar: <CalendarScreen go={go} user={user} stamps={stamps} onRestudy={restudyDate} startMakeup={startMakeup} rate={rate} />,

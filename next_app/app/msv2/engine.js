@@ -202,12 +202,13 @@ export const wordImgSrc = (w) => {
   return clean ? `/word_img/${clean}.png` : '/word_img/apple.png';
 };
 
-// ── 발음 유사도 채점 (1세대 / 의 관용 알고리즘 이식) ──
+// ── 발음 유사도 채점 (미인식·무관 발음과 실제 유사 발음 구분) ──
 const phonemeNorm = (s) =>
   s.toLowerCase().replace(/[^a-z]/g, '')
-    .replace(/ph/g, 'f').replace(/th/g, 't').replace(/c/g, 'k')
-    .replace(/z/g, 's').replace(/v/g, 'b').replace(/r/g, 'l')
-    .replace(/[aeiou]+/g, 'a');
+    .replace(/ph/g, 'f').replace(/ck/g, 'k').replace(/c(?=[eiy])/g, 's')
+    .replace(/th/g, 't').replace(/c/g, 'k').replace(/q/g, 'k')
+    .replace(/z/g, 's').replace(/x/g, 'ks').replace(/v/g, 'b').replace(/r/g, 'l')
+    .replace(/[aeiouy]+/g, 'a');
 
 const levenshtein = (a, b) => {
   const m = a.length, n = b.length;
@@ -225,26 +226,44 @@ const levenshtein = (a, b) => {
 export function pronScore(target, recognized) {
   const t = (target || '').toLowerCase().replace(/[^a-z\s]/g, '').trim();
   const r = (recognized || '').toLowerCase().replace(/[^a-z\s]/g, '').trim();
-  if (!r) return 60; // 마이크 입력만으로도 기본 격려 점수
+  if (!t || !r) return 0; // 미인식·무음 입력은 0점 (불합격 처리)
   if (t === r) return 100;
-  if (r.includes(t) || t.includes(r)) return 98; // "the apple" 류 포함 관계 관용 인정
-  if (phonemeNorm(t) === phonemeNorm(r)) return 95; // c/k, r/l 등 음운 변이 인정
-  const d = levenshtein(t.replace(/\s/g, ''), r.replace(/\s/g, ''));
-  const maxLen = Math.max(t.length, r.length, 1);
-  return Math.max(60, Math.round(100 - (d / maxLen) * 80));
+  const tClean = t.replace(/\s/g, '');
+  const rClean = r.replace(/\s/g, '');
+  if (!tClean || !rClean) return 0;
+  if (tClean === rClean) return 100;
+  if (tClean.length >= 2 && rClean.includes(tClean)) return 98; // "the apple" 류 포함 관계 관용 인정
+  if (rClean.length >= Math.max(2, Math.ceil(tClean.length * 0.65)) && tClean.includes(rClean)) return 92;
+  const normT = phonemeNorm(tClean);
+  const normR = phonemeNorm(rClean);
+  if (normT && normT === normR) return 95; // c/k, r/l 등 음운 변이 인정
+  const d = levenshtein(tClean, rClean);
+  const maxLen = Math.max(tClean.length, rClean.length, 1);
+  const similarity = Math.max(0, (maxLen - d) / maxLen);
+  const normD = levenshtein(normT, normR);
+  const normMaxLen = Math.max(normT.length, normR.length, 1);
+  const normSimilarity = Math.max(0, (normMaxLen - normD) / normMaxLen);
+  const bestRatio = Math.max(similarity, normSimilarity * 0.95);
+  return Math.max(10, Math.min(100, Math.round(bestRatio * 100)));
 }
 
-// ── 발음 교정 팁 (msv1 getAIPronunciationGuideTip 축약 한국어판) ──
+// ── 발음 교정 팁 (msv1 getAIPronunciationGuideTip 한국어판, 미인식·재도전·합격 구분) ──
 export function pronTip(word, score) {
   const w = (word || '').toLowerCase();
-  if (score >= 80) return { icon: '🎉', grade: '원어민급', text: `[${word}] 원어민 수준의 완벽한 발음이에요! 억양도 아주 자연스러워요. 👏`, tone: 'green' };
-  if (score >= 55) {
-    let hint = '또박또박한 발음이 좋아요. 계속 유지해요!';
-    if (/r/.test(w) && /l/.test(w)) hint = 'R은 혀를 말아 올리고, L은 혀끝을 윗니 뒤에 붙여요.';
-    else if (/th/.test(w)) hint = 'TH는 혀끝을 이 사이에 살짝 물고 바람을 내보내요.';
-    else if (/v|f/.test(w)) hint = 'V·F는 윗니를 아랫입술에 살짝 대고 소리내요.';
-    else if (/sh|ch/.test(w)) hint = 'SH는 입술을 둥글게, CH는 혀로 입천장을 쳐요.';
-    return { icon: '👍', grade: '합격', text: `[${word}] 55점 합격! ${hint} 🌟`, tone: 'green' };
+  if (score === 0) {
+    return { icon: '🎙️', grade: '미인식', text: `[${word}] 음성이 인식되지 않았어요. 마이크 가까이에서 또박또박 다시 발음해 보세요!`, tone: 'amber' };
   }
-  return { icon: '💡', grade: '연습', text: `[${word}] 조금만 더! 원어민 소리를 듣고 천천히 따라 말해 보세요.`, tone: 'amber' };
+  if (score >= 80) return { icon: '🎉', grade: '원어민급', text: `[${word}] 원어민 수준의 완벽한 발음이에요! 억양도 아주 자연스러워요. 👏`, tone: 'green' };
+  let hint = '원어민 소리를 듣고 강세에 맞춰 또박또박 발음해 보세요.';
+  if (/r/.test(w) && /l/.test(w)) hint = 'R은 혀를 말아 올리고, L은 혀끝을 윗니 뒤에 붙여요.';
+  else if (/r/.test(w)) hint = 'R은 혀끝을 입천장에 대지 않고 안쪽으로 살짝 말아 소리내요.';
+  else if (/l/.test(w)) hint = 'L은 혀끝을 윗니 바로 뒤 입천장에 꾹 대었다가 떼며 소리내요.';
+  else if (/th/.test(w)) hint = 'TH는 혀끝을 이 사이에 살짝 물고 바람을 내보내요.';
+  else if (/v|f/.test(w)) hint = 'V·F는 윗니를 아랫입술에 살짝 대고 소리내요.';
+  else if (/sh|ch/.test(w)) hint = 'SH는 입술을 둥글게, CH는 혀로 입천장을 쳐요.';
+  if (score >= 55) {
+    return { icon: '👍', grade: '합격', text: `[${word}] ${score}점 합격! ${hint} 🌟`, tone: 'green' };
+  }
+  return { icon: '💡', grade: '재도전', text: `[${word}] ${score}점 · 조금만 더! ${hint}`, tone: 'amber' };
 }
+
