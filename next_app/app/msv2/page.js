@@ -172,7 +172,7 @@ function LoginScreen({ go, onLogin }) {
 }
 
 // ═══ 02 홈 ═══
-function HomeScreen({ go, user, done, total, streak, loading, completedQuizLevels = [], hasRecorded = false, wrongCount = 0 }) {
+function HomeScreen({ go, user, done, total, streak, loading, completedQuizLevels = [], hasRecorded = false, wrongCount = 0, studyRound = 1, todayAllCount = 0, onNextRound }) {
   const first = (user?.name || '친구').replace(/^이|^김|^박/, '');
   const pct = total ? Math.round((done / total) * 100) : 0;
   const menu = [
@@ -195,7 +195,9 @@ function HomeScreen({ go, user, done, total, streak, loading, completedQuizLevel
       <div style={{ background: C.grad, borderRadius: 22, padding: 20, display: 'flex', flexDirection: 'column', gap: 14 }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <div>
-            <div style={{ fontSize: 12, fontWeight: 700, color: '#DEE3FF' }}>{user?.level || '중등단어'} 과정</div>
+            <div style={{ fontSize: 12, fontWeight: 700, color: '#DEE3FF' }}>
+              {user?.level || '중등단어'} 과정{studyRound > 1 ? ` · 제${studyRound}회차` : ''}{todayAllCount > total ? ` (오늘 누적 ${todayAllCount}단어)` : ''}
+            </div>
             <div style={{ fontSize: 20, fontWeight: 900, color: '#FFFFFF', marginTop: 4 }}>
               {loading ? '단어 불러오는 중…' : `오늘의 학습 ${done}/${total}`}
             </div>
@@ -210,6 +212,11 @@ function HomeScreen({ go, user, done, total, streak, loading, completedQuizLevel
         <button onClick={() => go('flashcard')} style={{ background: '#FFFFFF', border: 'none', borderRadius: 14, padding: '14px 0', fontSize: 15, fontWeight: 700, color: C.primaryDeep, cursor: 'pointer', fontFamily: FONT }}>
           {done > 0 ? '이어서 학습하기 →' : '학습 시작하기 →'}
         </button>
+        {onNextRound && (done >= total || completedQuizLevels.includes(2)) && (
+          <button onClick={onNextRound} style={{ background: 'rgba(255,255,255,0.2)', border: '1.5px solid rgba(255,255,255,0.55)', borderRadius: 12, padding: '10px 0', fontSize: 13, fontWeight: 800, color: '#FFFFFF', cursor: 'pointer', fontFamily: FONT }}>
+            🚀 다음 회차 (제{studyRound + 1}회차) 새 단어 학습 →
+          </button>
+        )}
       </div>
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12 }}>
         {menu.map(([icon, label, bg, target]) => (
@@ -392,7 +399,7 @@ function RecordingSheet({ word, rate, onClose, onScored, closeHint }) {
 }
 
 // ═══ 03 플래시카드 ═══
-function FlashcardScreen({ go, user, words, loading, idx, setIdx, markDone, wrongWords, toggleWrong, onRemoveWrong, rate, cycleRate, onFinishSet, makeupDate, exitMakeup, isWrongReview, exitWrongReview }) {
+function FlashcardScreen({ go, user, words, loading, idx, setIdx, markDone, wrongWords, toggleWrong, onRemoveWrong, rate, cycleRate, onFinishSet, makeupDate, exitMakeup, isWrongReview, exitWrongReview, studyRound = 1, todayAllCount = 0, onNextRound }) {
   const [flipped, setFlipped] = useState(false);
   const [sheet, setSheet] = useState(false);
   const lastScoreRef = useRef(null);
@@ -416,6 +423,11 @@ function FlashcardScreen({ go, user, words, loading, idx, setIdx, markDone, wron
     );
   }
   const ex = wordExample(w);
+  const prev = () => {
+    setFlipped(false);
+    if (idx > 0) setIdx(idx - 1);
+    else if (total > 1) setIdx(total - 1);
+  };
   const next = (know) => {
     setFlipped(false);
     if (!know) toggleWrong(w, true);
@@ -443,7 +455,7 @@ function FlashcardScreen({ go, user, words, loading, idx, setIdx, markDone, wron
         <div style={{ flex: 1, textAlign: 'center' }}>
           <div style={{ fontSize: 15, fontWeight: 900, color: C.text }}>{isWrongReview ? '오답 집중 복습' : (user?.level || '단어') + ' 학습'}</div>
           <div style={{ fontSize: 11, color: isWrongReview ? '#DC2626' : (makeupDate ? '#D97706' : C.sub), fontWeight: (isWrongReview || makeupDate) ? 700 : 400 }}>
-            {isWrongReview ? '틀린 단어 다시 익히기' : (makeupDate ? '보충 플래시카드 학습' : '플래시카드 학습')}
+            {isWrongReview ? '틀린 단어 다시 익히기' : (makeupDate ? '보충 플래시카드 학습' : `플래시카드 학습${studyRound > 1 ? ` · 제${studyRound}회차` : ''}${todayAllCount > total ? ` (누적 ${todayAllCount}개)` : ''}`)}
           </div>
         </div>
         <Pill bg={C.input} color={C.sub} onClick={cycleRate} style={{ padding: '6px 10px', fontSize: 12 }}>{rate}x</Pill>
@@ -490,11 +502,20 @@ function FlashcardScreen({ go, user, words, loading, idx, setIdx, markDone, wron
         </button>
       )}
 
-      <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-        <button onClick={() => setSheet(true)} style={{ flex: 1, background: C.grad, border: 'none', borderRadius: 18, padding: '15px 0', fontSize: 15, fontWeight: 700, color: '#FFFFFF', cursor: 'pointer', fontFamily: FONT }}>
+      {!isWrongReview && !makeupDate && onNextRound && (
+        <button onClick={onNextRound} style={{ background: '#FFF7ED', border: '1.5px solid #FDBA74', borderRadius: 14, padding: '8px 0', fontSize: 12, fontWeight: 800, color: '#C2410C', cursor: 'pointer', fontFamily: FONT }}>
+          🚀 다음 회차 (제{studyRound + 1}회차) 미학습 단어 배정 →
+        </button>
+      )}
+
+      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+        <button onClick={prev} style={{ background: C.surface, border: `1.5px solid ${C.border}`, borderRadius: 16, padding: '14px 12px', fontSize: 13, fontWeight: 700, color: C.text, cursor: 'pointer', fontFamily: FONT }}>
+          ◀ 이전
+        </button>
+        <button onClick={() => setSheet(true)} style={{ flex: 1, background: C.grad, border: 'none', borderRadius: 18, padding: '15px 0', fontSize: 14, fontWeight: 700, color: '#FFFFFF', cursor: 'pointer', fontFamily: FONT }}>
           🎙️ 발음하고 다음으로
         </button>
-        <button onClick={() => next(true)} style={{ background: 'none', border: 'none', fontSize: 13, fontWeight: 700, color: C.sub, cursor: 'pointer', fontFamily: FONT, padding: '0 6px' }}>
+        <button onClick={() => next(true)} style={{ background: C.surface, border: `1.5px solid ${C.border}`, borderRadius: 16, padding: '14px 12px', fontSize: 13, fontWeight: 700, color: C.sub, cursor: 'pointer', fontFamily: FONT }}>
           건너뛰기 →
         </button>
       </div>
@@ -727,7 +748,7 @@ function QuizScreen({ initialLevel = 1, onLevelChange, completedLevels = [], go,
 }
 
 // ═══ 11 퀴즈 완료 ═══
-function QuizDoneScreen({ go, result, onReviewWrong, onNextLevel, saveError, onRetrySave }) {
+function QuizDoneScreen({ go, result, onReviewWrong, onNextLevel, onNextRound, studyRound = 1, saveError, onRetrySave }) {
   const r = result || { level: 2, score: 0, correct: 0, total: 10, timeStr: '0:00', wrongs: [], stampedDate: null };
   const sd = r.stampedDate ? r.stampedDate.split('-').map(Number) : null;
   return (
@@ -785,6 +806,11 @@ function QuizDoneScreen({ go, result, onReviewWrong, onNextLevel, saveError, onR
       {r.nextLevel && (
         <button onClick={() => onNextLevel(r.nextLevel)} style={{ width: '100%', background: C.primaryLight, border: 'none', borderRadius: 18, padding: '14px 0', fontSize: 15, fontWeight: 700, color: C.primaryDeep, cursor: 'pointer', fontFamily: FONT }}>
           🌟 {r.nextLevel}단계 도전하기 {r.nextLevel >= 3 ? '(선택 심화)' : ''} →
+        </button>
+      )}
+      {onNextRound && (
+        <button onClick={onNextRound} style={{ width: '100%', background: '#FFF7ED', border: '1.5px solid #FDBA74', borderRadius: 18, padding: '13px 0', fontSize: 14, fontWeight: 800, color: '#C2410C', cursor: 'pointer', fontFamily: FONT }}>
+          🚀 다음 회차 (제{studyRound + 1}회차) 새 단어 학습하기 →
         </button>
       )}
       <button onClick={() => go('calendar')} style={{ width: '100%', background: C.surface, border: `1.5px solid ${C.border}`, borderRadius: 18, padding: '13px 0', fontSize: 14, fontWeight: 700, color: C.text, cursor: 'pointer', fontFamily: FONT }}>
@@ -1467,6 +1493,8 @@ export default function Msv2Page() {
   const [saveError, setSaveError] = useState(null);
   const [completedQuizLevels, setCompletedQuizLevels] = useState([]);
   const [hasRecorded, setHasRecorded] = useState(false);
+  const [studyRound, setStudyRound] = useState(1);
+  const [todayAllLearned, setTodayAllLearned] = useState([]);
   const isSpecialDeckRef = useRef(false);
   const savedDatesRef = useRef(new Set());
   const learnedWordsSetRef = useRef(new Set());
@@ -1481,6 +1509,45 @@ export default function Msv2Page() {
       const prev = JSON.parse(localStorage.getItem(key) || '{}');
       localStorage.setItem(key, JSON.stringify({ ...prev, ...patch }));
     } catch (e) {}
+  }, []);
+
+  const mergeCumulativeWordsForDate = useCallback((uid, dateStr, extraWords = []) => {
+    if (!uid || !dateStr) return extraWords || [];
+    const merged = [];
+    const seen = new Set();
+    const pushItem = (item) => {
+      if (!item) return;
+      const wText = cleanWord(item).trim();
+      const wKey = wText.toLowerCase();
+      if (!wKey || seen.has(wKey)) return;
+      seen.add(wKey);
+      merged.push({
+        ...item,
+        word: wText,
+        meaning: wordMeaning(item),
+      });
+    };
+    const keys = [
+      `today_all_learned_${uid}_${dateStr}`,
+      `stamped_words_${uid}_${dateStr}`,
+    ];
+    for (const k of keys) {
+      try {
+        const raw = localStorage.getItem(k);
+        if (!raw) continue;
+        const arr = JSON.parse(raw);
+        if (Array.isArray(arr)) arr.forEach(pushItem);
+      } catch (e) {}
+    }
+    if (Array.isArray(extraWords)) extraWords.forEach(pushItem);
+    try {
+      if (merged.length > 0) {
+        const json = JSON.stringify(merged);
+        localStorage.setItem(`today_all_learned_${uid}_${dateStr}`, json);
+        localStorage.setItem(`stamped_words_${uid}_${dateStr}`, json);
+      }
+    } catch (e) {}
+    return merged;
   }, []);
 
   const restoreDailySet = useCallback(() => {
@@ -1669,13 +1736,16 @@ export default function Msv2Page() {
     let restoredIdx = 0;
     let restoredQuizLevels = [];
     let restoredHasRecorded = false;
+    let restoredStudyRound = 1;
     let localStamps = [];
+    let cumulativeToday = ws || [];
     if (uid) {
       try {
         if (ws && ws.length) {
           localStorage.setItem(`daily_set_${uid}_${today}`, JSON.stringify(ws));
           localStorage.setItem(`daily_random_set_${uid}_${today}`, JSON.stringify(ws));
         }
+        cumulativeToday = mergeCumulativeWordsForDate(uid, today, ws);
         const prog = JSON.parse(localStorage.getItem(`msv2_progress_${uid}_${today}`) || '{}');
         const maxLen = ws.length || dailyCount;
         if (Array.isArray(prog.doneIndices)) {
@@ -1683,6 +1753,9 @@ export default function Msv2Page() {
         }
         if (typeof prog.idx === 'number' && prog.idx >= 0 && prog.idx < maxLen) {
           restoredIdx = prog.idx;
+        }
+        if (typeof prog.studyRound === 'number' && prog.studyRound >= 1) {
+          restoredStudyRound = prog.studyRound;
         }
         const qMission = JSON.parse(localStorage.getItem(`quiz_mission_${uid}_${today}`) || 'null');
         if (Array.isArray(qMission)) restoredQuizLevels = qMission;
@@ -1703,6 +1776,8 @@ export default function Msv2Page() {
     setMakeupDate(null);
     setSaveError(null);
     setRepeatCount(0);
+    setStudyRound(restoredStudyRound);
+    setTodayAllLearned(cumulativeToday);
     setCompletedQuizLevels(restoredQuizLevels);
     setHasRecorded(restoredHasRecorded);
     setWords(ws);
@@ -1712,7 +1787,7 @@ export default function Msv2Page() {
     setIdx(restoredIdx);
     setDoneSet(restoredDoneSet);
     setWordsLoading(false);
-  }, []);
+  }, [mergeCumulativeWordsForDate]);
 
   const handleLogin = useCallback((u) => {
     setUser(u);
@@ -1721,6 +1796,8 @@ export default function Msv2Page() {
     setCustomWords([]);
     setDoneSet(new Set());
     setIdx(0);
+    setStudyRound(1);
+    setTodayAllLearned([]);
     setCompletedQuizLevels([]);
     setHasRecorded(false);
     setQuizResult(null);
@@ -1863,7 +1940,78 @@ export default function Msv2Page() {
       });
       setLearnedTotal((n) => n + unlearned.length);
     }
+    if (user?.id && dateKey) {
+      const cum = mergeCumulativeWordsForDate(user.id, dateKey, targetWords);
+      if (dateKey === localDateStr()) setTodayAllLearned(cum);
+    }
     return true;
+  };
+
+  // 다음 회차(Round 2+) 미학습 단어 세트 배정 및 당일 누적 학습 기록 보존
+  const startNextRound = async () => {
+    const uid = user?.id;
+    const today = localDateStr();
+    const dailyCount = parseInt(user?.daily || 20, 10) || 20;
+
+    if (user && words.length && !isWrongReview && !makeupDate) {
+      await persistLearnedSet(words, today, null);
+    }
+
+    const excluded = new Set([...learnedWordsSetRef.current]);
+    todayAllLearned.forEach((w) => {
+      const k = cleanWord(w).toLowerCase();
+      if (k) excluded.add(k);
+    });
+    words.forEach((w) => {
+      const k = cleanWord(w).toLowerCase();
+      if (k) excluded.add(k);
+    });
+
+    const srcPool = (pool && pool.length) ? pool : words;
+    const unlearnedPool = srcPool.filter((w) => {
+      const k = cleanWord(w).toLowerCase();
+      return k && !excluded.has(k);
+    });
+
+    let nextSet = unlearnedPool.slice(0, dailyCount);
+    if (nextSet.length < dailyCount && srcPool.length > 0) {
+      const pickedKeys = new Set(nextSet.map((w) => cleanWord(w).toLowerCase()));
+      for (const w of srcPool) {
+        if (nextSet.length >= dailyCount) break;
+        const k = cleanWord(w).toLowerCase();
+        if (k && !pickedKeys.has(k)) {
+          pickedKeys.add(k);
+          nextSet.push(w);
+        }
+      }
+    }
+    if (!nextSet.length) return;
+
+    const nextRound = studyRound + 1;
+    setStudyRound(nextRound);
+    isSpecialDeckRef.current = false;
+    setIsWrongReview(false);
+    setMakeupDate(null);
+    savedDatesRef.current.delete(today);
+    originalDailyWordsRef.current = nextSet;
+    originalDailyDoneSetRef.current = new Set();
+    originalDailyIdxRef.current = 0;
+    setWords(nextSet);
+    setIdx(0);
+    setDoneSet(new Set());
+
+    if (uid) {
+      try {
+        const json = JSON.stringify(nextSet);
+        localStorage.setItem(`daily_set_${uid}_${today}`, json);
+        localStorage.setItem(`daily_random_set_${uid}_${today}`, json);
+        localStorage.setItem(`learned_words_${uid}`, JSON.stringify(Array.from(learnedWordsSetRef.current)));
+      } catch (e) {}
+      const cum = mergeCumulativeWordsForDate(uid, today, [...words, ...nextSet]);
+      setTodayAllLearned(cum);
+      saveDailyProgress(uid, today, { studyRound: nextRound, doneIndices: [], idx: 0 });
+    }
+    setScreen('flashcard');
   };
 
   // 세트 완주 → 학습 기록 DB 저장 → 퀴즈로 (오답 복습 완주 시 원래 단어 복귀 후 홈으로)
@@ -1905,14 +2053,14 @@ export default function Msv2Page() {
     }
     const ok = await stampAttendance(user, dateKey);
     if (ok) {
+      if (words.length) {
+        const cum = mergeCumulativeWordsForDate(user.id, dateKey, words);
+        if (dateKey === localDateStr()) setTodayAllLearned(cum);
+      }
       setStamps((p) => {
         const next = p.includes(dateKey) ? p : [...p, dateKey];
         try {
           localStorage.setItem(`english_stamps_${user.id}`, JSON.stringify(next));
-          if (words.length) {
-            localStorage.setItem(`stamped_words_${user.id}_${dateKey}`, JSON.stringify(words));
-            localStorage.setItem(`today_all_learned_${user.id}_${dateKey}`, JSON.stringify(words));
-          }
         } catch (e) {}
         return next;
       });
@@ -2056,6 +2204,8 @@ export default function Msv2Page() {
     setIsWrongReview(false);
     setSaveError(null);
     setRepeatCount(0);
+    setStudyRound(1);
+    setTodayAllLearned([]);
     setCompletedQuizLevels([]);
     setHasRecorded(false);
     setWrongWords([]);
@@ -2079,9 +2229,10 @@ export default function Msv2Page() {
     ['🏠', '홈', 'home'], ['🃏', '학습', 'flashcard'], ['📝', '퀴즈', 'quiz'], ['📊', '통계', 'stats'], ['👤', 'MY', 'profile'],
   ];
   const showNav = ['home', 'wordbook', 'calendar', 'stats', 'parent', 'profile'].includes(screen);
+  const canNextRound = !isWrongReview && !makeupDate;
   const screens = {
     login: <LoginScreen go={go} onLogin={handleLogin} />,
-    home: <HomeScreen go={go} user={user} done={doneSet.size} total={words.length || user?.daily || 20} streak={streak} loading={wordsLoading} completedQuizLevels={completedQuizLevels} hasRecorded={hasRecorded} wrongCount={wrongWords.length} />,
+    home: <HomeScreen go={go} user={user} done={doneSet.size} total={words.length || user?.daily || 20} streak={streak} loading={wordsLoading} completedQuizLevels={completedQuizLevels} hasRecorded={hasRecorded} wrongCount={wrongWords.length} studyRound={studyRound} todayAllCount={todayAllLearned.length} onNextRound={canNextRound ? startNextRound : undefined} />,
     flashcard: (
       <FlashcardScreen
         go={go}
@@ -2107,10 +2258,13 @@ export default function Msv2Page() {
         exitMakeup={exitMakeup}
         isWrongReview={isWrongReview}
         exitWrongReview={exitWrongReview}
+        studyRound={studyRound}
+        todayAllCount={todayAllLearned.length}
+        onNextRound={canNextRound ? startNextRound : undefined}
       />
     ),
     quiz: <QuizScreen key={quizKey} initialLevel={quizLevel} onLevelChange={setQuizLevel} completedLevels={completedQuizLevels} go={go} user={user} words={words} pool={pool} rate={rate} onQuizDone={onQuizDone} onRecordWrong={(w) => toggleWrong(w, true)} recordStamp={recordStamp} makeupDate={makeupDate} exitMakeup={exitMakeup} isWrongReview={isWrongReview} exitWrongReview={exitWrongReview} />,
-    quizdone: <QuizDoneScreen go={go} result={quizResult} onReviewWrong={reviewWrong} onNextLevel={handleNextQuizLevel} saveError={saveError} onRetrySave={retrySave} />,
+    quizdone: <QuizDoneScreen go={go} result={quizResult} onReviewWrong={reviewWrong} onNextLevel={handleNextQuizLevel} onNextRound={canNextRound ? startNextRound : undefined} studyRound={studyRound} saveError={saveError} onRetrySave={retrySave} />,
     wordbook: <WordbookScreen user={user} words={words} pool={pool} favs={favs} toggleFav={toggleFav} customWords={customWords} onAddCustomWord={addCustomWord} onDeleteCustomWord={deleteCustomWord} wrongWords={wrongWords} onStartWrongReview={startWrongReview} onRemoveWrong={removeWrongWord} rate={rate} initialTab={wordbookTab} go={go} />,
     calendar: <CalendarScreen go={go} user={user} stamps={stamps} onRestudy={restudyDate} startMakeup={startMakeup} rate={rate} />,
     stats: <StatsScreen user={user} learnedTotal={learnedTotal} repeatCount={repeatCount} stamps={stamps} lastScore={quizResult ? quizResult.score : null} streak={streak} />,

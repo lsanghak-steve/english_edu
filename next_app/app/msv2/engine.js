@@ -142,30 +142,41 @@ export async function fetchStamps(user) {
 
 export async function fetchWordsOfDate(user, dateStr) {
   if (!user?.id) return [];
+  const merged = [];
+  const seen = new Set();
+  const addList = (arr) => {
+    if (!Array.isArray(arr)) return;
+    for (const r of arr) {
+      const k = (r?.word || '').replace(/\.png/gi, '').trim().toLowerCase();
+      if (!k || seen.has(k)) continue;
+      seen.add(k);
+      merged.push(r);
+    }
+  };
+  try {
+    const keys = [
+      `today_all_learned_${user.id}_${dateStr}`,
+      `stamped_words_${user.id}_${dateStr}`,
+    ];
+    for (const key of keys) {
+      const raw = localStorage.getItem(key);
+      if (raw) addList(JSON.parse(raw));
+    }
+  } catch (e) {}
   try {
     const { data } = await supabase.from('student_learned_words')
       .select('word, meaning, learned_at')
       .eq('student_id', user.id)
       .gte('learned_at', `${dateStr}T00:00:00`)
       .lte('learned_at', `${dateStr}T23:59:59`);
-    if (data && data.length) {
-      const seen = new Set();
-      return data.filter((r) => {
-        const k = (r.word || '').replace(/\.png/gi, '').trim().toLowerCase();
-        if (!k || seen.has(k)) return false;
-        seen.add(k);
-        return true;
-      });
-    }
+    if (data && data.length) addList(data);
   } catch (e) {}
+  if (merged.length) return merged;
   try {
     const cached = localStorage.getItem(`daily_set_${user.id}_${dateStr}`) || localStorage.getItem(`daily_random_set_${user.id}_${dateStr}`);
-    if (cached) {
-      const parsed = JSON.parse(cached);
-      if (Array.isArray(parsed) && parsed.length) return parsed;
-    }
+    if (cached) addList(JSON.parse(cached));
   } catch (e) {}
-  return [];
+  return merged;
 }
 
 // ── 프로필 저장 (msv1: students 테이블 update) ──
