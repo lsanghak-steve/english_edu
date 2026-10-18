@@ -12,7 +12,7 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import { playUniversalAudio, initAudioUnlock } from '../../lib/audioPlayer.js';
 import { readStudentSession, saveStudentSession, clearStudentSession } from '../../lib/studentSession.js';
 import {
-  STUDENTS, loadWordsForUser, saveLearnedWords, stampAttendance, fetchStamps,
+  STUDENTS, FALLBACK_WORDS, getFallbackWordsForLevel, loadWordsForUser, saveLearnedWords, stampAttendance, fetchStamps,
   fetchWordsOfDate, updateProfile, wordMeaning, wordExample, wordImgSrc,
   pronScore, pronTip, localDateStr,
 } from './engine.js';
@@ -460,7 +460,7 @@ function RecordingSheet({ word, rate, initialAudioUrl = null, userRecordings = {
 }
 
 // ═══ 03 플래시카드 ═══
-function FlashcardScreen({ go, user, words, loading, idx, setIdx, markDone, wrongWords, toggleWrong, onRemoveWrong, rate, cycleRate, onFinishSet, makeupDate, exitMakeup, isWrongReview, exitWrongReview, studyRound = 1, todayAllCount = 0, onNextRound, userRecordings = {}, onSaveRecording }) {
+function FlashcardScreen({ go, user, words, loading, idx, setIdx, markDone, wrongWords, toggleWrong, onRemoveWrong, rate, cycleRate, onFinishSet, makeupDate, exitMakeup, isWrongReview, exitWrongReview, studyRound = 1, todayAllCount = 0, onNextRound, userRecordings = {}, onSaveRecording, loadError = false, usedFallback = false, onRetry, onUseFallback }) {
   const [flipped, setFlipped] = useState(false);
   const [sheet, setSheet] = useState(false);
   const lastScoreRef = useRef(null);
@@ -475,12 +475,47 @@ function FlashcardScreen({ go, user, words, loading, idx, setIdx, markDone, wron
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [idx, loading]);
 
-  if (loading || !w) {
+  if (loading) {
     return (
       <div style={{ padding: '120px 20px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 14, textAlign: 'center' }}>
         <div style={{ fontSize: 44 }}>📖</div>
         <div style={{ fontSize: 16, fontWeight: 900, color: C.text }}>{user?.name || ''} 님의 맞춤 단어 로딩 중…</div>
         <div style={{ fontSize: 13, color: C.sub }}>오늘 학습할 단어를 안전하게 불러오고 있어요 ⚡</div>
+        {go && (
+          <button onClick={() => go('home')}
+            style={{ marginTop: 8, padding: '11px 20px', borderRadius: 14, border: `1.5px solid ${C.border}`, background: C.surface, fontSize: 13, fontWeight: 700, color: C.sub, cursor: 'pointer', fontFamily: FONT }}>
+            🏠 홈으로 돌아가기
+          </button>
+        )}
+      </div>
+    );
+  }
+  if (!w) {
+    return (
+      <div style={{ padding: '100px 24px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 14, textAlign: 'center' }}>
+        <div style={{ fontSize: 46 }}>{loadError ? '⚠️' : '📭'}</div>
+        <div style={{ fontSize: 17, fontWeight: 900, color: C.text }}>
+          {loadError ? '단어 데이터를 불러오지 못했어요' : '표시할 학습 단어가 없어요'}
+        </div>
+        <div style={{ fontSize: 13, color: C.sub, lineHeight: 1.5 }}>
+          {loadError
+            ? '네트워크 연결 상태를 확인하거나 기본 내장 단어장으로 바로 학습을 시작할 수 있어요.'
+            : '다시 불러오거나 기본 내장 단어장으로 오늘의 학습을 이어갈 수 있어요.'}
+        </div>
+        <div style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: 10, marginTop: 6 }}>
+          <button onClick={() => { if (onRetry) onRetry(); }}
+            style={{ width: '100%', padding: '14px 0', borderRadius: 16, border: 'none', background: C.grad, fontSize: 14, fontWeight: 800, color: '#FFFFFF', cursor: 'pointer', fontFamily: FONT }}>
+            🔄 다시 불러오기
+          </button>
+          <button onClick={() => { if (onUseFallback) onUseFallback(); }}
+            style={{ width: '100%', padding: '13px 0', borderRadius: 16, border: `1.5px solid ${C.primary}`, background: C.primaryLight, fontSize: 14, fontWeight: 800, color: C.primaryDeep, cursor: 'pointer', fontFamily: FONT }}>
+            📚 기본 단어장으로 학습하기
+          </button>
+          <button onClick={() => { if (isWrongReview && exitWrongReview) exitWrongReview(); if (makeupDate && exitMakeup) exitMakeup(); if (go) go('home'); }}
+            style={{ width: '100%', padding: '13px 0', borderRadius: 16, border: `1.5px solid ${C.border}`, background: C.surface, fontSize: 14, fontWeight: 700, color: C.sub, cursor: 'pointer', fontFamily: FONT }}>
+            🏠 홈으로 돌아가기
+          </button>
+        </div>
       </div>
     );
   }
@@ -521,6 +556,16 @@ function FlashcardScreen({ go, user, words, loading, idx, setIdx, markDone, wron
     <div style={{ padding: '56px 20px 24px', display: 'flex', flexDirection: 'column', gap: 13, height: '100%', boxSizing: 'border-box', position: 'relative' }}>
       <MakeupBanner makeupDate={makeupDate} onExit={() => { exitMakeup(); go('calendar'); }} kind="deck" />
       {isWrongReview && <WrongReviewBanner onExit={() => { if (exitWrongReview) exitWrongReview(); go('home'); }} />}
+      {usedFallback && !isWrongReview && !makeupDate && (
+        <div style={{ background: C.amberBg, border: '1px solid #FCD34D', borderRadius: 12, padding: '7px 12px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: 11, fontWeight: 700, color: C.amber }}>
+          <span>📡 오프라인·기본 내장 단어장으로 학습 중</span>
+          {onRetry && (
+            <button onClick={onRetry} style={{ background: '#FFFFFF', border: `1px solid ${C.amber}`, borderRadius: 999, padding: '3px 9px', fontSize: 11, fontWeight: 800, color: C.amber, cursor: 'pointer', fontFamily: FONT }}>
+              🔄 다시 연결
+            </button>
+          )}
+        </div>
+      )}
       <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
         <button onClick={() => { if (isWrongReview && exitWrongReview) exitWrongReview(); go('home'); }} style={{ width: 40, height: 40, borderRadius: '50%', background: C.surface, border: 'none', fontSize: 18, fontWeight: 700, color: C.text, cursor: 'pointer', flexShrink: 0 }}>←</button>
         <div style={{ flex: 1, textAlign: 'center' }}>
@@ -624,7 +669,7 @@ const LEVELS = [
   { lv: 4, label: '4단계 ✍️ 쓰기', tag: '선택' },
 ];
 
-function QuizScreen({ initialLevel = 1, onLevelChange, completedLevels = [], go, user, words, pool, rate, onQuizDone, onRecordWrong, recordStamp, makeupDate, exitMakeup, isWrongReview, exitWrongReview, userRecordings = {}, onSaveRecording }) {
+function QuizScreen({ initialLevel = 1, onLevelChange, completedLevels = [], go, user, words, pool, rate, onQuizDone, onRecordWrong, recordStamp, makeupDate, exitMakeup, isWrongReview, exitWrongReview, userRecordings = {}, onSaveRecording, loadError = false, onRetry, onUseFallback }) {
   const [level, setLevel] = useState(initialLevel);
   const [qIdx, setQIdx] = useState(0);
   const [score, setScore] = useState(0);
@@ -740,7 +785,29 @@ function QuizScreen({ initialLevel = 1, onLevelChange, completedLevels = [], go,
   };
 
   if (!w) {
-    return <div style={{ padding: '120px 20px', textAlign: 'center', color: C.sub, fontWeight: 700 }}>오늘 단어를 먼저 불러와 주세요 (홈 → 학습)</div>;
+    return (
+      <div style={{ padding: '100px 24px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 14, textAlign: 'center' }}>
+        <div style={{ fontSize: 44 }}>{loadError ? '⚠️' : '📝'}</div>
+        <div style={{ fontSize: 16, fontWeight: 900, color: C.text }}>
+          {loadError ? '단어 데이터를 불러오지 못했어요' : '오늘 단어를 먼저 불러와 주세요'}
+        </div>
+        <div style={{ fontSize: 13, color: C.sub }}>다시 불러오거나 기본 단어장으로 바로 퀴즈를 풀 수 있어요.</div>
+        <div style={{ width: '100%', display: 'flex', flexDirection: 'column', gap: 10, marginTop: 6 }}>
+          <button onClick={() => { if (onRetry) onRetry(); }}
+            style={{ width: '100%', padding: '13px 0', borderRadius: 16, border: 'none', background: C.grad, fontSize: 14, fontWeight: 800, color: '#FFFFFF', cursor: 'pointer', fontFamily: FONT }}>
+            🔄 다시 불러오기
+          </button>
+          <button onClick={() => { if (onUseFallback) onUseFallback(); }}
+            style={{ width: '100%', padding: '13px 0', borderRadius: 16, border: `1.5px solid ${C.primary}`, background: C.primaryLight, fontSize: 14, fontWeight: 800, color: C.primaryDeep, cursor: 'pointer', fontFamily: FONT }}>
+            📚 기본 단어장으로 퀴즈 풀기
+          </button>
+          <button onClick={() => { if (go) go('home'); }}
+            style={{ width: '100%', padding: '13px 0', borderRadius: 16, border: `1.5px solid ${C.border}`, background: C.surface, fontSize: 14, fontWeight: 700, color: C.sub, cursor: 'pointer', fontFamily: FONT }}>
+            🏠 홈으로 돌아가기
+          </button>
+        </div>
+      </div>
+    );
   }
   const curWKey = cleanWord(w).toLowerCase();
   return (
@@ -1594,6 +1661,8 @@ export default function Msv2Page() {
   const [studyRound, setStudyRound] = useState(1);
   const [todayAllLearned, setTodayAllLearned] = useState([]);
   const [userRecordings, setUserRecordings] = useState({});
+  const [wordsLoadError, setWordsLoadError] = useState(false);
+  const [usedFallbackWords, setUsedFallbackWords] = useState(false);
   const isSpecialDeckRef = useRef(false);
   const savedDatesRef = useRef(new Set());
   const learnedWordsSetRef = useRef(new Set());
@@ -1812,10 +1881,11 @@ export default function Msv2Page() {
 
   const loadAll = useCallback(async (u, forceNewSet = false) => {
     setWordsLoading(true);
+    setWordsLoadError(false);
     const uid = u?.id;
     const today = localDateStr();
     const dailyCount = parseInt(u?.daily || 20, 10) || 20;
-    const [{ words: fetchedWords, pool: pl, learnedCount, learnedWords }, st] = await Promise.all([
+    const [{ words: fetchedWords, pool: pl, learnedCount, learnedWords, usedFallback, loadError }, st] = await Promise.all([
       loadWordsForUser(u),
       fetchStamps(u),
     ]);
@@ -1879,6 +1949,8 @@ export default function Msv2Page() {
     setTodayAllLearned(cumulativeToday);
     setCompletedQuizLevels(restoredQuizLevels);
     setHasRecorded(restoredHasRecorded);
+    setWordsLoadError(Boolean(loadError));
+    setUsedFallbackWords(Boolean(usedFallback));
     setWords(ws);
     setPool(pl);
     setLearnedTotal(learnedCount);
@@ -1887,6 +1959,22 @@ export default function Msv2Page() {
     setDoneSet(restoredDoneSet);
     setWordsLoading(false);
   }, [mergeCumulativeWordsForDate]);
+
+  const applyFallbackWords = useCallback(() => {
+    const lv = user?.level || '중등단어';
+    const cnt = parseInt(user?.daily || 20, 10) || 20;
+    const fbWords = getFallbackWordsForLevel(lv, cnt);
+    originalDailyWordsRef.current = fbWords;
+    originalDailyDoneSetRef.current = new Set();
+    originalDailyIdxRef.current = 0;
+    setWords(fbWords);
+    setPool(FALLBACK_WORDS);
+    setUsedFallbackWords(true);
+    setWordsLoadError(false);
+    setWordsLoading(false);
+    setIdx(0);
+    setDoneSet(new Set());
+  }, [user]);
 
   const handleLogin = useCallback((u) => {
     setUser(u);
@@ -2391,9 +2479,13 @@ export default function Msv2Page() {
         onNextRound={canNextRound ? startNextRound : undefined}
         userRecordings={userRecordings}
         onSaveRecording={saveUserRecording}
+        loadError={wordsLoadError}
+        usedFallback={usedFallbackWords}
+        onRetry={() => { if (user) loadAll(user, true); }}
+        onUseFallback={applyFallbackWords}
       />
     ),
-    quiz: <QuizScreen key={quizKey} initialLevel={quizLevel} onLevelChange={setQuizLevel} completedLevels={completedQuizLevels} go={go} user={user} words={words} pool={pool} rate={rate} onQuizDone={onQuizDone} onRecordWrong={(w) => toggleWrong(w, true)} recordStamp={recordStamp} makeupDate={makeupDate} exitMakeup={exitMakeup} isWrongReview={isWrongReview} exitWrongReview={exitWrongReview} userRecordings={userRecordings} onSaveRecording={saveUserRecording} />,
+    quiz: <QuizScreen key={quizKey} initialLevel={quizLevel} onLevelChange={setQuizLevel} completedLevels={completedQuizLevels} go={go} user={user} words={words} pool={pool} rate={rate} onQuizDone={onQuizDone} onRecordWrong={(w) => toggleWrong(w, true)} recordStamp={recordStamp} makeupDate={makeupDate} exitMakeup={exitMakeup} isWrongReview={isWrongReview} exitWrongReview={exitWrongReview} userRecordings={userRecordings} onSaveRecording={saveUserRecording} loadError={wordsLoadError} onRetry={() => { if (user) loadAll(user, true); }} onUseFallback={applyFallbackWords} />,
     quizdone: <QuizDoneScreen go={go} result={quizResult} onReviewWrong={reviewWrong} onNextLevel={handleNextQuizLevel} onNextRound={canNextRound ? startNextRound : undefined} studyRound={studyRound} saveError={saveError} onRetrySave={retrySave} />,
     wordbook: <WordbookScreen user={user} words={words} pool={pool} favs={favs} toggleFav={toggleFav} customWords={customWords} onAddCustomWord={addCustomWord} onDeleteCustomWord={deleteCustomWord} wrongWords={wrongWords} onStartWrongReview={startWrongReview} onRemoveWrong={removeWrongWord} rate={rate} initialTab={wordbookTab} go={go} />,
     calendar: <CalendarScreen go={go} user={user} stamps={stamps} onRestudy={restudyDate} startMakeup={startMakeup} rate={rate} />,
