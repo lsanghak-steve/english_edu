@@ -1538,8 +1538,8 @@ function ProfileScreen({ user, onSaveProfile, onLogout, learnedTotal, stamps, go
   );
 }
 
-// ═══ 12 시험지 출력 ═══
-function PdfScreen({ user, words, pool }) {
+// ═══ 12 시험지 출력 (6종 유형 + 학생용 문제지 / 별도 채점용 정답지 분리) ═══
+function PdfScreen({ go, user, words, pool }) {
   const [range, setRange] = useState('오늘 단어');
   const [count, setCount] = useState('20문항');
   const [mode, setMode] = useState('영→한 뜻쓰기');
@@ -1548,86 +1548,162 @@ function PdfScreen({ user, words, pool }) {
     ['🔤', '영→한 뜻쓰기', '영단어 보고 뜻 적기'],
     ['✍️', '한→영 스펠링', '뜻 보고 영단어 쓰기'],
     ['🧩', '스펠링 빈칸', 'a _ p _ e 채우기'],
-    ['🔀', '종합 섞기', '세 유형 혼합 출제'],
+    ['📝', '예문 빈칸', '예문 속 핵심 단어 채우기'],
+    ['🗂️', '휴대용 깜빡이장', 'A4 2열 암기 워크시트'],
+    ['💮', '채점용 정답지', '선생님·학부모 채점용'],
   ];
-  const blankify = (w) => w.split('').map((c, i) => (i === 0 || i === w.length - 1 ? c : i % 2 ? '_' : c)).join(' ');
+  const blankify = (w) => {
+    if (!w || w.length <= 2) return '_ _ _';
+    return w.split('').map((c, i) => (i === 0 || i === w.length - 1 ? c : i % 2 ? '_' : c)).join(' ');
+  };
+  const sentenceBlank = (x) => {
+    const base = x.exEn || `I learn the word '${x.word}' every day.`;
+    try {
+      const escaped = x.word.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      const re = new RegExp(escaped, 'gi');
+      if (re.test(base)) return base.replace(re, '( ________________ )');
+    } catch (e) {}
+    return `${base} ➔ ( ________________ )`;
+  };
   const print = () => {
     const src = range === '오늘 단어' && words.length ? words : (pool.length ? pool : words);
     const n = parseInt(count, 10) || 20;
-    const list = src.slice(0, n).map((w) => ({ word: cleanWord(w), mean: wordMeaning(w) })).filter((x) => x.word);
-    if (!list.length) { alert('출제할 단어가 없어요. 홈에서 단어를 먼저 불러와 주세요.'); return; }
-    const rowOf = (x, i) => {
-      const m = mode === '종합 섞기' ? ['영→한 뜻쓰기', '한→영 스펠링', '스펠링 빈칸'][i % 3] : mode;
-      if (m === '영→한 뜻쓰기') return `<td class="q">${x.word}</td><td class="blank">${withAnswers ? `<span class="ans">${x.mean}</span>` : ''}</td>`;
-      if (m === '한→영 스펠링') return `<td class="q">${x.mean}</td><td class="blank">${withAnswers ? `<span class="ans">${x.word}</span>` : ''}</td>`;
-      return `<td class="q">${blankify(x.word)} <span class="hint">(${x.mean})</span></td><td class="blank">${withAnswers ? `<span class="ans">${x.word}</span>` : ''}</td>`;
+    const list = src.slice(0, n).map((w) => {
+      const ex = wordExample(w);
+      return {
+        word: cleanWord(w),
+        mean: wordMeaning(w),
+        phonics: w.phonics || w.phonetic || '',
+        exEn: ex.en,
+        exKo: ex.ko,
+      };
+    }).filter((x) => x.word);
+    if (!list.length) {
+      if (typeof alert === 'function') alert('출제할 단어가 없어요. 홈에서 단어를 먼저 불러와 주세요.');
+      return null;
+    }
+    const isAnswerOnly = mode === '채점용 정답지';
+    const isPocket = mode === '휴대용 깜빡이장';
+    const rowOf = (x) => {
+      if (mode === '영→한 뜻쓰기') {
+        return `<td class="q">${x.word}${x.phonics ? ` <span class="hint">${x.phonics}</span>` : ''}</td><td class="blank"></td>`;
+      }
+      if (mode === '한→영 스펠링') {
+        return `<td class="q">${x.mean}</td><td class="blank"></td>`;
+      }
+      if (mode === '스펠링 빈칸') {
+        return `<td class="q">${blankify(x.word)} <span class="hint">(${x.mean})</span></td><td class="blank"></td>`;
+      }
+      if (mode === '예문 빈칸') {
+        return `<td class="q">${sentenceBlank(x)}<div class="hint">${x.exKo} (${x.mean} · 힌트: ${x.word[0] || ''}...)</div></td><td class="blank"></td>`;
+      }
+      if (isPocket) {
+        return `<td class="q">${x.word}${x.phonics ? ` <span class="hint">${x.phonics}</span>` : ''}</td><td class="pocket-ans">${x.mean}</td>`;
+      }
+      return `<td class="q">${x.word}${x.phonics ? ` <span class="hint">${x.phonics}</span>` : ''}</td><td class="ans-cell">${x.mean}</td>`;
     };
+    const dateLabel = new Date().toLocaleDateString('ko-KR');
+    const colHeader = isPocket ? '<th>영단어</th><th>한글 뜻 (접어서 암기)</th>' : isAnswerOnly ? '<th>영단어</th><th>채점 정답 (뜻)</th>' : '<th>문제</th><th>답안 작성란 (학생용)</th>';
+    const separateAnswerKey = (withAnswers && !isAnswerOnly && !isPocket)
+      ? `<div class="page-break"></div>
+      <section class="answer-key-sheet">
+        <h1>FlipVoca 채점용 정답지 (Answer Key) — ${mode}</h1>
+        <div class="meta">${user?.level || ''} · ${dateLabel} · ${list.length}문항 채점 기준표 (선생님·학부모용)</div>
+        <table class="answer-table"><tr><th class="num">No</th><th>출제 단어</th><th>채점 정답</th></tr>
+        ${list.map((x, i) => `<tr><td class="num">${i + 1}</td><td class="q">${x.word}${x.phonics ? ` <span class="hint">${x.phonics}</span>` : ''}</td><td class="ans-cell">${mode === '영→한 뜻쓰기' ? x.mean : `${x.word} (${x.mean})`}</td></tr>`).join('')}
+        </table>
+      </section>`
+      : '';
     const html = `<!doctype html><html><head><meta charset="utf-8"><title>FlipVoca 시험지</title><style>
       @page { size: A4; margin: 18mm; }
-      body { font-family: 'Malgun Gothic', sans-serif; color: #111; }
+      body { font-family: 'Malgun Gothic', 'Pretendard', sans-serif; color: #111; margin: 0; }
       h1 { font-size: 20px; margin: 0 0 4px; } .meta { font-size: 12px; color: #555; margin-bottom: 14px; }
       .info { display: flex; gap: 24px; border: 1.5px solid #111; padding: 8px 14px; font-size: 13px; margin-bottom: 16px; }
       table { width: 100%; border-collapse: collapse; } td, th { border: 1px solid #999; padding: 9px 10px; font-size: 14px; }
       th { background: #f0f0f5; font-size: 12px; } .num { width: 36px; text-align: center; color: #666; }
-      .q { font-weight: 700; } .blank { width: 45%; } .hint { font-weight: 400; color: #777; font-size: 12px; }
-      .ans { color: #4338ca; font-size: 13px; }
+      .q { font-weight: 700; } .blank { width: 42%; height: 22px; } .hint { font-weight: 400; color: #666; font-size: 11px; margin-top: 2px; }
+      .pocket-ans { width: 45%; background: #fafafa; color: #222; font-weight: 600; border-left: 1.5px dashed #666; }
+      .ans-cell { width: 45%; color: #4338ca; font-weight: 700; font-size: 13px; }
+      .page-break { page-break-before: always; break-before: page; height: 1px; margin: 28px 0; }
     </style></head><body>
-      <h1>FlipVoca 영단어 시험지 — ${mode}</h1>
-      <div class="meta">${user?.level || ''} · ${new Date().toLocaleDateString('ko-KR')} · ${list.length}문항${withAnswers ? ' · 정답 포함' : ''}</div>
-      <div class="info"><span>이름: ${user?.name || '_________'}</span><span>점수: ______ / ${list.length}</span></div>
-      <table><tr><th class="num">No</th><th>문제</th><th>답</th></tr>
-      ${list.map((x, i) => `<tr><td class="num">${i + 1}</td>${rowOf(x, i)}</tr>`).join('')}
-      </table></body></html>`;
-    const win = window.open('', '_blank');
-    if (!win) { alert('팝업이 차단되어 있어요. 팝업을 허용해 주세요.'); return; }
-    win.document.write(html);
-    win.document.close();
-    win.focus();
-    setTimeout(() => win.print(), 300);
+      <section class="student-question-sheet">
+        <h1>FlipVoca 영단어 시험지 — ${mode}</h1>
+        <div class="meta">${user?.level || ''} · ${dateLabel} · ${list.length}문항${withAnswers && !isAnswerOnly && !isPocket ? ' · 별도 채점용 정답지 포함' : ''}</div>
+        <div class="info"><span>이름: ${user?.name || '_________'}</span><span>점수: ______ / ${list.length}</span></div>
+        <table><tr><th class="num">No</th>${colHeader}</tr>
+        ${list.map((x, i) => `<tr><td class="num">${i + 1}</td>${rowOf(x)}</tr>`).join('')}
+        </table>
+      </section>
+      ${separateAnswerKey}
+    </body></html>`;
+    if (typeof window !== 'undefined' && typeof window.open === 'function') {
+      const win = window.open('', '_blank');
+      if (!win) {
+        if (typeof alert === 'function') alert('팝업이 차단되어 있어요. 팝업을 허용해 주세요.');
+        return html;
+      }
+      win.document.write(html);
+      win.document.close();
+      if (typeof win.focus === 'function') win.focus();
+      setTimeout(() => { if (typeof win.print === 'function') win.print(); }, 300);
+    }
+    return html;
   };
   const chip = (label, active, onClick) => (
-    <button key={label} onClick={onClick} style={{ padding: '8px 14px', borderRadius: 999, border: active ? 'none' : `1.5px solid ${C.border}`, background: active ? C.primary : C.surface, fontSize: 12, fontWeight: 700, color: active ? '#FFFFFF' : C.sub, cursor: 'pointer', fontFamily: FONT }}>
+    <button key={label} onClick={onClick} style={{ padding: '7px 12px', borderRadius: 999, border: active ? 'none' : `1.5px solid ${C.border}`, background: active ? C.primary : C.surface, fontSize: 12, fontWeight: 700, color: active ? '#FFFFFF' : C.sub, cursor: 'pointer', fontFamily: FONT }}>
       {label}
     </button>
   );
   return (
-    <div style={{ padding: '60px 20px 24px', display: 'flex', flexDirection: 'column', gap: 13, height: '100%', boxSizing: 'border-box' }}>
-      <div style={{ fontSize: 24, fontWeight: 900, color: C.text }}>시험지 출력 📄</div>
-      <div style={{ fontSize: 13, color: C.sub, marginTop: -6 }}>배운 단어로 종이 시험지를 만들어 출력해요</div>
-      <div style={{ background: C.surface, borderRadius: 22, padding: 16, display: 'flex', flexDirection: 'column', gap: 10 }}>
-        <div style={{ fontSize: 13, fontWeight: 900, color: C.text }}>출제 범위</div>
+    <div style={{ padding: '56px 20px 24px', display: 'flex', flexDirection: 'column', gap: 12, height: '100%', boxSizing: 'border-box' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+        {go && (
+          <button onClick={() => go('home')} style={{ width: 40, height: 40, borderRadius: '50%', background: C.surface, border: 'none', fontSize: 18, fontWeight: 700, color: C.text, cursor: 'pointer', flexShrink: 0 }} title="홈으로 돌아가기">←</button>
+        )}
+        <div style={{ flex: 1 }}>
+          <div style={{ fontSize: 22, fontWeight: 900, color: C.text }}>시험지 출력 📄</div>
+          <div style={{ fontSize: 12, color: C.sub, marginTop: 2 }}>배운 단어로 A4 6종 시험지·워크시트를 출력해요</div>
+        </div>
+      </div>
+      <div style={{ background: C.surface, borderRadius: 20, padding: 14, display: 'flex', flexDirection: 'column', gap: 9 }}>
+        <div style={{ fontSize: 12, fontWeight: 900, color: C.text }}>출제 범위</div>
         <div style={{ display: 'flex', gap: 8 }}>
           {['오늘 단어', '전체'].map((r) => chip(r, range === r, () => setRange(r)))}
         </div>
-        <div style={{ fontSize: 13, fontWeight: 900, color: C.text }}>문항 수</div>
-        <div style={{ display: 'flex', gap: 8 }}>
-          {['10문항', '20문항', '30문항'].map((n) => chip(n, count === n, () => setCount(n)))}
+        <div style={{ fontSize: 12, fontWeight: 900, color: C.text }}>문항 수</div>
+        <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+          {['10문항', '20문항', '30문항', '50문항'].map((n) => chip(n, count === n, () => setCount(n)))}
         </div>
       </div>
-      <div style={{ fontSize: 15, fontWeight: 900, color: C.text }}>시험 유형</div>
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
+      <div style={{ fontSize: 14, fontWeight: 900, color: C.text }}>시험 유형 (6종)</div>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
         {types.map(([ic, title, sub]) => {
           const active = mode === title;
           return (
-            <button key={title} onClick={() => setMode(title)} style={{ textAlign: 'left', padding: 13, borderRadius: 18, border: active ? `2px solid ${C.primary}` : `1.5px solid ${C.border}`, background: active ? C.primaryLight : C.surface, cursor: 'pointer', fontFamily: FONT }}>
-              <div style={{ fontSize: 19 }}>{ic}</div>
-              <div style={{ fontSize: 13, fontWeight: 900, color: active ? C.primaryDeep : C.text, marginTop: 5 }}>{title}</div>
-              <div style={{ fontSize: 11, fontWeight: 500, color: C.sub, marginTop: 2 }}>{sub}</div>
+            <button key={title} onClick={() => setMode(title)} style={{ textAlign: 'left', padding: '10px 12px', borderRadius: 16, border: active ? `2px solid ${C.primary}` : `1.5px solid ${C.border}`, background: active ? C.primaryLight : C.surface, cursor: 'pointer', fontFamily: FONT }}>
+              <div style={{ fontSize: 17 }}>{ic} <span style={{ fontSize: 12.5, fontWeight: 900, color: active ? C.primaryDeep : C.text }}>{title}</span></div>
+              <div style={{ fontSize: 10.5, fontWeight: 500, color: C.sub, marginTop: 3 }}>{sub}</div>
             </button>
           );
         })}
       </div>
-      <div onClick={() => setWithAnswers(!withAnswers)} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: C.surface, borderRadius: 16, padding: '12px 16px', cursor: 'pointer' }}>
-        <span style={{ fontSize: 13, fontWeight: 700, color: C.text }}>✅ 정답지 포함 (채점용)</span>
-        <div style={{ width: 44, height: 26, borderRadius: 999, background: withAnswers ? C.primary : '#D8DAE5', position: 'relative', transition: 'background 0.2s' }}>
+      <div onClick={() => setWithAnswers(!withAnswers)} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: C.surface, borderRadius: 16, padding: '11px 15px', cursor: 'pointer' }}>
+        <span style={{ fontSize: 12.5, fontWeight: 700, color: C.text }}>✅ 별도 채점용 정답지 함께 출력 (학생 답란은 빈칸 유지)</span>
+        <div style={{ width: 44, height: 26, borderRadius: 999, background: withAnswers ? C.primary : '#D8DAE5', position: 'relative', transition: 'background 0.2s', flexShrink: 0 }}>
           <span style={{ position: 'absolute', top: 3, left: withAnswers ? 21 : 3, width: 20, height: 20, borderRadius: '50%', background: '#FFFFFF', transition: 'left 0.2s' }} />
         </div>
       </div>
-      <div style={{ flex: 1 }} />
-      <button onClick={print} style={{ background: C.primary, border: 'none', borderRadius: 18, padding: '16px 0', fontSize: 16, fontWeight: 700, color: '#FFFFFF', cursor: 'pointer', fontFamily: FONT }}>
-        🖨️ PDF 시험지 만들기
-      </button>
-      <div style={{ fontSize: 11, color: C.sub, textAlign: 'center' }}>A4 규격 · 이름/점수 칸 자동 포함 · 인쇄 창에서 PDF 저장 가능</div>
+      <div style={{ display: 'flex', gap: 8 }}>
+        {go && (
+          <button onClick={() => go('home')} style={{ padding: '15px 16px', background: C.surface, border: `1.5px solid ${C.border}`, borderRadius: 18, fontSize: 14, fontWeight: 700, color: C.sub, cursor: 'pointer', fontFamily: FONT }}>
+            🏠 홈으로
+          </button>
+        )}
+        <button onClick={print} style={{ flex: 1, background: C.primary, border: 'none', borderRadius: 18, padding: '15px 0', fontSize: 15, fontWeight: 700, color: '#FFFFFF', cursor: 'pointer', fontFamily: FONT }}>
+          🖨️ PDF 시험지 만들기
+        </button>
+      </div>
+      <div style={{ fontSize: 11, color: C.sub, textAlign: 'center' }}>A4 규격 · 학생용 문제지와 채점용 정답지 자동 분리 출력</div>
     </div>
   );
 }
@@ -2472,7 +2548,7 @@ export default function Msv2Page() {
   const navItems = [
     ['🏠', '홈', 'home'], ['🃏', '학습', 'flashcard'], ['📝', '퀴즈', 'quiz'], ['📊', '통계', 'stats'], ['👤', 'MY', 'profile'],
   ];
-  const showNav = ['home', 'wordbook', 'calendar', 'stats', 'parent', 'profile'].includes(screen);
+  const showNav = ['home', 'wordbook', 'calendar', 'stats', 'parent', 'profile', 'pdf'].includes(screen);
   const canNextRound = !isWrongReview && !makeupDate;
   const screens = {
     login: <LoginScreen go={go} onLogin={handleLogin} />,
@@ -2520,7 +2596,7 @@ export default function Msv2Page() {
     stats: <StatsScreen user={user} learnedTotal={learnedTotal} repeatCount={repeatCount} stamps={stamps} lastScore={quizResult ? quizResult.score : null} streak={streak} />,
     parent: <ParentScreen user={user} done={doneSet.size} total={words.length || user?.daily || 20} stamps={stamps} learnedTotal={learnedTotal} />,
     profile: <ProfileScreen user={user} onSaveProfile={saveProfile} onLogout={logout} learnedTotal={learnedTotal} stamps={stamps} go={go} wordsTotal={words.length} />,
-    pdf: <PdfScreen user={user} words={words} pool={pool} />,
+    pdf: <PdfScreen go={go} user={user} words={words} pool={pool} />,
   };
 
   return (
